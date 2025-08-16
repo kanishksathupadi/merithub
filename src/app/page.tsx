@@ -62,7 +62,7 @@ export default function Home() {
             </div>
             <div className="mt-16">
                <Image
-                src="https://placehold.co/1200x600.png"
+                src="https://images.unsplash.com/photo-1605778316211-8cb6b3b76ca6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxBJTIwcGVyc29uJTIwb24lMjBhJTIwbW91bnRhaW4lMjBzdW1taXQlMkMlMjByZXByZXNlbnRpbmclMjBzdWNjZXNzLnxlbnwwfHx8fDE3NTUzNzgyNTh8MA&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="A person on a mountain summit, representing success."
                 width={1200}
                 height={600}
