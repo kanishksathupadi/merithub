@@ -26,15 +26,15 @@ const mockOnboardingData: Omit<SuggestNextStepInput, 'grade'> = {
 const dashboardTiles = [
     { title: "My Roadmap", description: "View your personalized tasks.", icon: ListChecks, href: "/dashboard/roadmap" },
     { title: "Progress Tracker", description: "Visualize your achievements.", icon: TrendingUp, href: "/dashboard/progress" },
-    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "#" },
-    { title: "Study Resources", description: "Find guides and materials.", icon: BookOpen, href: "#" },
-    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "#" },
+    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match" },
+    { title: "Study Resources", description: "Find guides and materials.", icon: BookOpen, href: "/dashboard/study-resources" },
+    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum" },
 ]
 
 function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): RoadmapTask[] {
     const tasks: RoadmapTask[] = [];
     suggestion.plan.forEach(planItem => {
-        const createTasks = (items: string[] | string, category: RoadmapTask['category']) => {
+        const createTasks = (items: string | string[], category: RoadmapTask['category']) => {
             const itemsArray = Array.isArray(items) ? items : [items];
             itemsArray.forEach(item => {
                 if (typeof item !== 'string') return;
@@ -128,60 +128,6 @@ export default function DashboardPage() {
             const tasks = generateTasksFromSuggestion(result);
             localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
         }
-      } catch (error) {
-        console.error("Error fetching suggestion:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getSuggestion();
-  }, []);
-
-  return (
-    <div className="space-y-8">
-      <DashboardHeader />
-
-      {loading ? (
-        <Card>
-            <CardHeader>
-                <Skeleton className="h-8 w-1/3" />
-                <Skeleton className="h-4 w-1/2" />
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-5/6" />
-                     <div className="flex gap-4 mt-2">
-                        <Skeleton className="h-10 w-36" />
-                        <Skeleton className="h-10 w-36" />
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-      ) : suggestion ? (
-        <NextStepCard suggestion={suggestion} />
-      ) : null}
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {dashboardTiles.map((tile) => (
-            <Card key={tile.title} className="hover:shadow-md transition-shadow">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle className="flex items-center gap-2">
-                           <tile.icon className="w-6 h-6 text-primary"/>
-                           {tile.title}
-                        </CardTitle>
-                        <CardDescription>{tile.description}</CardDescription>
-                    </div>
-                     <Button variant="ghost" size="icon" asChild>
-                        <Link href={tile.href}><ArrowRight className="w-5 h-5"/></Link>
-                     </Button>
-                </CardHeader>
-            </Card>
-        ))}
-      </div>
-    </div>
-  );
-}
+      } catch (error) a_string_var = """Hello World!"""
+a_second_one = '''How's life?'''
+another = "Yo!"

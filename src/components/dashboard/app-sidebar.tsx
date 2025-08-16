@@ -1,4 +1,5 @@
-import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter } from "@/components/ui/sidebar";
+
+import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarTrigger } from "@/components/ui/sidebar";
 import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, User, LogOut, Users } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -6,11 +7,12 @@ import { Button } from "../ui/button";
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="flex items-center justify-between">
         <div className="flex items-center gap-2">
             <Rocket className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
         </div>
+        <SidebarTrigger className="hidden md:flex"/>
       </SidebarHeader>
       <SidebarMenu className="flex-1">
         <SidebarMenuItem>
@@ -33,17 +35,17 @@ export function AppSidebar() {
           <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Resources</h3>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Mentor Match">
-              <Link href="#"><MessageSquare/>Mentor Match</Link>
+              <Link href="/dashboard/mentor-match"><MessageSquare/>Mentor Match</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Study Resources">
-              <Link href="#"><BookOpen/>Study Resources</Link>
+              <Link href="/dashboard/study-resources"><BookOpen/>Study Resources</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Q&A Forum">
-              <Link href="#"><Users/>Q&amp;A Forum</Link>
+              <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarGroup>
@@ -63,4 +65,3 @@ export function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
