@@ -27,11 +27,10 @@ import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  gradeLevel: z.string().min(1, { message: "Please select your grade level." }),
   academicStrengths: z.string().min(3, { message: "Please list at least one strength." }),
   academicWeaknesses: z.string().min(3, { message: "Please list at least one weakness." }),
-  careerInterests: z.string().min(3, { message: "Please describe your career interests." }),
-  collegeInterests: z.string().min(3, { message: "Please describe your college interests." }),
+  subjectsOfInterest: z.string().min(3, { message: "Please describe your interests." }),
+  collegeEnvironment: z.string().min(3, { message: "Please describe your ideal college environment." }),
   preferredLearningStyle: z.string().min(1, { message: "Please select your learning style." }),
   currentExtracurriculars: z.string().min(3, { message: "Please list your extracurriculars." }),
   weeklyTimeAvailable: z.string().min(1, { message: "Please enter your available time." }),
@@ -40,8 +39,8 @@ const formSchema = z.object({
 type OnboardingValues = z.infer<typeof formSchema>;
 
 const steps = [
-  { id: 'step1', title: 'Academics', fields: ['gradeLevel', 'academicStrengths', 'academicWeaknesses'] },
-  { id: 'step2', title: 'Aspirations', fields: ['careerInterests', 'collegeInterests'] },
+  { id: 'step1', title: 'Academics', fields: ['academicStrengths', 'academicWeaknesses'] },
+  { id: 'step2', title: 'Aspirations', fields: ['subjectsOfInterest', 'collegeEnvironment'] },
   { id: 'step3', title: 'Personal Style', fields: ['preferredLearningStyle', 'currentExtracurriculars', 'weeklyTimeAvailable'] },
 ];
 
@@ -52,11 +51,10 @@ export function OnboardingForm() {
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-        gradeLevel: "",
         academicStrengths: "",
         academicWeaknesses: "",
-        careerInterests: "",
-        collegeInterests: "",
+        subjectsOfInterest: "",
+        collegeEnvironment: "",
         preferredLearningStyle: "",
         currentExtracurriculars: "",
         weeklyTimeAvailable: "",
@@ -105,24 +103,6 @@ export function OnboardingForm() {
               <div className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="gradeLevel"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>What is your current grade level?</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger><SelectValue placeholder="Select your grade" /></SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {[...Array(8)].map((_, i) => <SelectItem key={i+5} value={`${i+5}`}>{i+5}th Grade</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name="academicStrengths"
                   render={({ field }) => (
                     <FormItem>
@@ -153,12 +133,12 @@ export function OnboardingForm() {
                 <div className="space-y-6">
                     <FormField
                     control={form.control}
-                    name="careerInterests"
+                    name="subjectsOfInterest"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>What careers are you interested in?</FormLabel>
+                        <FormLabel>What subjects or topics are you passionate about, inside or outside of school?</FormLabel>
                         <FormControl>
-                            <Textarea placeholder="e.g., Software Engineering, Medicine, Film Direction" {...field} />
+                            <Textarea placeholder="e.g., building robots, ancient history, climate change" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -166,12 +146,12 @@ export function OnboardingForm() {
                     />
                     <FormField
                     control={form.control}
-                    name="collegeInterests"
+                    name="collegeEnvironment"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>What type of colleges are you considering?</FormLabel>
+                        <FormLabel>Describe your ideal learning environment after high school.</FormLabel>
                         <FormControl>
-                            <Textarea placeholder="e.g., Ivy League, Liberal Arts Colleges, In-state Universities" {...field} />
+                            <Textarea placeholder="e.g., a large research university, a small collaborative college, hands-on vocational training" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
