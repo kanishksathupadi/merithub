@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -44,9 +45,10 @@ export function SignupForm() {
     // In a real app, you would handle user creation here.
     // For this demo, we'll save the name to localStorage and redirect.
     if (typeof window !== 'undefined') {
-      const { name, age, grade } = values;
+      const { name, age, grade, email } = values;
       localStorage.setItem('userName', name);
-      localStorage.setItem('signupData', JSON.stringify({ name, age, grade }));
+      // We store all signup data to simulate a user account for the login form.
+      localStorage.setItem('signupData', JSON.stringify({ name, age, grade, email }));
     }
     router.push("/onboarding");
   }

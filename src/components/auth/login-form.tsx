@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -17,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -25,6 +27,7 @@ const formSchema = z.object({
 
 export function LoginForm() {
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,12 +38,29 @@ export function LoginForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Login submitted", values);
-    // In a real app, you would handle authentication here.
-    // For this demo, we'll just redirect to the dashboard and set a default name.
+    
     if (typeof window !== 'undefined') {
-      localStorage.setItem('userName', 'Alex Rider'); // Default name for direct login
+      const storedSignupData = localStorage.getItem('signupData');
+      
+      if (storedSignupData) {
+        const signupData = JSON.parse(storedSignupData);
+        // In a real app, you would also verify the password.
+        // For this demo, we'll just check if the email matches.
+        if (signupData.email === values.email) {
+          localStorage.setItem('userName', signupData.name);
+          router.push("/dashboard");
+          return;
+        }
+      }
+
+      // Fallback for users who might not have signed up via the form in this session
+      // or if emails don't match.
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: "No account found with that email. Please sign up.",
+      });
     }
-    router.push("/dashboard");
   }
 
   return (
