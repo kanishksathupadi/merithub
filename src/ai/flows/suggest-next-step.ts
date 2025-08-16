@@ -55,6 +55,8 @@ const prompt = ai.definePrompt({
 
   Respond with an action that is appropriate, given the time available, and their grade level, that helps them explore their interests and build a strong profile for the future.
   In addition to the next step, briefly explain the reasoning behind this suggestion.
+  
+  All responses must be in English.
   `,
 });
 

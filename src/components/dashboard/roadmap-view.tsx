@@ -81,7 +81,7 @@ function TaskCard({ task, onToggle, getCategoryColor }: { task: RoadmapTask, onT
             <CardFooter className="flex justify-between items-center">
                  <div className="text-sm text-muted-foreground flex items-center gap-2">
                     <Calendar className="w-4 h-4"/>
-                    Due: {new Date(task.dueDate).toLocaleDateString()}
+                    Due: {new Date(task.dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                  </div>
                  <div className="flex gap-2">
                     {task.relatedResources?.map(resource => (

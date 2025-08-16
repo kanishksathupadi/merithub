@@ -36,7 +36,10 @@ export function LoginForm() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Login submitted", values);
     // In a real app, you would handle authentication here.
-    // For this demo, we'll just redirect to the dashboard.
+    // For this demo, we'll just redirect to the dashboard and set a default name.
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('userName', 'Alex'); // Default name for direct login
+    }
     router.push("/dashboard");
   }
 

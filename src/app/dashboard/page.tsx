@@ -2,14 +2,9 @@ import { suggestNextStep, type SuggestNextStepInput } from "@/ai/flows/suggest-n
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, ArrowRight, Bell } from "lucide-react";
+import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-// This is mock data that would normally come from the database for the logged-in user.
-const mockUserData = {
-    name: "Alex"
-};
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 
 const mockOnboardingData: SuggestNextStepInput = {
   academicStrengths: "Creative Writing, History",
@@ -34,22 +29,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-       <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Welcome, {mockUserData.name}!</h1>
-          <p className="text-muted-foreground">Here is your personalized dashboard.</p>
-        </div>
-        <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon">
-                <Bell className="h-5 w-5"/>
-                <span className="sr-only">Notifications</span>
-            </Button>
-            <Avatar>
-                <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" />
-                <AvatarFallback>{mockUserData.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-        </div>
-      </header>
+      <DashboardHeader />
 
       <NextStepCard suggestion={suggestion} />
 

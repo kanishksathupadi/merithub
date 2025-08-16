@@ -42,7 +42,10 @@ export function SignupForm() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Signup submitted", values);
     // In a real app, you would handle user creation here.
-    // For this demo, we'll just redirect to the onboarding questionnaire.
+    // For this demo, we'll save the name to localStorage and redirect.
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('userName', values.name);
+    }
     router.push("/onboarding");
   }
 
