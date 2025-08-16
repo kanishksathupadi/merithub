@@ -62,12 +62,12 @@ export default function Home() {
             </div>
             <div className="mt-16">
               <Image
-                src="https://images.unsplash.com/photo-1588880956285-5cd24e4ad1f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwYXRod2F5JTIwdG8lMjBzdWNjZXNzfGVufDB8fHx8MTc1NTM3NTA0MHww&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="A winding path leading to a bright future, symbolizing a journey to success."
+                src="https://images.unsplash.com/photo-1521791136064-7986c2920216?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzdWNjZXNzfGVufDB8fHx8MTc1NTM1ODAyN3ww&ixlib=rb-4.1.0&q=80&w=1080"
+                alt="A team of hikers silhouetted against a bright sky, helping each other reach a mountain summit, symbolizing teamwork and achieving goals."
                 width={1200}
                 height={600}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10"
-                data-ai-hint="pathway to success"
+                data-ai-hint="team success"
               />
             </div>
           </div>
