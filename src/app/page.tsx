@@ -20,11 +20,11 @@ export default function Home() {
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
           </nav>
           <div className="flex items-center gap-4 ml-auto">
-            <Button variant="ghost" asChild>
-              <Link href="/login">Log In</Link>
-            </Button>
             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
               <Link href="/signup">Get Started</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/login">Log In</Link>
             </Button>
           </div>
         </div>
