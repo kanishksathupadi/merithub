@@ -14,7 +14,7 @@ export default function DashboardLayout({
         <AppSidebar />
         <SidebarInset>
             <header className="p-4 sm:p-6 lg:p-8 flex items-center gap-4 border-b">
-                <SidebarTrigger className="md:hidden" />
+                <SidebarTrigger />
                 <h1 className="text-xl font-semibold">Dashboard</h1>
             </header>
           <div className="p-4 sm:p-6 lg:p-8 flex-1">

@@ -1,4 +1,4 @@
-import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarTrigger } from "@/components/ui/sidebar";
+import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter } from "@/components/ui/sidebar";
 import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, User, LogOut, Users } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -10,7 +10,6 @@ export function AppSidebar() {
         <div className="flex items-center gap-2">
             <Rocket className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
-            <SidebarTrigger className="ml-auto" />
         </div>
       </SidebarHeader>
       <SidebarMenu className="flex-1">
