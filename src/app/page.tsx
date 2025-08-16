@@ -63,11 +63,11 @@ export default function Home() {
             <div className="mt-16">
               <Image
                 src="https://placehold.co/1200x600.png"
-                alt="Abstract representation of a successful path"
+                alt="PinnaclePath platform screenshot"
                 width={1200}
                 height={600}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-white/10"
-                data-ai-hint="success journey"
+                data-ai-hint="dashboard user interface"
               />
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function Home() {
 
       </main>
 
-      <footer className="text-center p-8 text-sm text-gray-500 border-t border-white/10">
+      <footer className="container text-center p-8 text-sm text-gray-500 border-t border-white/10">
         © {new Date().getFullYear()} PinnaclePath. All Rights Reserved. For the ambitious.
       </footer>
     </div>
