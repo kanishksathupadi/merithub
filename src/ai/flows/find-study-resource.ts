@@ -20,7 +20,7 @@ export type FindStudyResourceInput = z.infer<typeof FindStudyResourceInputSchema
 const FindStudyResourceOutputSchema = z.object({
   title: z.string().describe("The title of the recommended resource."),
   description: z.string().describe("A brief, one-sentence summary of why this resource is a great match."),
-  url: z.string().url().describe("The direct, valid URL to the resource."),
+  url: z.string().describe("The direct, valid URL to the resource."),
   resourceType: z.enum(['Video', 'Article', 'Guide', 'Course', 'Podcast']).describe("The type of the resource."),
 });
 export type FindStudyResourceOutput = z.infer<typeof FindStudyResourceOutputSchema>;
