@@ -6,7 +6,7 @@ import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function DashboardHeader() {
-    const [userName, setUserName] = useState<string>("User");
+    const [userName, setUserName] = useState<string | null>(null);
 
     useEffect(() => {
         const name = localStorage.getItem('userName');
@@ -15,10 +15,12 @@ export function DashboardHeader() {
         }
     }, []);
 
+    const displayName = userName || "User";
+
     return (
         <header className="flex items-center justify-between">
             <div>
-                <h1 className="text-3xl font-bold">Welcome, {userName}!</h1>
+                <h1 className="text-3xl font-bold">Welcome, {displayName}!</h1>
                 <p className="text-muted-foreground">Here is your personalized dashboard.</p>
             </div>
             <div className="flex items-center gap-4">
@@ -28,7 +30,7 @@ export function DashboardHeader() {
                 </Button>
                 <Avatar>
                     <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" />
-                    <AvatarFallback>{userName.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
                 </Avatar>
             </div>
       </header>
