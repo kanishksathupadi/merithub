@@ -86,4 +86,8 @@ export default function QandAForumPage() {
               </div>
             </CardHeader>
           </Card>
-        
+        ))}
+      </div>
+    </div>
+  );
+}

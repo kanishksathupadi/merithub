@@ -76,4 +76,6 @@ function ResourceCard({ title, type, icon: Icon, imageHint }: { title: string; t
                     <Icon className="w-4 h-4"/> {type}
                  </p>
             </CardFooter>
-        </
+        </Card>
+    );
+}
