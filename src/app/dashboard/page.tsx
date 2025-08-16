@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // This is mock data that would normally come from the database for the logged-in user.
 const mockUserData = {
-    name: "Emily"
+    name: "Alex"
 };
 
 const mockOnboardingData: SuggestNextStepInput = {
