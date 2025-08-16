@@ -11,8 +11,7 @@ import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const mockOnboardingData: SuggestNextStepInput = {
-  grade: 10,
+const mockOnboardingData: Omit<SuggestNextStepInput, 'grade'> = {
   academicStrengths: "Creative Writing, History",
   academicWeaknesses: "Calculus, Chemistry",
   subjectsOfInterest: "Learning about ancient civilizations, writing poetry, and maybe something in law?",
@@ -36,7 +35,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const getSuggestion = async () => {
-      let onboardingData: SuggestNextStepInput | null = null;
+      let onboardingData: Omit<SuggestNextStepInput, 'grade'> | null = null;
       let signupData: { name: string, age: number, grade: number } | null = null;
       let suggestionData: SuggestNextStepOutput | null = null;
       
@@ -61,16 +60,14 @@ export default function DashboardPage() {
         setLoading(false);
         return;
       }
-      
-      // Use mock data if no real data is found
-      let dataToSuggest = onboardingData || mockOnboardingData;
-      if (signupData && !onboardingData) {
-        dataToSuggest.grade = signupData.grade;
-      }
-      if (signupData && onboardingData) {
-        dataToSuggest = { ...onboardingData, grade: signupData.grade };
-      }
 
+      const effectiveOnboardingData = onboardingData || mockOnboardingData;
+      const effectiveGrade = signupData?.grade || 10;
+      
+      const dataToSuggest: SuggestNextStepInput = {
+        ...effectiveOnboardingData,
+        grade: effectiveGrade
+      };
 
       try {
         const result = await suggestNextStep(dataToSuggest);
@@ -80,7 +77,6 @@ export default function DashboardPage() {
         }
       } catch (error) {
         console.error("Error fetching suggestion:", error);
-        // Fallback suggestion in case of error (though ideally UI would show an error message)
       } finally {
         setLoading(false);
       }
