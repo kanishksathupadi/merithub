@@ -1,3 +1,6 @@
+
+"use client"
+
 import { ProgressView } from "@/components/dashboard/progress-view";
 
 export default function ProgressPage() {

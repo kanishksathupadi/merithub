@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { RoadmapTask } from "@/lib/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -8,24 +9,31 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Link as LinkIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const initialTasks: RoadmapTask[] = [
-  { id: '1', title: 'Research 5 AI Summer Programs', description: 'Find and compare at least five summer programs focused on AI for high school students.', category: 'Extracurriculars', dueDate: '2024-09-01', completed: true },
-  { id: '2', title: 'Complete Khan Academy Calculus Course', description: 'Finish all modules and practice tests for the AP Calculus AB course.', category: 'Academics', dueDate: '2024-10-15', completed: false, relatedResources: [{title: 'Khan Academy Calculus', url: '#'}] },
-  { id: '3', title: 'Build a Personal Portfolio Website', description: 'Showcase your robotics and programming projects on a personal website.', category: 'Skill Building', dueDate: '2024-11-01', completed: false },
-  { id: '4', title: 'Enter the USACO Programming Competition', description: 'Prepare for and participate in the December USACO contest.', category: 'Competitions & Events', dueDate: '2024-12-10', completed: false },
-  { id: '5', title: 'Draft College Application Essay on AI Ethics', description: 'Write a compelling essay about the ethical implications of artificial intelligence.', category: 'Academics', dueDate: '2025-01-05', completed: false },
-];
-
-const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Competitions & Events', 'Skill Building'];
+const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building', 'Competitions & Events'];
 
 export function RoadmapView() {
-  const [tasks, setTasks] = useState<RoadmapTask[]>(initialTasks);
+  const [tasks, setTasks] = useState<RoadmapTask[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('all');
+
+  useEffect(() => {
+    const storedTasks = localStorage.getItem('roadmapTasks');
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
+    }
+    setLoading(false);
+  }, []);
 
   const toggleTask = (taskId: string) => {
-    setTasks(tasks.map(task =>
+    const newTasks = tasks.map(task =>
       task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
+    );
+    setTasks(newTasks);
+    localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
+    // Manually dispatch a storage event to notify other components like the progress page.
+    window.dispatchEvent(new Event('storage'));
   };
 
   const getCategoryColor = (category: RoadmapTask['category']) => {
@@ -38,24 +46,37 @@ export function RoadmapView() {
     }
   }
 
+  if (loading) {
+    return (
+        <div className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+        </div>
+    );
+  }
+
+  const filteredTasks = activeTab === 'all' ? tasks : tasks.filter(t => t.category === activeTab);
+
   return (
-    <Tabs defaultValue="all" className="w-full">
+    <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
       <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
         <TabsTrigger value="all">All</TabsTrigger>
         {categories.map(cat => <TabsTrigger key={cat} value={cat}>{cat}</TabsTrigger>)}
       </TabsList>
-      <TabsContent value="all">
-        <div className="space-y-4 mt-4">
-            {tasks.map(task => <TaskCard key={task.id} task={task} onToggle={toggleTask} getCategoryColor={getCategoryColor} />)}
-        </div>
-      </TabsContent>
-      {categories.map(cat => (
-        <TabsContent key={cat} value={cat}>
-           <div className="space-y-4 mt-4">
-            {tasks.filter(t => t.category === cat).map(task => <TaskCard key={task.id} task={task} onToggle={toggleTask} getCategoryColor={getCategoryColor}/>)}
-           </div>
-        </TabsContent>
-      ))}
+
+      <div className="space-y-4 mt-4">
+        {filteredTasks.length > 0 ? (
+            filteredTasks.map(task => <TaskCard key={task.id} task={task} onToggle={toggleTask} getCategoryColor={getCategoryColor} />)
+        ) : (
+            <Card className="mt-4">
+                <CardContent className="p-6 text-center text-muted-foreground">
+                    No tasks in this category yet.
+                </CardContent>
+            </Card>
+        )}
+      </div>
     </Tabs>
   );
 }
@@ -81,7 +102,7 @@ function TaskCard({ task, onToggle, getCategoryColor }: { task: RoadmapTask, onT
             <CardFooter className="flex justify-between items-center">
                  <div className="text-sm text-muted-foreground flex items-center gap-2">
                     <Calendar className="w-4 h-4"/>
-                    Due: {new Date(task.dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                     Due: In {task.grade}
                  </div>
                  <div className="flex gap-2">
                     {task.relatedResources?.map(resource => (

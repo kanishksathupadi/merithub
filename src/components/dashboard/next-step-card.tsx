@@ -1,7 +1,8 @@
+
 import type { SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Lightbulb, BookOpen, User, Star } from "lucide-react";
+import { Lightbulb, BookOpen, User, Star, CheckCircle } from "lucide-react";
 
 type NextStepCardProps = {
   suggestion: SuggestNextStepOutput;
@@ -33,21 +34,27 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
                   <BookOpen className="w-5 h-5 mt-1 text-primary"/>
                   <div>
                     <h4 className="font-semibold">Academics</h4>
-                    <p className="text-muted-foreground">{item.academics}</p>
+                    <ul className="list-none space-y-1 mt-1 text-muted-foreground">
+                        {item.academics.map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                    </ul>
                   </div>
                 </div>
                  <div className="flex items-start gap-4">
                   <User className="w-5 h-5 mt-1 text-primary"/>
                   <div>
                     <h4 className="font-semibold">Extracurriculars</h4>
-                    <p className="text-muted-foreground">{item.extracurriculars}</p>
+                    <ul className="list-none space-y-1 mt-1 text-muted-foreground">
+                        {item.extracurriculars.map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                    </ul>
                   </div>
                 </div>
                  <div className="flex items-start gap-4">
                   <Star className="w-5 h-5 mt-1 text-primary"/>
                   <div>
                     <h4 className="font-semibold">Skill Building</h4>
-                    <p className="text-muted-foreground">{item.skillBuilding}</p>
+                    <ul className="list-none space-y-1 mt-1 text-muted-foreground">
+                        {item.skillBuilding.map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                    </ul>
                   </div>
                 </div>
               </AccordionContent>

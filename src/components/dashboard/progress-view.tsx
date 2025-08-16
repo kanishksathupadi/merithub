@@ -1,37 +1,43 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, ListChecks, Star, Trophy } from "lucide-react";
-
-const progressData = {
-    overallProgress: 65,
-    majorGoals: [
-        {
-            title: "Build a Science Fair Project",
-            progress: 80,
-            completedSteps: 4,
-            totalSteps: 5,
-        },
-        {
-            title: "Prepare for SAT",
-            progress: 50,
-            completedSteps: 2,
-            totalSteps: 4,
-        },
-        {
-            title: "Launch a Community Service Project",
-            progress: 25,
-            completedSteps: 1,
-            totalSteps: 4,
-        },
-    ],
-    completedTasks: 12,
-    skillsMastered: 4,
-    competitionsWon: 1,
-};
+import { CheckCircle, ListChecks, Star, Trophy, Activity, BrainCircuit } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { RoadmapTask } from "@/lib/types";
 
 export function ProgressView() {
+    const [tasks, setTasks] = useState<RoadmapTask[]>([]);
+
+    useEffect(() => {
+        const storedTasks = localStorage.getItem('roadmapTasks');
+        if (storedTasks) {
+            setTasks(JSON.parse(storedTasks));
+        }
+    }, []);
+
+    const completedTasks = tasks.filter(task => task.completed).length;
+    const totalTasks = tasks.length;
+    const overallProgress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+    const getTasksByCategory = (category: RoadmapTask['category']) => tasks.filter(t => t.category === category);
+
+    const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building'];
+
+    const categoryProgress = categories.map(category => {
+        const categoryTasks = getTasksByCategory(category);
+        const completed = categoryTasks.filter(t => t.completed).length;
+        const total = categoryTasks.length;
+        const progress = total > 0 ? (completed / total) * 100 : 0;
+        return {
+            title: category,
+            progress,
+            completedSteps: completed,
+            totalSteps: total,
+        };
+    });
+
   return (
     <div className="space-y-6">
       <Card>
@@ -40,39 +46,40 @@ export function ProgressView() {
           <CardDescription>You are making great strides towards your goals!</CardDescription>
         </CardHeader>
         <CardContent>
-          <Progress value={progressData.overallProgress} className="h-4" />
-          <p className="text-right mt-2 font-bold text-primary">{progressData.overallProgress}% Complete</p>
+          <Progress value={overallProgress} className="h-4" />
+          <p className="text-right mt-2 font-bold text-primary">{Math.round(overallProgress)}% Complete</p>
         </CardContent>
       </Card>
 
-      <div className="grid md:grid-cols-3 gap-4 text-center">
+      <div className="grid md:grid-cols-2 gap-4 text-center">
         <Card>
             <CardHeader><CardTitle className="flex items-center justify-center gap-2"><CheckCircle className="text-green-500"/>Completed Tasks</CardTitle></CardHeader>
-            <CardContent><p className="text-4xl font-bold">{progressData.completedTasks}</p></CardContent>
+            <CardContent><p className="text-4xl font-bold">{completedTasks}</p></CardContent>
         </Card>
         <Card>
-            <CardHeader><CardTitle className="flex items-center justify-center gap-2"><Star className="text-yellow-500"/>Skills Mastered</CardTitle></CardHeader>
-            <CardContent><p className="text-4xl font-bold">{progressData.skillsMastered}</p></CardContent>
-        </Card>
-        <Card>
-            <CardHeader><CardTitle className="flex items-center justify-center gap-2"><Trophy className="text-accent"/>Competitions Won</CardTitle></CardHeader>
-            <CardContent><p className="text-4xl font-bold">{progressData.competitionsWon}</p></CardContent>
+            <CardHeader><CardTitle className="flex items-center justify-center gap-2"><ListChecks className="text-blue-500"/>Total Tasks</CardTitle></CardHeader>
+            <CardContent><p className="text-4xl font-bold">{totalTasks}</p></CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader>
-            <CardTitle className="flex items-center gap-2"><ListChecks/>Major Goal Progress</CardTitle>
-            <CardDescription>A breakdown of your progress on significant milestones.</CardDescription>
+            <CardTitle className="flex items-center gap-2"><Activity/>Category Breakdown</CardTitle>
+            <CardDescription>A breakdown of your progress across different areas.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-            {progressData.majorGoals.map((goal, index) => (
+            {categoryProgress.map((cat, index) => (
                 <div key={index}>
                     <div className="flex justify-between mb-1">
-                        <p className="font-medium">{goal.title}</p>
-                        <p className="text-sm text-muted-foreground">{goal.completedSteps} / {goal.totalSteps} steps</p>
+                        <p className="font-medium flex items-center gap-2">
+                           {cat.title === 'Academics' && <BrainCircuit className="w-5 h-5 text-primary"/>}
+                           {cat.title === 'Extracurriculars' && <Trophy className="w-5 h-5 text-primary"/>}
+                           {cat.title === 'Skill Building' && <Star className="w-5 h-5 text-primary"/>}
+                           {cat.title}
+                        </p>
+                        <p className="text-sm text-muted-foreground">{cat.completedSteps} / {cat.totalSteps} tasks</p>
                     </div>
-                    <Progress value={goal.progress} />
+                    <Progress value={cat.progress} />
                 </div>
             ))}
         </CardContent>

@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -30,9 +31,9 @@ const SuggestNextStepOutputSchema = z.object({
   plan: z.array(z.object({
     grade: z.string().describe('The grade level for this part of the plan (e.g., "9th Grade", "10th Grade").'),
     focus: z.string().describe('The main theme or focus for that grade level.'),
-    academics: z.string().describe('Academic goals and courses to take.'),
-    extracurriculars: z.string().describe('Extracurricular activities to pursue or continue.'),
-    skillBuilding: z.string().describe('Skills to develop (e.g., coding, public speaking, writing).'),
+    academics: z.array(z.string()).describe('A list of specific, actionable academic goals and courses to take. Each item should be a clear task, like "Master Advanced Trigonometry: Complete the trigonometry module on Khan Academy."'),
+    extracurriculars: z.array(z.string()).describe('A list of specific, actionable extracurricular activities to pursue or continue. Each item should be a clear task, like "Join the Debate Team: Attend the first informational meeting and sign up."'),
+    skillBuilding: z.array(z.string()).describe('A list of specific, actionable skills to develop. Each item should be a clear task, like "Learn Python Basics: Complete the first 5 lessons on Codecademy."'),
   })).describe('A year-by-year plan from the student\'s current grade through 12th grade.'),
 });
 export type SuggestNextStepOutput = z.infer<typeof SuggestNextStepOutputSchema>;
@@ -50,7 +51,7 @@ const prompt = ai.definePrompt({
 
   Before providing a suggestion, you must validate that the provided academic strengths and weaknesses are real subjects or skills using the 'validateAcademicSubject' tool.
 
-  Based on the student's input, provide a clear, year-by-year plan from their current grade level through 12th grade. The plan should be actionable, inspiring, and broken down into concrete goals for each year.
+  Based on the student's input, provide a clear, year-by-year plan from their current grade level through 12th grade. The plan should be actionable, inspiring, and broken down into concrete goals for each year. For each year, provide a list of specific and actionable tasks for Academics, Extracurriculars, and Skill Building. Each task should be a string in the format "Task Title: Brief description of the task."
 
   Consider the following information about the student:
   - Current Grade: {{{grade}}}
@@ -62,11 +63,11 @@ const prompt = ai.definePrompt({
   - Current Extracurriculars: {{{currentExtracurriculars}}}
   - Weekly Time Available: {{{weeklyTimeAvailable}}} hours
 
-  Your response must be structured as a JSON object with a title, an introduction, and an array of plans for each grade level. Each grade-level plan should include sections for:
+  Your response must be structured as a JSON object with a title, an introduction, and an array of plans for each grade level. Each grade-level plan should include:
   - The main focus for that year.
-  - Academics (courses, subjects to focus on).
-  - Extracurriculars (clubs, sports, volunteering).
-  - Skill Building (soft and hard skills to develop).
+  - A list of actionable tasks for Academics.
+  - A list of actionable tasks for Extracurriculars.
+  - A list of actionable tasks for Skill Building.
 
   The plan should feel like a complete, all-in-one roadmap that guides the student on exactly what to do. Be specific and encouraging.
   

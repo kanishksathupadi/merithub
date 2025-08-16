@@ -10,6 +10,8 @@ import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, ArrowRight } fr
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { RoadmapTask } from "@/lib/types";
+import { v4 as uuidv4 } from 'uuid';
 
 const mockOnboardingData: Omit<SuggestNextStepInput, 'grade'> = {
   academicStrengths: "Creative Writing, History",
@@ -29,9 +31,47 @@ const dashboardTiles = [
     { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "#" },
 ]
 
+function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): RoadmapTask[] {
+    const tasks: RoadmapTask[] = [];
+    suggestion.plan.forEach(planItem => {
+        const createTasks = (items: string[], category: RoadmapTask['category']) => {
+            items.forEach(item => {
+                const [title, ...descriptionParts] = item.split(':');
+                const description = descriptionParts.join(':').trim();
+                tasks.push({
+                    id: uuidv4(),
+                    title: title.trim(),
+                    description: description || `Complete the task: ${title.trim()}`,
+                    category,
+                    grade: planItem.grade,
+                    completed: false,
+                });
+            });
+        };
+
+        createTasks(planItem.academics, 'Academics');
+        createTasks(planItem.extracurriculars, 'Extracurriculars');
+        createTasks(planItem.skillBuilding, 'Skill Building');
+    });
+    return tasks;
+}
+
+
 export default function DashboardPage() {
   const [suggestion, setSuggestion] = useState<SuggestNextStepOutput | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Adding uuid dependency for task generation
+    const script = document.createElement('script');
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    }
+  }, []);
 
   useEffect(() => {
     const getSuggestion = async () => {
@@ -52,17 +92,25 @@ export default function DashboardPage() {
         }
         if (storedSuggestionData) {
             suggestionData = JSON.parse(storedSuggestionData);
+            setSuggestion(suggestionData);
         }
       }
 
+      // If we have a suggestion, we don't need to call the AI again.
+      // We can just generate tasks and set loading to false.
       if (suggestionData) {
+        if (localStorage.getItem('roadmapTasks') === null) {
+            const tasks = generateTasksFromSuggestion(suggestionData);
+            localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
+        }
         setSuggestion(suggestionData);
         setLoading(false);
         return;
       }
 
       const effectiveOnboardingData = onboardingData || mockOnboardingData;
-      const effectiveGrade = signupData?.grade || 10;
+      // Grade from signup is a string, needs to be a number.
+      const effectiveGrade = signupData ? Number(signupData.grade) : 10;
       
       const dataToSuggest: SuggestNextStepInput = {
         ...effectiveOnboardingData,
@@ -74,6 +122,9 @@ export default function DashboardPage() {
         setSuggestion(result);
         if (typeof window !== 'undefined') {
             localStorage.setItem('nextStepSuggestion', JSON.stringify(result));
+            // Generate and save tasks right after getting the suggestion
+            const tasks = generateTasksFromSuggestion(result);
+            localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
         }
       } catch (error) {
         console.error("Error fetching suggestion:", error);
