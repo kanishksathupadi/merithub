@@ -62,12 +62,12 @@ export default function Home() {
             </div>
             <div className="mt-16">
               <Image
-                src="https://images.unsplash.com/photo-1579532582937-16c1415505b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHN1bW1pdCUyMHN1Y2Nlc3N8ZW58MHx8fHwxNzU1NTYxMDI1fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="A person standing on a mountain peak, symbolizing the achievement of reaching one's pinnacle."
+                src="https://placehold.co/1200x600.png"
+                alt="A successful person looking out at a cityscape, symbolizing reaching career and educational goals."
                 width={1200}
                 height={600}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10"
-                data-ai-hint="mountain summit success"
+                data-ai-hint="mountain summit"
               />
             </div>
           </div>
