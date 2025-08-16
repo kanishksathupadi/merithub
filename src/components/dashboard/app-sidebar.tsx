@@ -12,7 +12,6 @@ export function AppSidebar() {
             <Rocket className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
         </div>
-        <SidebarTrigger className="hidden md:flex"/>
       </SidebarHeader>
       <SidebarMenu className="flex-1">
         <SidebarMenuItem>
@@ -65,3 +64,4 @@ export function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
+}
