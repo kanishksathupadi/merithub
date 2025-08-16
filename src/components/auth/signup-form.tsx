@@ -34,6 +34,8 @@ export function SignupForm() {
       name: "",
       email: "",
       password: "",
+      age: undefined,
+      grade: undefined,
     },
   });
 
@@ -103,7 +105,7 @@ export function SignupForm() {
                   <FormItem className="flex-1">
                     <FormLabel>Age</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="16" {...field} />
+                      <Input type="number" placeholder="16" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -116,7 +118,7 @@ export function SignupForm() {
                   <FormItem className="flex-1">
                     <FormLabel>Grade</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="11" {...field} />
+                      <Input type="number" placeholder="11" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
