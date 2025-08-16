@@ -62,7 +62,7 @@ export default function Home() {
             </div>
             <div className="mt-16">
               <Image
-                src="https://images.unsplash.com/photo-1579532582937-16c1415505b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMHN1bW1pdCUyMHN1Y2Nlc3N8ZW58MHx8fHwxNzU1NTYxMDI1fDA&ixlib=rb-4.1.0&q=80&w=1080"
+                src="https://images.unsplash.com/photo-1615125946783-fbbea7de95a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxBJTIwcGVyc29uJTIwc3RhbmRpbmclMjBvbiUyMGElMjBtb3VudGFpbiUyMHBlYWslMkMlMjBsb29raW5nJTIwb3V0JTIwYXQlMjBhJTIwdmFzdCUyMG1vdW50YWluJTIwcmFuZ2UlMkMlMjBzeW1ib2xpemluZyUyMGFjaGlldmluZyUyMG9uZSUyN3MlMjBwZWFrJTIwcG90ZW50aWFsLnxlbnwwfHx8fDE3NTUzNzYzODN8MA&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="A person standing on a mountain peak, looking out at a vast mountain range, symbolizing achieving one's peak potential."
                 width={1200}
                 height={600}
