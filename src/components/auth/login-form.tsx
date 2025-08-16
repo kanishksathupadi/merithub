@@ -44,9 +44,8 @@ export function LoginForm() {
       
       if (storedSignupData) {
         const signupData = JSON.parse(storedSignupData);
-        // In a real app, you would also verify the password.
-        // For this demo, we'll just check if the email matches.
-        if (signupData.email === values.email) {
+        // Verify both email and password.
+        if (signupData.email === values.email && signupData.password === values.password) {
           localStorage.setItem('userName', signupData.name);
           router.push("/dashboard");
           return;
@@ -54,11 +53,11 @@ export function LoginForm() {
       }
 
       // Fallback for users who might not have signed up via the form in this session
-      // or if emails don't match.
+      // or if credentials don't match.
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "No account found with that email. Please sign up.",
+        description: "Invalid email or password. Please try again or sign up.",
       });
     }
   }
