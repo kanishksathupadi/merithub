@@ -34,8 +34,10 @@ const dashboardTiles = [
 function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): RoadmapTask[] {
     const tasks: RoadmapTask[] = [];
     suggestion.plan.forEach(planItem => {
-        const createTasks = (items: string[], category: RoadmapTask['category']) => {
-            items.forEach(item => {
+        const createTasks = (items: string[] | string, category: RoadmapTask['category']) => {
+            const itemsArray = Array.isArray(items) ? items : [items];
+            itemsArray.forEach(item => {
+                if (typeof item !== 'string') return;
                 const [title, ...descriptionParts] = item.split(':');
                 const description = descriptionParts.join(':').trim();
                 tasks.push({
