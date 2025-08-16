@@ -47,6 +47,8 @@ export function LoginForm() {
         // Verify both email and password.
         if (signupData.email === values.email && signupData.password === values.password) {
           localStorage.setItem('userName', signupData.name);
+          // Set onboarding data so the dashboard doesn't redirect.
+          localStorage.setItem('onboardingData', JSON.stringify(signupData));
           router.push("/dashboard");
           return;
         }
