@@ -62,12 +62,12 @@ export default function Home() {
             </div>
             <div className="mt-16">
               <Image
-                src="https://images.unsplash.com/photo-1615125946783-fbbea7de95a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxBJTIwcGVyc29uJTIwc3RhbmRpbmclMjBvbiUyMGElMjBtb3VudGFpbiUyMHBlYWslMkMlMjBsb29raW5nJTIwb3V0JTIwYXQlMjBhJTIwdmFzdCUyMG1vdW50YWluJTIwcmFuZ2UlMkMlMjBzeW1ib2xpemluZyUyMGFjaGlldmluZyUyMG9uZSUyN3MlMjBwZWFrJTIwcG90ZW50aWFsLnxlbnwwfHx8fDE3NTUzNzYzODN8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="A person standing on a mountain peak, looking out at a vast mountain range, symbolizing achieving one's peak potential."
+                src="https://images.unsplash.com/photo-1551818255-ca620c4d43f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhc3Ryb25hdXQlMjBvbiUyMG1vb258ZW58MHx8fHwxNzU1NTYxMTE0fDA&ixlib=rb-4.1.0&q=80&w=1080"
+                alt="A successful person looking out at a cityscape, symbolizing reaching career and educational goals."
                 width={1200}
                 height={600}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10"
-                data-ai-hint="mountain summit"
+                data-ai-hint="success achievement"
               />
             </div>
           </div>
