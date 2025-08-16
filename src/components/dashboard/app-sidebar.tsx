@@ -1,19 +1,36 @@
 
-import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarTrigger } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, User, LogOut, Users } from "lucide-react";
+"use client";
+
+import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator } from "@/components/ui/sidebar";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, User, LogOut, Users, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import React, { useEffect, useState } from "react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 export function AppSidebar() {
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+      const name = localStorage.getItem('userName');
+      if (name) {
+          setUserName(name);
+      }
+  }, []);
+
+  const displayName = userName || "User";
+  const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
+
   return (
     <Sidebar>
-      <SidebarHeader className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <SidebarHeader className="p-2">
+        <Link href="/dashboard" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
             <Rocket className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
-        </div>
+        </Link>
       </SidebarHeader>
-      <SidebarMenu className="flex-1">
+      <SidebarMenu className="flex-1 p-2">
         <SidebarMenuItem>
           <SidebarMenuButton asChild tooltip="Dashboard">
             <Link href="/dashboard"><LayoutDashboard/>Dashboard</Link>
@@ -44,23 +61,41 @@ export function AppSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Q&A Forum">
-              <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
+              <Link href="/dashboard/q-and-a-forum"><Users/>Q&A Forum</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarGroup>
       </SidebarMenu>
 
-      <SidebarFooter className="mt-auto">
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="Settings">
-            <Link href="/dashboard/settings"><Settings/>Settings</Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="Log Out">
-            <Link href="/"><LogOut/>Log Out</Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+      <SidebarSeparator />
+
+      <SidebarFooter className="p-2">
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="w-full justify-start items-center gap-2 p-2 h-auto">
+                     <Avatar className="w-8 h-8">
+                        <AvatarImage src={`https://placehold.co/40x40.png`} alt={displayName} />
+                        <AvatarFallback>{avatarFallback}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start">
+                        <span className="font-medium">{displayName}</span>
+                    </div>
+                    <ChevronDown className="w-4 h-4 ml-auto" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[--sidebar-width] mb-2" side="top" align="start">
+                <DropdownMenuItem asChild>
+                     <Link href="/dashboard/settings" className="flex items-center gap-2">
+                        <Settings className="w-4 h-4" /> Settings
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/" className="flex items-center gap-2">
+                        <LogOut className="w-4 h-4" /> Log Out
+                    </Link>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
     </Sidebar>
   );
