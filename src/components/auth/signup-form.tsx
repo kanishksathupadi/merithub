@@ -45,10 +45,10 @@ export function SignupForm() {
   }
 
   return (
-    <Card className="w-full max-w-md shadow-xl">
+    <Card className="w-full max-w-md shadow-xl border-border">
       <CardHeader className="text-center">
-        <div className="mx-auto bg-primary rounded-full p-3 w-fit mb-4">
-          <Rocket className="w-8 h-8 text-primary-foreground" />
+        <div className="mx-auto bg-primary/10 border border-primary/20 text-primary rounded-full p-3 w-fit mb-4">
+          <Rocket className="w-8 h-8" />
         </div>
         <CardTitle className="text-3xl">Create Your Account</CardTitle>
         <CardDescription>Start your path to success today.</CardDescription>
@@ -123,7 +123,7 @@ export function SignupForm() {
                 )}
               />
             </div>
-            <Button type="submit" className="w-full !mt-6 bg-accent hover:bg-accent/90 text-accent-foreground">Create Account</Button>
+            <Button type="submit" className="w-full !mt-6 bg-primary text-primary-foreground hover:bg-primary/90">Create Account</Button>
           </form>
         </Form>
         <p className="text-center text-sm text-muted-foreground mt-6">

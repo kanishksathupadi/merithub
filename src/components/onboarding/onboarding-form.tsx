@@ -90,7 +90,7 @@ export function OnboardingForm() {
   const progress = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <Card className="w-full max-w-2xl shadow-xl">
+    <Card className="w-full max-w-2xl shadow-xl border-border">
       <CardHeader>
         <CardTitle className="text-3xl">Let's Build Your Roadmap</CardTitle>
         <CardDescription>This will help us personalize your path to success.</CardDescription>
@@ -215,7 +215,7 @@ export function OnboardingForm() {
               <Button type="button" variant="outline" onClick={prevStep} disabled={currentStep === 0}>
                 Back
               </Button>
-              <Button type="button" onClick={nextStep} className="bg-accent hover:bg-accent/90">
+              <Button type="button" onClick={nextStep} className="bg-primary text-primary-foreground hover:bg-primary/90">
                 {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
               </Button>
             </div>

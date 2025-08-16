@@ -7,15 +7,18 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // This is mock data that would normally come from the database for the logged-in user.
+const mockUserData = {
+    name: "Emily"
+};
+
 const mockOnboardingData: SuggestNextStepInput = {
-  gradeLevel: "11th Grade",
-  academicStrengths: "Mathematics, Computer Science",
-  academicWeaknesses: "Essay Writing, Public Speaking",
-  subjectsOfInterest: "Artificial Intelligence research and development",
-  collegeEnvironment: "Top-tier universities with strong CS programs like MIT or Stanford",
-  preferredLearningStyle: "Kinesthetic (hands-on projects)",
-  currentExtracurriculars: "Robotics club, math team",
-  weeklyTimeAvailable: "10",
+  academicStrengths: "Creative Writing, History",
+  academicWeaknesses: "Calculus, Chemistry",
+  subjectsOfInterest: "Learning about ancient civilizations, writing poetry, and maybe something in law?",
+  collegeEnvironment: "A smaller liberal arts college with a strong sense of community and accessible professors.",
+  preferredLearningStyle: "reading-writing",
+  currentExtracurriculars: "School newspaper, debate club",
+  weeklyTimeAvailable: "8",
 };
 
 const dashboardTiles = [
@@ -33,7 +36,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
        <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Welcome, Alex!</h1>
+          <h1 className="text-3xl font-bold">Welcome, {mockUserData.name}!</h1>
           <p className="text-muted-foreground">Here is your personalized dashboard.</p>
         </div>
         <div className="flex items-center gap-4">
@@ -43,7 +46,7 @@ export default async function DashboardPage() {
             </Button>
             <Avatar>
                 <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" />
-                <AvatarFallback>A</AvatarFallback>
+                <AvatarFallback>{mockUserData.name.charAt(0)}</AvatarFallback>
             </Avatar>
         </div>
       </header>
