@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100 font-body">
       <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-gray-900/80 backdrop-blur-sm">
-        <div className="container flex h-16 items-center">
+        <div className="container mx-auto flex h-16 items-center">
           <Link href="/" className="flex items-center gap-2 mr-6">
             <Rocket className="w-8 h-8 text-vivid-blue" />
             <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
@@ -34,7 +34,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative py-24 md:py-40 text-center overflow-hidden">
           <div className="absolute inset-0 bg-grid-white/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
-          <div className="container relative">
+          <div className="container relative mx-auto">
             <div className="max-w-4xl mx-auto">
                <div className="inline-block rounded-full bg-white/10 px-4 py-2 text-sm font-semibold mb-4 border border-white/20">
                 Your Personal AI Mentor for College & Career Success
@@ -75,7 +75,7 @@ export default function Home() {
 
         {/* Features Section */}
         <section id="features" className="py-24 bg-gray-900/50">
-            <div className="container">
+            <div className="container mx-auto">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">The PinnaclePath Advantage</h3>
                     <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Our platform is engineered to give you an unparalleled edge in the competitive landscape of college admissions.</p>
@@ -102,7 +102,7 @@ export default function Home() {
 
         {/* How It Works Section */}
         <section id="how-it-works" className="py-24">
-          <div className="container">
+          <div className="container mx-auto">
             <div className="text-center mb-16">
               <h3 className="text-4xl font-bold tracking-tight">Your Path to Excellence in 3 Steps</h3>
                <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Our streamlined process makes it simple to get started on your journey to success.</p>
@@ -132,7 +132,7 @@ export default function Home() {
         
         {/* Testimonials Section */}
         <section id="testimonials" className="py-24 bg-gray-900/50">
-            <div className="container">
+            <div className="container mx-auto">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">From Ambitious Students, For Ambitious Students</h3>
                 </div>
@@ -185,7 +185,7 @@ export default function Home() {
 
         {/* Pricing Section */}
         <section id="pricing" className="py-24">
-            <div className="container">
+            <div className="container mx-auto">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">Invest in Your Future</h3>
                     <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.</p>
@@ -221,7 +221,7 @@ export default function Home() {
 
       </main>
 
-      <footer className="container text-center p-8 text-sm text-gray-500 border-t border-white/10">
+      <footer className="container mx-auto text-center p-8 text-sm text-gray-500 border-t border-white/10">
         © {new Date().getFullYear()} PinnaclePath. All Rights Reserved. For the ambitious.
       </footer>
     </div>
