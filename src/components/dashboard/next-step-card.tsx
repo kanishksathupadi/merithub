@@ -9,6 +9,12 @@ type NextStepCardProps = {
 };
 
 export function NextStepCard({ suggestion }: NextStepCardProps) {
+  const ensureArray = (items: string | string[] | undefined) => {
+    if (Array.isArray(items)) return items;
+    if (typeof items === 'string') return [items];
+    return [];
+  };
+
   return (
     <Card className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20">
       <CardHeader>
@@ -35,7 +41,7 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
                   <div>
                     <h4 className="font-semibold">Academics</h4>
                     <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {item.academics.map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                        {ensureArray(item.academics).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
                     </ul>
                   </div>
                 </div>
@@ -44,7 +50,7 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
                   <div>
                     <h4 className="font-semibold">Extracurriculars</h4>
                     <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {item.extracurriculars.map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                        {ensureArray(item.extracurriculars).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
                     </ul>
                   </div>
                 </div>
@@ -53,7 +59,7 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
                   <div>
                     <h4 className="font-semibold">Skill Building</h4>
                     <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {item.skillBuilding.map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                        {ensureArray(item.skillBuilding).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
                     </ul>
                   </div>
                 </div>
