@@ -10,9 +10,9 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { validateAcademicSubject } from '../tools/validate-academic-subject';
 
 const SuggestNextStepInputSchema = z.object({
-  gradeLevel: z.string().describe('The current grade level of the student.'),
   academicStrengths: z.string().describe('The academic strengths of the student.'),
   academicWeaknesses: z.string().describe('The academic weaknesses of the student.'),
   subjectsOfInterest: z.string().describe('Subjects and topics the student is passionate about.'),
@@ -37,12 +37,14 @@ const prompt = ai.definePrompt({
   name: 'suggestNextStepPrompt',
   input: {schema: SuggestNextStepInputSchema},
   output: {schema: SuggestNextStepOutputSchema},
+  tools: [validateAcademicSubject],
   prompt: `You are an AI assistant designed to provide personalized guidance to students aged 10-18 to help them discover their passions and succeed academically and in their extracurricular pursuits.
+
+  Before providing a suggestion, you must validate that the provided academic strengths and weaknesses are real subjects or skills using the 'validateAcademicSubject' tool.
 
   Based on the student's input, provide a single, actionable "next step" that they can take to explore their interests and improve their chances of getting into top colleges and achieving their personal goals. The student may not know what they want to do, so focus on exploration and skill-building.
 
   Consider the following information about the student:
-  - Grade Level: {{{gradeLevel}}}
   - Academic Strengths: {{{academicStrengths}}}
   - Academic Weaknesses: {{{academicWeaknesses}}}
   - Subjects of Interest: {{{subjectsOfInterest}}}
