@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, User, LogOut, Users, ChevronDown } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -24,13 +24,13 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="p-2">
+      <SidebarHeader>
         <Link href="/dashboard" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
             <Rocket className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
         </Link>
       </SidebarHeader>
-      <SidebarMenu className="flex-1 p-2">
+      <SidebarMenu className="flex-1 px-2">
         <SidebarMenuItem>
           <SidebarMenuButton asChild tooltip="Dashboard">
             <Link href="/dashboard"><LayoutDashboard/>Dashboard</Link>
@@ -74,7 +74,7 @@ export function AppSidebar() {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-full justify-start items-center gap-2 p-2 h-auto">
                      <Avatar className="w-8 h-8">
-                        <AvatarImage src={`https://placehold.co/40x40.png`} alt={displayName} />
+                        <AvatarImage src={`https://placehold.co/40x40.png`} alt={displayName} data-ai-hint="profile picture" />
                         <AvatarFallback>{avatarFallback}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start">
@@ -83,7 +83,7 @@ export function AppSidebar() {
                     <ChevronDown className="w-4 h-4 ml-auto" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[--sidebar-width] mb-2" side="top" align="start">
+            <DropdownMenuContent className="w-[calc(var(--sidebar-width)_-_1rem)] mb-2" side="top" align="start">
                 <DropdownMenuItem asChild>
                      <Link href="/dashboard/settings" className="flex items-center gap-2">
                         <Settings className="w-4 h-4" /> Settings
