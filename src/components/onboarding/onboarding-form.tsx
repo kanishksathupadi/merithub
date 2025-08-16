@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -65,6 +66,9 @@ export function OnboardingForm() {
     console.log("Onboarding complete:", data);
     // In a real app, this data would be sent to the server to call the AI
     // and store the result. For this demo, we just navigate to the dashboard.
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('onboardingData', JSON.stringify(data));
+    }
     router.push("/dashboard");
   };
 
