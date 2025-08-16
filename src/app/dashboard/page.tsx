@@ -128,6 +128,53 @@ export default function DashboardPage() {
             const tasks = generateTasksFromSuggestion(result);
             localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
         }
-      } catch (error) a_string_var = """Hello World!"""
-a_second_one = '''How's life?'''
-another = "Yo!"
+      } catch (error) {
+        console.error("Failed to fetch suggestion:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getSuggestion();
+  }, []);
+
+  return (
+    <div className="space-y-8">
+      <DashboardHeader />
+
+      <section>
+        {loading ? (
+            <Skeleton className="h-64 w-full" />
+        ) : (
+            suggestion && <NextStepCard suggestion={suggestion} />
+        )}
+      </section>
+
+      <section>
+        <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold">Your Dashboard</h2>
+            <Button variant="ghost">View All <ArrowRight className="w-4 h-4 ml-2"/></Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {dashboardTiles.map((tile) => (
+                <Link href={tile.href} key={tile.title}>
+                    <Card className="hover:border-primary/50 hover:bg-primary/5 transition-colors h-full">
+                        <CardHeader className="flex flex-row items-center gap-4">
+                            <div className="bg-primary/10 text-primary p-3 rounded-lg">
+                                <tile.icon className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <CardTitle className="text-xl">{tile.title}</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                             <CardDescription>{tile.description}</CardDescription>
+                        </CardContent>
+                    </Card>
+                </Link>
+            ))}
+        </div>
+      </section>
+    </div>
+  );
+}
