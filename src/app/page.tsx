@@ -65,7 +65,7 @@ export default function Home() {
                 src="https://images.unsplash.com/photo-1605778316211-8cb6b3b76ca6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxBJTIwcGVyc29uJTIwb24lMjBhJTIwbW91bnRhaW4lMjBzdW1taXQlMkMlMjByZXByZXNlbnRpbmclMjBzdWNjZXNzLnxlbnwwfHx8fDE3NTUzNzgyNTh8MA&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="A person on a mountain summit, representing success."
                 width={1200}
-                height={600}
+                height={300}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10"
                 data-ai-hint="mountain summit success"
               />
