@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -16,6 +17,7 @@ export function DashboardHeader() {
     }, []);
 
     const displayName = userName || "User";
+    const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
 
     return (
         <header className="flex items-center justify-between">
@@ -29,8 +31,8 @@ export function DashboardHeader() {
                     <span className="sr-only">Notifications</span>
                 </Button>
                 <Avatar>
-                    <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" />
-                    <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={`https://placehold.co/40x40.png`} alt="User avatar" />
+                    <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
             </div>
       </header>
