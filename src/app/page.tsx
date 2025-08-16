@@ -13,14 +13,14 @@ export default function Home() {
             <GraduationCap className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium ml-auto">
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
             <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
             <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
           </nav>
-          <div className="flex items-center gap-4 ml-auto md:ml-6">
-            <Button variant="ghost" asChild className="hover:bg-accent/10">
+          <div className="flex items-center gap-4 ml-auto">
+            <Button variant="ghost" asChild>
               <Link href="/login">Log In</Link>
             </Button>
             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
@@ -61,13 +61,13 @@ export default function Home() {
               </div>
             </div>
             <div className="mt-16">
-              <Image
+               <Image
                 src="https://placehold.co/1200x600.png"
-                alt="A placeholder image representing the journey to success."
+                alt="A person on a mountain summit, representing success."
                 width={1200}
                 height={600}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10"
-                data-ai-hint="mountain peak"
+                data-ai-hint="mountain summit success"
               />
             </div>
           </div>
