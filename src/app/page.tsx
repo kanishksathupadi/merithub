@@ -1,48 +1,58 @@
 import { Button } from "@/components/ui/button";
-import { Rocket, LogIn, TrendingUp, Zap, Target, Star } from "lucide-react";
+import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
+    <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100 font-body">
+      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-gray-900/80 backdrop-blur-sm">
+        <div className="container flex h-16 items-center">
           <Link href="/" className="flex items-center gap-2 mr-6">
-            <Rocket className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold">PinnaclePath</h1>
+            <Rocket className="w-8 h-8 text-vivid-blue" />
+            <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
           </Link>
-          <nav className="flex items-center gap-4 text-sm ml-auto">
-            <Button variant="ghost" asChild>
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium ml-auto">
+            <Link href="#features" className="hover:text-vivid-blue transition-colors">Features</Link>
+            <Link href="#how-it-works" className="hover:text-vivid-blue transition-colors">How It Works</Link>
+            <Link href="#testimonials" className="hover:text-vivid-blue transition-colors">Testimonials</Link>
+            <Link href="#pricing" className="hover:text-vivid-blue transition-colors">Pricing</Link>
+          </nav>
+          <div className="flex items-center gap-4 ml-auto md:ml-6">
+            <Button variant="ghost" asChild className="hover:bg-white/10">
               <Link href="/login">Log In</Link>
             </Button>
-            <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground">
-              <Link href="/signup">Get Started Free</Link>
+            <Button asChild className="bg-vivid-blue text-white hover:bg-vivid-blue/90 shadow-lg shadow-vivid-blue/30">
+              <Link href="/signup">Get Started</Link>
             </Button>
-          </nav>
+          </div>
         </div>
       </header>
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="py-20 md:py-32">
-          <div className="container text-center">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-primary-foreground">
-                Unlock Your Full Potential.
+        <section className="relative py-24 md:py-40 text-center overflow-hidden">
+          <div className="absolute inset-0 bg-grid-white/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+          <div className="container relative">
+            <div className="max-w-4xl mx-auto">
+               <div className="inline-block rounded-full bg-white/10 px-4 py-2 text-sm font-semibold mb-4 border border-white/20">
+                Your Personal AI Mentor for College & Career Success
+              </div>
+              <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
+                Chart Your Course to the Top.
               </h2>
-              <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-                PinnaclePath is your AI-powered mentor, crafting a personalized roadmap to your dream college and career. Stop guessing, start achieving.
+              <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-400">
+                PinnaclePath leverages cutting-edge AI to provide elite, personalized guidance. We analyze your unique profile to build a strategic roadmap that maximizes your potential and paves the way to your dream university and beyond.
               </p>
               <div className="mt-8 space-x-4">
-                <Button size="lg" asChild>
+                <Button size="lg" asChild className="bg-vivid-blue text-white hover:bg-vivid-blue/90 shadow-lg shadow-vivid-blue/30">
                   <Link href="/signup">
                     <Rocket className="mr-2 h-5 w-5" />
-                    Claim Your Future
+                    Begin Your Ascent
                   </Link>
                 </Button>
-                <Button variant="outline" size="lg" asChild>
+                <Button variant="outline" size="lg" asChild className="border-white/20 hover:bg-white/10">
                   <Link href="/login">
                     <LogIn className="mr-2 h-5 w-5" />
                     Member Login
@@ -53,77 +63,81 @@ export default function Home() {
             <div className="mt-16">
               <Image
                 src="https://placehold.co/1200x600.png"
-                alt="Dashboard preview"
+                alt="Abstract representation of a successful path"
                 width={1200}
                 height={600}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-white/10"
-                data-ai-hint="futuristic dashboard"
+                data-ai-hint="success journey"
               />
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-secondary/20">
+        <section id="features" className="py-24 bg-gray-900/50">
             <div className="container">
-                <div className="text-center mb-12">
-                    <h3 className="text-3xl font-bold">The PinnaclePath Advantage</h3>
-                    <p className="text-muted-foreground mt-2">Everything you need to succeed, personalized for you.</p>
+                <div className="text-center mb-16">
+                    <h3 className="text-4xl font-bold tracking-tight">The PinnaclePath Advantage</h3>
+                    <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Our platform is engineered to give you an unparalleled edge in the competitive landscape of college admissions.</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 text-center">
-                    <div className="p-6 bg-card rounded-lg shadow-md">
-                        <Target className="w-12 h-12 text-primary mx-auto mb-4"/>
-                        <h4 className="text-xl font-semibold">AI-Powered Roadmap</h4>
-                        <p className="text-muted-foreground mt-2">Get a step-by-step action plan tailored to your unique goals, strengths, and interests.</p>
+                    <div className="p-8 bg-gray-800/50 rounded-xl shadow-lg border border-white/10 transition-all hover:border-vivid-blue/50 hover:scale-105">
+                        <BrainCircuit className="w-12 h-12 text-vivid-blue mx-auto mb-4"/>
+                        <h4 className="text-xl font-semibold">Hyper-Personalized Roadmap</h4>
+                        <p className="text-gray-400 mt-2">Our AI doesn't just suggest tasks; it builds a dynamic, multi-year strategy based on deep analysis of your goals and abilities.</p>
                     </div>
-                    <div className="p-6 bg-card rounded-lg shadow-md">
-                        <TrendingUp className="w-12 h-12 text-primary mx-auto mb-4"/>
-                        <h4 className="text-xl font-semibold">Progress Tracking</h4>
-                        <p className="text-muted-foreground mt-2">Visualize your growth and celebrate milestones on your journey to success.</p>
+                    <div className="p-8 bg-gray-800/50 rounded-xl shadow-lg border border-white/10 transition-all hover:border-vivid-blue/50 hover:scale-105">
+                        <BarChart className="w-12 h-12 text-vivid-blue mx-auto mb-4"/>
+                        <h4 className="text-xl font-semibold">Predictive Analytics</h4>
+                        <p className="text-gray-400 mt-2">Understand your admissions chances with our data-driven insights, helping you target the right schools with confidence.</p>
                     </div>
-                    <div className="p-6 bg-card rounded-lg shadow-md">
-                        <Zap className="w-12 h-12 text-primary mx-auto mb-4"/>
-                        <h4 className="text-xl font-semibold">Opportunity Matching</h4>
-                        <p className="text-muted-foreground mt-2">Discover extracurriculars, competitions, and resources that match your profile.</p>
+                    <div className="p-8 bg-gray-800/50 rounded-xl shadow-lg border border-white/10 transition-all hover:border-vivid-blue/50 hover:scale-105">
+                        <ShieldCheck className="w-12 h-12 text-vivid-blue mx-auto mb-4"/>
+                        <h4 className="text-xl font-semibold">Elite Opportunity Network</h4>
+                        <p className="text-gray-400 mt-2">Gain access to a curated database of prestigious programs, internships, and competitions that make your application shine.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         {/* How It Works Section */}
-        <section className="py-20">
+        <section id="how-it-works" className="py-24">
           <div className="container">
-            <div className="text-center mb-12">
-              <h3 className="text-3xl font-bold">Your Path in Three Simple Steps</h3>
+            <div className="text-center mb-16">
+              <h3 className="text-4xl font-bold tracking-tight">Your Path to Excellence in 3 Steps</h3>
+               <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Our streamlined process makes it simple to get started on your journey to success.</p>
             </div>
-            <div className="grid md:grid-cols-3 gap-8 items-start">
-              <div className="flex flex-col items-center text-center">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4">1</div>
-                <h4 className="text-xl font-semibold">Tell Us Your Story</h4>
-                <p className="text-muted-foreground mt-2">Complete a brief onboarding questionnaire about your academics, interests, and aspirations.</p>
+            <div className="grid md:grid-cols-3 gap-12 items-start relative">
+                <div className="absolute top-8 left-0 w-full h-1 bg-white/10 hidden md:block">
+                    <div className="h-1 bg-vivid-blue w-1/2"></div>
+                </div>
+              <div className="flex flex-col items-center text-center relative">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-vivid-blue text-white text-2xl font-bold mb-4 border-4 border-gray-900 z-10">1</div>
+                <h4 className="text-xl font-semibold mt-4">Complete Your Profile</h4>
+                <p className="text-gray-400 mt-2">Provide a comprehensive overview of your academic record, extracurricular involvement, and future aspirations.</p>
               </div>
-              <div className="flex flex-col items-center text-center mt-8 md:mt-0">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4">2</div>
-                <h4 className="text-xl font-semibold">Get Your AI Roadmap</h4>
-                <p className="text-muted-foreground mt-2">Our AI analyzes your profile to generate a personalized, actionable plan for you to follow.</p>
+              <div className="flex flex-col items-center text-center relative">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-vivid-blue text-white text-2xl font-bold mb-4 border-4 border-gray-900 z-10">2</div>
+                <h4 className="text-xl font-semibold mt-4">Receive Your AI Strategy</h4>
+                <p className="text-gray-400 mt-2">Our system analyzes your data to generate a bespoke, long-term roadmap with actionable milestones.</p>
               </div>
-              <div className="flex flex-col items-center text-center mt-8 md:mt-0">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4">3</div>
-                <h4 className="text-xl font-semibold">Achieve Your Goals</h4>
-                <p className="text-muted-foreground mt-2">Follow your tasks, track your progress, and adapt your plan as you grow and your goals evolve.</p>
+              <div className="flex flex-col items-center text-center relative">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-vivid-blue text-white text-2xl font-bold mb-4 border-4 border-gray-900 z-10">3</div>
+                <h4 className="text-xl font-semibold mt-4">Execute and Dominate</h4>
+                <p className="text-gray-400 mt-2">Follow your tailored plan, track your progress with advanced tools, and adapt as you achieve and grow.</p>
               </div>
             </div>
           </div>
         </section>
         
         {/* Testimonials Section */}
-        <section className="py-20 bg-secondary/20">
+        <section id="testimonials" className="py-24 bg-gray-900/50">
             <div className="container">
-                <div className="text-center mb-12">
-                    <h3 className="text-3xl font-bold">Loved by Ambitious Students</h3>
+                <div className="text-center mb-16">
+                    <h3 className="text-4xl font-bold tracking-tight">From Ambitious Students, For Ambitious Students</h3>
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div className="bg-card p-6 rounded-lg shadow-md">
+                    <div className="bg-gray-800/50 p-6 rounded-xl shadow-lg border border-white/10">
                         <div className="flex items-center mb-4">
                             <Avatar>
                                 <AvatarImage src="https://placehold.co/40x40.png" data-ai-hint="female student" />
@@ -131,13 +145,13 @@ export default function Home() {
                             </Avatar>
                             <div className="ml-4">
                                 <p className="font-semibold">Jessica S.</p>
-                                <p className="text-sm text-muted-foreground">11th Grade</p>
+                                <p className="text-sm text-gray-400">Accepted to Stanford</p>
                             </div>
                         </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
-                        <p className="text-muted-foreground">"PinnaclePath took the guesswork out of college prep. I finally have a clear plan!"</p>
+                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-bright-orange fill-bright-orange"/>)}</div>
+                        <p className="text-gray-300 italic">"PinnaclePath was my secret weapon. The AI-driven plan was more detailed than any counselor could provide. I knew exactly what to do and when."</p>
                     </div>
-                     <div className="bg-card p-6 rounded-lg shadow-md">
+                     <div className="bg-gray-800/50 p-6 rounded-xl shadow-lg border border-white/10">
                         <div className="flex items-center mb-4">
                             <Avatar>
                                 <AvatarImage src="https://placehold.co/40x40.png" data-ai-hint="male student" />
@@ -145,13 +159,13 @@ export default function Home() {
                             </Avatar>
                             <div className="ml-4">
                                 <p className="font-semibold">Michael I.</p>
-                                <p className="text-sm text-muted-foreground">10th Grade</p>
+                                <p className="text-sm text-gray-400">Future AI Researcher</p>
                             </div>
                         </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
-                        <p className="text-muted-foreground">"I discovered a passion for coding through a summer program PinnaclePath recommended."</p>
+                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-bright-orange fill-bright-orange"/>)}</div>
+                        <p className="text-gray-300 italic">"I discovered a passion for AI ethics through a research opportunity PinnaclePath found for me. It changed the entire focus of my applications."</p>
                     </div>
-                     <div className="bg-card p-6 rounded-lg shadow-md">
+                     <div className="bg-gray-800/50 p-6 rounded-xl shadow-lg border border-white/10">
                         <div className="flex items-center mb-4">
                             <Avatar>
                                 <AvatarImage src="https://placehold.co/40x40.png" data-ai-hint="student face" />
@@ -159,11 +173,47 @@ export default function Home() {
                             </Avatar>
                             <div className="ml-4">
                                 <p className="font-semibold">Emily A.</p>
-                                <p className="text-sm text-muted-foreground">12th Grade</p>
+                                <p className="text-sm text-gray-400">Accepted to MIT</p>
                             </div>
                         </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
-                        <p className="text-muted-foreground">"The roadmap kept me on track with my applications and I got into my dream school!"</p>
+                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-bright-orange fill-bright-orange"/>)}</div>
+                        <p className="text-gray-300 italic">"The roadmap kept me on track with my applications and I got into my dream school! The progress tracker was super motivating."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {/* Pricing Section */}
+        <section id="pricing" className="py-24">
+            <div className="container">
+                <div className="text-center mb-16">
+                    <h3 className="text-4xl font-bold tracking-tight">Invest in Your Future</h3>
+                    <p className="text-gray-400 mt-3 max-w-2xl mx-auto">Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.</p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div className="p-8 bg-gray-800/50 rounded-xl shadow-lg border border-white/10 flex flex-col">
+                        <h4 className="text-2xl font-semibold">Standard</h4>
+                        <p className="text-4xl font-bold my-4">$29<span className="text-lg font-medium text-gray-400">/mo</span></p>
+                        <ul className="space-y-3 text-gray-300 flex-1">
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-vivid-blue"/>AI-Powered Roadmap</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-vivid-blue"/>Progress Tracking</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-vivid-blue"/>Basic Opportunity Matching</li>
+                        </ul>
+                        <Button variant="outline" className="w-full mt-8 border-white/20 hover:bg-white/10">Get Started</Button>
+                    </div>
+                    <div className="p-8 bg-vivid-blue/10 rounded-xl shadow-lg border border-vivid-blue flex flex-col relative">
+                         <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                            <div className="bg-vivid-blue text-white px-4 py-1 rounded-full text-sm font-semibold">Most Popular</div>
+                        </div>
+                        <h4 className="text-2xl font-semibold text-vivid-blue">Elite</h4>
+                        <p className="text-4xl font-bold my-4">$49<span className="text-lg font-medium text-gray-400">/mo</span></p>
+                        <ul className="space-y-3 text-gray-300 flex-1">
+                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-vivid-blue"/>Everything in Standard, plus:</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-vivid-blue"/>Predictive Admissions Analytics</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-vivid-blue"/>Elite Opportunity Network Access</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-vivid-blue"/>Priority Support</li>
+                        </ul>
+                        <Button className="w-full mt-8 bg-vivid-blue text-white hover:bg-vivid-blue/90 shadow-lg shadow-vivid-blue/30">Choose Elite</Button>
                     </div>
                 </div>
             </div>
@@ -171,8 +221,8 @@ export default function Home() {
 
       </main>
 
-      <footer className="text-center p-6 text-sm text-muted-foreground border-t border-border/40">
-        © {new Date().getFullYear()} PinnaclePath. All rights reserved.
+      <footer className="text-center p-8 text-sm text-gray-500 border-t border-white/10">
+        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved. For the ambitious.
       </footer>
     </div>
   );
