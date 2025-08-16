@@ -44,7 +44,9 @@ export function SignupForm() {
     // In a real app, you would handle user creation here.
     // For this demo, we'll save the name to localStorage and redirect.
     if (typeof window !== 'undefined') {
-      localStorage.setItem('userName', values.name);
+      const { name, age, grade } = values;
+      localStorage.setItem('userName', name);
+      localStorage.setItem('signupData', JSON.stringify({ name, age, grade }));
     }
     router.push("/onboarding");
   }

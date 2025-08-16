@@ -1,7 +1,7 @@
 import type { SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Lightbulb, ArrowRight, CheckCircle } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Lightbulb, BookOpen, User, Star } from "lucide-react";
 
 type NextStepCardProps = {
   suggestion: SuggestNextStepOutput;
@@ -15,26 +15,45 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
             <div>
                 <CardTitle className="text-2xl flex items-center gap-2">
                     <Lightbulb className="text-primary w-7 h-7" />
-                    Your Next Step
+                    Your Strategic Plan: {suggestion.title}
                 </CardTitle>
-                <CardDescription>The most important action for you right now.</CardDescription>
+                <CardDescription className="mt-2">{suggestion.introduction}</CardDescription>
             </div>
-            <Button variant="ghost" size="sm">
-                Suggest another <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="bg-card/50 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold text-primary-foreground">{suggestion.nextStep}</h3>
-            <p className="text-muted-foreground mt-2">{suggestion.reasoning}</p>
-            <div className="mt-6 flex gap-4">
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                    <CheckCircle className="w-4 h-4 mr-2" /> Mark as Complete
-                </Button>
-                <Button variant="outline">View in Roadmap</Button>
-            </div>
-        </div>
+        <Accordion type="single" collapsible className="w-full" defaultValue={`item-${suggestion.plan[0]?.grade}`}>
+          {suggestion.plan.map((item, index) => (
+            <AccordionItem value={`item-${item.grade}`} key={index}>
+              <AccordionTrigger className="text-lg font-semibold">
+                {item.grade}: {item.focus}
+              </AccordionTrigger>
+              <AccordionContent className="space-y-4 pl-2">
+                <div className="flex items-start gap-4">
+                  <BookOpen className="w-5 h-5 mt-1 text-primary"/>
+                  <div>
+                    <h4 className="font-semibold">Academics</h4>
+                    <p className="text-muted-foreground">{item.academics}</p>
+                  </div>
+                </div>
+                 <div className="flex items-start gap-4">
+                  <User className="w-5 h-5 mt-1 text-primary"/>
+                  <div>
+                    <h4 className="font-semibold">Extracurriculars</h4>
+                    <p className="text-muted-foreground">{item.extracurriculars}</p>
+                  </div>
+                </div>
+                 <div className="flex items-start gap-4">
+                  <Star className="w-5 h-5 mt-1 text-primary"/>
+                  <div>
+                    <h4 className="font-semibold">Skill Building</h4>
+                    <p className="text-muted-foreground">{item.skillBuilding}</p>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </CardContent>
     </Card>
   );

@@ -12,6 +12,7 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const mockOnboardingData: SuggestNextStepInput = {
+  grade: 10,
   academicStrengths: "Creative Writing, History",
   academicWeaknesses: "Calculus, Chemistry",
   subjectsOfInterest: "Learning about ancient civilizations, writing poetry, and maybe something in law?",
@@ -36,26 +37,50 @@ export default function DashboardPage() {
   useEffect(() => {
     const getSuggestion = async () => {
       let onboardingData: SuggestNextStepInput | null = null;
+      let signupData: { name: string, age: number, grade: number } | null = null;
+      let suggestionData: SuggestNextStepOutput | null = null;
+      
       if (typeof window !== 'undefined') {
-        const storedData = localStorage.getItem('onboardingData');
-        if (storedData) {
-          onboardingData = JSON.parse(storedData);
+        const storedOnboardingData = localStorage.getItem('onboardingData');
+        const storedSignupData = localStorage.getItem('signupData');
+        const storedSuggestionData = localStorage.getItem('nextStepSuggestion');
+        
+        if (storedOnboardingData) {
+          onboardingData = JSON.parse(storedOnboardingData);
         }
+        if (storedSignupData) {
+          signupData = JSON.parse(storedSignupData);
+        }
+        if (storedSuggestionData) {
+            suggestionData = JSON.parse(storedSuggestionData);
+        }
+      }
+
+      if (suggestionData) {
+        setSuggestion(suggestionData);
+        setLoading(false);
+        return;
       }
       
       // Use mock data if no real data is found
-      const dataToSuggest = onboardingData || mockOnboardingData;
+      let dataToSuggest = onboardingData || mockOnboardingData;
+      if (signupData && !onboardingData) {
+        dataToSuggest.grade = signupData.grade;
+      }
+      if (signupData && onboardingData) {
+        dataToSuggest = { ...onboardingData, grade: signupData.grade };
+      }
+
 
       try {
         const result = await suggestNextStep(dataToSuggest);
         setSuggestion(result);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('nextStepSuggestion', JSON.stringify(result));
+        }
       } catch (error) {
         console.error("Error fetching suggestion:", error);
-        // Fallback suggestion in case of error
-        setSuggestion({
-            nextStep: "Explore our Study Resources",
-            reasoning: "There was an issue generating your personalized next step. Please try again later."
-        })
+        // Fallback suggestion in case of error (though ideally UI would show an error message)
       } finally {
         setLoading(false);
       }
