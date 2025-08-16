@@ -1,7 +1,5 @@
 
-"use client";
-
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -58,96 +56,44 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
     return tasks;
 }
 
-
-export default function DashboardPage() {
-  const [suggestion, setSuggestion] = useState<SuggestNextStepOutput | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Adding uuid dependency for task generation
-    const script = document.createElement('script');
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js";
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    }
-  }, []);
-
-  useEffect(() => {
-    const getSuggestion = async () => {
-      let onboardingData: Omit<SuggestNextStepInput, 'grade'> | null = null;
-      let signupData: { name: string, age: number, grade: number } | null = null;
-      let suggestionData: SuggestNextStepOutput | null = null;
-      
-      if (typeof window !== 'undefined') {
-        const storedOnboardingData = localStorage.getItem('onboardingData');
-        const storedSignupData = localStorage.getItem('signupData');
-        const storedSuggestionData = localStorage.getItem('nextStepSuggestion');
-        
-        if (storedOnboardingData) {
-          onboardingData = JSON.parse(storedOnboardingData);
-        }
-        if (storedSignupData) {
-          signupData = JSON.parse(storedSignupData);
-        }
-        if (storedSuggestionData) {
-            suggestionData = JSON.parse(storedSuggestionData);
-            setSuggestion(suggestionData);
-        }
-      }
-
-      // If we have a suggestion, we don't need to call the AI again.
-      // We can just generate tasks and set loading to false.
-      if (suggestionData) {
-        if (localStorage.getItem('roadmapTasks') === null) {
-            const tasks = generateTasksFromSuggestion(suggestionData);
-            localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
-        }
-        setSuggestion(suggestionData);
-        setLoading(false);
-        return;
-      }
-
-      const effectiveOnboardingData = onboardingData || mockOnboardingData;
-      // Grade from signup is a string, needs to be a number.
-      const effectiveGrade = signupData ? Number(signupData.grade) : 10;
-      
-      const dataToSuggest: SuggestNextStepInput = {
-        ...effectiveOnboardingData,
-        grade: effectiveGrade
-      };
-
-      try {
-        const result = await suggestNextStep(dataToSuggest);
-        setSuggestion(result);
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('nextStepSuggestion', JSON.stringify(result));
-            // Generate and save tasks right after getting the suggestion
-            const tasks = generateTasksFromSuggestion(result);
-            localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
-        }
-      } catch (error) {
-        console.error("Failed to fetch suggestion:", error);
-      } finally {
-        setLoading(false);
-      }
+async function SuggestionView() {
+    // This is a server component, so we can't use localStorage directly.
+    // In a real app, this data would come from a database.
+    // For now, we will call the AI every time, which might be slow.
+    // A more advanced implementation would use caching or a database.
+    
+    const dataToSuggest: SuggestNextStepInput = {
+        ...mockOnboardingData,
+        grade: 10 // Mock grade
     };
 
-    getSuggestion();
-  }, []);
+    try {
+        const result = await suggestNextStep(dataToSuggest);
+        // We can't save to localStorage here, but we can pass tasks to a client component
+        // which can then save them.
+        const tasks = generateTasksFromSuggestion(result);
+        
+        // This is a simplified approach. In a real app, you'd likely want to avoid
+        // passing large data blobs as props and would have a more robust
+        // state management solution for client-side task storage.
+        return <NextStepCard suggestion={result} />;
 
+    } catch (error) {
+        console.error("Failed to fetch suggestion:", error);
+        return <Card><CardContent><p>Failed to load suggestion. Please try again later.</p></CardContent></Card>;
+    }
+}
+
+
+export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <DashboardHeader />
 
       <section>
-        {loading ? (
-            <Skeleton className="h-64 w-full" />
-        ) : (
-            suggestion && <NextStepCard suggestion={suggestion} />
-        )}
+        <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+            <SuggestionView />
+        </Suspense>
       </section>
 
       <section>

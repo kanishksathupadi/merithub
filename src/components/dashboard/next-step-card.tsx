@@ -1,12 +1,44 @@
 
+"use client";
+
 import type { SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Lightbulb, BookOpen, User, Star, CheckCircle } from "lucide-react";
+import type { RoadmapTask } from "@/lib/types";
+import { v4 as uuidv4 } from 'uuid';
+import { useEffect } from "react";
 
 type NextStepCardProps = {
   suggestion: SuggestNextStepOutput;
 };
+
+function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): RoadmapTask[] {
+    const tasks: RoadmapTask[] = [];
+    suggestion.plan.forEach(planItem => {
+        const createTasks = (items: string | string[], category: RoadmapTask['category']) => {
+            const itemsArray = Array.isArray(items) ? items : [items];
+            itemsArray.forEach(item => {
+                if (typeof item !== 'string') return;
+                const [title, ...descriptionParts] = item.split(':');
+                const description = descriptionParts.join(':').trim();
+                tasks.push({
+                    id: uuidv4(),
+                    title: title.trim(),
+                    description: description || `Complete the task: ${title.trim()}`,
+                    category,
+                    grade: planItem.grade,
+                    completed: false,
+                });
+            });
+        };
+
+        createTasks(planItem.academics, 'Academics');
+        createTasks(planItem.extracurriculars, 'Extracurriculars');
+        createTasks(planItem.skillBuilding, 'Skill Building');
+    });
+    return tasks;
+}
 
 export function NextStepCard({ suggestion }: NextStepCardProps) {
   const ensureArray = (items: string | string[] | undefined) => {
@@ -14,6 +46,18 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
     if (typeof items === 'string') return [items];
     return [];
   };
+
+  useEffect(() => {
+    // This component is now responsible for populating localStorage
+    // with the tasks generated from the server-fetched suggestion.
+    if (typeof window !== 'undefined' && suggestion) {
+        if (localStorage.getItem('roadmapTasks') === null) {
+            const tasks = generateTasksFromSuggestion(suggestion);
+            localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
+        }
+    }
+  }, [suggestion]);
+
 
   return (
     <Card className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20">
