@@ -45,7 +45,7 @@ const prompt = ai.definePrompt({
   3.  Select the single best match.
   4.  Provide a concise title, a one-sentence description of why it's a good fit, the direct URL, and the type of resource.
 
-  Do not recommend generic homepages. Link directly to the specific article, video, or course. Ensure the URL is 100% correct and accessible.
+  Do not recommend generic homepages. Link directly to the specific article, video, or course. Ensure the URL is 100% correct and accessible. Do not invent resources or URLs. The link must be functional.
   `,
 });
 
