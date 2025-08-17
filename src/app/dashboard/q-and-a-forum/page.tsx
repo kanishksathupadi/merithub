@@ -1,13 +1,21 @@
 
 "use client";
 
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { ArrowUp, MessageSquare, PlusCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
 
-const forumPosts = [
+const initialForumPosts = [
   {
     user: "Jessica S.",
     avatar: "JS",
@@ -46,7 +54,66 @@ const forumPosts = [
   }
 ];
 
+const postSchema = z.object({
+  title: z.string().min(10, "Title must be at least 10 characters long.").max(200, "Title is too long."),
+  content: z.string().min(20, "Post content must be at least 20 characters long."),
+});
+
+
 export default function QandAForumPage() {
+  const [forumPosts, setForumPosts] = useState(initialForumPosts);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    try {
+      const savedPosts = localStorage.getItem("forumPosts");
+      if (savedPosts) {
+        setForumPosts(JSON.parse(savedPosts));
+      } else {
+        localStorage.setItem("forumPosts", JSON.stringify(initialForumPosts));
+      }
+    } catch (error) {
+        console.error("Failed to parse forum posts from localStorage", error);
+        localStorage.setItem("forumPosts", JSON.stringify(initialForumPosts));
+    }
+  }, []);
+
+  const form = useForm<z.infer<typeof postSchema>>({
+    resolver: zodResolver(postSchema),
+    defaultValues: {
+      title: "",
+      content: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof postSchema>) => {
+    const userName = localStorage.getItem("userName") || "Anonymous";
+    const userAvatar = userName.charAt(0).toUpperCase();
+
+    const newPost = {
+      user: userName,
+      avatar: userAvatar,
+      hint: "student face",
+      title: values.title,
+      replies: 0,
+      upvotes: 0,
+      tags: ["New", "Discussion"], // We can add tag selection later
+    };
+
+    const updatedPosts = [newPost, ...forumPosts];
+    setForumPosts(updatedPosts);
+    localStorage.setItem("forumPosts", JSON.stringify(updatedPosts));
+    
+    toast({
+        title: "Success!",
+        description: "Your discussion has been posted.",
+    });
+
+    form.reset();
+    setDialogOpen(false);
+  };
+
   return (
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -54,9 +121,57 @@ export default function QandAForumPage() {
           <h1 className="text-3xl font-bold">Q&A Forum</h1>
           <p className="text-muted-foreground">Ask questions, share knowledge, and connect with the community.</p>
         </div>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" /> Start a New Discussion
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+                <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Start a New Discussion
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Start a New Discussion</DialogTitle>
+                    <DialogDescription>
+                        Share your question or topic with the community. Be specific and clear.
+                    </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+                         <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Title</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g., How can I find good research opportunities?" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="content"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Content</FormLabel>
+                                    <FormControl>
+                                        <Textarea placeholder="Elaborate on your question or topic here..." className="resize-none" rows={5} {...field}/>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary">Cancel</Button>
+                            </DialogClose>
+                            <Button type="submit">Post Discussion</Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
       </header>
 
       <Input placeholder="Search the forum..." className="max-w-sm" />
@@ -91,5 +206,3 @@ export default function QandAForumPage() {
     </div>
   );
 }
-
-    
