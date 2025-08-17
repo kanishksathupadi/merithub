@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -17,6 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
+import { Skeleton } from "../ui/skeleton";
 
 const settingsSchema = z.object({
   name: z.string().min(2, "Name is too short."),
@@ -33,10 +36,7 @@ const settingsSchema = z.object({
 
 type SettingsValues = z.infer<typeof settingsSchema>;
 
-// Mock data that would come from the user's profile
-const defaultValues: SettingsValues = {
-  name: "Alex",
-  email: "alex@example.com",
+const defaultValues: Partial<SettingsValues> = {
   notifications: {
     newOpportunities: true,
     mentorMessages: true,
@@ -49,17 +49,55 @@ const defaultValues: SettingsValues = {
 
 export function SettingsForm() {
   const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
   const form = useForm<SettingsValues>({
     resolver: zodResolver(settingsSchema),
     defaultValues,
   });
 
+  useEffect(() => {
+    const userData = localStorage.getItem('signupData');
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      form.reset({
+        name: parsedData.name,
+        email: parsedData.email,
+        notifications: defaultValues.notifications,
+        privacy: defaultValues.privacy,
+      });
+    }
+    setLoading(false);
+  }, [form]);
+
+
   function onSubmit(data: SettingsValues) {
     console.log("Settings saved:", data);
+    // In a real app, you'd also update the localStorage here
     toast({
       title: "Settings Saved",
       description: "Your changes have been successfully saved.",
     });
+  }
+
+  if (loading) {
+    return (
+        <div className="space-y-8">
+            <Card>
+                <CardHeader><Skeleton className="h-8 w-1/3" /></CardHeader>
+                <CardContent className="space-y-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                </CardContent>
+            </Card>
+             <Card>
+                <CardHeader><Skeleton className="h-8 w-1/3" /></CardHeader>
+                <CardContent className="space-y-4">
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-20 w-full" />
+                </CardContent>
+            </Card>
+        </div>
+    )
   }
 
   return (

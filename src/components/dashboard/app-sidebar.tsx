@@ -77,31 +77,27 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             <Link href="/dashboard/progress"><TrendingUp/>Progress Tracker</Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
-        
-        <SidebarGroup>
-          {userPlan === 'elite' && (
-            <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Resources</h3>
-          )}
-          {userPlan === 'elite' && (
-            <>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Mentor Match">
-                  <Link href="/dashboard/mentor-match"><MessageSquare/>Mentor Match</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Q&amp;A Forum">
-                  <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </>
-          )}
-          <SidebarMenuItem>
+         <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Study Resources">
               <Link href="/dashboard/study-resources"><BookOpen/>Study Resources</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-        </SidebarGroup>
+        
+        {userPlan === 'elite' && (
+            <SidebarGroup>
+                <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Resources</h3>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Mentor Match">
+                    <Link href="/dashboard/mentor-match"><MessageSquare/>Mentor Match</Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Q&amp;A Forum">
+                    <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarGroup>
+        )}
       </SidebarMenu>
 
       <SidebarSeparator />
