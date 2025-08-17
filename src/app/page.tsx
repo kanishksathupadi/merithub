@@ -22,7 +22,7 @@ export default function Home() {
           </nav>
           <div className="flex items-center gap-2 ml-auto">
             <Button variant="outline" asChild>
-                <Link href="/signup?plan=standard">Go Standard</Link>
+                <Link href="/login">Member Login</Link>
             </Button>
             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
               <Link href="/signup?plan=elite">Go Elite</Link>
@@ -54,9 +54,9 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild className="border-border hover:bg-accent/10">
-                  <Link href="/login">
+                  <Link href="/signup?plan=standard">
                     <LogIn className="mr-2 h-5 w-5" />
-                    Member Login
+                    Go Standard
                   </Link>
                 </Button>
               </div>
@@ -260,3 +260,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
