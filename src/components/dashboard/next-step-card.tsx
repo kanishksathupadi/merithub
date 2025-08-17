@@ -16,7 +16,6 @@ const getCategoryColor = (category: RoadmapTask['category']) => {
     switch(category) {
         case 'Academics': return 'bg-blue-500';
         case 'Extracurriculars': return 'bg-green-500';
-        case 'Competitions & Events': return 'bg-purple-500';
         case 'Skill Building': return 'bg-yellow-500';
         default: return 'bg-gray-500';
     }
@@ -28,12 +27,12 @@ export function NextStepCard({ nextTask }: NextStepCardProps) {
     return (
         <Card className="bg-gradient-to-br from-green-500/10 via-background to-background border-green-500/20">
             <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                <CheckCircle className="text-green-500 w-7 h-7" />
+                <CardTitle className="text-xl flex items-center gap-2">
+                <CheckCircle className="text-green-500 w-6 h-6" />
                 All Tasks Completed!
                 </CardTitle>
-                <CardDescription className="mt-2">
-                    You've completed all the steps in your current roadmap. Great job! You can add custom tasks or wait for your plan to be updated for the next grade.
+                <CardDescription className="!mt-2">
+                    You've completed all the steps in your current roadmap. Great job! You can add custom tasks or wait for your plan to be updated.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -52,11 +51,10 @@ export function NextStepCard({ nextTask }: NextStepCardProps) {
       <CardHeader>
         <div className="flex items-start justify-between">
             <div>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                    <Lightbulb className="text-primary w-7 h-7" />
+                <CardTitle className="text-xl flex items-center gap-2">
+                    <Lightbulb className="text-primary w-6 h-6" />
                     Your Next Step
                 </CardTitle>
-                <CardDescription className="mt-2">Here's the next task on your personalized roadmap to success.</CardDescription>
             </div>
              <Badge variant="outline">
                 <span className={`w-2 h-2 mr-2 rounded-full ${getCategoryColor(nextTask.category)}`}></span>
@@ -66,7 +64,7 @@ export function NextStepCard({ nextTask }: NextStepCardProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="p-4 rounded-lg bg-background/50">
-            <h3 className="font-bold text-xl text-primary">{nextTask.title}</h3>
+            <h3 className="font-bold text-lg text-primary">{nextTask.title}</h3>
             <p className="text-muted-foreground mt-1">{nextTask.description}</p>
         </div>
         <Button asChild>

@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { generateStudyGuide, type GenerateStudyGuideOutput } from "@/ai/flows/generate-study-guide";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Lightbulb, Search, BookOpen, Brain, HelpCircle, Check } from "lucide-react";
+import { Lightbulb, Search, BookOpen, Brain, HelpCircle, Check, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -73,12 +73,26 @@ export default function StudyResourcesPage() {
             <Skeleton className="h-48 w-full" />
         </div>
     )}
+
     {error && (
         <Alert variant="destructive">
             <AlertTitle>Generation Failed</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
         </Alert>
     )}
+
+    {!loading && !error && !searchResult && (
+        <Card className="text-center py-12">
+            <CardContent className="flex flex-col items-center gap-4">
+                <div className="bg-primary/10 text-primary p-4 rounded-full">
+                    <Sparkles className="w-8 h-8" />
+                </div>
+                <h2 className="text-xl font-semibold">Ready to Learn?</h2>
+                <p className="text-muted-foreground max-w-md">Your personalized study guides will appear here once you generate them. Try searching for a topic above to get started!</p>
+            </CardContent>
+        </Card>
+    )}
+
     {searchResult && (
         <Card>
             <CardHeader>
@@ -137,5 +151,3 @@ export default function StudyResourcesPage() {
     </div>
   );
 }
-
-    

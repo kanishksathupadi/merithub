@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -56,7 +57,7 @@ export default function MentorMatchPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mentors.map((mentor, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="items-center text-center">
+            <CardHeader className="items-center text-center p-6">
               <Avatar className="w-24 h-24 mb-4">
                 <AvatarImage src={`https://placehold.co/100x100.png`} data-ai-hint={mentor.hint} />
                 <AvatarFallback>{mentor.avatar}</AvatarFallback>
@@ -65,7 +66,7 @@ export default function MentorMatchPage() {
               <p className="text-sm text-primary font-medium">{mentor.subject}</p>
               <p className="text-xs text-muted-foreground">{mentor.institution}</p>
             </CardHeader>
-            <CardFooter>
+            <CardFooter className="p-4 pt-0">
               <Button className="w-full">
                 <MessageSquare className="mr-2 h-4 w-4" /> Connect
               </Button>

@@ -33,7 +33,7 @@ export function DashboardHeader() {
     const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
 
     return (
-        <header className="flex items-center justify-between py-4">
+        <header className="flex items-center justify-between">
             <div>
                 <h1 className="text-3xl font-bold">Welcome, {displayName}!</h1>
                 <p className="text-muted-foreground">Here is your personalized dashboard.</p>

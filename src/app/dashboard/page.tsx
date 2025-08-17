@@ -145,15 +145,14 @@ export default function DashboardPage() {
       <DashboardHeader />
 
       <section>
+        <h2 className="text-2xl font-semibold mb-4">Your Next Step</h2>
         <Suspense fallback={<Skeleton className="h-48 w-full" />}>
             <SuggestionView />
         </Suspense>
       </section>
 
       <section>
-        <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Your Dashboard</h2>
-        </div>
+        <h2 className="text-2xl font-semibold mb-4">Your Dashboard</h2>
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}>
             {dashboardTiles.map((tile) => (
                 <Link href={tile.href} key={tile.title}>

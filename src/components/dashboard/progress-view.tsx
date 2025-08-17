@@ -53,11 +53,11 @@ export function ProgressView() {
 
       <div className="grid md:grid-cols-2 gap-4 text-center">
         <Card>
-            <CardHeader><CardTitle className="flex items-center justify-center gap-2"><CheckCircle className="text-green-500"/>Completed Tasks</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="flex items-center justify-center gap-2 text-xl"><CheckCircle className="text-green-500"/>Completed Tasks</CardTitle></CardHeader>
             <CardContent><p className="text-4xl font-bold">{completedTasks}</p></CardContent>
         </Card>
         <Card>
-            <CardHeader><CardTitle className="flex items-center justify-center gap-2"><ListChecks className="text-blue-500"/>Total Tasks</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="flex items-center justify-center gap-2 text-xl"><ListChecks className="text-blue-500"/>Total Tasks</CardTitle></CardHeader>
             <CardContent><p className="text-4xl font-bold">{totalTasks}</p></CardContent>
         </Card>
       </div>
