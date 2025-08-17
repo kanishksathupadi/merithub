@@ -172,7 +172,7 @@ export default function Home() {
                     <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
                         <div className="flex items-center mb-4">
                             <Avatar>
-                                <AvatarImage src="https://placehold.co/40x40.png" data-ai-hint="female student" />
+                                <AvatarImage src="https://images.unsplash.com/photo-1610012525054-b6ab57df6105?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmZW1hbGUlMjBzdHVkZW50fGVufDB8fHx8MTc1NTM0NTY5N3ww&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="female student" />
                                 <AvatarFallback>JS</AvatarFallback>
                             </Avatar>
                             <div className="ml-4">
@@ -186,7 +186,7 @@ export default function Home() {
                      <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
                         <div className="flex items-center mb-4">
                             <Avatar>
-                                <AvatarImage src="https://placehold.co/40x40.png" data-ai-hint="male student" />
+                                <AvatarImage src="https://images.unsplash.com/photo-1624918479892-3e5df2910410?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYWxlJTIwc3R1ZGVudHxlbnwwfHx8fDE3NTUzNDU2OTd8MA&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="male student" />
                                 <AvatarFallback>MI</AvatarFallback>
                             </Avatar>
                             <div className="ml-4">
@@ -200,7 +200,7 @@ export default function Home() {
                      <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
                         <div className="flex items-center mb-4">
                             <Avatar>
-                                <AvatarImage src="https://placehold.co/40x40.png" data-ai-hint="student face" />
+                                <AvatarImage src="https://images.unsplash.com/photo-1631304672439-f6ef24965cc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzdHVkZW50JTIwZmFjZXxlbnwwfHx8fDE3NTU0MDkwNjd8MA&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="student face" />
                                 <AvatarFallback>EA</AvatarFallback>
                             </Avatar>
                             <div className="ml-4">
@@ -263,8 +263,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
-
