@@ -33,7 +33,7 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-16 md:py-24 text-center overflow-hidden">
+        <section className="relative pt-12 pb-16 md:pt-16 md:pb-24 text-center overflow-hidden">
           <div className="absolute inset-0 bg-grid-primary/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
           <div className="container relative mx-auto px-4">
             <div className="max-w-4xl mx-auto">
