@@ -1,5 +1,7 @@
 
 'use server';
+import { config } from 'dotenv';
+config();
 
 /**
  * @fileOverview An AI agent for sending a welcome email via Gmail.
