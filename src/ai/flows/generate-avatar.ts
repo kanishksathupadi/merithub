@@ -33,7 +33,7 @@ const generateAvatarFlow = ai.defineFlow(
     outputSchema: GenerateAvatarOutputSchema,
   },
   async ({letter}) => {
-    const prompt = `Generate an extremely simple image of the capital letter '${letter}'. The letter must be in a standard, blocky, non-serif font like Arial or Helvetica. It should be perfectly centered. The background must be a single, solid, neutral gray color. The letter itself must be a single, solid, contrasting color like white or black. There should be absolutely no other designs, patterns, gradients, or textures on the letter or in the background. The final image should be clean and minimalist.`;
+    const prompt = `Generate a minimalist, high-quality avatar featuring the capital letter '${letter}'. The letter should be bold, white, and perfectly centered in the image. The font should be a clean, modern, sans-serif type like Helvetica Bold. The background must be a single, solid, professional blue color (hex code #3B82F6). There should be no other elements, textures, or gradients in the image.`;
     
     const {media} = await ai.generate({
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
