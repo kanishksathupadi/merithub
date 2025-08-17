@@ -1,6 +1,8 @@
 
-import { Suspense } from "react";
-import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
+"use client";
+
+import { Suspense, useEffect, useState } from "react";
+import { suggestNextStep, type SuggestNextStepInput } from "@/ai/flows/suggest-next-step";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,30 +10,24 @@ import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, ArrowRight } fr
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { RoadmapTask } from "@/lib/types";
 import { v4 as uuidv4 } from 'uuid';
+import type { RoadmapTask } from "@/lib/types";
 
-const mockOnboardingData: Omit<SuggestNextStepInput, 'grade'> = {
-  academicStrengths: "Creative Writing, History",
-  academicWeaknesses: "Calculus, Chemistry",
-  subjectsOfInterest: "Learning about ancient civilizations, writing poetry, and maybe something in law?",
-  collegeEnvironment: "A smaller liberal arts college with a strong sense of community and accessible professors.",
-  preferredLearningStyle: "reading-writing",
-  currentExtracurriculars: "School newspaper, debate club",
-  weeklyTimeAvailable: "8",
-};
+async function fetchSuggestion(input: SuggestNextStepInput) {
+    try {
+        const result = await suggestNextStep(input);
+        return result;
+    } catch (error) {
+        console.error("Failed to fetch suggestion:", error);
+        return null;
+    }
+}
 
-const dashboardTiles = [
-    { title: "My Roadmap", description: "View your personalized tasks.", icon: ListChecks, href: "/dashboard/roadmap" },
-    { title: "Progress Tracker", description: "Visualize your achievements.", icon: TrendingUp, href: "/dashboard/progress" },
-    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match" },
-    { title: "Study Resources", description: "Find guides and materials.", icon: BookOpen, href: "/dashboard/study-resources" },
-    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum" },
-]
-
-function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): RoadmapTask[] {
+function generateTasksFromSuggestion(suggestion: any): RoadmapTask[] {
     const tasks: RoadmapTask[] = [];
-    suggestion.plan.forEach(planItem => {
+    if (!suggestion || !suggestion.plan) return tasks;
+
+    suggestion.plan.forEach((planItem: any) => {
         const createTasks = (items: string | string[], category: RoadmapTask['category']) => {
             const itemsArray = Array.isArray(items) ? items : [items];
             itemsArray.forEach(item => {
@@ -56,36 +52,70 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
     return tasks;
 }
 
-async function SuggestionView() {
-    // This is a server component, so we can't use localStorage directly.
-    // In a real app, this data would come from a database.
-    // For now, we will call the AI every time, which might be slow.
-    // A more advanced implementation would use caching or a database.
-    
-    const dataToSuggest: SuggestNextStepInput = {
-        ...mockOnboardingData,
-        grade: 10 // Mock grade
-    };
+function SuggestionView() {
+    const [suggestion, setSuggestion] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-    try {
-        const result = await suggestNextStep(dataToSuggest);
-        // We can't save to localStorage here, but we can pass tasks to a client component
-        // which can then save them.
-        const tasks = generateTasksFromSuggestion(result);
-        
-        // This is a simplified approach. In a real app, you'd likely want to avoid
-        // passing large data blobs as props and would have a more robust
-        // state management solution for client-side task storage.
-        return <NextStepCard suggestion={result} />;
+    useEffect(() => {
+        const getSuggestion = async () => {
+            const onboardingDataStr = localStorage.getItem('onboardingData');
+            const signupDataStr = localStorage.getItem('signupData');
 
-    } catch (error) {
-        console.error("Failed to fetch suggestion:", error);
-        return <Card><CardContent><p>Failed to load suggestion. Please try again later.</p></CardContent></Card>;
+            if (onboardingDataStr && signupDataStr) {
+                const onboardingData = JSON.parse(onboardingDataStr);
+                const signupData = JSON.parse(signupDataStr);
+                const result = await fetchSuggestion({ ...onboardingData, grade: signupData.grade });
+                setSuggestion(result);
+
+                if (localStorage.getItem('roadmapTasks') === null && result) {
+                    const tasks = generateTasksFromSuggestion(result);
+                    localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
+                     // Dispatch storage event to notify other components
+                    window.dispatchEvent(new Event('storage'));
+                }
+            }
+            setLoading(false);
+        };
+
+        getSuggestion();
+    }, []);
+
+    if (loading) {
+        return <Skeleton className="h-64 w-full" />;
     }
+
+    if (!suggestion) {
+        return <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>;
+    }
+
+    return <NextStepCard suggestion={suggestion} />;
 }
+
+const standardTiles = [
+    { title: "My Roadmap", description: "View your personalized tasks.", icon: ListChecks, href: "/dashboard/roadmap" },
+    { title: "Progress Tracker", description: "Visualize your achievements.", icon: TrendingUp, href: "/dashboard/progress" },
+    { title: "Study Resources", description: "Find guides and materials.", icon: BookOpen, href: "/dashboard/study-resources" },
+];
+
+const eliteTiles = [
+    ...standardTiles,
+    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match" },
+    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum" },
+]
 
 
 export default function DashboardPage() {
+    const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
+
+    useEffect(() => {
+        const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
+        if (plan) {
+            setUserPlan(plan);
+        }
+    }, []);
+
+    const dashboardTiles = userPlan === 'elite' ? eliteTiles : standardTiles;
+
   return (
     <div className="space-y-8">
       <DashboardHeader />
@@ -101,7 +131,7 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-semibold">Your Dashboard</h2>
             <Button variant="ghost">View All <ArrowRight className="w-4 h-4 ml-2"/></Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${userPlan === 'elite' ? 'xl:grid-cols-5' : 'xl:grid-cols-3'} gap-4`}>
             {dashboardTiles.map((tile) => (
                 <Link href={tile.href} key={tile.title}>
                     <Card className="hover:border-primary/50 hover:bg-primary/5 transition-colors h-full">

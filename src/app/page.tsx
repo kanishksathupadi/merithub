@@ -22,7 +22,7 @@ export default function Home() {
           </nav>
           <div className="flex items-center gap-4 ml-auto">
             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
-              <Link href="/signup">Get Started</Link>
+              <Link href="/signup?plan=elite">Get Started</Link>
             </Button>
             <Button variant="ghost" asChild>
               <Link href="/login">Log In</Link>
@@ -48,7 +48,7 @@ export default function Home() {
               </p>
               <div className="mt-8 space-x-4">
                 <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
-                  <Link href="/signup">
+                  <Link href="/signup?plan=elite">
                     <Rocket className="mr-2 h-5 w-5" />
                     Begin Your Ascent
                   </Link>
@@ -229,7 +229,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Basic Opportunity Matching</li>
                         </ul>
                         <Button asChild variant="outline" className="w-full mt-8 border-border hover:bg-accent/10">
-                           <Link href="/signup">Choose Standard</Link>
+                           <Link href="/signup?plan=standard">Choose Standard</Link>
                         </Button>
                     </div>
                     <div className="p-8 bg-primary/10 rounded-xl shadow-lg border border-primary flex flex-col relative">
@@ -245,7 +245,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
                         </ul>
                         <Button asChild className="w-full mt-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
-                            <Link href="/signup">Choose Elite</Link>
+                            <Link href="/signup?plan=elite">Choose Elite</Link>
                         </Button>
                     </div>
                 </div>

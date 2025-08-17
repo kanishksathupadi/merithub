@@ -1,6 +1,18 @@
+
+"use client";
+
 import { SignupForm } from "@/components/auth/signup-form";
 import { GraduationCap } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from "react";
+
+function SignupContent() {
+  const searchParams = useSearchParams();
+  const plan = searchParams.get('plan') || 'standard'; // Default to standard if no plan is specified
+
+  return <SignupForm plan={plan as 'standard' | 'elite'} />;
+}
 
 export default function SignupPage() {
   return (
@@ -11,7 +23,9 @@ export default function SignupPage() {
             <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
         </Link>
       </header>
-      <SignupForm />
+      <Suspense fallback={<div>Loading...</div>}>
+        <SignupContent />
+      </Suspense>
     </div>
   );
 }

@@ -27,7 +27,11 @@ const formSchema = z.object({
   grade: z.coerce.number().min(5, {message: "Grade must be 5 or higher."}).max(12, {message: "Grade must be 12 or lower."}),
 });
 
-export function SignupForm() {
+interface SignupFormProps {
+  plan: 'standard' | 'elite';
+}
+
+export function SignupForm({ plan }: SignupFormProps) {
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,14 +45,15 @@ export function SignupForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Signup submitted", values);
+    console.log("Signup submitted", { ...values, plan });
     // In a real app, you would handle user creation here.
     // For this demo, we'll save the name to localStorage and redirect.
     if (typeof window !== 'undefined') {
       const { name, age, grade, email, password } = values;
       localStorage.setItem('userName', name);
+      localStorage.setItem('userPlan', plan);
       // We store all signup data to simulate a user account for the login form.
-      localStorage.setItem('signupData', JSON.stringify({ name, age, grade, email, password }));
+      localStorage.setItem('signupData', JSON.stringify({ name, age, grade, email, password, plan }));
     }
     router.push("/onboarding");
   }
@@ -60,7 +65,7 @@ export function SignupForm() {
           <Rocket className="w-8 h-8" />
         </div>
         <CardTitle className="text-3xl">Create Your Account</CardTitle>
-        <CardDescription>Start your path to success today.</CardDescription>
+        <CardDescription>You've selected the <span className="font-bold text-primary">{plan}</span> plan. Start your path to success today.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
