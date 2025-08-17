@@ -63,12 +63,12 @@ export default function Home() {
             </div>
             <div className="mt-16">
                <Image
-                src="https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=2070&auto=format&fit=crop"
-                alt="A winding path leading towards a bright, successful future, representing a student's journey."
+                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop"
+                alt="A sleek application dashboard showing charts and data, representing the PinnaclePath platform."
                 width={1200}
                 height={400}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10 object-cover"
-                data-ai-hint="path success"
+                data-ai-hint="app dashboard"
               />
             </div>
           </div>
