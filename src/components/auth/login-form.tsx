@@ -44,18 +44,24 @@ export function LoginForm() {
       
       if (storedSignupData) {
         const signupData = JSON.parse(storedSignupData);
-        // Verify both email and password.
         if (signupData.email === values.email && signupData.password === values.password) {
           localStorage.setItem('userName', signupData.name);
-          // Set onboarding data so the dashboard doesn't redirect.
-          localStorage.setItem('onboardingData', JSON.stringify(signupData));
-          router.push("/dashboard");
+          
+          // Check onboarding and payment status to redirect correctly
+          const onboardingComplete = !!localStorage.getItem('onboardingData');
+          const paymentComplete = !!localStorage.getItem('paymentComplete');
+
+          if (paymentComplete) {
+            router.push("/dashboard");
+          } else if (onboardingComplete) {
+            router.push("/payment");
+          } else {
+            router.push("/onboarding");
+          }
           return;
         }
       }
 
-      // Fallback for users who might not have signed up via the form in this session
-      // or if credentials don't match.
       toast({
         variant: "destructive",
         title: "Login Failed",

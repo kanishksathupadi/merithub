@@ -63,13 +63,11 @@ export function OnboardingForm() {
   });
 
   const onSubmit = (data: OnboardingValues) => {
-    console.log("Onboarding complete:", data);
-    // In a real app, this data would be sent to the server to call the AI
-    // and store the result. For this demo, we just navigate to the dashboard.
+    console.log("Onboarding complete, redirecting to payment:", data);
     if (typeof window !== 'undefined') {
         localStorage.setItem('onboardingData', JSON.stringify(data));
     }
-    router.push("/dashboard");
+    router.push("/payment");
   };
 
   const nextStep = async () => {
