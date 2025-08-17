@@ -4,7 +4,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -23,24 +23,21 @@ async function fetchSuggestion(input: SuggestNextStepInput) {
     }
 }
 
-function generateTasksFromSuggestion(suggestion: any): RoadmapTask[] {
+function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): RoadmapTask[] {
     const tasks: RoadmapTask[] = [];
     if (!suggestion || !suggestion.plan) return tasks;
 
-    suggestion.plan.forEach((planItem: any) => {
-        const createTasks = (items: string | string[], category: RoadmapTask['category']) => {
-            const itemsArray = Array.isArray(items) ? items : [items];
-            itemsArray.forEach(item => {
-                if (typeof item !== 'string') return;
-                const [title, ...descriptionParts] = item.split(':');
-                const description = descriptionParts.join(':').trim();
+    suggestion.plan.forEach((planItem) => {
+        const createTasks = (items: any[], category: RoadmapTask['category']) => {
+            items.forEach(item => {
                 tasks.push({
                     id: uuidv4(),
-                    title: title.trim(),
-                    description: description || `Complete the task: ${title.trim()}`,
+                    title: item.title,
+                    description: item.description,
                     category,
                     grade: planItem.grade,
                     completed: false,
+                    relatedResources: item.resource ? [item.resource] : [],
                 });
             });
         };
@@ -76,9 +73,9 @@ function SuggestionView() {
                 const onboardingData = JSON.parse(onboardingDataStr);
                 const signupData = JSON.parse(signupDataStr);
                 const result = await fetchSuggestion({ ...onboardingData, grade: signupData.grade });
-                setSuggestion(result);
-
+                
                 if (result) {
+                    setSuggestion(result);
                     localStorage.setItem('aiSuggestion', JSON.stringify(result));
                     const newTasks = generateTasksFromSuggestion(result);
                     setTasks(newTasks);
@@ -127,7 +124,7 @@ const standardTiles = [
 const eliteTiles = [
     ...standardTiles,
     { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match" },
-    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum" },
+    { title: "Q&amp;A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum" },
 ]
 
 
@@ -181,3 +178,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

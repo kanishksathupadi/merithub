@@ -58,8 +58,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                 <Rocket className="w-8 h-8 text-primary" />
                 <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
             </Link>
-            <SidebarTrigger />
         </div>
+        <SidebarTrigger className={cn(!open && "hidden")} />
         <SidebarTrigger className={cn(open && "hidden")} />
       </SidebarHeader>
       <SidebarMenu className="flex-1 px-2">
@@ -89,8 +89,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Q&A Forum">
-                  <Link href="/dashboard/q-and-a-forum"><Users/>Q&A Forum</Link>
+                <SidebarMenuButton asChild tooltip="Q&amp;A Forum">
+                  <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </>
@@ -136,3 +136,5 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     </Sidebar>
   );
 }
+
+    

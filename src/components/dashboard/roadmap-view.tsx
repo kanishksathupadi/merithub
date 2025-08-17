@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Link as LinkIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building', 'Competitions & Events'];
+const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building'];
 
 export function RoadmapView() {
   const [tasks, setTasks] = useState<RoadmapTask[]>([]);
@@ -40,7 +40,6 @@ export function RoadmapView() {
     switch(category) {
         case 'Academics': return 'bg-blue-500';
         case 'Extracurriculars': return 'bg-green-500';
-        case 'Competitions & Events': return 'bg-purple-500';
         case 'Skill Building': return 'bg-yellow-500';
         default: return 'bg-gray-500';
     }
@@ -61,7 +60,7 @@ export function RoadmapView() {
 
   return (
     <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+      <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
         <TabsTrigger value="all">All</TabsTrigger>
         {categories.map(cat => <TabsTrigger key={cat} value={cat}>{cat}</TabsTrigger>)}
       </TabsList>
@@ -102,7 +101,7 @@ function TaskCard({ task, onToggle, getCategoryColor }: { task: RoadmapTask, onT
             <CardFooter className="flex justify-between items-center">
                  <div className="text-sm text-muted-foreground flex items-center gap-2">
                     <Calendar className="w-4 h-4"/>
-                     Due: In {task.grade}
+                     For {task.grade}
                  </div>
                  <div className="flex gap-2">
                     {task.relatedResources?.map(resource => (
@@ -118,3 +117,5 @@ function TaskCard({ task, onToggle, getCategoryColor }: { task: RoadmapTask, onT
         </Card>
     )
 }
+
+    
