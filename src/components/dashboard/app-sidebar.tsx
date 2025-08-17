@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import React, { useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface AppSidebarProps {
   avatarUrl: string | null;
@@ -19,6 +20,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(propAvatarUrl);
   const { open } = useSidebar();
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -46,6 +48,22 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   useEffect(() => {
     setAvatarUrl(propAvatarUrl);
   }, [propAvatarUrl]);
+
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem('signupData');
+        localStorage.removeItem('onboardingData');
+        localStorage.removeItem('paymentComplete');
+        localStorage.removeItem('userAvatar');
+        localStorage.removeItem('welcomeEmailSent');
+        localStorage.removeItem('aiSuggestion');
+        localStorage.removeItem('roadmapTasks');
+        localStorage.removeItem('forumPosts');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userPlan');
+    }
+    router.push('/');
+  };
 
   const displayName = userName || "User";
   const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
@@ -122,10 +140,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                         <Settings className="w-4 h-4" /> Settings
                     </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link href="/" className="flex items-center gap-2">
-                        <LogOut className="w-4 h-4" /> Log Out
-                    </Link>
+                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
+                    <LogOut className="w-4 h-4" /> Log Out
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
