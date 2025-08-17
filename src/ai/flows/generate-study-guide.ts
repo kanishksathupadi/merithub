@@ -57,8 +57,8 @@ const prompt = ai.definePrompt({
   4.  A list of exactly {{{numConcepts}}} "Key Concepts" that act like flashcards. Each concept must have a term and its corresponding definition.
   5.  A list of exactly {{{numQuestions}}} multiple-choice "Practice Questions". Each question must have:
       - A question text.
-      - An array of exactly 4 `options`.
-      - The correct `answer`, which MUST be one of the provided options.
+      - An array of exactly 4 'options'.
+      - The correct 'answer', which MUST be one of the provided options.
 
   Ensure the content is accurate, well-structured, and tailored for a high school or early college-level student.
   `,
