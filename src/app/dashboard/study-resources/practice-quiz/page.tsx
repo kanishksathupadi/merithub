@@ -18,7 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const generationSchema = z.object({
-  numQuestions: z.number().min(1).max(20),
+  numQuestions: z.number().min(1).max(100),
 });
 
 function PracticeQuizGenerator() {
@@ -55,7 +55,15 @@ function PracticeQuizGenerator() {
     };
 
     if (loading) {
-        return <Skeleton className="h-96 w-full max-w-2xl mx-auto" />;
+        return (
+            <div className="flex flex-col items-center gap-6">
+                <div className="text-center space-y-2">
+                    <p className="font-semibold text-primary">Generating your quiz...</p>
+                    <p className="text-sm text-muted-foreground">This may take a moment.</p>
+                </div>
+                 <Skeleton className="h-96 w-full max-w-2xl mx-auto" />
+            </div>
+        );
     }
     
     if (error) {
@@ -63,6 +71,7 @@ function PracticeQuizGenerator() {
             <Alert variant="destructive">
                 <AlertTitle>Generation Failed</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
+                <Button onClick={() => setError(null)} className="mt-4">Try Again</Button>
             </Alert>
         );
     }
@@ -89,7 +98,7 @@ function PracticeQuizGenerator() {
                                         <FormControl>
                                             <Slider
                                                 min={1}
-                                                max={20}
+                                                max={100}
                                                 step={1}
                                                 value={[field.value]}
                                                 onValueChange={(vals) => field.onChange(vals[0])}
@@ -112,8 +121,8 @@ function PracticeQuizGenerator() {
      if (!studyGuide.practiceQuestions || studyGuide.practiceQuestions.length === 0) {
         return (
              <div className="space-y-4 text-center">
-                <h2 className="text-2xl font-bold">No practice questions available for this topic.</h2>
-                <p>Try generating a new study guide with questions.</p>
+                <h2 className="text-2xl font-bold">No practice questions were generated.</h2>
+                <p>Try generating again with a different topic or number of questions.</p>
                  <Button onClick={() => setStudyGuide(null)}>Try Again</Button>
             </div>
         )
@@ -125,7 +134,7 @@ function PracticeQuizGenerator() {
                 <h1 className="text-3xl font-bold flex items-center justify-center gap-2"><HelpCircle/> Practice Quiz: {studyGuide.title}</h1>
                 <p className="text-muted-foreground mt-1">{studyGuide.introduction}</p>
             </div>
-            <PracticeQuiz studyGuide={studyGuide} />
+            <PracticeQuiz studyGuide={studyGuide} onRestart={() => setStudyGuide(null)} />
         </>
     );
 }

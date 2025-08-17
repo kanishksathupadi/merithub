@@ -13,11 +13,12 @@ import { Progress } from '@/components/ui/progress';
 
 interface PracticeQuizProps {
     studyGuide: GenerateStudyGuideOutput;
+    onRestart: () => void;
 }
 
 type AnswerStatus = 'unanswered' | 'correct' | 'incorrect';
 
-export function PracticeQuiz({ studyGuide }: PracticeQuizProps) {
+export function PracticeQuiz({ studyGuide, onRestart }: PracticeQuizProps) {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [answerStatus, setAnswerStatus] = useState<AnswerStatus>('unanswered');
@@ -57,6 +58,7 @@ export function PracticeQuiz({ studyGuide }: PracticeQuizProps) {
         setAnswerStatus('unanswered');
         setScore(0);
         setQuizFinished(false);
+        onRestart(); // This will trigger the parent to re-render the customization form
     };
 
     if (quizFinished) {
@@ -75,7 +77,7 @@ export function PracticeQuiz({ studyGuide }: PracticeQuizProps) {
                 </CardContent>
                 <CardFooter>
                     <Button onClick={handleRestartQuiz} className="w-full">
-                        <RotateCcw className="mr-2 h-4 w-4" /> Try Again
+                        <RotateCcw className="mr-2 h-4 w-4" /> Create a New Quiz
                     </Button>
                 </CardFooter>
             </Card>
@@ -139,4 +141,3 @@ export function PracticeQuiz({ studyGuide }: PracticeQuizProps) {
         </Card>
     );
 }
-

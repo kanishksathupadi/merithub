@@ -18,7 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const generationSchema = z.object({
-  numConcepts: z.number().min(1).max(20),
+  numConcepts: z.number().min(1).max(100),
 });
 
 function FlashcardsGenerator() {
@@ -33,7 +33,7 @@ function FlashcardsGenerator() {
 
     const generationForm = useForm<z.infer<typeof generationSchema>>({
         resolver: zodResolver(generationSchema),
-        defaultValues: { numConcepts: 5 },
+        defaultValues: { numConcepts: 10 },
     });
 
     if (!topic) {
@@ -58,6 +58,10 @@ function FlashcardsGenerator() {
     if (loading) {
         return (
             <div className="flex flex-col items-center gap-6">
+                <div className="text-center space-y-2">
+                    <p className="font-semibold text-primary">Generating your flashcards...</p>
+                    <p className="text-sm text-muted-foreground">This may take a moment.</p>
+                </div>
                 <Skeleton className="w-full max-w-lg h-80" />
                 <div className="flex items-center justify-between w-full max-w-lg">
                     <Skeleton className="h-10 w-28" />
@@ -73,6 +77,7 @@ function FlashcardsGenerator() {
             <Alert variant="destructive">
                 <AlertTitle>Generation Failed</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
+                 <Button onClick={() => setError(null)} className="mt-4">Try Again</Button>
             </Alert>
         );
     }
@@ -99,7 +104,7 @@ function FlashcardsGenerator() {
                                         <FormControl>
                                             <Slider
                                                 min={1}
-                                                max={20}
+                                                max={100}
                                                 step={1}
                                                 value={[field.value]}
                                                 onValueChange={(vals) => field.onChange(vals[0])}
@@ -120,6 +125,15 @@ function FlashcardsGenerator() {
     }
 
     const keyConcepts = studyGuide.keyConcepts || [];
+     if (keyConcepts.length === 0) {
+        return (
+             <div className="space-y-4 text-center">
+                <h2 className="text-2xl font-bold">No flashcards were generated.</h2>
+                <p>Try generating again with a different topic or number of cards.</p>
+                 <Button onClick={() => setStudyGuide(null)}>Try Again</Button>
+            </div>
+        )
+    }
 
     const goToNext = () => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % keyConcepts.length);
@@ -148,7 +162,7 @@ function FlashcardsGenerator() {
                     <p className="text-sm font-medium text-muted-foreground">
                         {currentIndex + 1} / {keyConcepts.length}
                     </p>
-                    <Button variant="outline" onClick={goToNext} disabled={keyConcepts.length <= 1}>
+                    <Button onClick={goToNext} disabled={keyConcepts.length <= 1}>
                         Next <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                 </div>
@@ -174,4 +188,3 @@ export default function FlashcardsPage() {
         </div>
     );
 }
-

@@ -14,8 +14,8 @@ import {z} from 'genkit';
 
 const GenerateStudyGuideInputSchema = z.object({
   topic: z.string().describe('The academic topic the user needs a study guide for.'),
-  numConcepts: z.coerce.number().min(0).max(20).describe('The number of key concepts to generate for flashcards.'),
-  numQuestions: z.coerce.number().min(0).max(20).describe('The number of practice questions to generate.'),
+  numConcepts: z.coerce.number().min(0).max(100).describe('The number of key concepts to generate for flashcards.'),
+  numQuestions: z.coerce.number().min(0).max(100).describe('The number of practice questions to generate.'),
 });
 export type GenerateStudyGuideInput = z.infer<typeof GenerateStudyGuideInputSchema>;
 
@@ -43,19 +43,18 @@ const prompt = ai.definePrompt({
   name: 'generateStudyGuidePrompt',
   input: {schema: GenerateStudyGuideInputSchema},
   output: {schema: GenerateStudyGuideOutputSchema},
-  model: 'googleai/gemini-2.0-flash',
   prompt: `You are an expert educator and academic tutor. A student has asked for help understanding a topic.
 
   Topic: "{{{topic}}}"
 
-  Your task is to generate a comprehensive, easy-to-understand study guide for this topic. The guide should be structured to facilitate learning and retention.
+  Your task is to generate a comprehensive, easy-to-understand study guide for this topic. The response must be structured to facilitate learning and retention.
 
   The response must include:
   1.  The original topic provided by the user.
   2.  A clear title for the study guide.
   3.  A brief introductory paragraph that sets the context for the topic.
-  4.  A list of exactly {{{numConcepts}}} "Key Concepts" that act like flashcards. Each concept must have a term and its corresponding definition. If numConcepts is 0, return an empty array.
-  5.  A list of exactly {{{numQuestions}}} multiple-choice "Practice Questions". Each question must have:
+  4.  A list of exactly {{{numConcepts}}} 'Key Concepts' that act like flashcards. Each concept must have a term and its corresponding definition. If numConcepts is 0, return an empty array.
+  5.  A list of exactly {{{numQuestions}}} multiple-choice 'Practice Questions'. Each question must have:
       - A question text.
       - An array of exactly 4 'options'.
       - The correct 'answer', which MUST be one of the provided options.
