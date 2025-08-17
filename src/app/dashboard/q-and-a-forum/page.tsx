@@ -88,7 +88,13 @@ export default function QandAForumPage() {
   });
 
   const onSubmit = (values: z.infer<typeof postSchema>) => {
-    const userName = localStorage.getItem("userName") || "Anonymous";
+    let userName = "Anonymous";
+    const signupDataStr = localStorage.getItem('signupData');
+    if (signupDataStr) {
+        const signupData = JSON.parse(signupDataStr);
+        userName = signupData.name || "Anonymous";
+    }
+
     const userAvatar = userName.charAt(0).toUpperCase();
 
     const newPost = {
