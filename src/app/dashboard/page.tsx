@@ -4,7 +4,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -124,7 +124,7 @@ const standardTiles = [
 const eliteTiles = [
     ...standardTiles,
     { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match" },
-    { title: "Q&amp;A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum" },
+    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum" },
 ]
 
 
@@ -178,5 +178,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
