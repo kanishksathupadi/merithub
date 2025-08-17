@@ -33,7 +33,7 @@ const generateAvatarFlow = ai.defineFlow(
     outputSchema: GenerateAvatarOutputSchema,
   },
   async ({letter}) => {
-    const prompt = `Generate a visually appealing, modern, and abstract profile picture design featuring the letter '${letter}'. The design should be clean, suitable for a small avatar, and use a vibrant but professional color palette. The letter should be the clear focal point.`;
+    const prompt = `Generate a simple image of the letter '${letter}'. The letter should be centered and clear. The background should be a solid, neutral color. The letter itself should be a simple, contrasting color. No extra designs or abstract patterns.`;
     
     const {media} = await ai.generate({
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
