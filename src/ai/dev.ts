@@ -7,5 +7,3 @@ import '@/ai/flows/send-welcome-email.ts';
 import '@/ai/tools/validate-academic-subject.ts';
 import '@/ai/tools/find-online-resource.ts';
 import '@/ai/tools/validate-avatar-image.ts';
-
-    

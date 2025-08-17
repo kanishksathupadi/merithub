@@ -85,7 +85,7 @@ export default function DashboardLayout({
               toast({
                   variant: "destructive",
                   title: "Email Failed",
-                  description: "Could not send welcome email. Please check your credentials in the .env file.",
+                  description: "Could not send welcome email. Please try again later.",
               });
             });
         }
