@@ -44,22 +44,19 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateStudyGuideInputSchema},
   output: {schema: GenerateStudyGuideOutputSchema},
   model: 'googleai/gemini-2.0-flash',
-  prompt: `You are an expert educator and academic tutor. A student has asked for help understanding a topic.
+  prompt: `You are an expert educator and academic tutor. Your task is to generate a structured study guide for the given topic.
 
   Topic: "{{{topic}}}"
 
-  Your task is to generate a comprehensive, easy-to-understand study guide for this topic. The response must be structured to facilitate learning and retention.
-
-  The response must include:
-  1.  The original topic provided by the user.
-  2.  A clear title for the study guide.
-  3.  A brief introductory paragraph that sets the context for the topic.
-  4.  A list of exactly {{{numConcepts}}} 'Key Concepts' that act like flashcards. Each concept must have a term and its corresponding definition. If numConcepts is 0, return an empty array.
-  5.  A list of exactly {{{numQuestions}}} multiple-choice 'Practice Questions'. Each question must have:
+  You must adhere to the following output structure precisely:
+  1.  **Topic**: The original topic provided by the user.
+  2.  **Title**: A clear title for the study guide.
+  3.  **Introduction**: A brief, one-paragraph overview of the topic.
+  4.  **Key Concepts**: Generate *exactly* {{{numConcepts}}} key concepts. Do not generate more or less. If 'numConcepts' is 0, this must be an empty array.
+  5.  **Practice Questions**: Generate *exactly* {{{numQuestions}}} multiple-choice practice questions. Do not generate more or less. If 'numQuestions' is 0, this must be an empty array. Each question must contain:
       - A question text.
       - An array of exactly 4 'options'.
       - The correct 'answer', which MUST be one of the provided options.
-      If numQuestions is 0, return an empty array.
 
   Ensure the content is accurate, well-structured, and tailored for a high school or early college-level student.
   `,
