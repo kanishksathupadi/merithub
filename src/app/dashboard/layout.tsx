@@ -2,6 +2,7 @@
 "use client";
 
 import { generateAvatar } from "@/ai/flows/generate-avatar";
+import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
@@ -30,16 +31,17 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const signupData = localStorage.getItem('signupData');
+      const signupDataStr = localStorage.getItem('signupData');
       const onboardingData = localStorage.getItem('onboardingData');
       const paymentComplete = localStorage.getItem('paymentComplete');
 
-      if (!signupData) {
+      if (!signupDataStr) {
         router.push('/login');
         return;
       }
       
-      const { name } = JSON.parse(signupData);
+      const signupData = JSON.parse(signupDataStr);
+      const { name, email } = signupData;
       const firstLetter = name.charAt(0).toUpperCase();
 
       if (!onboardingData) {
@@ -63,6 +65,19 @@ export default function DashboardLayout({
                     setAvatarUrl(storedAvatar);
                 }
             });
+
+        // Send a one-time welcome email
+        const welcomeEmailSent = localStorage.getItem('welcomeEmailSent');
+        if (!welcomeEmailSent) {
+          sendWelcomeEmail({ name, email })
+            .then(() => {
+              localStorage.setItem('welcomeEmailSent', 'true');
+              console.log('Welcome email sent successfully.');
+            })
+            .catch(err => {
+              console.error("Failed to send welcome email:", err);
+            });
+        }
       }
     }
   }, [router]);
