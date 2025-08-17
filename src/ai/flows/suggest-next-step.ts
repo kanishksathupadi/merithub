@@ -60,6 +60,7 @@ const prompt = ai.definePrompt({
   input: {schema: SuggestNextStepInputSchema},
   output: {schema: SuggestNextStepOutputSchema},
   tools: [validateAcademicSubject, findOnlineResource],
+  model: 'googleai/gemini-2.0-flash',
   prompt: `You are an AI assistant designed to provide a comprehensive, long-term strategic plan for students aged 10-18 to help them discover their passions and succeed academically and in their extracurricular pursuits, ultimately preparing them for college admissions.
 
   Before providing a suggestion, you must validate that the provided academic strengths and weaknesses are real subjects or skills using the 'validateAcademicSubject' tool.
