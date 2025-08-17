@@ -2,7 +2,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { suggestNextStep, type SuggestNextStepInput } from "@/ai/flows/suggest-next-step";
+import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,11 +53,18 @@ function generateTasksFromSuggestion(suggestion: any): RoadmapTask[] {
 }
 
 function SuggestionView() {
-    const [suggestion, setSuggestion] = useState<any>(null);
+    const [suggestion, setSuggestion] = useState<SuggestNextStepOutput | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getSuggestion = async () => {
+            const cachedSuggestion = localStorage.getItem('aiSuggestion');
+            if (cachedSuggestion) {
+                setSuggestion(JSON.parse(cachedSuggestion));
+                setLoading(false);
+                return;
+            }
+
             const onboardingDataStr = localStorage.getItem('onboardingData');
             const signupDataStr = localStorage.getItem('signupData');
 
@@ -67,11 +74,14 @@ function SuggestionView() {
                 const result = await fetchSuggestion({ ...onboardingData, grade: signupData.grade });
                 setSuggestion(result);
 
-                if (localStorage.getItem('roadmapTasks') === null && result) {
+                if (result) {
+                    localStorage.setItem('aiSuggestion', JSON.stringify(result));
                     const tasks = generateTasksFromSuggestion(result);
-                    localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
-                     // Dispatch storage event to notify other components
-                    window.dispatchEvent(new Event('storage'));
+                    if (localStorage.getItem('roadmapTasks') === null) {
+                        localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
+                         // Dispatch storage event to notify other components
+                        window.dispatchEvent(new Event('storage'));
+                    }
                 }
             }
             setLoading(false);
@@ -131,7 +141,7 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-semibold">Your Dashboard</h2>
             <Button variant="ghost">View All <ArrowRight className="w-4 h-4 ml-2"/></Button>
         </div>
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${userPlan === 'elite' ? 'xl:grid-cols-5' : 'xl:grid-cols-3'} gap-4`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}>
             {dashboardTiles.map((tile) => (
                 <Link href={tile.href} key={tile.title}>
                     <Card className="hover:border-primary/50 hover:bg-primary/5 transition-colors h-full">
