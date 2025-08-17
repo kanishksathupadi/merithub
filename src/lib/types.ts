@@ -30,4 +30,10 @@ export type ForumPost = {
     tags: string[];
     replies: ForumReply[];
 }
+
+export type PracticeQuestion = {
+    question: string;
+    options: string[];
+    answer: string;
+}
     

@@ -14,6 +14,8 @@ import {z} from 'genkit';
 
 const GenerateStudyGuideInputSchema = z.object({
   topic: z.string().describe('The academic topic the user needs a study guide for.'),
+  numConcepts: z.coerce.number().min(1).max(20).describe('The number of key concepts to generate for flashcards.'),
+  numQuestions: z.coerce.number().min(1).max(20).describe('The number of practice questions to generate.'),
 });
 export type GenerateStudyGuideInput = z.infer<typeof GenerateStudyGuideInputSchema>;
 
@@ -27,7 +29,8 @@ const GenerateStudyGuideOutputSchema = z.object({
     })).describe("A list of the most important concepts and their definitions, like flashcards."),
     practiceQuestions: z.array(z.object({
         question: z.string().describe("A practice question to test understanding."),
-        answer: z.string().describe("The correct answer to the practice question."),
+        options: z.array(z.string()).describe("A list of 4 multiple-choice options."),
+        answer: z.string().describe("The correct answer from the options list."),
     })).describe("A set of practice questions to help the user test their knowledge."),
 });
 export type GenerateStudyGuideOutput = z.infer<typeof GenerateStudyGuideOutputSchema>;
@@ -51,8 +54,11 @@ const prompt = ai.definePrompt({
   1.  The original topic provided by the user.
   2.  A clear title for the study guide.
   3.  A brief introductory paragraph that sets the context for the topic.
-  4.  A list of "Key Concepts" that act like flashcards. Each concept should have a term and its corresponding definition.
-  5.  A list of "Practice Questions" with their correct answers to allow the student to self-assess their understanding.
+  4.  A list of exactly {{{numConcepts}}} "Key Concepts" that act like flashcards. Each concept must have a term and its corresponding definition.
+  5.  A list of exactly {{{numQuestions}}} multiple-choice "Practice Questions". Each question must have:
+      - A question text.
+      - An array of exactly 4 `options`.
+      - The correct `answer`, which MUST be one of the provided options.
 
   Ensure the content is accurate, well-structured, and tailored for a high school or early college-level student.
   `,
