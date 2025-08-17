@@ -84,8 +84,8 @@ export default function DashboardLayout({
               console.error("Failed to send welcome email:", err);
               toast({
                   variant: "destructive",
-                  title: "Email Failed",
-                  description: "Could not send welcome email. Please try again later.",
+                  title: "Email Failed to Send",
+                  description: "Could not send welcome email. The server may be missing required credentials.",
               });
             });
         }

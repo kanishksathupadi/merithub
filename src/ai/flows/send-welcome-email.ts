@@ -2,14 +2,15 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for sending a welcome email.
+ * @fileOverview An AI agent for sending a welcome email using a real email service.
  *
  * - sendWelcomeEmail - A function that sends a welcome email.
  * - SendWelcomeEmailInput - The input type for the function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import nodemailer from 'nodemailer';
 
 const SendWelcomeEmailInputSchema = z.object({
   name: z.string().describe('The name of the user.'),
@@ -21,24 +22,50 @@ export async function sendWelcomeEmail(input: SendWelcomeEmailInput): Promise<vo
   await sendWelcomeEmailFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'sendWelcomeEmailPrompt',
-  input: {schema: SendWelcomeEmailInputSchema},
-  model: 'googleai/gemini-2.0-flash',
-  prompt: `You are an email sending service. A user has just signed up. Generate a log message confirming that a welcome email has been sent. The log should be a single line. For example: "Simulated sending welcome email to name at email."`,
-});
-
-
 const sendWelcomeEmailFlow = ai.defineFlow(
   {
     name: 'sendWelcomeEmailFlow',
     inputSchema: SendWelcomeEmailInputSchema,
     outputSchema: z.void(),
   },
-  async (input) => {
-    // In a real application, this is where you would integrate with an email sending service like SendGrid or AWS SES.
-    // For this demo, we are just logging the action to the console via the LLM prompt.
-    const llmResponse = await prompt(input);
-    console.log(`Simulated sending welcome email to ${input.email}. Response: ${llmResponse.text}`);
+  async ({ name, email }) => {
+    // Check if the email address ends with @gmail.com
+    if (!email.endsWith('@gmail.com')) {
+        console.log(`Skipping email to ${email} as it is not a Gmail address.`);
+        return;
+    }
+
+    const { GMAIL_EMAIL, GMAIL_APP_PASSWORD } = process.env;
+
+    if (!GMAIL_EMAIL || !GMAIL_APP_PASSWORD) {
+        console.error('Missing GMAIL_EMAIL or GMAIL_APP_PASSWORD environment variables.');
+        throw new Error('Email credentials are not configured on the server.');
+    }
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: GMAIL_EMAIL,
+            pass: GMAIL_APP_PASSWORD,
+        },
+    });
+
+    const mailOptions = {
+        from: `"PinnaclePath" <${GMAIL_EMAIL}>`,
+        to: email,
+        subject: 'Welcome to PinnaclePath!',
+        text: `Hi ${name}!\n\nThanks for using our product!`,
+        html: `<h3>Hi ${name}!</h3><p>Thanks for using our product!</p>`,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`Welcome email sent to ${email}`);
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // We throw an error so the calling function knows something went wrong.
+        // In a real-world app, you might want more robust error handling, like a retry queue.
+        throw new Error('Failed to send welcome email.');
+    }
   }
 );
