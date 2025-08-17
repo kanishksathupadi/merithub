@@ -53,13 +53,13 @@ export default function Home() {
                 <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
                   <Link href="/signup?plan=elite">
                     <Rocket className="mr-2 h-5 w-5" />
-                    Begin Your Ascent
+                    Get Started with Elite
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild className="border-border hover:bg-accent/10">
                   <Link href="/signup?plan=standard">
                     <LogIn className="mr-2 h-5 w-5" />
-                    Go Standard
+                    Get Started with Standard
                   </Link>
                 </Button>
               </div>
@@ -267,3 +267,4 @@ export default function Home() {
     
 
     
+
