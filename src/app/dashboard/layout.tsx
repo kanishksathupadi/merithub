@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/com
 import { Toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 function ConditionalSidebarTrigger() {
     const { open, isMobile } = useSidebar();
@@ -26,6 +27,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isVerified, setIsVerified] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
@@ -73,14 +75,23 @@ export default function DashboardLayout({
             .then(() => {
               localStorage.setItem('welcomeEmailSent', 'true');
               console.log('Welcome email sent successfully.');
+              toast({
+                  title: "Welcome Email Sent!",
+                  description: "Check your inbox for a welcome message.",
+              });
             })
             .catch(err => {
               console.error("Failed to send welcome email:", err);
+              toast({
+                  variant: "destructive",
+                  title: "Email Failed",
+                  description: "Could not send welcome email. Please check your credentials in the .env file.",
+              });
             });
         }
       }
     }
-  }, [router]);
+  }, [router, toast]);
 
   if (!isVerified) {
     return (
