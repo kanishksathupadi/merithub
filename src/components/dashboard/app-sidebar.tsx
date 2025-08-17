@@ -9,9 +9,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import React, { useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  avatarUrl: string | null;
+}
+
+export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const [userName, setUserName] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(propAvatarUrl);
 
   useEffect(() => {
       const name = localStorage.getItem('userName');
@@ -22,7 +27,22 @@ export function AppSidebar() {
       if (plan) {
         setUserPlan(plan);
       }
+      const storedAvatar = localStorage.getItem('userAvatar');
+      if (storedAvatar) {
+        setAvatarUrl(storedAvatar);
+      }
+      
+      const handleStorageChange = () => {
+        const newAvatar = localStorage.getItem('userAvatar');
+        setAvatarUrl(newAvatar);
+      }
+      window.addEventListener('storage', handleStorageChange);
+      return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  useEffect(() => {
+    setAvatarUrl(propAvatarUrl);
+  }, [propAvatarUrl]);
 
   const displayName = userName || "User";
   const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
@@ -83,7 +103,7 @@ export function AppSidebar() {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-full justify-start items-center gap-2 p-2 h-auto">
                      <Avatar className="w-8 h-8">
-                        <AvatarImage src={`https://placehold.co/40x40.png`} alt={displayName} data-ai-hint="profile picture" />
+                        <AvatarImage src={avatarUrl ?? undefined} alt={displayName} />
                         <AvatarFallback>{avatarFallback}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start">

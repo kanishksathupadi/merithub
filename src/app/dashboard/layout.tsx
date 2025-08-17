@@ -1,6 +1,7 @@
 
 "use client";
 
+import { generateAvatar } from "@/ai/flows/generate-avatar";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,6 +15,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const [isVerified, setIsVerified] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -23,18 +25,35 @@ export default function DashboardLayout({
 
       if (!signupData) {
         router.push('/login');
-      } else if (!onboardingData) {
+        return;
+      }
+      
+      const { name } = JSON.parse(signupData);
+      const firstLetter = name.charAt(0).toUpperCase();
+
+      if (!onboardingData) {
         router.push('/onboarding');
       } else if (!paymentComplete) {
         router.push('/payment');
       } else {
         setIsVerified(true);
+        const storedAvatar = localStorage.getItem('userAvatar');
+        if (storedAvatar) {
+            setAvatarUrl(storedAvatar);
+        } else {
+            generateAvatar({ letter: firstLetter })
+                .then(result => {
+                    localStorage.setItem('userAvatar', result.imageUrl);
+                    setAvatarUrl(result.imageUrl);
+                    window.dispatchEvent(new Event('storage')); // Notify other components
+                })
+                .catch(err => console.error("Failed to generate avatar", err));
+        }
       }
     }
   }, [router]);
 
   if (!isVerified) {
-    // You can return a loader here while verification is in progress
     return (
         <div className="flex items-center justify-center min-h-screen">
             <p>Loading...</p>
@@ -46,7 +65,7 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <AppSidebar />
+        <AppSidebar avatarUrl={avatarUrl} />
         <SidebarInset>
             <header className="p-4 sm:p-6 lg:p-8 flex items-center gap-4 border-b">
                 <SidebarTrigger />

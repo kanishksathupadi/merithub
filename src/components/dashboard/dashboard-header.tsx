@@ -8,19 +8,32 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function DashboardHeader() {
     const [userName, setUserName] = useState<string | null>(null);
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const name = localStorage.getItem('userName');
         if (name) {
             setUserName(name);
         }
+        const storedAvatar = localStorage.getItem('userAvatar');
+        if (storedAvatar) {
+            setAvatarUrl(storedAvatar);
+        }
+
+        const handleStorageChange = () => {
+          const newAvatar = localStorage.getItem('userAvatar');
+          setAvatarUrl(newAvatar);
+        }
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+
     }, []);
 
     const displayName = userName || "User";
     const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
 
     return (
-        <header className="flex items-center justify-between">
+        <header className="flex items-center justify-between py-4">
             <div>
                 <h1 className="text-3xl font-bold">Welcome, {displayName}!</h1>
                 <p className="text-muted-foreground">Here is your personalized dashboard.</p>
@@ -31,7 +44,7 @@ export function DashboardHeader() {
                     <span className="sr-only">Notifications</span>
                 </Button>
                 <Avatar>
-                    <AvatarImage src={`https://placehold.co/40x40.png`} alt="User avatar" />
+                    <AvatarImage src={avatarUrl ?? undefined} alt="User avatar" />
                     <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
             </div>
