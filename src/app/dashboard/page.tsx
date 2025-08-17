@@ -55,10 +55,18 @@ function generateTasksFromSuggestion(suggestion: any): RoadmapTask[] {
 function SuggestionView() {
     const [suggestion, setSuggestion] = useState<SuggestNextStepOutput | null>(null);
     const [loading, setLoading] = useState(true);
+    const [userGrade, setUserGrade] = useState<number | null>(null);
 
     useEffect(() => {
         const getSuggestion = async () => {
             const cachedSuggestion = localStorage.getItem('aiSuggestion');
+            const signupDataStr = localStorage.getItem('signupData');
+            
+            if (signupDataStr) {
+                const signupData = JSON.parse(signupDataStr);
+                setUserGrade(signupData.grade);
+            }
+            
             if (cachedSuggestion) {
                 setSuggestion(JSON.parse(cachedSuggestion));
                 setLoading(false);
@@ -66,7 +74,6 @@ function SuggestionView() {
             }
 
             const onboardingDataStr = localStorage.getItem('onboardingData');
-            const signupDataStr = localStorage.getItem('signupData');
 
             if (onboardingDataStr && signupDataStr) {
                 const onboardingData = JSON.parse(onboardingDataStr);
@@ -94,11 +101,11 @@ function SuggestionView() {
         return <Skeleton className="h-64 w-full" />;
     }
 
-    if (!suggestion) {
+    if (!suggestion || userGrade === null) {
         return <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>;
     }
 
-    return <NextStepCard suggestion={suggestion} />;
+    return <NextStepCard suggestion={suggestion} userGrade={userGrade} />;
 }
 
 const standardTiles = [

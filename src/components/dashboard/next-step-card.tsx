@@ -3,14 +3,14 @@
 
 import type { SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Lightbulb, BookOpen, User, Star, CheckCircle } from "lucide-react";
 import type { RoadmapTask } from "@/lib/types";
 import { v4 as uuidv4 } from 'uuid';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type NextStepCardProps = {
   suggestion: SuggestNextStepOutput;
+  userGrade: number;
 };
 
 function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): RoadmapTask[] {
@@ -40,7 +40,7 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
     return tasks;
 }
 
-export function NextStepCard({ suggestion }: NextStepCardProps) {
+export function NextStepCard({ suggestion, userGrade }: NextStepCardProps) {
   const ensureArray = (items: string | string[] | undefined) => {
     if (Array.isArray(items)) return items;
     if (typeof items === 'string') return [items];
@@ -48,8 +48,6 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
   };
 
   useEffect(() => {
-    // This component is now responsible for populating localStorage
-    // with the tasks generated from the server-fetched suggestion.
     if (typeof window !== 'undefined' && suggestion) {
         if (localStorage.getItem('roadmapTasks') === null) {
             const tasks = generateTasksFromSuggestion(suggestion);
@@ -58,6 +56,8 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
     }
   }, [suggestion]);
 
+  const currentGradeString = `${userGrade}th Grade`;
+  const currentPlan = suggestion.plan.find(p => p.grade.startsWith(userGrade.toString()));
 
   return (
     <Card className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20">
@@ -66,26 +66,23 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
             <div>
                 <CardTitle className="text-2xl flex items-center gap-2">
                     <Lightbulb className="text-primary w-7 h-7" />
-                    Your Strategic Plan: {suggestion.title}
+                    Your Next Steps for {currentGradeString}
                 </CardTitle>
-                <CardDescription className="mt-2">{suggestion.introduction}</CardDescription>
+                <CardDescription className="mt-2">{currentPlan?.focus || suggestion.introduction}</CardDescription>
             </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <Accordion type="single" collapsible className="w-full" defaultValue={`item-${suggestion.plan[0]?.grade}`}>
-          {suggestion.plan.map((item, index) => (
-            <AccordionItem value={`item-${item.grade}`} key={index}>
-              <AccordionTrigger className="text-lg font-semibold">
-                {item.grade}: {item.focus}
-              </AccordionTrigger>
-              <AccordionContent className="space-y-4 pl-2">
+      <CardContent className="space-y-4 pl-8 pr-6">
+        {!currentPlan ? (
+            <p className="text-muted-foreground">Your detailed plan is being prepared. In the meantime, focus on your current studies!</p>
+        ) : (
+            <>
                 <div className="flex items-start gap-4">
                   <BookOpen className="w-5 h-5 mt-1 text-primary"/>
                   <div>
                     <h4 className="font-semibold">Academics</h4>
                     <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {ensureArray(item.academics).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                        {ensureArray(currentPlan.academics).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
                     </ul>
                   </div>
                 </div>
@@ -94,7 +91,7 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
                   <div>
                     <h4 className="font-semibold">Extracurriculars</h4>
                     <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {ensureArray(item.extracurriculars).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                        {ensureArray(currentPlan.extracurriculars).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
                     </ul>
                   </div>
                 </div>
@@ -103,14 +100,12 @@ export function NextStepCard({ suggestion }: NextStepCardProps) {
                   <div>
                     <h4 className="font-semibold">Skill Building</h4>
                     <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {ensureArray(item.skillBuilding).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
+                        {ensureArray(currentPlan.skillBuilding).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
                     </ul>
                   </div>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+            </>
+        )}
       </CardContent>
     </Card>
   );
