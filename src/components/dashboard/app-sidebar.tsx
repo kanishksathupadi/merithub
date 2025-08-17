@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronDown } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -115,7 +115,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                     <div className={cn("flex flex-col items-start", !open && "hidden")}>
                         <span className="font-medium">{displayName}</span>
                     </div>
-                    <ChevronDown className={cn("w-4 h-4 ml-auto", !open && "hidden")} />
+                    <ChevronUp className={cn("w-4 h-4 ml-auto", !open && "hidden")} />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[calc(var(--sidebar-width)_-_1rem)] mb-2" side="top" align="start">
