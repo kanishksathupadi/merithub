@@ -39,6 +39,7 @@ const prompt = ai.definePrompt({
   name: 'generateStudyGuidePrompt',
   input: {schema: GenerateStudyGuideInputSchema},
   output: {schema: GenerateStudyGuideOutputSchema},
+  model: 'googleai/gemini-2.0-flash',
   prompt: `You are an expert educator and academic tutor. A student has asked for help understanding a topic.
 
   Topic: "{{{topic}}}"
