@@ -41,8 +41,11 @@ export default function PostDetailPage() {
             setPost(foundPost);
             setReplies(foundPost.replies || []);
           } else {
+            // If post not found, redirect to forum page
             router.push('/dashboard/q-and-a-forum');
           }
+        } else {
+            router.push('/dashboard/q-and-a-forum');
         }
       } catch (error) {
         console.error("Failed to load post", error);
@@ -82,16 +85,20 @@ export default function PostDetailPage() {
     setReplies(updatedReplies);
 
     // Update localStorage
-    const savedPosts = localStorage.getItem("forumPosts");
-    if (savedPosts) {
-        let posts: ForumPost[] = JSON.parse(savedPosts);
-        posts = posts.map(p => {
-            if (p.id === post.id) {
-                return { ...p, replies: updatedReplies };
-            }
-            return p;
-        });
-        localStorage.setItem("forumPosts", JSON.stringify(posts));
+    try {
+        const savedPosts = localStorage.getItem("forumPosts");
+        if (savedPosts) {
+            let posts: ForumPost[] = JSON.parse(savedPosts);
+            posts = posts.map(p => {
+                if (p.id === post.id) {
+                    return { ...p, replies: updatedReplies };
+                }
+                return p;
+            });
+            localStorage.setItem("forumPosts", JSON.stringify(posts));
+        }
+    } catch (error) {
+        console.error("Failed to save reply", error);
     }
     
     toast({
