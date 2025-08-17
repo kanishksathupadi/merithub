@@ -61,7 +61,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
         </div>
         <SidebarTrigger />
       </SidebarHeader>
-      <SidebarMenu className="flex-1 px-2">
+      <SidebarMenu className="flex-1 px-2 pt-4">
         <SidebarMenuItem>
           <SidebarMenuButton asChild tooltip="Dashboard">
             <Link href="/dashboard"><LayoutDashboard/>Dashboard</Link>
