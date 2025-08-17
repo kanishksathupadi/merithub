@@ -24,6 +24,7 @@ export async function sendWelcomeEmail(input: SendWelcomeEmailInput): Promise<vo
 const prompt = ai.definePrompt({
   name: 'sendWelcomeEmailPrompt',
   input: {schema: SendWelcomeEmailInputSchema},
+  model: 'googleai/gemini-2.0-flash',
   prompt: `You are a friendly customer service agent. Your task is to send a welcome email to a new user.
 
   User's Name: {{{name}}}
