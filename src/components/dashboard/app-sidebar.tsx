@@ -54,11 +54,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     <Sidebar>
       <SidebarHeader className={cn("flex items-center gap-2", open ? "justify-between" : "justify-center")}>
         <div className={cn("flex items-center gap-2", !open && "hidden")}>
-            <SidebarTrigger />
             <Link href="/dashboard" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
                 <Rocket className="w-8 h-8 text-primary" />
                 <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
             </Link>
+            <SidebarTrigger />
         </div>
         <SidebarTrigger className={cn(open && "hidden")} />
       </SidebarHeader>
