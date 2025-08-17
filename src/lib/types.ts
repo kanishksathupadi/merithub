@@ -1,4 +1,5 @@
 
+
 export type RoadmapTask = {
     id: string;
     title: string;
@@ -9,4 +10,24 @@ export type RoadmapTask = {
     relatedResources?: { title: string; url: string }[];
 };
 
+export type ForumReply = {
+    id: string;
+    user: string;
+    avatar: string;
+    hint: string;
+    content: string;
+    timestamp: string;
+}
+
+export type ForumPost = {
+    id: string;
+    user: string;
+    avatar: string;
+    hint: string;
+    title: string;
+    content: string;
+    upvotes: number;
+    tags: string[];
+    replies: ForumReply[];
+}
     

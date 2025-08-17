@@ -14,14 +14,17 @@ import { ArrowUp, MessageSquare, PlusCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
+import { v4 as uuidv4 } from "uuid";
+import type { ForumPost } from "@/lib/types";
+import Link from "next/link";
 
-const initialForumPosts = [
+const initialForumPosts: Omit<ForumPost, 'id' | 'replies'>[] = [
   {
     user: "Jessica S.",
     avatar: "JS",
     hint: "female student",
     title: "Best way to prepare for the SAT essay section?",
-    replies: 12,
+    content: "I'm finding it hard to structure my essays for the SAT. Does anyone have a good framework or resources they'd recommend? I'm aiming for a high score but my practice essays feel a bit weak.",
     upvotes: 45,
     tags: ["SAT", "Essays"],
   },
@@ -30,7 +33,7 @@ const initialForumPosts = [
     avatar: "MI",
     hint: "male student",
     title: "Has anyone participated in the Google Science Fair? Looking for tips.",
-    replies: 8,
+    content: "I'm thinking of entering the Google Science Fair this year. It seems like a huge undertaking. If anyone has gone through it, I'd love to hear about your experience, how you picked a topic, and how you managed the project timeline.",
     upvotes: 72,
     tags: ["STEM", "Competitions"],
   },
@@ -39,7 +42,7 @@ const initialForumPosts = [
     avatar: "EA",
     hint: "student face",
     title: "How to balance a heavy AP course load with extracurriculars?",
-    replies: 25,
+    content: "Next year I'm taking 4 APs and I'm also captain of the debate team and in the school orchestra. I'm worried about burnout. How do you all stay organized and make sure you have time for everything, including sleep?",
     upvotes: 102,
     tags: ["Academics", "Time Management"],
   },
@@ -48,7 +51,7 @@ const initialForumPosts = [
     avatar: "CL",
     hint: "male student",
     title: "What are some unique extracurriculars for someone interested in medicine?",
-    replies: 15,
+    content: "I want to go pre-med in college, and I already volunteer at the local hospital. I'm looking for something more unique to add to my application. Any ideas for extracurriculars that stand out for a future doctor?",
     upvotes: 58,
     tags: ["Extracurriculars", "Medicine"],
   }
@@ -61,7 +64,7 @@ const postSchema = z.object({
 
 
 export default function QandAForumPage() {
-  const [forumPosts, setForumPosts] = useState(initialForumPosts);
+  const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
@@ -71,11 +74,15 @@ export default function QandAForumPage() {
       if (savedPosts) {
         setForumPosts(JSON.parse(savedPosts));
       } else {
-        localStorage.setItem("forumPosts", JSON.stringify(initialForumPosts));
+        const postsWithIds = initialForumPosts.map(post => ({ ...post, id: uuidv4(), replies: [] }));
+        setForumPosts(postsWithIds);
+        localStorage.setItem("forumPosts", JSON.stringify(postsWithIds));
       }
     } catch (error) {
         console.error("Failed to parse forum posts from localStorage", error);
-        localStorage.setItem("forumPosts", JSON.stringify(initialForumPosts));
+        const postsWithIds = initialForumPosts.map(post => ({ ...post, id: uuidv4(), replies: [] }));
+        setForumPosts(postsWithIds);
+        localStorage.setItem("forumPosts", JSON.stringify(postsWithIds));
     }
   }, []);
 
@@ -97,12 +104,14 @@ export default function QandAForumPage() {
 
     const userAvatar = userName.charAt(0).toUpperCase();
 
-    const newPost = {
+    const newPost: ForumPost = {
+      id: uuidv4(),
       user: userName,
       avatar: userAvatar,
       hint: "student face",
       title: values.title,
-      replies: 0,
+      content: values.content,
+      replies: [],
       upvotes: 0,
       tags: ["New", "Discussion"], // We can add tag selection later
     };
@@ -183,30 +192,32 @@ export default function QandAForumPage() {
       <Input placeholder="Search the forum..." className="max-w-sm" />
 
       <div className="space-y-4">
-        {forumPosts.map((post, index) => (
-          <Card key={index} className="hover:border-primary/50 transition-colors">
-            <CardHeader className="flex flex-row items-center gap-4 p-4">
-              <div className="flex flex-col items-center">
-                <Button variant="ghost" size="sm" className="flex items-center gap-1"><ArrowUp className="w-4 h-4"/>{post.upvotes}</Button>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg">{post.title}</h3>
-                <div className="flex items-center text-sm text-muted-foreground mt-1 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="w-6 h-6">
-                      <AvatarImage src={`https://placehold.co/40x40.png`} data-ai-hint={post.hint} />
-                      <AvatarFallback>{post.avatar}</AvatarFallback>
-                    </Avatar>
-                    <span>{post.user}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MessageSquare className="w-4 h-4" />
-                    <span>{post.replies} replies</span>
+        {forumPosts.map((post) => (
+          <Link href={`/dashboard/q-and-a-forum/${post.id}`} key={post.id} className="block">
+            <Card className="hover:border-primary/50 transition-colors">
+              <CardHeader className="flex flex-row items-center gap-4 p-4">
+                <div className="flex flex-col items-center">
+                  <Button variant="ghost" size="sm" className="flex items-center gap-1"><ArrowUp className="w-4 h-4"/>{post.upvotes}</Button>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg">{post.title}</h3>
+                  <div className="flex items-center text-sm text-muted-foreground mt-1 gap-4">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-6 h-6">
+                        <AvatarImage src={`https://placehold.co/40x40.png`} data-ai-hint={post.hint} />
+                        <AvatarFallback>{post.avatar}</AvatarFallback>
+                      </Avatar>
+                      <span>{post.user}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MessageSquare className="w-4 h-4" />
+                      <span>{post.replies?.length || 0} replies</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardHeader>
-          </Card>
+              </CardHeader>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
