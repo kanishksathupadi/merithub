@@ -46,18 +46,21 @@ export default function DashboardLayout({
         router.push('/payment');
       } else {
         setIsVerified(true);
-        const storedAvatar = localStorage.getItem('userAvatar');
-        if (storedAvatar) {
-            setAvatarUrl(storedAvatar);
-        } else {
-            generateAvatar({ letter: firstLetter })
-                .then(result => {
-                    localStorage.setItem('userAvatar', result.imageUrl);
-                    setAvatarUrl(result.imageUrl);
-                    window.dispatchEvent(new Event('storage')); // Notify other components
-                })
-                .catch(err => console.error("Failed to generate avatar", err));
-        }
+        // Force a one-time regeneration of the avatar for the current user
+        generateAvatar({ letter: firstLetter })
+            .then(result => {
+                localStorage.setItem('userAvatar', result.imageUrl);
+                setAvatarUrl(result.imageUrl);
+                window.dispatchEvent(new Event('storage')); // Notify other components
+            })
+            .catch(err => {
+                console.error("Failed to generate avatar", err)
+                // Fallback to checking local storage if generation fails
+                const storedAvatar = localStorage.getItem('userAvatar');
+                if (storedAvatar) {
+                    setAvatarUrl(storedAvatar);
+                }
+            });
       }
     }
   }, [router]);
