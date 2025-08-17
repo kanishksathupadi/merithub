@@ -12,7 +12,9 @@ function ConditionalSidebarTrigger() {
     const { open, isMobile } = useSidebar();
     if (open || isMobile) return null;
     return (
-        <SidebarTrigger />
+        <div className="fixed top-4 left-4 z-50">
+            <SidebarTrigger />
+        </div>
     );
 }
 
@@ -79,13 +81,11 @@ export default function DashboardLayout({
       <div className="flex min-h-screen">
         <AppSidebar avatarUrl={avatarUrl} />
         <SidebarInset>
-          <div className="p-4 sm:p-6 lg:p-8 flex-1">
-            <div className="mb-4">
-               <ConditionalSidebarTrigger />
+            <ConditionalSidebarTrigger />
+            <div className="p-4 sm:p-6 lg:p-8 flex-1">
+                {children}
             </div>
-            {children}
-          </div>
-          <Toaster />
+            <Toaster />
         </SidebarInset>
       </div>
     </SidebarProvider>

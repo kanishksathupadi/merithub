@@ -79,7 +79,9 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
         </SidebarMenuItem>
         
         <SidebarGroup>
-          <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Resources</h3>
+          {userPlan === 'elite' && (
+            <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Resources</h3>
+          )}
           {userPlan === 'elite' && (
             <>
               <SidebarMenuItem>
@@ -135,5 +137,3 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     </Sidebar>
   );
 }
-
-    
