@@ -54,26 +54,23 @@ function generateTasksFromSuggestion(suggestion: any): RoadmapTask[] {
 
 function SuggestionView() {
     const [suggestion, setSuggestion] = useState<SuggestNextStepOutput | null>(null);
+    const [tasks, setTasks] = useState<RoadmapTask[]>([]);
     const [loading, setLoading] = useState(true);
-    const [userGrade, setUserGrade] = useState<number | null>(null);
 
     useEffect(() => {
-        const getSuggestion = async () => {
+        const getSuggestionAndTasks = async () => {
             const cachedSuggestion = localStorage.getItem('aiSuggestion');
-            const signupDataStr = localStorage.getItem('signupData');
+            const cachedTasks = localStorage.getItem('roadmapTasks');
             
-            if (signupDataStr) {
-                const signupData = JSON.parse(signupDataStr);
-                setUserGrade(signupData.grade);
-            }
-            
-            if (cachedSuggestion) {
+            if (cachedSuggestion && cachedTasks) {
                 setSuggestion(JSON.parse(cachedSuggestion));
+                setTasks(JSON.parse(cachedTasks));
                 setLoading(false);
                 return;
             }
 
             const onboardingDataStr = localStorage.getItem('onboardingData');
+            const signupDataStr = localStorage.getItem('signupData');
 
             if (onboardingDataStr && signupDataStr) {
                 const onboardingData = JSON.parse(onboardingDataStr);
@@ -83,29 +80,42 @@ function SuggestionView() {
 
                 if (result) {
                     localStorage.setItem('aiSuggestion', JSON.stringify(result));
-                    const tasks = generateTasksFromSuggestion(result);
-                    if (localStorage.getItem('roadmapTasks') === null) {
-                        localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
-                         // Dispatch storage event to notify other components
-                        window.dispatchEvent(new Event('storage'));
-                    }
+                    const newTasks = generateTasksFromSuggestion(result);
+                    setTasks(newTasks);
+                    localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
+                    // Dispatch storage event to notify other components
+                    window.dispatchEvent(new Event('storage'));
                 }
             }
             setLoading(false);
         };
 
-        getSuggestion();
+        getSuggestionAndTasks();
+    }, []);
+    
+    // This effect listens for task updates from other components (like the roadmap page)
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const storedTasks = localStorage.getItem('roadmapTasks');
+            if (storedTasks) {
+                setTasks(JSON.parse(storedTasks));
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
     if (loading) {
-        return <Skeleton className="h-64 w-full" />;
+        return <Skeleton className="h-48 w-full" />;
     }
 
-    if (!suggestion || userGrade === null) {
+    if (!suggestion || tasks.length === 0) {
         return <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>;
     }
+    
+    const nextTask = tasks.find(task => !task.completed);
 
-    return <NextStepCard suggestion={suggestion} userGrade={userGrade} />;
+    return <NextStepCard nextTask={nextTask} />;
 }
 
 const standardTiles = [
@@ -138,7 +148,7 @@ export default function DashboardPage() {
       <DashboardHeader />
 
       <section>
-        <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+        <Suspense fallback={<Skeleton className="h-48 w-full" />}>
             <SuggestionView />
         </Suspense>
       </section>

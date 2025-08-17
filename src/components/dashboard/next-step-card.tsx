@@ -1,64 +1,52 @@
 
 "use client";
 
-import type { SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Lightbulb, BookOpen, User, Star, CheckCircle } from "lucide-react";
+import { Lightbulb, CheckCircle, ArrowRight, BookOpen } from "lucide-react";
 import type { RoadmapTask } from "@/lib/types";
-import { v4 as uuidv4 } from 'uuid';
-import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import { Badge } from "../ui/badge";
 
 type NextStepCardProps = {
-  suggestion: SuggestNextStepOutput;
-  userGrade: number;
+  nextTask: RoadmapTask | undefined;
 };
 
-function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): RoadmapTask[] {
-    const tasks: RoadmapTask[] = [];
-    suggestion.plan.forEach(planItem => {
-        const createTasks = (items: string | string[], category: RoadmapTask['category']) => {
-            const itemsArray = Array.isArray(items) ? items : [items];
-            itemsArray.forEach(item => {
-                if (typeof item !== 'string') return;
-                const [title, ...descriptionParts] = item.split(':');
-                const description = descriptionParts.join(':').trim();
-                tasks.push({
-                    id: uuidv4(),
-                    title: title.trim(),
-                    description: description || `Complete the task: ${title.trim()}`,
-                    category,
-                    grade: planItem.grade,
-                    completed: false,
-                });
-            });
-        };
-
-        createTasks(planItem.academics, 'Academics');
-        createTasks(planItem.extracurriculars, 'Extracurriculars');
-        createTasks(planItem.skillBuilding, 'Skill Building');
-    });
-    return tasks;
-}
-
-export function NextStepCard({ suggestion, userGrade }: NextStepCardProps) {
-  const ensureArray = (items: string | string[] | undefined) => {
-    if (Array.isArray(items)) return items;
-    if (typeof items === 'string') return [items];
-    return [];
-  };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && suggestion) {
-        if (localStorage.getItem('roadmapTasks') === null) {
-            const tasks = generateTasksFromSuggestion(suggestion);
-            localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
-        }
+const getCategoryColor = (category: RoadmapTask['category']) => {
+    switch(category) {
+        case 'Academics': return 'bg-blue-500';
+        case 'Extracurriculars': return 'bg-green-500';
+        case 'Competitions & Events': return 'bg-purple-500';
+        case 'Skill Building': return 'bg-yellow-500';
+        default: return 'bg-gray-500';
     }
-  }, [suggestion]);
+  }
 
-  const currentGradeString = `${userGrade}th Grade`;
-  const currentPlan = suggestion.plan.find(p => p.grade.startsWith(userGrade.toString()));
-
+export function NextStepCard({ nextTask }: NextStepCardProps) {
+  
+  if (!nextTask) {
+    return (
+        <Card className="bg-gradient-to-br from-green-500/10 via-background to-background border-green-500/20">
+            <CardHeader>
+                <CardTitle className="text-2xl flex items-center gap-2">
+                <CheckCircle className="text-green-500 w-7 h-7" />
+                All Tasks Completed!
+                </CardTitle>
+                <CardDescription className="mt-2">
+                    You've completed all the steps in your current roadmap. Great job! You can add custom tasks or wait for your plan to be updated for the next grade.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button asChild>
+                    <Link href="/dashboard/roadmap">
+                        Review Your Roadmap <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                </Button>
+            </CardContent>
+        </Card>
+    )
+  }
+  
   return (
     <Card className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20">
       <CardHeader>
@@ -66,46 +54,26 @@ export function NextStepCard({ suggestion, userGrade }: NextStepCardProps) {
             <div>
                 <CardTitle className="text-2xl flex items-center gap-2">
                     <Lightbulb className="text-primary w-7 h-7" />
-                    Your Next Steps for {currentGradeString}
+                    Your Next Step
                 </CardTitle>
-                <CardDescription className="mt-2">{currentPlan?.focus || suggestion.introduction}</CardDescription>
+                <CardDescription className="mt-2">Here's the next task on your personalized roadmap to success.</CardDescription>
             </div>
+             <Badge variant="outline">
+                <span className={`w-2 h-2 mr-2 rounded-full ${getCategoryColor(nextTask.category)}`}></span>
+                {nextTask.category}
+            </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4 pl-8 pr-6">
-        {!currentPlan ? (
-            <p className="text-muted-foreground">Your detailed plan is being prepared. In the meantime, focus on your current studies!</p>
-        ) : (
-            <>
-                <div className="flex items-start gap-4">
-                  <BookOpen className="w-5 h-5 mt-1 text-primary"/>
-                  <div>
-                    <h4 className="font-semibold">Academics</h4>
-                    <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {ensureArray(currentPlan.academics).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
-                    </ul>
-                  </div>
-                </div>
-                 <div className="flex items-start gap-4">
-                  <User className="w-5 h-5 mt-1 text-primary"/>
-                  <div>
-                    <h4 className="font-semibold">Extracurriculars</h4>
-                    <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {ensureArray(currentPlan.extracurriculars).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
-                    </ul>
-                  </div>
-                </div>
-                 <div className="flex items-start gap-4">
-                  <Star className="w-5 h-5 mt-1 text-primary"/>
-                  <div>
-                    <h4 className="font-semibold">Skill Building</h4>
-                    <ul className="list-none space-y-1 mt-1 text-muted-foreground">
-                        {ensureArray(currentPlan.skillBuilding).map((task, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 mt-1 text-green-500 shrink-0"/><span>{task}</span></li>)}
-                    </ul>
-                  </div>
-                </div>
-            </>
-        )}
+      <CardContent className="space-y-4">
+        <div className="p-4 rounded-lg bg-background/50">
+            <h3 className="font-bold text-xl text-primary">{nextTask.title}</h3>
+            <p className="text-muted-foreground mt-1">{nextTask.description}</p>
+        </div>
+        <Button asChild>
+          <Link href="/dashboard/roadmap">
+            View Full Roadmap <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </Button>
       </CardContent>
     </Card>
   );
