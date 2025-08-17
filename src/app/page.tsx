@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap } from "lucide-react";
 import Image from "next/image";
@@ -62,7 +63,7 @@ export default function Home() {
             </div>
             <div className="mt-16">
                <Image
-                src="https://placehold.co/1200x400.png"
+                src="https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=2070&auto=format&fit=crop"
                 alt="A winding path leading towards a bright, successful future, representing a student's journey."
                 width={1200}
                 height={400}
