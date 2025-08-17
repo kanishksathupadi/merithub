@@ -228,7 +228,9 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Progress Tracking</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Basic Opportunity Matching</li>
                         </ul>
-                        <Button variant="outline" className="w-full mt-8 border-border hover:bg-accent/10">Get Started</Button>
+                        <Button asChild variant="outline" className="w-full mt-8 border-border hover:bg-accent/10">
+                           <Link href="/signup">Choose Standard</Link>
+                        </Button>
                     </div>
                     <div className="p-8 bg-primary/10 rounded-xl shadow-lg border border-primary flex flex-col relative">
                          <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
@@ -242,7 +244,9 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Elite Opportunity Network Access</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
                         </ul>
-                        <Button className="w-full mt-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">Choose Elite</Button>
+                        <Button asChild className="w-full mt-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
+                            <Link href="/signup">Choose Elite</Link>
+                        </Button>
                     </div>
                 </div>
             </div>
