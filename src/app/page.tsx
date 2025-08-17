@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap } from "lucide-react";
+import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -70,6 +70,34 @@ export default function Home() {
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10 object-cover"
                 data-ai-hint="app dashboard"
               />
+            </div>
+          </div>
+        </section>
+
+        {/* Stats Section */}
+        <section className="py-16 bg-muted/50 border-y border-border">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              <div className="flex flex-col items-center">
+                <Smile className="w-10 h-10 text-primary mb-2" />
+                <h4 className="text-3xl lg:text-4xl font-bold text-foreground">95%</h4>
+                <p className="text-muted-foreground mt-1">User Satisfaction</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <Award className="w-10 h-10 text-primary mb-2" />
+                <h4 className="text-3xl lg:text-4xl font-bold text-foreground">80%</h4>
+                <p className="text-muted-foreground mt-1">Top 50 School Acceptance</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <DollarSign className="w-10 h-10 text-primary mb-2" />
+                <h4 className="text-3xl lg:text-4xl font-bold text-foreground">$50k+</h4>
+                <p className="text-muted-foreground mt-1">Avg. Scholarships</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <ArrowUpCircle className="w-10 h-10 text-primary mb-2" />
+                <h4 className="text-3xl lg:text-4xl font-bold text-foreground">4x</h4>
+                <p className="text-muted-foreground mt-1">Increased Productivity</p>
+              </div>
             </div>
           </div>
         </section>
