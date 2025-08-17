@@ -8,5 +8,6 @@ import '@/ai/flows/generate-avatar.ts';
 import '@/ai/flows/generate-study-guide.ts';
 import '@/ai/tools/validate-academic-subject.ts';
 import '@/ai/tools/find-online-resource.ts';
+import '@/ai/tools/validate-avatar-image.ts';
 
     
