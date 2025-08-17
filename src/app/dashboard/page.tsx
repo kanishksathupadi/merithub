@@ -5,13 +5,13 @@ import { Suspense, useEffect, useState } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, ArrowRight } from "lucide-react";
+import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star } from "lucide-react";
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { v4 as uuidv4 } from 'uuid';
 import type { RoadmapTask } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
     try {
@@ -122,9 +122,9 @@ const standardTiles = [
 ];
 
 const eliteTiles = [
+    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match", isFeatured: true },
+    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true },
     ...standardTiles,
-    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match" },
-    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum" },
 ]
 
 
@@ -153,12 +153,23 @@ export default function DashboardPage() {
 
       <section>
         <h2 className="text-2xl font-semibold mb-4">Your Dashboard</h2>
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}>
-            {dashboardTiles.map((tile) => (
-                <Link href={tile.href} key={tile.title}>
-                    <Card className="hover:border-primary/50 hover:bg-primary/5 transition-colors h-full">
+         <div className={cn(
+            "grid grid-cols-1 md:grid-cols-2 gap-4",
+            userPlan === 'elite' ? "lg:grid-cols-3" : "lg:grid-cols-3"
+         )}>
+            {dashboardTiles.map((tile: any) => (
+                <Link href={tile.href} key={tile.title} className={cn(
+                    tile.isFeatured && "lg:col-span-2"
+                )}>
+                    <Card className={cn(
+                        "hover:border-primary/50 hover:bg-primary/5 transition-colors h-full",
+                        tile.isElite && "border-yellow-400/30 bg-yellow-400/5 hover:border-yellow-400/50 hover:bg-yellow-400/10"
+                    )}>
                         <CardHeader className="flex flex-row items-center gap-4">
-                            <div className="bg-primary/10 text-primary p-3 rounded-lg">
+                            <div className={cn(
+                                "p-3 rounded-lg",
+                                tile.isElite ? "bg-yellow-400/10 text-yellow-300" : "bg-primary/10 text-primary"
+                            )}>
                                 <tile.icon className="w-6 h-6" />
                             </div>
                             <div>
