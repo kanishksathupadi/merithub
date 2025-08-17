@@ -18,6 +18,7 @@ const GenerateStudyGuideInputSchema = z.object({
 export type GenerateStudyGuideInput = z.infer<typeof GenerateStudyGuideInputSchema>;
 
 const GenerateStudyGuideOutputSchema = z.object({
+    topic: z.string().describe("The topic of the study guide."),
     title: z.string().describe("A concise, relevant title for the study guide."),
     introduction: z.string().describe("A brief, one-paragraph overview of the topic."),
     keyConcepts: z.array(z.object({
@@ -47,10 +48,11 @@ const prompt = ai.definePrompt({
   Your task is to generate a comprehensive, easy-to-understand study guide for this topic. The guide should be structured to facilitate learning and retention.
 
   The response must include:
-  1.  A clear title for the study guide.
-  2.  A brief introductory paragraph that sets the context for the topic.
-  3.  A list of "Key Concepts" that act like flashcards. Each concept should have a term and its corresponding definition.
-  4.  A list of "Practice Questions" with their correct answers to allow the student to self-assess their understanding.
+  1.  The original topic provided by the user.
+  2.  A clear title for the study guide.
+  3.  A brief introductory paragraph that sets the context for the topic.
+  4.  A list of "Key Concepts" that act like flashcards. Each concept should have a term and its corresponding definition.
+  5.  A list of "Practice Questions" with their correct answers to allow the student to self-assess their understanding.
 
   Ensure the content is accurate, well-structured, and tailored for a high school or early college-level student.
   `,
@@ -64,8 +66,10 @@ const generateStudyGuideFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    return output!;
+    if (output) {
+      // Ensure the topic is included in the final output
+      return { ...output, topic: input.topic };
+    }
+    throw new Error("Failed to generate study guide.");
   }
 );
-
-    
