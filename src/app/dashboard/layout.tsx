@@ -3,10 +3,21 @@
 
 import { generateAvatar } from "@/ai/flows/generate-avatar";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+function ConditionalSidebarTrigger() {
+    const { open, isMobile } = useSidebar();
+    if (open || isMobile) return null;
+    return (
+        <div className="p-2">
+             <SidebarTrigger />
+        </div>
+    );
+}
+
 
 export default function DashboardLayout({
   children,
@@ -68,8 +79,7 @@ export default function DashboardLayout({
         <AppSidebar avatarUrl={avatarUrl} />
         <SidebarInset>
             <header className="p-4 sm:p-6 lg:p-8 flex items-center gap-4 border-b">
-                <SidebarTrigger />
-                <h1 className="text-xl font-semibold">Dashboard</h1>
+                <ConditionalSidebarTrigger />
             </header>
           <div className="p-4 sm:p-6 lg:p-8 flex-1">
             {children}

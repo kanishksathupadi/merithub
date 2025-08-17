@@ -1,13 +1,14 @@
 
 "use client";
 
-import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator } from "@/components/ui/sidebar";
+import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import React, { useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 interface AppSidebarProps {
   avatarUrl: string | null;
@@ -17,6 +18,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const [userName, setUserName] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(propAvatarUrl);
+  const { open } = useSidebar();
+
 
   useEffect(() => {
       const name = localStorage.getItem('userName');
@@ -49,11 +52,12 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
   return (
     <Sidebar>
-      <SidebarHeader>
-        <Link href="/dashboard" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
+      <SidebarHeader className={cn("flex items-center", open ? "justify-between" : "justify-center")}>
+        <Link href="/dashboard" className={cn("flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent", !open && "hidden")}>
             <Rocket className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
         </Link>
+        <SidebarTrigger className={cn(!open && "hidden")} />
       </SidebarHeader>
       <SidebarMenu className="flex-1 px-2">
         <SidebarMenuItem>
@@ -106,10 +110,10 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                         <AvatarImage src={avatarUrl ?? undefined} alt={displayName} />
                         <AvatarFallback>{avatarFallback}</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col items-start">
+                    <div className={cn("flex flex-col items-start", !open && "hidden")}>
                         <span className="font-medium">{displayName}</span>
                     </div>
-                    <ChevronDown className="w-4 h-4 ml-auto" />
+                    <ChevronDown className={cn("w-4 h-4 ml-auto", !open && "hidden")} />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[calc(var(--sidebar-width)_-_1rem)] mb-2" side="top" align="start">
