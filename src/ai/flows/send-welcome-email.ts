@@ -38,8 +38,8 @@ const sendWelcomeEmailFlow = ai.defineFlow(
     const { GMAIL_EMAIL, GMAIL_APP_PASSWORD } = process.env;
 
     if (!GMAIL_EMAIL || !GMAIL_APP_PASSWORD) {
-        console.error('Missing GMAIL_EMAIL or GMAIL_APP_PASSWORD environment variables. Please check your .env file.');
-        throw new Error('Email credentials are not configured on the server.');
+        console.warn('Missing GMAIL_EMAIL or GMAIL_APP_PASSWORD environment variables. Skipping welcome email. Please check your .env file.');
+        return;
     }
 
     const transporter = nodemailer.createTransport({
