@@ -15,6 +15,7 @@ export type ForumReply = {
     user: string;
     avatar: string;
     hint: string;
+    avatarUrl?: string;
     content: string;
     timestamp: string;
 }
@@ -24,6 +25,7 @@ export type ForumPost = {
     user: string;
     avatar: string;
     hint: string;
+    avatarUrl?: string;
     title: string;
     content: string;
     upvotes: number;

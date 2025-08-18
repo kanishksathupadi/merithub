@@ -65,17 +65,24 @@ export default function PostDetailPage() {
     if (!post) return;
 
     let userName = "Anonymous";
+    let userAvatarUrl;
     const signupDataStr = localStorage.getItem('signupData');
     if (signupDataStr) {
         const signupData = JSON.parse(signupDataStr);
         userName = signupData.name || "Anonymous";
     }
     const userAvatar = userName.charAt(0).toUpperCase();
+    const storedAvatar = localStorage.getItem('userAvatar');
+    if (storedAvatar) {
+        userAvatarUrl = storedAvatar;
+    }
+
 
     const newReply: ForumReply = {
       id: uuidv4(),
       user: userName,
       avatar: userAvatar,
+      avatarUrl: userAvatarUrl,
       hint: "student face",
       content: values.content,
       timestamp: new Date().toISOString(),
@@ -127,7 +134,7 @@ export default function PostDetailPage() {
             <div className="flex items-center text-sm text-muted-foreground mt-2 gap-4">
               <div className="flex items-center gap-2">
                 <Avatar className="w-8 h-8">
-                  <AvatarImage src={`https://placehold.co/40x40.png`} data-ai-hint={post.hint} />
+                  <AvatarImage src={post.avatarUrl} data-ai-hint={post.hint} />
                   <AvatarFallback>{post.avatar}</AvatarFallback>
                 </Avatar>
                 <span>Posted by {post.user}</span>
@@ -148,7 +155,7 @@ export default function PostDetailPage() {
             <Card key={reply.id} className="bg-muted/50">
                 <CardHeader className="flex flex-row items-start gap-4 p-4">
                      <Avatar className="w-8 h-8">
-                      <AvatarImage src={`https://placehold.co/40x40.png`} data-ai-hint={reply.hint} />
+                      <AvatarImage src={reply.avatarUrl} data-ai-hint={reply.hint} />
                       <AvatarFallback>{reply.avatar}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
