@@ -46,18 +46,17 @@ export function LoginForm() {
         const signupData = JSON.parse(storedSignupData);
         if (signupData.email === values.email && signupData.password === values.password) {
           localStorage.setItem('userName', signupData.name);
-          localStorage.setItem('userPlan', signupData.plan); // Save user plan on login
+          localStorage.setItem('userPlan', signupData.plan);
           
-          // Check onboarding and payment status to redirect correctly
           const onboardingComplete = !!localStorage.getItem('onboardingData');
           const paymentComplete = !!localStorage.getItem('paymentComplete');
 
-          if (paymentComplete) {
-            router.push("/dashboard");
-          } else if (onboardingComplete) {
+          if (!onboardingComplete) {
+            router.push("/onboarding");
+          } else if (!paymentComplete) {
             router.push("/payment");
           } else {
-            router.push("/onboarding");
+            router.push("/dashboard");
           }
           return;
         }
