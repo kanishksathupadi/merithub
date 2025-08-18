@@ -2,12 +2,30 @@
 "use client";
 import { RoadmapView } from "@/components/dashboard/roadmap-view";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import type { RoadmapTask } from "@/lib/types";
+import { v4 as uuidv4 } from "uuid";
+import { useToast } from "@/hooks/use-toast";
+
+const taskSchema = z.object({
+  title: z.string().min(5, "Title must be at least 5 characters."),
+  description: z.string().min(10, "Description must be at least 10 characters."),
+  category: z.enum(['Academics', 'Extracurriculars', 'Skill Building']),
+});
 
 export default function RoadmapPage() {
-  // This state is to ensure the component re-renders when localStorage changes.
-  const [, setUpdate] = useState(0);
+  const [update, setUpdate] = useState(0);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -19,6 +37,49 @@ export default function RoadmapPage() {
     };
   }, []);
 
+  const form = useForm<z.infer<typeof taskSchema>>({
+    resolver: zodResolver(taskSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      category: "Academics",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof taskSchema>) => {
+    let userName = "User";
+    const signupDataStr = localStorage.getItem('signupData');
+    if (signupDataStr) {
+        const signupData = JSON.parse(signupDataStr);
+        userName = signupData.name || "User";
+    }
+    
+    const newTask: RoadmapTask = {
+      id: uuidv4(),
+      title: values.title,
+      description: values.description,
+      category: values.category as any,
+      grade: "Custom",
+      completed: false,
+      relatedResources: [],
+    };
+    
+    const storedTasks = localStorage.getItem('roadmapTasks');
+    const tasks = storedTasks ? JSON.parse(storedTasks) : [];
+    const updatedTasks = [...tasks, newTask];
+    localStorage.setItem('roadmapTasks', JSON.stringify(updatedTasks));
+    window.dispatchEvent(new Event('storage'));
+    
+    toast({
+        title: "Task Added!",
+        description: "Your custom task has been added to the roadmap.",
+    });
+
+    form.reset();
+    setDialogOpen(false);
+  };
+
+
   return (
     <div className="space-y-8">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -26,12 +87,82 @@ export default function RoadmapPage() {
           <h1 className="text-3xl font-bold">My Roadmap</h1>
           <p className="text-muted-foreground">Your personalized list of tasks and milestones.</p>
         </div>
-        <Button className="bg-accent hover:bg-accent/90">
-            <PlusCircle className="w-4 h-4 mr-2"/>
-            Add Custom Task
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <PlusCircle className="w-4 h-4 mr-2"/>
+              Add Custom Task
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add a Custom Task</DialogTitle>
+              <DialogDescription>
+                Add a new task to your personalized roadmap.
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Task Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Prepare for Math Olympiad" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Describe the task in a bit more detail..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Academics">Academics</SelectItem>
+                          <SelectItem value="Extracurriculars">Extracurriculars</SelectItem>
+                          <SelectItem value="Skill Building">Skill Building</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">Cancel</Button>
+                  </DialogClose>
+                  <Button type="submit">Add Task</Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </header>
-      <RoadmapView />
+      <RoadmapView key={update} />
     </div>
   );
 }

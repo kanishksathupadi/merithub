@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +18,21 @@ const mentors = [
   { name: 'Ben Carter', subject: 'Computer Science & AI', institution: 'Stanford', avatar: 'BC', hint: 'male programmer', imageUrl: 'https://images.unsplash.com/photo-1713947503813-da5351679a0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYWxlJTIwcHJvZ3JhbW1lcnxlbnwwfHx8fDE3NTU1NTU2NTN8MA&ixlib=rb-4.1.0&q=80&w=1080' },
 ];
 
+const subjects = [...new Set(mentors.map(m => m.subject))];
+
 export default function MentorMatchPage() {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedSubject, setSelectedSubject] = useState("all");
+
+    const filteredMentors = mentors.filter(mentor => {
+        const matchesSearch = mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              mentor.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              mentor.institution.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSubject = selectedSubject === "all" || mentor.subject === selectedSubject;
+        return matchesSearch && matchesSubject;
+    });
+
+
   return (
     <div className="space-y-8">
       <header>
@@ -30,20 +45,23 @@ export default function MentorMatchPage() {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input placeholder="Search by name, subject, or university..." className="pl-10" />
+              <Input 
+                placeholder="Search by name, subject, or university..." 
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
             <div className="flex gap-4">
-                <Select>
-                    <SelectTrigger className="w-full md:w-[180px]">
+                <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                    <SelectTrigger className="w-full md:w-[240px]">
                         <SelectValue placeholder="Filter by Subject" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="stem">STEM & Research</SelectItem>
-                        <SelectItem value="humanities">Humanities & Law</SelectItem>
-                        <SelectItem value="business">Business</SelectItem>
-                        <SelectItem value="arts">Arts & Design</SelectItem>
-                        <SelectItem value="medicine">Medicine</SelectItem>
-                        <SelectItem value="cs">Computer Science</SelectItem>
+                        <SelectItem value="all">All Subjects</SelectItem>
+                        {subjects.map(subject => (
+                             <SelectItem key={subject} value={subject}>{subject}</SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
                 <Button variant="outline" size="icon">
@@ -55,7 +73,7 @@ export default function MentorMatchPage() {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mentors.map((mentor, index) => (
+        {filteredMentors.map((mentor, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
             <CardHeader className="items-center text-center p-6">
               <Avatar className="w-24 h-24 mb-4">

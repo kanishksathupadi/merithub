@@ -9,20 +9,24 @@ import {z} from 'genkit';
 
 const ResourceSchema = z.object({
     title: z.string().describe('The title of the recommended online resource.'),
-    url: z.string().url().describe('The valid URL for the resource.'),
+    url: z.string().url().describe('The valid, working URL for the resource.'),
 });
 
 export const findOnlineResource = ai.defineTool(
   {
     name: 'findOnlineResource',
-    description: 'Finds the single best, publicly accessible, high-quality online resource (article or video) for a given academic topic or skill.',
+    description: 'Finds the single best, publicly accessible, high-quality online resource (article or video) for a given academic topic or skill. The URL must be a real, working link.',
     inputSchema: z.object({
       query: z.string().describe('The topic to find a resource for (e.g., "Intro to Calculus", "Learn Python programming").'),
     }),
     outputSchema: ResourceSchema,
   },
   async (input) => {
-    const prompt = `Find the single best, real, and publicly accessible online resource (like a specific Khan Academy video, a detailed article, or a tutorial) for the topic: "${input.query}". The URL must be valid and directly link to the content. Provide the title of the resource and its URL.`;
+    const prompt = `Find the single best, real, and publicly accessible online resource for the topic: "${input.query}".
+
+    IMPORTANT: The URL must be 100% valid and lead directly to the content. Prioritize well-known, high-quality sources like Khan Academy, Coursera, edX, university websites (.edu), official documentation, or major educational YouTube channels (like CrashCourse). Do not invent URLs. Your primary goal is to provide a working link.
+
+    Return the title of the resource and its direct URL.`;
     
     const llmResponse = await ai.generate({
         prompt,
@@ -40,5 +44,3 @@ export const findOnlineResource = ai.defineTool(
     return resource;
   }
 );
-
-    

@@ -10,13 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, MessageSquare, PlusCircle } from "lucide-react";
+import { ArrowUp, MessageSquare, PlusCircle, ShieldAlert } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 import type { ForumPost } from "@/lib/types";
 import Link from "next/link";
+import { moderatePost } from "@/ai/flows/moderate-post";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const initialForumPosts: Omit<ForumPost, 'id' | 'replies'>[] = [
   {
@@ -70,6 +72,8 @@ const postSchema = z.object({
 export default function QandAForumPage() {
   const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [moderationError, setModerationError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -98,39 +102,62 @@ export default function QandAForumPage() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof postSchema>) => {
-    let userName = "Anonymous";
-    const signupDataStr = localStorage.getItem('signupData');
-    if (signupDataStr) {
-        const signupData = JSON.parse(signupDataStr);
-        userName = signupData.name || "Anonymous";
+  const onSubmit = async (values: z.infer<typeof postSchema>) => {
+    setIsSubmitting(true);
+    setModerationError(null);
+
+    try {
+        const moderationResult = await moderatePost(values);
+        
+        if (!moderationResult.isAppropriate) {
+            setModerationError(moderationResult.reasoning);
+            setIsSubmitting(false);
+            return;
+        }
+
+        let userName = "Anonymous";
+        const signupDataStr = localStorage.getItem('signupData');
+        if (signupDataStr) {
+            const signupData = JSON.parse(signupDataStr);
+            userName = signupData.name || "Anonymous";
+        }
+
+        const userAvatar = userName.charAt(0).toUpperCase();
+
+        const newPost: ForumPost = {
+          id: uuidv4(),
+          user: userName,
+          avatar: userAvatar,
+          hint: "student face",
+          title: values.title,
+          content: values.content,
+          replies: [],
+          upvotes: 0,
+          tags: ["New", "Discussion"], // We can add tag selection later
+        };
+
+        const updatedPosts = [newPost, ...forumPosts];
+        setForumPosts(updatedPosts);
+        localStorage.setItem("forumPosts", JSON.stringify(updatedPosts));
+        
+        toast({
+            title: "Success!",
+            description: "Your discussion has been posted.",
+        });
+
+        form.reset();
+        setDialogOpen(false);
+
+    } catch (error) {
+        console.error("Moderation check failed:", error);
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not submit your post. Please try again later.",
+        });
+    } finally {
+        setIsSubmitting(false);
     }
-
-    const userAvatar = userName.charAt(0).toUpperCase();
-
-    const newPost: ForumPost = {
-      id: uuidv4(),
-      user: userName,
-      avatar: userAvatar,
-      hint: "student face",
-      title: values.title,
-      content: values.content,
-      replies: [],
-      upvotes: 0,
-      tags: ["New", "Discussion"], // We can add tag selection later
-    };
-
-    const updatedPosts = [newPost, ...forumPosts];
-    setForumPosts(updatedPosts);
-    localStorage.setItem("forumPosts", JSON.stringify(updatedPosts));
-    
-    toast({
-        title: "Success!",
-        description: "Your discussion has been posted.",
-    });
-
-    form.reset();
-    setDialogOpen(false);
   };
 
   return (
@@ -181,11 +208,22 @@ export default function QandAForumPage() {
                                 </FormItem>
                             )}
                         />
+                        {moderationError && (
+                            <Alert variant="destructive">
+                                <ShieldAlert className="h-4 w-4" />
+                                <AlertTitle>Post Cannot Be Published</AlertTitle>
+                                <AlertDescription>
+                                    {moderationError}
+                                </AlertDescription>
+                            </Alert>
+                        )}
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="secondary">Cancel</Button>
+                                <Button type="button" variant="secondary" disabled={isSubmitting}>Cancel</Button>
                             </DialogClose>
-                            <Button type="submit">Post Discussion</Button>
+                            <Button type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? "Submitting..." : "Post Discussion"}
+                            </Button>
                         </DialogFooter>
                     </form>
                 </Form>
