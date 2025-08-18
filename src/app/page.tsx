@@ -48,7 +48,7 @@ export default function Home() {
               </p>
               <div className="mt-8 space-x-4">
                 <Button size="lg" asChild className="bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
-                  <Link href="/signup?plan=elite">
+                  <Link href="#pricing">
                     <Rocket className="mr-2 h-5 w-5" />
                     Unlock Your Potential
                   </Link>
