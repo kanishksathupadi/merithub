@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -73,8 +73,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       <SidebarHeader className={cn("flex flex-row items-center", open ? "justify-between" : "justify-center")}>
         <div className={cn("flex items-center gap-2", !open && "hidden")}>
           <Link href="/dashboard" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
-            <Rocket className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">PinnaclePath</h1>
+            <GraduationCap className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
           </Link>
         </div>
         <SidebarTrigger />

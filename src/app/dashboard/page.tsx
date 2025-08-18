@@ -5,7 +5,7 @@ import { Suspense, useEffect, useState } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star } from "lucide-react";
+import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -159,6 +159,7 @@ export default function DashboardPage() {
          )}>
             {dashboardTiles.map((tile: any) => (
                 <Link href={tile.href} key={tile.title} className={cn(
+                    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg",
                     tile.isFeatured && "lg:col-span-2"
                 )}>
                     <Card className={cn(
