@@ -21,14 +21,11 @@ export default function Home() {
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
           </nav>
           <div className="flex items-center gap-2 ml-auto">
-            <Button asChild>
-                <Link href="/signup?plan=standard">Go Standard</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/signup?plan=elite">Go Elite</Link>
+            <Button asChild variant="ghost">
+                <Link href="/login">Member Login</Link>
             </Button>
              <Button asChild>
-                <Link href="/login">Member Login</Link>
+              <Link href="/signup?plan=elite">Get Started</Link>
             </Button>
           </div>
         </div>
@@ -53,13 +50,12 @@ export default function Home() {
                 <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
                   <Link href="/signup?plan=elite">
                     <Rocket className="mr-2 h-5 w-5" />
-                    Get Started with Elite
+                    Start Your Elite Journey
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild className="border-border hover:bg-accent/10">
                   <Link href="/signup?plan=standard">
-                    <LogIn className="mr-2 h-5 w-5" />
-                    Get Started with Standard
+                    View Standard Plan
                   </Link>
                 </Button>
               </div>
