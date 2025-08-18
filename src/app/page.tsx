@@ -24,8 +24,8 @@ export default function Home() {
             <Button asChild variant="ghost">
                 <Link href="/login">Member Login</Link>
             </Button>
-             <Button asChild>
-              <Link href="/signup?plan=elite">Get Started</Link>
+             <Button asChild className="bg-accent text-black hover:bg-accent/90">
+              <Link href="/signup?plan=elite">Get Started Free</Link>
             </Button>
           </div>
         </div>
@@ -33,7 +33,7 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative pt-12 pb-16 md:pt-16 md:pb-24 text-center overflow-hidden">
+        <section className="relative pt-12 pb-16 md:pt-24 md:pb-32 text-center overflow-hidden">
           <div className="absolute inset-0 bg-grid-primary/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
           <div className="container relative mx-auto px-4">
             <div className="max-w-4xl mx-auto">
@@ -47,20 +47,20 @@ export default function Home() {
                 PinnaclePath leverages cutting-edge AI to provide elite, personalized guidance. We analyze your unique profile to build a strategic roadmap that maximizes your potential and paves the way to your dream university and beyond.
               </p>
               <div className="mt-8 space-x-4">
-                <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
+                <Button size="lg" asChild className="bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
                   <Link href="/signup?plan=elite">
                     <Rocket className="mr-2 h-5 w-5" />
-                    Start Your Elite Journey
+                    Unlock Your Potential
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild className="border-border hover:bg-accent/10">
-                  <Link href="/signup?plan=standard">
-                    View Standard Plan
+                  <Link href="#features">
+                    Learn More
                   </Link>
                 </Button>
               </div>
             </div>
-            <div className="mt-16">
+            <div className="mt-20">
                <Image
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop"
                 alt="A sleek application dashboard showing charts and data, representing the PinnaclePath platform."
@@ -102,10 +102,10 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-24 bg-background/50">
+        <section id="features" className="py-24 bg-background">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                    <h3 className="text-4xl font-bold tracking-tight">The PinnaclePath Advantage</h3>
+                    <h3 className="text-4xl font-bold tracking-tight">Your Unfair Advantage</h3>
                     <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our platform is engineered to give you an unparalleled edge in the competitive landscape of college admissions.</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 text-center">
@@ -129,7 +129,7 @@ export default function Home() {
         </section>
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="py-24">
+        <section id="how-it-works" className="py-24 bg-muted/50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h3 className="text-4xl font-bold tracking-tight">Your Path to Excellence in 3 Steps</h3>
@@ -140,17 +140,17 @@ export default function Home() {
                     <div className="h-px bg-primary w-full"></div>
                 </div>
               <div className="flex flex-col items-center text-center relative">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-background z-10">1</div>
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-muted z-10">1</div>
                 <h4 className="text-xl font-semibold mt-4">Complete Your Profile</h4>
                 <p className="text-muted-foreground mt-2">Provide a comprehensive overview of your academic record, extracurricular involvement, and future aspirations.</p>
               </div>
               <div className="flex flex-col items-center text-center relative">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-background z-10">2</div>
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-muted z-10">2</div>
                 <h4 className="text-xl font-semibold mt-4">Receive Your AI Strategy</h4>
                 <p className="text-muted-foreground mt-2">Our system analyzes your data to generate a bespoke, long-term roadmap with actionable milestones.</p>
               </div>
               <div className="flex flex-col items-center text-center relative">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-background z-10">3</div>
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-muted z-10">3</div>
                 <h4 className="text-xl font-semibold mt-4">Execute and Dominate</h4>
                 <p className="text-muted-foreground mt-2">Follow your tailored plan, track your progress with advanced tools, and adapt as you achieve and grow.</p>
               </div>
@@ -159,7 +159,7 @@ export default function Home() {
         </section>
         
         {/* Testimonials Section */}
-        <section id="testimonials" className="py-24 bg-background/50">
+        <section id="testimonials" className="py-24 bg-background">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">From Ambitious Students, For Ambitious Students</h3>
@@ -212,7 +212,7 @@ export default function Home() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-24">
+        <section id="pricing" className="py-24 bg-muted/50">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">Invest in Your Future</h3>
@@ -243,7 +243,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Elite Opportunity Network Access</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
                         </ul>
-                        <Button asChild className="w-full mt-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
+                        <Button asChild className="w-full mt-8 bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
                             <Link href="/signup?plan=elite">Choose Elite</Link>
                         </Button>
                     </div>
