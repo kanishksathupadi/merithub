@@ -25,7 +25,7 @@ export default function Home() {
                 <Link href="/login">Member Login</Link>
             </Button>
              <Button asChild className="bg-accent text-black hover:bg-accent/90">
-              <Link href="/signup?plan=elite">Get Started Free</Link>
+              <Link href="#pricing">Get Started</Link>
             </Button>
           </div>
         </div>
