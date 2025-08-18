@@ -2,7 +2,6 @@
 "use client";
 
 import { generateAvatar } from "@/ai/flows/generate-avatar";
-import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
@@ -67,28 +66,6 @@ export default function DashboardLayout({
                     setAvatarUrl(storedAvatar);
                 }
             });
-
-        // Send a one-time welcome email
-        const welcomeEmailSent = localStorage.getItem('welcomeEmailSent');
-        if (!welcomeEmailSent) {
-          sendWelcomeEmail({ name, email })
-            .then(() => {
-              localStorage.setItem('welcomeEmailSent', 'true');
-              console.log('Welcome email sent successfully.');
-              toast({
-                  title: "Welcome Email Sent!",
-                  description: "Check your inbox for a welcome message.",
-              });
-            })
-            .catch(err => {
-              console.error("Failed to send welcome email:", err);
-              toast({
-                  variant: "destructive",
-                  title: "Email Failed to Send",
-                  description: "Could not send welcome email. The server may be missing required credentials.",
-              });
-            });
-        }
       }
     }
   }, [router, toast]);
