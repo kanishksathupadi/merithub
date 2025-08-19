@@ -39,7 +39,9 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       
       const handleStorageChange = () => {
         const newAvatar = localStorage.getItem('userAvatar');
+        const newName = localStorage.getItem('userName');
         setAvatarUrl(newAvatar);
+        setUserName(newName);
       }
       window.addEventListener('storage', handleStorageChange);
       return () => window.removeEventListener('storage', handleStorageChange);

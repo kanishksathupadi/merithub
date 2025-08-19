@@ -72,7 +72,19 @@ export function SettingsForm() {
 
   function onSubmit(data: SettingsValues) {
     console.log("Settings saved:", data);
-    // In a real app, you'd also update the localStorage here
+    
+    // Update local storage
+    const userData = localStorage.getItem('signupData');
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      const updatedData = { ...parsedData, name: data.name, email: data.email };
+      localStorage.setItem('signupData', JSON.stringify(updatedData));
+      localStorage.setItem('userName', data.name);
+    }
+    
+    // Dispatch event to notify other components
+    window.dispatchEvent(new Event('storage'));
+
     toast({
       title: "Settings Saved",
       description: "Your changes have been successfully saved.",
