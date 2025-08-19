@@ -7,31 +7,89 @@ import { Users, LineChart, Star, Crown } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import type { ForumPost } from "@/lib/types";
 
-// Mock Data
-const userStats = {
-  totalUsers: 1489,
-  dailyActive: 312,
-  standardUsers: 982,
-  eliteUsers: 507,
+// Helper to safely parse JSON from localStorage
+const getFromLocalStorage = (key: string, defaultValue: any) => {
+    if (typeof window === 'undefined') return defaultValue;
+    try {
+        const item = window.localStorage.getItem(key);
+        return item ? JSON.parse(item) : defaultValue;
+    } catch (error) {
+        console.error(`Error parsing localStorage key "${key}":`, error);
+        return defaultValue;
+    }
 };
 
-const featureEngagementData = [
-  { name: 'AI Study Buddy', usage: 4200 },
-  { name: 'Roadmap', usage: 3800 },
-  { name: 'Mentor Match', usage: 1500 },
-  { name: 'Q&A Forum', usage: 1200 },
-  { name: 'Progress', usage: 2900 },
-];
+const getAllUsers = () => {
+    if (typeof window === 'undefined') return [];
+    // This is a simplified example. A real app would have a better way to store/retrieve all users.
+    // For this demo, we'll assume we can retrieve a list of signups if they were stored in an array.
+    // We will simulate this by checking for a single `signupData` item.
+    const signupData = getFromLocalStorage('signupData', null);
+    if (signupData) {
+        // In a real scenario, you'd fetch this from a database.
+        // For now, we simulate a list of users based on what's available.
+        // Let's create a few mock users plus the real one to make the dashboard look populated.
+         const mockUsers = [
+            { name: "Jessica S.", email: "jessica.s@example.com", plan: "elite" },
+            { name: "Michael I.", email: "michael.i@example.com", plan: "standard" },
+            { name: "Emily A.", email: "emily.a@example.com", plan: "elite" },
+         ];
+        const allUsers = [...mockUsers];
+        // Ensure the current user isn't duplicated if their email matches a mock user
+        if (!allUsers.some(u => u.email === signupData.email)) {
+             allUsers.push(signupData)
+        }
+        return allUsers;
+    }
+    return [];
+}
 
-const recentSignups = [
-  { name: "Sarah J.", email: "sarah.j@example.com", plan: "Elite", avatar: "SJ", hint: "female student", avatarUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmZW1hbGUlMjBzdHVkZW50fGVufDB8fHx8MTc1NTU5OTY3NXww&ixlib=rb-4.1.0&q=80&w=1080" },
-  { name: "Kevin L.", email: "kevin.l@example.com", plan: "Standard", avatar: "KL", hint: "male student", avatarUrl: "https://images.unsplash.com/photo-1581005963836-8b02424b8156?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtYWxlJTIwc3R1ZGVudHxlbnwwfHx8fDE3NTU1OTk2NzZ8MA&ixlib=rb-4.1.0&q=80&w=1080" },
-  { name: "Angela M.", email: "angela.m@example.com", plan: "Elite", avatar: "AM", hint: "student face", avatarUrl: "https://images.unsplash.com/photo-1628890920690-9e29d0019b9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdHVkZW50JTIwZmFjZXxlbnwwfHx8fDE3NTU1OTk2Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080" },
-  { name: "David R.", email: "david.r@example.com", plan: "Standard", avatar: "DR", hint: "young man", avatarUrl: "https://images.unsplash.com/photo-1550750661-a73b4041ba43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx5b3VuZyUyMG1hbnxlbnwwfHx8fDE3NTU1OTk2Nzh8MA&ixlib=rb-4.1.0&q=80&w=1080" },
-];
 
 export default function AdminPage() {
+    const [userStats, setUserStats] = useState({
+        totalUsers: 0,
+        dailyActive: 0, // This remains a mock value as tracking this is complex without a backend
+        standardUsers: 0,
+        eliteUsers: 0,
+    });
+    const [featureEngagementData, setFeatureEngagementData] = useState([]);
+    const [recentSignups, setRecentSignups] = useState([]);
+
+    useEffect(() => {
+        // --- User Stats ---
+        const allUsers = getAllUsers();
+        const standardUsers = allUsers.filter(u => u.plan === 'standard').length;
+        const eliteUsers = allUsers.filter(u => u.plan === 'elite').length;
+        setUserStats({
+            totalUsers: allUsers.length,
+            dailyActive: allUsers.length > 0 ? 1 : 0, // Simplified: at least 1 active user if someone is logged in
+            standardUsers,
+            eliteUsers
+        });
+
+        // --- Recent Signups ---
+        // Let's use a mock avatar generation logic for recent signups for visuals
+        const signupsWithAvatars = allUsers.slice(-4).map(user => ({
+            ...user,
+            avatar: user.name.charAt(0).toUpperCase(),
+            hint: "student face", // generic hint
+        }));
+        setRecentSignups(signupsWithAvatars as any);
+
+        // --- Feature Engagement ---
+        const engagementData = getFromLocalStorage('featureEngagement', {});
+        const chartData = Object.entries(engagementData).map(([name, usage]) => ({
+            name: name.replace(/([A-Z])/g, ' $1').trim(), // Format name for display
+            usage: usage as number,
+        }));
+        setFeatureEngagementData(chartData as any);
+        
+    }, []);
+
+
   return (
     <div className="space-y-8">
       <header>
@@ -115,7 +173,7 @@ export default function AdminPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentSignups.map((user) => (
+                {recentSignups.map((user: any) => (
                   <TableRow key={user.email}>
                     <TableCell className="font-medium flex items-center gap-2">
                         <Avatar className="w-8 h-8">
@@ -126,8 +184,8 @@ export default function AdminPage() {
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
-                        <Badge variant={user.plan === 'Elite' ? 'default' : 'secondary'}
-                           className={user.plan === 'Elite' ? 'bg-yellow-400/20 text-yellow-300 border-yellow-400/30' : ''}
+                        <Badge variant={user.plan === 'elite' ? 'default' : 'secondary'}
+                           className={user.plan === 'elite' ? 'bg-yellow-400/20 text-yellow-300 border-yellow-400/30' : ''}
                         >
                             {user.plan}
                         </Badge>

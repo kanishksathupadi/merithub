@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { v4 as uuidv4 } from 'uuid';
 import type { RoadmapTask } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { trackFeatureUsage } from "@/lib/tracking";
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
     try {
@@ -116,14 +117,14 @@ function SuggestionView() {
 }
 
 const standardTiles = [
-    { title: "My Roadmap", description: "View your personalized tasks.", icon: ListChecks, href: "/dashboard/roadmap" },
-    { title: "Progress Tracker", description: "Visualize your achievements.", icon: TrendingUp, href: "/dashboard/progress" },
-    { title: "AI Study Buddy", description: "Generate guides and quizzes.", icon: BookOpen, href: "/dashboard/study-resources" },
+    { title: "My Roadmap", description: "View your personalized tasks.", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap" },
+    { title: "Progress Tracker", description: "Visualize your achievements.", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker" },
+    { title: "AI Study Buddy", description: "Generate guides and quizzes.", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy" },
 ];
 
 const eliteTiles = [
-    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match", isFeatured: true },
-    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true },
+    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match", isFeatured: true, feature: "mentorMatch" },
+    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum" },
     ...standardTiles,
 ]
 
@@ -158,9 +159,13 @@ export default function DashboardPage() {
             userPlan === 'elite' ? "lg:grid-cols-3" : "lg:grid-cols-3"
          )}>
             {dashboardTiles.map((tile: any) => (
-                <Link href={tile.href} key={tile.title} className={cn(
-                    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg",
-                    tile.isFeatured && "lg:col-span-2"
+                <Link 
+                    href={tile.href} 
+                    key={tile.title} 
+                    onClick={() => trackFeatureUsage(tile.feature)}
+                    className={cn(
+                        "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg",
+                        tile.isFeatured && "lg:col-span-2"
                 )}>
                     <Card className={cn(
                         "hover:border-primary/50 hover:bg-primary/5 transition-colors h-full",
