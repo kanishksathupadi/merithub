@@ -22,7 +22,7 @@ export function DashboardHeader() {
         if (plan) setUserPlan(plan);
         if (signupDataStr) {
             const signupData = JSON.parse(signupDataStr);
-            if (signupData.email === 'admin@pinnaclepath.com') {
+            if (signupData.email === 'admin@dymera.com') {
                 setIsAdmin(true);
             }
         }
