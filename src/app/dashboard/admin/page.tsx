@@ -97,6 +97,12 @@ function AdminHeader() {
     );
 }
 
+const formatFeatureName = (name: string) => {
+    if (name === 'qaForum') return 'Q&A Forum';
+    // Add spaces before uppercase letters
+    return name.replace(/([A-Z])/g, ' $1').trim();
+};
+
 
 export default function AdminPage() {
     const [userStats, setUserStats] = useState({
@@ -132,7 +138,7 @@ export default function AdminPage() {
         // --- Feature Engagement ---
         const engagementData = getFromLocalStorage('featureEngagement', {});
         const chartData = Object.entries(engagementData).map(([name, usage]) => ({
-            name: name.replace(/([A-Z])/g, ' $1').trim(), // Format name for display
+            name: formatFeatureName(name), // Format name for display
             usage: usage as number,
         }));
         setFeatureEngagementData(chartData as any);
@@ -251,3 +257,5 @@ export default function AdminPage() {
     </div>
   )
 }
+
+    
