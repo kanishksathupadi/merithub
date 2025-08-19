@@ -63,6 +63,7 @@ function UsersList() {
                             <TableRow>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Email</TableHead>
+                                <TableHead>Password</TableHead>
                                 <TableHead>Plan</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -71,6 +72,7 @@ function UsersList() {
                                 <TableRow key={user.email}>
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
+                                    <TableCell>{user.password}</TableCell>
                                     <TableCell>
                                         <Badge
                                             variant={user.plan === 'elite' ? 'default' : 'secondary'}
