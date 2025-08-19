@@ -13,6 +13,13 @@ export default function PaymentPage() {
     const handleBypass = () => {
         if (typeof window !== 'undefined') {
             localStorage.setItem('paymentComplete', 'true');
+            
+            const signupDataStr = localStorage.getItem('signupData');
+            if (signupDataStr) {
+                const signupData = JSON.parse(signupDataStr);
+                 // Persist payment status for this specific user
+                localStorage.setItem(`payment-${signupData.email}`, 'true');
+            }
         }
         router.push('/dashboard');
     };
@@ -43,7 +50,7 @@ export default function PaymentPage() {
                 <CardFooter className="flex flex-col gap-4">
                      <Button className="w-full" disabled>Proceed to Payment (Placeholder)</Button>
                      <button onClick={handleBypass} className="text-sm text-primary hover:underline font-medium">
-                        Bypass payment as admin
+                        Bypass payment for demo
                      </button>
                 </CardFooter>
             </Card>
