@@ -37,8 +37,6 @@ export function LoginForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Login submitted", values);
-    
     if (typeof window !== 'undefined') {
       const storedSignupData = localStorage.getItem('signupData');
       
@@ -58,10 +56,12 @@ export function LoginForm() {
           } else {
             router.push("/dashboard");
           }
+          // This return statement prevents the error toast from showing on success
           return;
         }
       }
 
+      // This code will only be reached if the login credentials are bad or the user doesn't exist.
       toast({
         variant: "destructive",
         title: "Login Failed",
