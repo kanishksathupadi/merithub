@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import type { ForumPost } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 // Helper to safely parse JSON from localStorage
 const getFromLocalStorage = (key: string, defaultValue: any) => {
@@ -24,27 +25,8 @@ const getFromLocalStorage = (key: string, defaultValue: any) => {
 
 const getAllUsers = () => {
     if (typeof window === 'undefined') return [];
-    // This is a simplified example. A real app would have a better way to store/retrieve all users.
-    // For this demo, we'll assume we can retrieve a list of signups if they were stored in an array.
-    // We will simulate this by checking for a single `signupData` item.
-    const signupData = getFromLocalStorage('signupData', null);
-    if (signupData) {
-        // In a real scenario, you'd fetch this from a database.
-        // For now, we simulate a list of users based on what's available.
-        // Let's create a few mock users plus the real one to make the dashboard look populated.
-         const mockUsers = [
-            { name: "Jessica S.", email: "jessica.s@example.com", plan: "elite" },
-            { name: "Michael I.", email: "michael.i@example.com", plan: "standard" },
-            { name: "Emily A.", email: "emily.a@example.com", plan: "elite" },
-         ];
-        const allUsers = [...mockUsers];
-        // Ensure the current user isn't duplicated if their email matches a mock user
-        if (!allUsers.some(u => u.email === signupData.email)) {
-             allUsers.push(signupData)
-        }
-        return allUsers;
-    }
-    return [];
+    // Reads an array of all users who signed up in this browser.
+    return getFromLocalStorage('allSignups', []);
 }
 
 
@@ -57,6 +39,7 @@ export default function AdminPage() {
     });
     const [featureEngagementData, setFeatureEngagementData] = useState([]);
     const [recentSignups, setRecentSignups] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         // --- User Stats ---
@@ -65,14 +48,13 @@ export default function AdminPage() {
         const eliteUsers = allUsers.filter(u => u.plan === 'elite').length;
         setUserStats({
             totalUsers: allUsers.length,
-            dailyActive: allUsers.length > 0 ? 1 : 0, // Simplified: at least 1 active user if someone is logged in
+            dailyActive: allUsers.length > 0 ? allUsers.length : 0, // Simplified: count all users in localstorage as active
             standardUsers,
             eliteUsers
         });
 
         // --- Recent Signups ---
-        // Let's use a mock avatar generation logic for recent signups for visuals
-        const signupsWithAvatars = allUsers.slice(-4).map(user => ({
+        const signupsWithAvatars = allUsers.slice(-4).map((user: any) => ({
             ...user,
             avatar: user.name.charAt(0).toUpperCase(),
             hint: "student face", // generic hint
@@ -89,6 +71,10 @@ export default function AdminPage() {
         
     }, []);
 
+    const handleCardClick = (path: string) => {
+        router.push(path);
+    }
+
 
   return (
     <div className="space-y-8">
@@ -98,7 +84,7 @@ export default function AdminPage() {
       </header>
       
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -116,7 +102,7 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{userStats.dailyActive.toLocaleString()}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users?plan=standard')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Standard Plans</CardTitle>
             <Star className="h-4 w-4 text-muted-foreground" />
@@ -125,7 +111,7 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{userStats.standardUsers.toLocaleString()}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users?plan=elite')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Elite Plans</CardTitle>
             <Crown className="h-4 w-4 text-muted-foreground" />

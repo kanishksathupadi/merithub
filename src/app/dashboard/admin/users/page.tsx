@@ -1,0 +1,98 @@
+
+"use client";
+
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
+const getFromLocalStorage = (key: string, defaultValue: any) => {
+    if (typeof window === 'undefined') return defaultValue;
+    try {
+        const item = window.localStorage.getItem(key);
+        return item ? JSON.parse(item) : defaultValue;
+    } catch (error) {
+        console.error(`Error parsing localStorage key "${key}":`, error);
+        return defaultValue;
+    }
+};
+
+function UsersList() {
+    const searchParams = useSearchParams();
+    const planFilter = searchParams.get('plan');
+    const [users, setUsers] = useState<any[]>([]);
+
+    useEffect(() => {
+        const allUsers = getFromLocalStorage('allSignups', []);
+        const filteredUsers = planFilter 
+            ? allUsers.filter((user: any) => user.plan === planFilter)
+            : allUsers;
+        setUsers(filteredUsers);
+    }, [planFilter]);
+
+    const pageTitle = planFilter 
+        ? `${planFilter.charAt(0).toUpperCase() + planFilter.slice(1)} Plan Users`
+        : "All Users";
+    
+    const pageDescription = planFilter
+        ? `A list of all users subscribed to the ${planFilter} plan.`
+        : "A comprehensive list of all users who have signed up.";
+
+
+    return (
+        <div className="space-y-8">
+             <header>
+                <Button variant="ghost" asChild>
+                    <Link href="/dashboard/admin">
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Admin Dashboard
+                    </Link>
+                </Button>
+            </header>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{pageTitle}</CardTitle>
+                    <CardDescription>{pageDescription}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Plan</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {users.map((user) => (
+                                <TableRow key={user.email}>
+                                    <TableCell className="font-medium">{user.name}</TableCell>
+                                    <TableCell>{user.email}</TableCell>
+                                    <TableCell>
+                                        <Badge
+                                            variant={user.plan === 'elite' ? 'default' : 'secondary'}
+                                            className={user.plan === 'elite' ? 'bg-yellow-400/20 text-yellow-300 border-yellow-400/30' : ''}
+                                        >
+                                            {user.plan}
+                                        </Badge>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
+
+export default function UsersPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <UsersList />
+        </Suspense>
+    )
+}

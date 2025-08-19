@@ -46,14 +46,20 @@ export function SignupForm({ plan }: SignupFormProps) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Signup submitted", { ...values, plan });
-    // In a real app, you would handle user creation here.
-    // For this demo, we'll save the name to localStorage and redirect.
+    
     if (typeof window !== 'undefined') {
       const { name, age, grade, email, password } = values;
+      const newUser = { name, age, grade, email, password, plan };
+
+      // Set current user's data for immediate login
       localStorage.setItem('userName', name);
       localStorage.setItem('userPlan', plan);
-      // We store all signup data to simulate a user account for the login form.
-      localStorage.setItem('signupData', JSON.stringify({ name, age, grade, email, password, plan }));
+      localStorage.setItem('signupData', JSON.stringify(newUser));
+
+      // Add the new user to the list of all signups
+      const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+      allSignups.push(newUser);
+      localStorage.setItem('allSignups', JSON.stringify(allSignups));
     }
     router.push("/onboarding");
   }
