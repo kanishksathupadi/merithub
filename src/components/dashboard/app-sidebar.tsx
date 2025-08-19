@@ -81,7 +81,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     <Sidebar>
       <SidebarHeader className={cn("flex flex-row items-center", open ? "justify-between" : "justify-center")}>
         <div className={cn("flex items-center gap-2", !open && "hidden")}>
-          <Link href="/dashboard" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
+          <Link href={isAdmin ? "/dashboard/admin" : "/dashboard"} className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
             <GraduationCap className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
           </Link>
@@ -89,14 +89,19 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
         <SidebarTrigger />
       </SidebarHeader>
       <SidebarMenu className="flex-1 px-2 pt-4">
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="Dashboard">
-            <Link href="/dashboard"><LayoutDashboard/>Dashboard</Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-
-        {!isAdmin && (
+        {isAdmin ? (
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Analytics">
+                    <Link href="/dashboard/admin"><Shield/>Analytics</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        ) : (
           <>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Dashboard">
+                <Link href="/dashboard"><LayoutDashboard/>Dashboard</Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="My Roadmap">
                 <Link href="/dashboard/roadmap"><ListChecks/>My Roadmap</Link>
@@ -131,13 +136,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
           </>
         )}
 
-        {isAdmin && (
-            <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Analytics">
-                    <Link href="/dashboard/admin"><Shield/>Analytics</Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-        )}
       </SidebarMenu>
 
       <SidebarSeparator />
