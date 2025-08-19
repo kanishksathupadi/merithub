@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -17,6 +17,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const [userName, setUserName] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(propAvatarUrl);
   const { open } = useSidebar();
@@ -26,6 +27,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   useEffect(() => {
       const name = localStorage.getItem('userName');
       const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
+      const signupDataStr = localStorage.getItem('signupData');
+      if (signupDataStr) {
+          const signupData = JSON.parse(signupDataStr);
+          setUserEmail(signupData.email);
+      }
       if (name) {
           setUserName(name);
       }
@@ -69,6 +75,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
   const displayName = userName || "User";
   const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
+  const isAdmin = userEmail === 'admin@pinnaclepath.com';
 
   return (
     <Sidebar>
@@ -114,6 +121,17 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                 <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Q&amp;A Forum">
                     <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarGroup>
+        )}
+
+        {isAdmin && (
+            <SidebarGroup>
+                <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Admin</h3>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Analytics">
+                        <Link href="/dashboard/admin"><Shield/>Analytics</Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarGroup>

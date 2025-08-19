@@ -42,12 +42,12 @@ export function LoginForm() {
       if (values.email === 'admin@pinnaclepath.com' && values.password === 'adminpassword') {
         localStorage.setItem('userName', 'Admin User');
         localStorage.setItem('userPlan', 'elite');
-        // We set dummy data for onboarding and payment to bypass them
-        localStorage.setItem('signupData', JSON.stringify({ name: 'Admin User', email: values.email, plan: 'elite' }));
-        localStorage.setItem('onboardingData', JSON.stringify({ status: 'complete' }));
-        localStorage.setItem('paymentComplete', 'true');
+        const adminSignupData = { name: 'Admin User', email: values.email, plan: 'elite' };
+        localStorage.setItem('signupData', JSON.stringify(adminSignupData));
+        localStorage.setItem('onboardingData', JSON.stringify({ status: 'complete' })); // Bypass onboarding
+        localStorage.setItem('paymentComplete', 'true'); // Bypass payment
         router.push("/dashboard");
-        return;
+        return; 
       }
       
       const storedSignupData = localStorage.getItem('signupData');
@@ -68,8 +68,7 @@ export function LoginForm() {
           } else {
             router.push("/dashboard");
           }
-          // This return statement prevents the error toast from showing on success
-          return;
+          return; // IMPORTANT: This stops the function from proceeding to the error toast.
         }
       }
 
