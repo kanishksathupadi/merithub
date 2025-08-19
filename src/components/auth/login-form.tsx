@@ -38,6 +38,18 @@ export function LoginForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (typeof window !== 'undefined') {
+      // Admin User Check
+      if (values.email === 'admin@pinnaclepath.com' && values.password === 'adminpassword') {
+        localStorage.setItem('userName', 'Admin User');
+        localStorage.setItem('userPlan', 'elite');
+        // We set dummy data for onboarding and payment to bypass them
+        localStorage.setItem('signupData', JSON.stringify({ name: 'Admin User', email: values.email, plan: 'elite' }));
+        localStorage.setItem('onboardingData', JSON.stringify({ status: 'complete' }));
+        localStorage.setItem('paymentComplete', 'true');
+        router.push("/dashboard");
+        return;
+      }
+      
       const storedSignupData = localStorage.getItem('signupData');
       
       if (storedSignupData) {
