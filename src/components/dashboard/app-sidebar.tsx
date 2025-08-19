@@ -96,8 +96,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
           </SidebarMenuButton>
         </SidebarMenuItem>
          <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Study Resources">
-              <Link href="/dashboard/study-resources"><BookOpen/>Study Resources</Link>
+            <SidebarMenuButton asChild tooltip="AI Study Buddy">
+              <Link href="/dashboard/study-resources"><BookOpen/>AI Study Buddy</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         

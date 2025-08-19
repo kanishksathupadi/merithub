@@ -178,7 +178,7 @@ export default function FlashcardsPage() {
             <header>
                 <Button variant="ghost" asChild>
                     <Link href="/dashboard/study-resources">
-                        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Study Buddy
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Back to AI Study Buddy
                     </Link>
                 </Button>
             </header>
