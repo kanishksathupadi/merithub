@@ -62,7 +62,7 @@ export default function Home() {
             </div>
             <div className="mt-20">
                <Image
-                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1631571499388-154131908a8e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkYXJrJTIwbW9kZSUyMHByb2plY3QlMjBtYW5hZ2VtZW50JTIwZGFzaGJvYXJkfGVufDB8fHx8MTcyMjE0NjgwMnww&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="A sleek application dashboard showing charts and data, representing the PinnaclePath platform."
                 width={1200}
                 height={400}
@@ -259,5 +259,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
