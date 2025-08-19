@@ -56,7 +56,7 @@ export default function DashboardLayout({
       } else {
         setIsVerified(true);
         // Only generate avatar for non-admin users to avoid unnecessary calls
-        if (!isAdmin) {
+        if (signupData.email !== 'admin@pinnaclepath.com') {
             generateAvatar({ letter: firstLetter })
                 .then(result => {
                     localStorage.setItem('userAvatar', result.imageUrl);
@@ -74,7 +74,7 @@ export default function DashboardLayout({
         }
       }
     }
-  }, [router, toast, isAdmin]);
+  }, [router, toast]);
 
   if (!isVerified) {
     return (
@@ -88,6 +88,7 @@ export default function DashboardLayout({
     return (
         <div className="p-4 sm:p-6 lg:p-8 flex-1">
             {children}
+            <Toaster />
         </div>
     );
   }

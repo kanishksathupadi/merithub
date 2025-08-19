@@ -3,13 +3,15 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Users, LineChart, Star, Crown } from "lucide-react";
+import { Users, LineChart, Star, Crown, Settings, LogOut } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
-import type { ForumPost } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 // Helper to safely parse JSON from localStorage
 const getFromLocalStorage = (key: string, defaultValue: any) => {
@@ -27,6 +29,72 @@ const getAllUsers = () => {
     if (typeof window === 'undefined') return [];
     // Reads an array of all users who signed up in this browser.
     return getFromLocalStorage('allSignups', []);
+}
+
+function AdminHeader() {
+    const router = useRouter();
+    const [userName, setUserName] = useState<string | null>(null);
+
+    useEffect(() => {
+        const name = localStorage.getItem('userName');
+        if (name) {
+            setUserName(name);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('signupData');
+            localStorage.removeItem('onboardingData');
+            localStorage.removeItem('paymentComplete');
+            localStorage.removeItem('userAvatar');
+            localStorage.removeItem('welcomeEmailSent');
+            localStorage.removeItem('aiSuggestion');
+            localStorage.removeItem('roadmapTasks');
+            localStorage.removeItem('forumPosts');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userPlan');
+        }
+        router.push('/');
+    };
+
+    const displayName = userName || "Admin";
+    const avatarFallback = displayName.charAt(0).toUpperCase();
+
+    return (
+        <header className="flex items-center justify-between mb-8">
+            <div>
+                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                <p className="text-muted-foreground">Site-wide analytics and user management.</p>
+            </div>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center gap-3">
+                        <Avatar className="w-9 h-9">
+                            <AvatarFallback>{avatarFallback}</AvatarFallback>
+                        </Avatar>
+                        <div className="text-left">
+                            <p className="font-medium">{displayName}</p>
+                            <p className="text-xs text-muted-foreground">Admin</p>
+                        </div>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                     <DropdownMenuItem asChild>
+                        <Link href="/dashboard/settings">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log Out</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </header>
+    );
 }
 
 
@@ -78,10 +146,7 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Site-wide analytics and user management.</p>
-      </header>
+      <AdminHeader />
       
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users')}>
