@@ -56,6 +56,9 @@ export function SignupForm({ plan }: SignupFormProps) {
       localStorage.setItem('userPlan', plan);
       // Store the main signup data under its own key for direct lookup
       localStorage.setItem('signupData', JSON.stringify(newUser));
+      
+      // *** BUG FIX: Persist user data for future logins ***
+      localStorage.setItem(`user-${email}`, JSON.stringify(newUser));
 
       // Add the new user to the list of all signups for the admin panel
       const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
