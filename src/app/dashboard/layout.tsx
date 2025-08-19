@@ -28,6 +28,7 @@ export default function DashboardLayout({
   const router = useRouter();
   const { toast } = useToast();
   const [isVerified, setIsVerified] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,6 +43,9 @@ export default function DashboardLayout({
       }
       
       const signupData = JSON.parse(signupDataStr);
+      if (signupData.email === 'admin@pinnaclepath.com') {
+        setIsAdmin(true);
+      }
       const { name, email } = signupData;
       const firstLetter = name.charAt(0).toUpperCase();
 
@@ -51,24 +55,26 @@ export default function DashboardLayout({
         router.push('/payment');
       } else {
         setIsVerified(true);
-        // Force a one-time regeneration of the avatar for the current user
-        generateAvatar({ letter: firstLetter })
-            .then(result => {
-                localStorage.setItem('userAvatar', result.imageUrl);
-                setAvatarUrl(result.imageUrl);
-                window.dispatchEvent(new Event('storage')); // Notify other components
-            })
-            .catch(err => {
-                console.error("Failed to generate avatar", err)
-                // Fallback to checking local storage if generation fails
-                const storedAvatar = localStorage.getItem('userAvatar');
-                if (storedAvatar) {
-                    setAvatarUrl(storedAvatar);
-                }
-            });
+        // Only generate avatar for non-admin users to avoid unnecessary calls
+        if (!isAdmin) {
+            generateAvatar({ letter: firstLetter })
+                .then(result => {
+                    localStorage.setItem('userAvatar', result.imageUrl);
+                    setAvatarUrl(result.imageUrl);
+                    window.dispatchEvent(new Event('storage')); // Notify other components
+                })
+                .catch(err => {
+                    console.error("Failed to generate avatar", err)
+                    // Fallback to checking local storage if generation fails
+                    const storedAvatar = localStorage.getItem('userAvatar');
+                    if (storedAvatar) {
+                        setAvatarUrl(storedAvatar);
+                    }
+                });
+        }
       }
     }
-  }, [router, toast]);
+  }, [router, toast, isAdmin]);
 
   if (!isVerified) {
     return (
@@ -78,6 +84,13 @@ export default function DashboardLayout({
     );
   }
 
+  if (isAdmin) {
+    return (
+        <div className="p-4 sm:p-6 lg:p-8 flex-1">
+            {children}
+        </div>
+    );
+  }
 
   return (
     <SidebarProvider>
