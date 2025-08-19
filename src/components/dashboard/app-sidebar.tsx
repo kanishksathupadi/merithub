@@ -91,8 +91,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       <SidebarMenu className="flex-1 px-2 pt-4">
         {isAdmin ? (
             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Analytics">
-                    <Link href="/dashboard/admin"><Shield/>Analytics</Link>
+                <SidebarMenuButton asChild tooltip="Dashboard">
+                    <Link href="/dashboard/admin"><LayoutDashboard/>Dashboard</Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
         ) : (
