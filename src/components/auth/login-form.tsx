@@ -67,7 +67,7 @@ export function LoginForm() {
             const userData = JSON.parse(storedUserData);
             if (userData.password === values.password) {
               // This is the user, log them in.
-              // CRITICAL: Set signupData for the session.
+              // CRITICAL: Set the full user data object for the session.
               localStorage.setItem('signupData', JSON.stringify(userData));
               localStorage.setItem('userName', userData.name);
               localStorage.setItem('userPlan', userData.plan);
