@@ -40,11 +40,20 @@ export function LoginForm() {
     if (typeof window !== 'undefined') {
       // Admin User Check
       if (values.email === 'admin@pinnaclepath.com' && values.password === 'adminpassword') {
+        const adminSignupData = { name: 'Admin User', email: values.email, plan: 'elite', grade: 11 };
+        const adminOnboardingData = {
+          academicStrengths: "Mathematics, Computer Science",
+          academicWeaknesses: "Public Speaking, History",
+          subjectsOfInterest: "Artificial Intelligence, Robotics, Quantum Physics",
+          collegeEnvironment: "A large, collaborative research university with a strong engineering program.",
+          preferredLearningStyle: "kinesthetic",
+          currentExtracurriculars: "Robotics Club, Coding Competitions",
+          weeklyTimeAvailable: "10",
+        };
         localStorage.setItem('userName', 'Admin User');
         localStorage.setItem('userPlan', 'elite');
-        const adminSignupData = { name: 'Admin User', email: values.email, plan: 'elite' };
         localStorage.setItem('signupData', JSON.stringify(adminSignupData));
-        localStorage.setItem('onboardingData', JSON.stringify({ status: 'complete' })); // Bypass onboarding
+        localStorage.setItem('onboardingData', JSON.stringify(adminOnboardingData));
         localStorage.setItem('paymentComplete', 'true'); // Bypass payment
         router.push("/dashboard");
         return; 
