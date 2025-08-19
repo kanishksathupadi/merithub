@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { RoadmapTask } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { trackFeatureUsage } from "@/lib/tracking";
+import { useRouter } from "next/navigation";
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
     try {
@@ -138,6 +139,10 @@ const eliteTiles = [
 export default function DashboardPage() {
     const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
     const [userName, setUserName] = useState<string | null>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
 
     useEffect(() => {
         const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
@@ -148,7 +153,25 @@ export default function DashboardPage() {
         if (name) {
             setUserName(name);
         }
-    }, []);
+        
+        const signupDataStr = localStorage.getItem('signupData');
+        if (signupDataStr) {
+            const signupData = JSON.parse(signupDataStr);
+            if(signupData.email === 'admin@pinnaclepath.com') {
+                setIsAdmin(true);
+                router.replace('/dashboard/admin');
+            }
+        }
+        setLoading(false);
+    }, [router]);
+
+    if (loading || isAdmin) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <p>Loading...</p>
+            </div>
+        );
+    }
 
     const dashboardTiles = userPlan === 'elite' ? eliteTiles : standardTiles;
     const gridCols = userPlan === 'elite' ? 'lg:grid-cols-3' : 'lg:grid-cols-3';
