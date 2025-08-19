@@ -94,47 +94,49 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             <Link href="/dashboard"><LayoutDashboard/>Dashboard</Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="My Roadmap">
-            <Link href="/dashboard/roadmap"><ListChecks/>My Roadmap</Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="Progress Tracker">
-            <Link href="/dashboard/progress"><TrendingUp/>Progress Tracker</Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-         <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="AI Study Buddy">
-              <Link href="/dashboard/study-resources"><BookOpen/>AI Study Buddy</Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        
-        {userPlan === 'elite' && (
-            <SidebarGroup>
-                <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Resources</h3>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Mentor Match">
-                    <Link href="/dashboard/mentor-match"><MessageSquare/>Mentor Match</Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Q&amp;A Forum">
-                    <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarGroup>
+
+        {!isAdmin && (
+          <>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="My Roadmap">
+                <Link href="/dashboard/roadmap"><ListChecks/>My Roadmap</Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Progress Tracker">
+                <Link href="/dashboard/progress"><TrendingUp/>Progress Tracker</Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="AI Study Buddy">
+                <Link href="/dashboard/study-resources"><BookOpen/>AI Study Buddy</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            
+            {userPlan === 'elite' && (
+                <SidebarGroup>
+                    <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Resources</h3>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip="Mentor Match">
+                        <Link href="/dashboard/mentor-match"><MessageSquare/>Mentor Match</Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip="Q&amp;A Forum">
+                        <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarGroup>
+            )}
+          </>
         )}
 
         {isAdmin && (
-            <SidebarGroup>
-                <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Admin</h3>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Analytics">
-                        <Link href="/dashboard/admin"><Shield/>Analytics</Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarGroup>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Analytics">
+                    <Link href="/dashboard/admin"><Shield/>Analytics</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
         )}
       </SidebarMenu>
 

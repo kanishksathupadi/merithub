@@ -11,16 +11,22 @@ export function DashboardHeader() {
     const [userName, setUserName] = useState<string | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         const name = localStorage.getItem('userName');
-        if (name) {
-            setUserName(name);
-        }
         const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
-        if (plan) {
-            setUserPlan(plan);
+        const signupDataStr = localStorage.getItem('signupData');
+
+        if (name) setUserName(name);
+        if (plan) setUserPlan(plan);
+        if (signupDataStr) {
+            const signupData = JSON.parse(signupDataStr);
+            if (signupData.email === 'admin@pinnaclepath.com') {
+                setIsAdmin(true);
+            }
         }
+        
         const storedAvatar = localStorage.getItem('userAvatar');
         if (storedAvatar) {
             setAvatarUrl(storedAvatar);
@@ -45,7 +51,11 @@ export function DashboardHeader() {
             <div>
                 <div className='flex items-center gap-3'>
                     <h1 className="text-3xl font-bold">Welcome, {displayName}!</h1>
-                    {userPlan === 'elite' && (
+                    {isAdmin ? (
+                        <Badge className="bg-primary/20 text-primary border-primary/30 hover:bg-primary/30">
+                            Admin Plan
+                        </Badge>
+                    ) : userPlan === 'elite' && (
                         <Badge className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30 hover:bg-yellow-400/30">
                             <Star className="w-3 h-3 mr-1"/>
                             Elite Plan
