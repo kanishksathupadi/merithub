@@ -65,13 +65,15 @@ export function OnboardingForm() {
   const onSubmit = (data: OnboardingValues) => {
     console.log("Onboarding complete, redirecting to payment:", data);
     if (typeof window !== 'undefined') {
+        // Set the data for the current session
+        localStorage.setItem('onboardingData', JSON.stringify(data));
+        
+        // Persist the data for future logins against the user's email
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
             const signupData = JSON.parse(signupDataStr);
-            // Persist onboarding data for this specific user
             localStorage.setItem(`onboarding-${signupData.email}`, JSON.stringify(data));
         }
-        localStorage.setItem('onboardingData', JSON.stringify(data));
     }
     router.push("/payment");
   };

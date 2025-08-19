@@ -72,25 +72,23 @@ export function LoginForm() {
               localStorage.setItem('userName', userData.name);
               localStorage.setItem('userPlan', userData.plan);
               
-              // CRITICAL FIX: Restore onboarding data for existing users
+              // CRITICAL FIX: Restore onboarding and payment data for existing users
               const onboardingData = localStorage.getItem(`onboarding-${values.email}`);
+              const paymentComplete = !!localStorage.getItem(`payment-${values.email}`);
+
               if (onboardingData) {
                 localStorage.setItem('onboardingData', onboardingData);
               }
+              if (paymentComplete) {
+                localStorage.setItem('paymentComplete', 'true');
+              }
 
               // Now check where to send them.
-              const onboardingComplete = !!onboardingData;
-              const paymentComplete = !!localStorage.getItem(`payment-${values.email}`);
-
-              if (!onboardingComplete) {
+              if (!onboardingData) {
                 router.push("/onboarding");
               } else if (!paymentComplete) {
-                 // Restore payment data if it exists
-                localStorage.setItem('paymentComplete', 'true');
                 router.push("/payment");
               } else {
-                // Restore payment data if it exists
-                localStorage.setItem('paymentComplete', 'true');
                 router.push("/dashboard");
               }
               return;

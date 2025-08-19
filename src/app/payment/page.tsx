@@ -17,7 +17,7 @@ export default function PaymentPage() {
             const signupDataStr = localStorage.getItem('signupData');
             if (signupDataStr) {
                 const signupData = JSON.parse(signupDataStr);
-                 // Persist payment status for this specific user
+                 // Persist payment status for this specific user for future logins
                 localStorage.setItem(`payment-${signupData.email}`, 'true');
             }
         }
