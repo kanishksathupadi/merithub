@@ -60,16 +60,19 @@ export function LoginForm() {
       }
       
       // Standard User Login
-      const storedSignupData = localStorage.getItem('signupData');
+      const storedUserData = localStorage.getItem(`user-${values.email}`);
       
-      if (storedSignupData) {
+      if (storedUserData) {
         try {
-            const signupData = JSON.parse(storedSignupData);
-            // Direct check against the currently logged-in or last-signed-up user's data
-            if (signupData.email === values.email && signupData.password === values.password) {
-              localStorage.setItem('userName', signupData.name);
-              localStorage.setItem('userPlan', signupData.plan);
+            const userData = JSON.parse(storedUserData);
+            if (userData.password === values.password) {
+              // This is the user, log them in.
+              // CRITICAL: Set signupData for the session.
+              localStorage.setItem('signupData', JSON.stringify(userData));
+              localStorage.setItem('userName', userData.name);
+              localStorage.setItem('userPlan', userData.plan);
               
+              // Now check where to send them.
               const onboardingComplete = !!localStorage.getItem('onboardingData');
               const paymentComplete = !!localStorage.getItem('paymentComplete');
 
@@ -83,25 +86,8 @@ export function LoginForm() {
               return;
             }
         } catch(e) {
-            console.error("Failed to parse signup data", e);
+            console.error("Failed to parse user data", e);
         }
-      }
-
-      // Fallback for returning users if `signupData` is not the correct one
-      // NOTE: This part still iterates, but it's a fallback, not the primary path.
-      // The primary path for a user who just signed up or logged in will be fast.
-      const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-      const foundUser = allSignups.find((u: any) => u.email === values.email && u.password === values.password);
-
-      if (foundUser) {
-        // Since we found them, let's set their data as the primary `signupData` for next time
-        localStorage.setItem('signupData', JSON.stringify(foundUser));
-        localStorage.setItem('userName', foundUser.name);
-        localStorage.setItem('userPlan', foundUser.plan);
-        // We assume a returning user has completed these steps. This could be improved.
-        // A more robust system would store completion status per user.
-        router.push("/dashboard");
-        return;
       }
 
       // This code will only be reached if the login credentials are bad or the user doesn't exist.
