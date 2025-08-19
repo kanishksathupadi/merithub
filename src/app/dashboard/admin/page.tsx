@@ -99,8 +99,8 @@ function AdminHeader() {
 
 const formatFeatureName = (name: string) => {
     if (name === 'qaForum') return 'Q&A Forum';
-    // Add spaces before uppercase letters
-    return name.replace(/([A-Z])/g, ' $1').trim();
+    const spaced = name.replace(/([A-Z])/g, ' $1');
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 };
 
 
