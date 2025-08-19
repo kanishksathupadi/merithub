@@ -12,7 +12,7 @@ export default function Home() {
         <div className="container mx-auto flex h-16 items-center">
           <Link href="/" className="flex items-center gap-2 mr-6">
             <GraduationCap className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Dymera</h1>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
@@ -44,7 +44,7 @@ export default function Home() {
                 Smarter Prep, Brighter Future.
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                PinnaclePath uses AI to build your personalized roadmap for academic and extracurricular success. Get on-demand study help, generate practice quizzes, and follow a clear path to your goals.
+                Dymera uses AI to build your personalized roadmap for academic and extracurricular success. Get on-demand study help, generate practice quizzes, and follow a clear path to your goals.
               </p>
               <div className="mt-8 space-x-4">
                 <Button size="lg" asChild className="bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
@@ -63,7 +63,7 @@ export default function Home() {
             <div className="mt-20">
                <Image
                 src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzbGVlayUyMGRhcmslMjBtb2RlJTIwYXBwbGljYXRpb24lMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzIyMTQ5NDAyfDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="A sleek application dashboard showing charts and data, representing the PinnaclePath platform."
+                alt="A sleek application dashboard showing charts and data, representing the Dymera platform."
                 width={1200}
                 height={400}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10 object-cover"
@@ -177,7 +177,7 @@ export default function Home() {
                             </div>
                         </div>
                         <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
-                        <p className="text-foreground/80 italic">"PinnaclePath's AI roadmap gave me a clear, step-by-step plan. I finally feel organized and confident about my college applications."</p>
+                        <p className="text-foreground/80 italic">"Dymera's AI roadmap gave me a clear, step-by-step plan. I finally feel organized and confident about my college applications."</p>
                     </div>
                      <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
                         <div className="flex items-center mb-4">
@@ -254,7 +254,7 @@ export default function Home() {
       </main>
 
       <footer className="container mx-auto text-center p-8 text-sm text-muted-foreground border-t border-border">
-        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved. For the ambitious.
+        © {new Date().getFullYear()} Dymera. All Rights Reserved. For the ambitious.
       </footer>
     </div>
   );

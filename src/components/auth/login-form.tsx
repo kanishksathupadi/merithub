@@ -39,7 +39,7 @@ export function LoginForm() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (typeof window !== 'undefined') {
       // Admin User Check
-      if (values.email === 'admin@pinnaclepath.com' && values.password === 'adminpassword') {
+      if (values.email === 'admin@dymera.com' && values.password === 'adminpassword') {
         const adminSignupData = { name: 'Admin User', email: values.email, plan: 'elite', grade: 11 };
         const adminOnboardingData = {
           academicStrengths: "Mathematics, Computer Science",

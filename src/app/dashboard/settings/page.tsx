@@ -29,7 +29,7 @@ function SettingsContent() {
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
             const signupData = JSON.parse(signupDataStr);
-            if(signupData.email === 'admin@pinnaclepath.com') {
+            if(signupData.email === 'admin@dymera.com') {
                 setIsAdmin(true);
             }
         }

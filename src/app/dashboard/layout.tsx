@@ -43,7 +43,7 @@ export default function DashboardLayout({
       }
       
       const signupData = JSON.parse(signupDataStr);
-      if (signupData.email === 'admin@pinnaclepath.com') {
+      if (signupData.email === 'admin@dymera.com') {
         setIsAdmin(true);
       }
       const { name, email } = signupData;
@@ -56,7 +56,7 @@ export default function DashboardLayout({
       } else {
         setIsVerified(true);
         // Only generate avatar for non-admin users to avoid unnecessary calls
-        if (signupData.email !== 'admin@pinnaclepath.com') {
+        if (signupData.email !== 'admin@dymera.com') {
             generateAvatar({ letter: firstLetter })
                 .then(result => {
                     localStorage.setItem('userAvatar', result.imageUrl);

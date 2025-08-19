@@ -99,6 +99,10 @@ function AdminHeader() {
 
 const formatFeatureName = (name: string) => {
     if (name === 'qaForum') return 'Q&A Forum';
+    if (name === 'mentorMatch') return 'Mentor Match';
+    if (name === 'myRoadmap') return 'My Roadmap';
+    if (name === 'progressTracker') return 'Progress Tracker';
+    if (name === 'aiStudyBuddy') return 'AI Study Buddy';
     const spaced = name.replace(/([A-Z])/g, ' $1');
     return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 };

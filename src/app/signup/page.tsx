@@ -20,7 +20,7 @@ export default function SignupPage() {
       <header className="absolute top-0 left-0 w-full p-4 sm:p-6">
         <Link href="/" className="flex items-center gap-2">
             <GraduationCap className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Dymera</h1>
         </Link>
       </header>
       <Suspense fallback={<div>Loading...</div>}>

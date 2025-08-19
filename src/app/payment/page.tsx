@@ -22,7 +22,7 @@ export default function PaymentPage() {
              <header className="absolute top-0 left-0 w-full p-4 sm:p-6">
                 <Link href="/" className="flex items-center gap-2">
                     <GraduationCap className="w-8 h-8 text-primary" />
-                    <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                    <h1 className="text-2xl font-bold tracking-tight">Dymera</h1>
                 </Link>
             </header>
             <Card className="w-full max-w-md shadow-xl border-border">
@@ -31,7 +31,7 @@ export default function PaymentPage() {
                         <CreditCard className="w-8 h-8" />
                     </div>
                     <CardTitle className="text-3xl">Final Step: Payment</CardTitle>
-                    <CardDescription>Secure your access to PinnaclePath.</CardDescription>
+                    <CardDescription>Secure your access to Dymera.</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center space-y-4">
                     <p>This is where a real payment form (like Stripe or PayPal) would be integrated.</p>
