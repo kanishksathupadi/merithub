@@ -55,7 +55,7 @@ export function LoginForm() {
         localStorage.setItem('signupData', JSON.stringify(adminSignupData));
         localStorage.setItem('onboardingData', JSON.stringify(adminOnboardingData));
         localStorage.setItem('paymentComplete', 'true'); // Bypass payment
-        router.push("/dashboard");
+        router.push("/dashboard/admin");
         return; 
       }
       
