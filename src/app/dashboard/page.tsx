@@ -54,8 +54,14 @@ function SuggestionView() {
     const [suggestion, setSuggestion] = useState<SuggestNextStepOutput | null>(null);
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
     const [loading, setLoading] = useState(true);
+    const [userName, setUserName] = useState<string | null>(null);
 
     useEffect(() => {
+        const name = localStorage.getItem('userName');
+        if (name) {
+            setUserName(name);
+        }
+
         const getSuggestionAndTasks = async () => {
             const cachedSuggestion = localStorage.getItem('aiSuggestion');
             const cachedTasks = localStorage.getItem('roadmapTasks');
@@ -123,23 +129,29 @@ const standardTiles = [
 ];
 
 const eliteTiles = [
-    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match", isFeatured: true, feature: "mentorMatch" },
-    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum" },
     ...standardTiles,
+    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match", isElite: true, feature: "mentorMatch" },
+    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum" },
 ]
 
 
 export default function DashboardPage() {
     const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
+    const [userName, setUserName] = useState<string | null>(null);
 
     useEffect(() => {
         const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
         if (plan) {
             setUserPlan(plan);
         }
+        const name = localStorage.getItem('userName');
+        if (name) {
+            setUserName(name);
+        }
     }, []);
 
     const dashboardTiles = userPlan === 'elite' ? eliteTiles : standardTiles;
+    const gridCols = userPlan === 'elite' ? 'lg:grid-cols-3' : 'lg:grid-cols-3';
 
   return (
     <div className="space-y-8">
@@ -156,23 +168,21 @@ export default function DashboardPage() {
         <h2 className="text-2xl font-semibold mb-4">Your Dashboard</h2>
          <div className={cn(
             "grid grid-cols-1 md:grid-cols-2 gap-4",
-            userPlan === 'elite' ? "lg:grid-cols-3" : "lg:grid-cols-3"
+            gridCols
          )}>
-            {dashboardTiles.map((tile: any) => (
+            {dashboardTiles.map((tile) => (
                 <Link 
                     href={tile.href} 
                     key={tile.title} 
                     onClick={() => trackFeatureUsage(tile.feature)}
-                    className={cn(
-                        "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg",
-                        tile.isFeatured && "lg:col-span-2"
-                )}>
+                    className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg"
+                >
                     <Card className={cn(
                         "hover:border-primary/50 hover:bg-primary/5 transition-colors h-full",
-                        tile.isElite && "border-yellow-400/30 bg-yellow-400/5 hover:border-yellow-400/50 hover:bg-yellow-400/10"
+                         tile.isElite && "border-yellow-400/30 bg-yellow-400/5 hover:border-yellow-400/50 hover:bg-yellow-400/10"
                     )}>
                         <CardHeader className="flex flex-row items-center gap-4">
-                            <div className={cn(
+                             <div className={cn(
                                 "p-3 rounded-lg",
                                 tile.isElite ? "bg-yellow-400/10 text-yellow-300" : "bg-primary/10 text-primary"
                             )}>
