@@ -41,22 +41,28 @@ const generateAvatarFlow = ai.defineFlow(
 
     while (attempts < maxAttempts) {
         attempts++;
-        const {media} = await ai.generate({
-            model: 'googleai/gemini-2.0-flash-preview-image-generation',
-            prompt: prompt,
-            config: {
-                responseModalities: ['IMAGE', 'TEXT'],
-            },
-        });
+        try {
+            const {media} = await ai.generate({
+                model: 'googleai/gemini-2.0-flash-preview-image-generation',
+                prompt: prompt,
+                config: {
+                    responseModalities: ['IMAGE', 'TEXT'],
+                },
+            });
 
-        if (!media?.url) {
-            continue; // Generation failed, try again.
-        }
+            if (!media?.url) {
+                console.log(`Attempt ${attempts}: Image generation failed, no media URL returned.`);
+                continue; // Generation failed, try again.
+            }
 
-        const validation = await validateAvatarImage({ imageUrl: media.url, letter });
+            const validation = await validateAvatarImage({ imageUrl: media.url, letter });
 
-        if (validation.isValid) {
-            return { imageUrl: media.url };
+            if (validation.isValid) {
+                return { imageUrl: media.url };
+            }
+        } catch (error) {
+            console.error(`Attempt ${attempts} failed with an error:`, error);
+            // If it's the last attempt and it still fails, the error will be thrown after the loop.
         }
     }
 
