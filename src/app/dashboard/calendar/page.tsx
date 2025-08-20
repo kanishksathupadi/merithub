@@ -103,10 +103,10 @@ export default function CalendarPage() {
                         head_row: "flex justify-around",
                         head_cell: "text-muted-foreground rounded-md w-full font-normal text-sm",
                         row: "flex w-full mt-2 justify-around flex-1",
-                        cell: "w-full text-left text-sm p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 border-t border-l",
+                        cell: "h-32 w-full text-left text-sm p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 border",
                         day: "h-full w-full p-0 font-normal aria-selected:opacity-100",
                         day_selected: "bg-accent text-accent-foreground",
-                        day_today: "bg-primary/10 text-primary-foreground",
+                        day_today: "bg-primary/10",
                         table: "w-full h-full flex flex-col",
                         tbody: "flex flex-col flex-1",
                     }}
