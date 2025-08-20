@@ -100,7 +100,7 @@ export default function CalendarPage() {
                     mode="single"
                     className="p-0 flex-1"
                     classNames={{
-                        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
+                        months: "flex flex-col space-y-4 sm:space-x-4 sm:space-y-0 w-full",
                         month: "space-y-4 flex-1 flex flex-col",
                         caption_label: "text-lg font-bold",
                         head_row: "flex justify-around",
