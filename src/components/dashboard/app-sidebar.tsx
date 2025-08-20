@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Calendar } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -105,11 +105,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="My Roadmap">
                 <Link href="/dashboard/roadmap"><ListChecks/>My Roadmap</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Calendar">
-                <Link href="/dashboard/calendar"><Calendar/>Calendar</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
