@@ -53,7 +53,7 @@ export default function CalendarPage() {
                 <time dateTime={date.toISOString()} className="absolute top-1 right-1">{props.children}</time>
                 {dayTasks.length > 0 && (
                     <div className="flex flex-col gap-1 mt-6 overflow-y-auto">
-                        {dayTasks.slice(0, 3).map((task) => (
+                        {dayTasks.slice(0, 2).map((task) => (
                            <Popover key={task.id}>
                                 <PopoverTrigger asChild>
                                     <div className={cn("px-2 py-1 text-xs rounded-md truncate cursor-pointer", getCategoryColor(task.category))}>
@@ -75,9 +75,9 @@ export default function CalendarPage() {
                                 </PopoverContent>
                             </Popover>
                         ))}
-                         {dayTasks.length > 3 && (
+                         {dayTasks.length > 2 && (
                             <div className="text-xs text-muted-foreground mt-1 text-center">
-                                +{dayTasks.length - 3} more
+                                +{dayTasks.length - 2} more
                             </div>
                         )}
                     </div>
