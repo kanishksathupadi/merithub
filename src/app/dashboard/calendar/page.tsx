@@ -90,18 +90,18 @@ export default function CalendarPage() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 h-full flex flex-col">
             <header>
                 <h1 className="text-3xl font-bold">Calendar</h1>
                 <p className="text-muted-foreground">Your tasks and deadlines at a glance.</p>
             </header>
-            <Card>
+            <div className="border rounded-lg flex-1 flex">
                  <Calendar
                     mode="single"
-                    className="p-0"
+                    className="p-0 flex-1"
                     classNames={{
-                        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-                        month: "space-y-4 flex-1",
+                        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
+                        month: "space-y-4 flex-1 flex flex-col",
                         caption_label: "text-lg font-bold",
                         head_row: "flex justify-around",
                         head_cell: "text-muted-foreground rounded-md w-full font-normal text-sm",
@@ -110,12 +110,14 @@ export default function CalendarPage() {
                         day: "h-full w-full p-0 font-normal aria-selected:opacity-100",
                         day_selected: "bg-accent text-accent-foreground",
                         day_today: "bg-primary/10 text-primary-foreground",
+                        table: "w-full h-full flex-1 flex flex-col",
+                        tbody: "flex-1",
                     }}
                     components={{
                         Day: DayWithTasks
                     }}
                 />
-            </Card>
+            </div>
         </div>
     );
 }
