@@ -33,6 +33,7 @@ const prompt = ai.definePrompt({
   name: 'findStudyResourcePrompt',
   input: {schema: FindStudyResourceInputSchema},
   output: {schema: FindStudyResourceOutputSchema},
+  model: 'googleai/gemini-2.0-flash',
   prompt: `You are an expert academic advisor and researcher. A student has asked for help finding the best online study resource.
 
   User's query: "{{{query}}}"
