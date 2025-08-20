@@ -20,19 +20,26 @@ export function RoadmapView() {
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
-    let storedTasks = localStorage.getItem('roadmapTasks');
-    if (storedTasks) {
-      // Add mock points and due dates for demo purposes
-      let parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
-      parsedTasks = parsedTasks.map((task, index) => ({
-        ...task,
-        points: task.points || Math.floor(Math.random() * 20) + 10, // 10-30 points
-        dueDate: task.dueDate || new Date(Date.now() + index * 3 * 24 * 60 * 60 * 1000).toISOString(),
-      }));
-      setTasks(parsedTasks);
-      localStorage.setItem('roadmapTasks', JSON.stringify(parsedTasks));
+    try {
+        let storedTasks = localStorage.getItem('roadmapTasks');
+        if (storedTasks) {
+          // Add mock points and due dates for demo purposes
+          let parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
+          parsedTasks = parsedTasks.map((task, index) => ({
+            ...task,
+            points: task.points || Math.floor(Math.random() * 20) + 10, // 10-30 points
+            dueDate: task.dueDate || new Date(Date.now() + index * 3 * 24 * 60 * 60 * 1000).toISOString(),
+          }));
+          setTasks(parsedTasks);
+          localStorage.setItem('roadmapTasks', JSON.stringify(parsedTasks));
+        }
+    } catch(error) {
+        console.error("Failed to parse roadmap tasks from localStorage", error);
+        // If parsing fails, clear the broken data.
+        localStorage.removeItem('roadmapTasks');
+    } finally {
+        setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const toggleTask = (taskId: string) => {

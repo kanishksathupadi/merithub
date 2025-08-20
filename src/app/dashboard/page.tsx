@@ -71,10 +71,18 @@ function SuggestionView() {
             const cachedTasks = localStorage.getItem('roadmapTasks');
             
             if (cachedSuggestion && cachedTasks) {
-                setSuggestion(JSON.parse(cachedSuggestion));
-                setTasks(JSON.parse(cachedTasks));
-                setLoading(false);
-                return;
+                try {
+                    setSuggestion(JSON.parse(cachedSuggestion));
+                    setTasks(JSON.parse(cachedTasks));
+                } catch (error) {
+                    console.error("Failed to parse cached data from localStorage", error);
+                    // Clear broken data
+                    localStorage.removeItem('aiSuggestion');
+                    localStorage.removeItem('roadmapTasks');
+                } finally {
+                    setLoading(false);
+                    return;
+                }
             }
 
             const onboardingDataStr = localStorage.getItem('onboardingData');
@@ -106,7 +114,11 @@ function SuggestionView() {
         const handleStorageChange = () => {
             const storedTasks = localStorage.getItem('roadmapTasks');
             if (storedTasks) {
-                setTasks(JSON.parse(storedTasks));
+                try {
+                    setTasks(JSON.parse(storedTasks));
+                } catch (error) {
+                    console.error("Failed to parse tasks from localStorage on storage event", error);
+                }
             }
         };
         window.addEventListener('storage', handleStorageChange);
