@@ -130,6 +130,7 @@ const standardTiles = [
     { title: "My Roadmap", description: "View your personalized tasks.", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap" },
     { title: "Progress Tracker", description: "Visualize your achievements.", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker" },
     { title: "AI Study Buddy", description: "Generate guides and quizzes.", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy" },
+    { title: "College Finder", description: "Discover colleges that fit you.", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder" },
 ];
 
 const eliteTiles = [
@@ -177,7 +178,7 @@ export default function DashboardPage() {
     }
 
     const dashboardTiles = userPlan === 'elite' ? eliteTiles : standardTiles;
-    const gridCols = userPlan === 'elite' ? 'lg:grid-cols-3' : 'lg:grid-cols-3';
+    const gridCols = userPlan === 'elite' ? 'lg:grid-cols-3' : 'lg:grid-cols-2';
 
   return (
     <div className="space-y-8">
