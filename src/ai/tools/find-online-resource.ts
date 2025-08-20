@@ -51,9 +51,14 @@ export const findOnlineResource = ai.defineTool(
             continue; // Try again
         }
         
-        // The LLM should have used the tool, but we can double-check here for robustness if needed,
-        // although the prompt forces it. The LLM's internal validation is the key.
-        return resource;
+        // The LLM should have used the tool, but we can double-check here for robustness.
+        const validation = await validateResourceURL({url: resource.url});
+        if (validation.isValid) {
+            return resource; // Success!
+        }
+        
+        // If validation fails, log it and the loop will continue.
+        console.log(`Attempt ${attempts}: URL validation failed for ${resource.url}. Reason: ${validation.reasoning}`);
     }
     
     throw new Error(`Failed to find a valid resource for "${input.query}" after ${maxAttempts} attempts.`);

@@ -75,8 +75,8 @@ const prompt = ai.definePrompt({
   **Core Instructions:**
   1.  **No Vague Tasks:** Do NOT create vague tasks like "Improve your grades" or "Study for the SAT." Every task must be a concrete, measurable action.
   2.  **Action-Oriented Titles:** All task titles must start with an action verb (e.g., "Master," "Complete," "Build," "Publish," "Lead").
-  3.  **Mandatory Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course that can help the student complete that task.
-  4.  **Optional but Validated Resources:** For 'extracurriculars' tasks, a resource is optional. However, IF YOU PROVIDE a resource, you MUST validate its URL using the 'findOnlineResource' tool to ensure it is a valid, working link. Do not provide a resource if you cannot find a valid one.
+  3.  **Mandatory and Validated Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course. This tool automatically validates that the URL works.
+  4.  **Optional but Validated Resources:** For 'extracurriculars' tasks, a resource is optional. However, IF YOU PROVIDE a resource, you MUST use the 'findOnlineResource' tool to ensure it is a valid, working link. Do not provide a resource if you cannot find a valid one.
   5.  **Target Weaknesses:** For academic tasks, directly address the student's 'academicWeaknesses'. If a weakness is 'Physics', create a task like "Master the concept of Kinematics" and find a resource for it.
   6.  **Validate Subjects:** Before creating a plan, you MUST validate that the provided 'academicStrengths' and 'academicWeaknesses' are real subjects or skills using the 'validateAcademicSubject' tool.
   7.  **Year-by-Year Plan:** Provide a clear, year-by-year plan from the student's current grade level through 12th grade.
@@ -87,7 +87,7 @@ const prompt = ai.definePrompt({
   - Academic Weaknesses: {{{academicWeaknesses}}}
   - Subjects of Interest: {{{subjectsOfInterest}}}
   - Preferred College Environment: {{{collegeEnvironment}}}
-  - Preferred Learning Style: {{{preferredLearningStyle}}}
+  - Preferred LearningStyle: {{{preferredLearningStyle}}}
   - Current Extracurriculars: {{{currentExtracurriculars}}}
   - Weekly Time Available: {{{weeklyTimeAvailable}}} hours
 
