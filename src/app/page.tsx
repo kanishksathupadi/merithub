@@ -44,7 +44,7 @@ export default function Home() {
                 Smarter Prep, Brighter Future.
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                Dymera uses AI to build your personalized roadmap, get on-demand study help, and provide feedback on your essays to ensure you stand out.
+                Dymera uses AI to build a personalized roadmap, find best-fit colleges, provide instant essay feedback, and generate on-demand study help to ensure you stand out.
               </p>
               <div className="mt-8 space-x-4">
                 <Button size="lg" asChild className="bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
@@ -83,9 +83,9 @@ export default function Home() {
                 <p className="text-muted-foreground mt-1">Personalized Plans</p>
               </div>
               <div className="flex flex-col items-center">
-                <ListChecks className="w-10 h-10 text-primary mb-2" />
-                <h4 className="text-3xl lg:text-4xl font-bold text-foreground">Actionable</h4>
-                <p className="text-muted-foreground mt-1">Step-by-step Tasks</p>
+                <GraduationCap className="w-10 h-10 text-primary mb-2" />
+                <h4 className="text-3xl lg:text-4xl font-bold text-foreground">College Matches</h4>
+                <p className="text-muted-foreground mt-1">AI-Powered Recs</p>
               </div>
               <div className="flex flex-col items-center">
                  <PenSquare className="w-10 h-10 text-primary mb-2" />
@@ -108,21 +108,36 @@ export default function Home() {
                     <h3 className="text-4xl font-bold tracking-tight">Your Unfair Advantage</h3>
                     <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our platform is engineered to give you an unparalleled edge on your academic journey.</p>
                 </div>
-                <div className="grid md:grid-cols-3 gap-8 text-center">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
                         <BrainCircuit className="w-12 h-12 text-primary mx-auto mb-4"/>
                         <h4 className="text-xl font-semibold">Hyper-Personalized Roadmap</h4>
                         <p className="text-muted-foreground mt-2">Our AI builds a dynamic, multi-year strategy based on deep analysis of your goals, strengths, and weaknesses.</p>
                     </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <PenSquare className="w-12 h-12 text-primary mx-auto mb-4"/>
-                        <h4 className="text-xl font-semibold">AI Essay Review</h4>
-                        <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college and scholarship essays to improve clarity, structure, and impact.</p>
+                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <GraduationCap className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <h4 className="text-xl font-semibold">AI College Finder</h4>
+                        <p className="text-muted-foreground mt-2">Discover universities that perfectly match your academic profile, interests, and learning preferences.</p>
                     </div>
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
                         <BookOpen className="w-12 h-12 text-primary mx-auto mb-4"/>
                         <h4 className="text-xl font-semibold">AI Study Buddy</h4>
-                        <p className="text-muted-foreground mt-2">Instantly generate flashcards and quizzes for any topic, or find the web's best resource for a specific question.</p>
+                        <p className="text-muted-foreground mt-2">Instantly generate flashcards and quizzes, or find the web's best resource for a specific question.</p>
+                    </div>
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <TrendingUp className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <h4 className="text-xl font-semibold">Progress Tracker</h4>
+                        <p className="text-muted-foreground mt-2">Visualize your journey, track completed tasks, and watch your long-term goals get closer every day.</p>
+                    </div>
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <PenSquare className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <h4 className="text-xl font-semibold">AI Essay Review (Elite)</h4>
+                        <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college and scholarship essays to improve clarity, structure, and impact.</p>
+                    </div>
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <Users className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <h4 className="text-xl font-semibold">Mentor Match & Forum (Elite)</h4>
+                        <p className="text-muted-foreground mt-2">Connect with experienced mentors and collaborate with peers in our exclusive Q&A community.</p>
                     </div>
                 </div>
             </div>
@@ -177,7 +192,7 @@ export default function Home() {
                             </div>
                         </div>
                         <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
-                        <p className="text-foreground/80 italic">"Dymera's AI roadmap gave me a clear, step-by-step plan. I finally feel organized and confident about my college applications."</p>
+                        <p className="text-foreground/80 italic">"The AI College Finder was incredible. It suggested schools I hadn't even heard of that were a perfect fit for my niche interest in historical linguistics."</p>
                     </div>
                      <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
                         <div className="flex items-center mb-4">
@@ -191,7 +206,7 @@ export default function Home() {
                             </div>
                         </div>
                         <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
-                        <p className="text-foreground/80 italic">"The AI Study Buddy is a lifesaver. I was stuck on a physics concept, and the Resource Finder pointed me to the perfect video. I understood it in 10 minutes."</p>
+                        <p className="text-foreground/80 italic">"The AI Study Buddy's Resource Finder is my go-to. It consistently finds the best, most relevant articles and videos, saving me hours of searching."</p>
                     </div>
                      <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
                         <div className="flex items-center mb-4">
@@ -224,8 +239,10 @@ export default function Home() {
                         <p className="text-4xl font-bold my-4">$29<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI-Personalized Roadmap</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI College Finder</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Detailed Progress Tracking</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy (Quizzes & Flashcards)</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Resource Finder</li>
                         </ul>
                         <Button asChild variant="outline" className="w-full mt-8 border-border hover:bg-accent/10">
                            <Link href="/signup?plan=standard">Choose Standard</Link>
@@ -240,8 +257,8 @@ export default function Home() {
                         <ul className="space-y-3 text-muted-foreground flex-1">
                              <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Everything in Standard, plus:</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Essay Review Tool</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Mentor Match Directory</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Community Q&A Forum</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Mentor Match Directory</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Community Q&A Forum</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
                         </ul>
                         <Button asChild className="w-full mt-8 bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
