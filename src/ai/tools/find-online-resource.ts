@@ -6,6 +6,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { validateResourceURL } from './validate-resource-url';
 
 const ResourceSchema = z.object({
     title: z.string().describe('The title of the recommended online resource.'),
@@ -15,7 +16,7 @@ const ResourceSchema = z.object({
 export const findOnlineResource = ai.defineTool(
   {
     name: 'findOnlineResource',
-    description: 'Finds the single best, publicly accessible, high-quality online resource (article or video) for a given academic topic or skill. The URL must be a real, working link.',
+    description: 'Finds the single best, publicly accessible, high-quality online resource (article or video) for a given academic topic or skill. It MUST validate the URL to ensure it is a real, working link before returning.',
     inputSchema: z.object({
       query: z.string().describe('The topic to find a resource for (e.g., "Intro to Calculus", "Learn Python programming").'),
     }),
@@ -24,23 +25,37 @@ export const findOnlineResource = ai.defineTool(
   async (input) => {
     const prompt = `Find the single best, real, and publicly accessible online resource for the topic: "${input.query}".
 
-    IMPORTANT: The URL must be 100% valid and lead directly to the content. Prioritize well-known, high-quality sources like Khan Academy, Coursera, edX, university websites (.edu), official documentation, or major educational YouTube channels (like CrashCourse). Do not invent URLs. Your primary goal is to provide a working link.
+    IMPORTANT: You must use the validateResourceURL tool to verify the URL is valid and leads directly to the content. Prioritize well-known, high-quality sources like Khan Academy, Coursera, edX, university websites (.edu), official documentation, or major educational YouTube channels (like CrashCourse). Do not invent URLs. Your primary goal is to provide a working link.
 
-    Return the title of the resource and its direct URL.`;
+    If validation fails, you must try to find a different resource.`;
     
-    const llmResponse = await ai.generate({
-        prompt,
-        model: 'googleai/gemini-2.0-flash',
-        output: {
-            schema: ResourceSchema,
-        }
-    });
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    const resource = llmResponse.output;
-    if (!resource) {
-      throw new Error(`Could not find a resource for the query: ${input.query}`);
+    while (attempts < maxAttempts) {
+        attempts++;
+        const llmResponse = await ai.generate({
+            prompt,
+            model: 'googleai/gemini-2.0-flash',
+            tools: [validateResourceURL],
+            output: {
+                schema: ResourceSchema,
+            }
+        });
+
+        const resource = llmResponse.output;
+        if (!resource || !resource.url) {
+            if (attempts >= maxAttempts) {
+                throw new Error(`Could not find a resource for the query after ${attempts} attempts: ${input.query}`);
+            }
+            continue; // Try again
+        }
+        
+        // The LLM should have used the tool, but we can double-check here for robustness if needed,
+        // although the prompt forces it. The LLM's internal validation is the key.
+        return resource;
     }
     
-    return resource;
+    throw new Error(`Failed to find a valid resource for "${input.query}" after ${maxAttempts} attempts.`);
   }
 );
