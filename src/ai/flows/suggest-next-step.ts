@@ -26,21 +26,30 @@ const SuggestNextStepInputSchema = z.object({
 });
 export type SuggestNextStepInput = z.infer<typeof SuggestNextStepInputSchema>;
 
-const TaskSchema = z.object({
+const ResourceSchema = z.object({
+    title: z.string().describe('The title of the recommended online resource.'),
+    url: z.string().url().describe('The valid URL for the resource.'),
+});
+
+const AcademicsAndSkillsTaskSchema = z.object({
     title: z.string().describe("A concise, action-oriented title for the task (e.g., 'Master Quadratic Equations')."),
     description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important."),
-    resource: z.object({
-        title: z.string().describe('The title of the recommended online resource.'),
-        url: z.string().url().describe('The valid URL for the resource.'),
-    }).optional().describe('An optional online resource to help with the task. This is REQUIRED for Academics and Skill Building tasks.'),
+    resource: ResourceSchema.describe('An online resource to help with the task. This is REQUIRED for Academics and Skill Building tasks.'),
 });
+
+const ExtracurricularsTaskSchema = z.object({
+    title: z.string().describe("A concise, action-oriented title for the task (e.g., 'Run for Treasurer in Student Government')."),
+    description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important."),
+    resource: ResourceSchema.optional().describe('An optional online resource to help with the task. If provided, the URL must be valid.'),
+});
+
 
 const PlanSchema = z.object({
     grade: z.string().describe('The grade level for this part of the plan (e.g., "9th Grade", "10th Grade").'),
     focus: z.string().describe('The main theme or focus for that grade level (e.g., "Building Foundational Skills").'),
-    academics: z.array(TaskSchema).describe('A list of specific, actionable academic goals. DO NOT create vague tasks like "Improve Math Grades." Focus on mastering specific concepts from their weaknesses.'),
-    extracurriculars: z.array(TaskSchema).describe("A list of specific, actionable extracurricular activities. Instead of just listing an activity, suggest a concrete action within it (e.g., 'Run for Treasurer in Student Government')."),
-    skillBuilding: z.array(TaskSchema).describe("A list of specific, actionable skills to develop (e.g., 'Complete a Python for Beginners course')."),
+    academics: z.array(AcademicsAndSkillsTaskSchema).describe('A list of specific, actionable academic goals. DO NOT create vague tasks like "Improve Math Grades." Focus on mastering specific concepts from their weaknesses.'),
+    extracurriculars: z.array(ExtracurricularsTaskSchema).describe("A list of specific, actionable extracurricular activities. Instead of just listing an activity, suggest a concrete action within it (e.g., 'Run for Treasurer in Student Government')."),
+    skillBuilding: z.array(AcademicsAndSkillsTaskSchema).describe("A list of specific, actionable skills to develop (e.g., 'Complete a Python for Beginners course')."),
 });
 
 
@@ -66,10 +75,11 @@ const prompt = ai.definePrompt({
   **Core Instructions:**
   1.  **No Vague Tasks:** Do NOT create vague tasks like "Improve your grades" or "Study for the SAT." Every task must be a concrete, measurable action.
   2.  **Action-Oriented Titles:** All task titles must start with an action verb (e.g., "Master," "Complete," "Build," "Publish," "Lead").
-  3.  **Mandatory Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course that can help the student complete that task. For 'extracurriculars', a resource is optional but encouraged.
-  4.  **Target Weaknesses:** For academic tasks, directly address the student's 'academicWeaknesses'. If a weakness is 'Physics', create a task like "Master the concept of Kinematics" and find a resource for it.
-  5.  **Validate Subjects:** Before creating a plan, you MUST validate that the provided 'academicStrengths' and 'academicWeaknesses' are real subjects or skills using the 'validateAcademicSubject' tool.
-  6.  **Year-by-Year Plan:** Provide a clear, year-by-year plan from the student's current grade level through 12th grade.
+  3.  **Mandatory Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course that can help the student complete that task.
+  4.  **Optional but Validated Resources:** For 'extracurriculars' tasks, a resource is optional. However, IF YOU PROVIDE a resource, you MUST validate its URL using the 'findOnlineResource' tool to ensure it is a valid, working link. Do not provide a resource if you cannot find a valid one.
+  5.  **Target Weaknesses:** For academic tasks, directly address the student's 'academicWeaknesses'. If a weakness is 'Physics', create a task like "Master the concept of Kinematics" and find a resource for it.
+  6.  **Validate Subjects:** Before creating a plan, you MUST validate that the provided 'academicStrengths' and 'academicWeaknesses' are real subjects or skills using the 'validateAcademicSubject' tool.
+  7.  **Year-by-Year Plan:** Provide a clear, year-by-year plan from the student's current grade level through 12th grade.
 
   **Student Information:**
   - Current Grade: {{{grade}}}
