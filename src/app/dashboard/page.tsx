@@ -5,7 +5,7 @@ import { Suspense, useEffect, useState } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap } from "lucide-react";
+import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Trophy } from "lucide-react";
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +14,7 @@ import type { RoadmapTask } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { trackFeatureUsage } from "@/lib/tracking";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
     try {
@@ -29,9 +30,9 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
     const tasks: RoadmapTask[] = [];
     if (!suggestion || !suggestion.plan) return tasks;
 
-    suggestion.plan.forEach((planItem) => {
+    suggestion.plan.forEach((planItem, planIndex) => {
         const createTasks = (items: any[], category: RoadmapTask['category']) => {
-            items.forEach(item => {
+            items.forEach((item, itemIndex) => {
                 tasks.push({
                     id: uuidv4(),
                     title: item.title,
@@ -40,6 +41,8 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
                     grade: planItem.grade,
                     completed: false,
                     relatedResources: item.resource ? [item.resource] : [],
+                    points: Math.floor(Math.random() * 20) + 10, // Assign 10-30 points
+                    dueDate: new Date(Date.now() + (planIndex * 30 + itemIndex) * 24 * 60 * 60 * 1000).toISOString(), // Mock due dates
                 });
             });
         };
@@ -131,6 +134,7 @@ const standardTiles = [
 
 const eliteTiles = [
     ...standardTiles,
+    { title: "AI Essay Review", description: "Get feedback on your essays.", icon: PenSquare, href: "/dashboard/essay-review", isElite: true, feature: "essayReview" },
     { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match", isElite: true, feature: "mentorMatch" },
     { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum" },
 ]
@@ -180,12 +184,41 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <DashboardHeader />
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Your Next Step</h2>
-        <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-            <SuggestionView />
-        </Suspense>
-      </section>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+                <h2 className="text-2xl font-semibold mb-4">Your Next Step</h2>
+                <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+                    <SuggestionView />
+                </Suspense>
+            </div>
+            <div className="space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Quick Actions</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-2">
+                        <Button asChild variant="outline"><Link href="/dashboard/study-resources">AI Study Buddy</Link></Button>
+                        {userPlan === 'elite' && <Button asChild variant="outline"><Link href="/dashboard/essay-review">AI Essay Review</Link></Button>}
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Community Spotlight</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex items-center gap-4">
+                            <div className="bg-primary/10 p-3 rounded-full text-primary">
+                                <Trophy/>
+                            </div>
+                            <div>
+                                <p className="font-semibold">Weekly Challenge</p>
+                                <p className="text-sm text-muted-foreground">Complete 5 tasks to earn a badge!</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
 
       <section>
         <h2 className="text-2xl font-semibold mb-4">Your Dashboard</h2>

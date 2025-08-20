@@ -3,17 +3,49 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, ListChecks, Star, Trophy, Activity, BrainCircuit } from "lucide-react";
+import { CheckCircle, ListChecks, Star, Trophy, Activity, BrainCircuit, Calendar, BarChart2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { RoadmapTask } from "@/lib/types";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { subDays, format } from "date-fns";
+
+// Mock data for completion timeline
+const generateTimelineData = (tasks: RoadmapTask[]) => {
+    const data: { [key: string]: number } = {};
+    for (let i = 6; i >= 0; i--) {
+        const date = format(subDays(new Date(), i), "MMM d");
+        data[date] = 0;
+    }
+    // This is a mock; in a real app, you'd check task completion dates.
+    // For now, let's randomly assign some completions.
+    const completedTasks = tasks.filter(t => t.completed);
+    completedTasks.forEach((_, index) => {
+        const dateKey = Object.keys(data)[index % 7];
+        if (dateKey) {
+            data[dateKey]++;
+        }
+    })
+
+    return Object.entries(data).map(([name, completed]) => ({ name, completed }));
+};
+
 
 export function ProgressView() {
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
+    const [timelineData, setTimelineData] = useState<any[]>([]);
+    const [totalPoints, setTotalPoints] = useState(0);
 
     useEffect(() => {
         const storedTasks = localStorage.getItem('roadmapTasks');
         if (storedTasks) {
-            setTasks(JSON.parse(storedTasks));
+            const parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
+            setTasks(parsedTasks);
+            setTimelineData(generateTimelineData(parsedTasks));
+            
+            const points = parsedTasks
+                .filter(t => t.completed && t.points)
+                .reduce((sum, task) => sum + (task.points || 0), 0);
+            setTotalPoints(points);
         }
     }, []);
 
@@ -51,7 +83,7 @@ export function ProgressView() {
         </CardContent>
       </Card>
 
-      <div className="grid md:grid-cols-2 gap-4 text-center">
+      <div className="grid md:grid-cols-3 gap-4 text-center">
         <Card>
             <CardHeader><CardTitle className="flex items-center justify-center gap-2 text-xl"><CheckCircle className="text-green-500"/>Completed Tasks</CardTitle></CardHeader>
             <CardContent><p className="text-4xl font-bold">{completedTasks}</p></CardContent>
@@ -60,7 +92,29 @@ export function ProgressView() {
             <CardHeader><CardTitle className="flex items-center justify-center gap-2 text-xl"><ListChecks className="text-blue-500"/>Total Tasks</CardTitle></CardHeader>
             <CardContent><p className="text-4xl font-bold">{totalTasks}</p></CardContent>
         </Card>
+         <Card>
+            <CardHeader><CardTitle className="flex items-center justify-center gap-2 text-xl"><Star className="text-yellow-400"/>Points Earned</CardTitle></CardHeader>
+            <CardContent><p className="text-4xl font-bold">{totalPoints.toLocaleString()}</p></CardContent>
+        </Card>
       </div>
+
+       <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><BarChart2/>Task Completion Timeline</CardTitle>
+            <CardDescription>Tasks completed over the last 7 days.</CardDescription>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={timelineData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <Tooltip contentStyle={{ backgroundColor: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }} />
+                    <Bar dataKey="completed" name="Tasks Completed" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
       <Card>
         <CardHeader>

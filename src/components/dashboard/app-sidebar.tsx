@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -120,7 +120,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             
             {userPlan === 'elite' && (
                 <SidebarGroup>
-                    <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Resources</h3>
+                    <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Elite Resources</h3>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild tooltip="Mentor Match">
                         <Link href="/dashboard/mentor-match"><MessageSquare/>Mentor Match</Link>
@@ -129,6 +129,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild tooltip="Q&amp;A Forum">
                         <Link href="/dashboard/q-and-a-forum"><Users/>Q&amp;A Forum</Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip="AI Essay Review">
+                        <Link href="/dashboard/essay-review"><PenSquare/>AI Essay Review</Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarGroup>

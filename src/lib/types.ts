@@ -8,6 +8,8 @@ export type RoadmapTask = {
     grade: string;
     completed: boolean;
     relatedResources?: { title: string; url: string }[];
+    points?: number;
+    dueDate?: string;
 };
 
 export type ForumReply = {
@@ -21,7 +23,7 @@ export type ForumReply = {
 }
 
 export type ForumPost = {
-    id: string;
+    id:string;
     user: string;
     avatar: string;
     hint: string;
@@ -39,3 +41,21 @@ export type PracticeQuestion = {
     answer: string;
 }
     
+export type EssayReviewFeedback = {
+    clarity: {
+        score: number;
+        feedback: string;
+    };
+    grammar: {
+        score: number;
+        feedback: string;
+    };
+    structure: {
+        score: number;
+        feedback: string;
+    };
+    overall: {
+        score: number;
+        feedback: string;
+    };
+}

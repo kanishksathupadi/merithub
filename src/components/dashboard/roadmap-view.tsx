@@ -8,8 +8,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Link as LinkIcon } from "lucide-react";
+import { Calendar, Link as LinkIcon, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format, parseISO } from "date-fns";
 
 const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building'];
 
@@ -19,9 +20,17 @@ export function RoadmapView() {
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
-    const storedTasks = localStorage.getItem('roadmapTasks');
+    let storedTasks = localStorage.getItem('roadmapTasks');
     if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
+      // Add mock points and due dates for demo purposes
+      let parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
+      parsedTasks = parsedTasks.map((task, index) => ({
+        ...task,
+        points: task.points || Math.floor(Math.random() * 20) + 10, // 10-30 points
+        dueDate: task.dueDate || new Date(Date.now() + index * 3 * 24 * 60 * 60 * 1000).toISOString(),
+      }));
+      setTasks(parsedTasks);
+      localStorage.setItem('roadmapTasks', JSON.stringify(parsedTasks));
     }
     setLoading(false);
   }, []);
@@ -92,30 +101,47 @@ function TaskCard({ task, onToggle, getCategoryColor }: { task: RoadmapTask, onT
                         </CardTitle>
                         <CardDescription>{task.description}</CardDescription>
                     </div>
-                    <Badge variant="outline" className="hidden sm:inline-flex">
-                        <span className={`w-2 h-2 mr-2 rounded-full ${getCategoryColor(task.category)}`}></span>
-                        {task.category}
-                    </Badge>
+                     <div className="hidden sm:flex flex-col items-end gap-2">
+                        <Badge variant="outline" className="whitespace-nowrap">
+                            <span className={`w-2 h-2 mr-2 rounded-full ${getCategoryColor(task.category)}`}></span>
+                            {task.category}
+                        </Badge>
+                        {task.points && (
+                            <Badge variant="secondary" className="bg-yellow-400/10 text-yellow-300">
+                                <Star className="w-3 h-3 mr-1" /> {task.points} pts
+                            </Badge>
+                        )}
+                    </div>
                 </div>
             </CardHeader>
-            <CardFooter className="flex justify-between items-center">
-                 <div className="text-sm text-muted-foreground flex items-center gap-2">
-                    <Calendar className="w-4 h-4"/>
-                     For {task.grade}
+            <CardContent>
+                 <div className="text-sm text-muted-foreground flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4"/>
+                        <span>For {task.grade}</span>
+                    </div>
+                    {task.dueDate && (
+                        <div className="flex items-center gap-2">
+                            <span className="font-bold">Due:</span>
+                            <span>{format(parseISO(task.dueDate), "MMMM d, yyyy")}</span>
+                        </div>
+                    )}
                  </div>
-                 <div className="flex gap-2">
-                    {task.relatedResources?.map(resource => (
-                        <Button key={resource.title} variant="outline" size="sm" asChild>
-                            <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                                <LinkIcon className="w-4 h-4 mr-2" />
-                                {resource.title}
-                            </a>
-                        </Button>
-                    ))}
-                 </div>
-            </CardFooter>
+            </CardContent>
+            {task.relatedResources && task.relatedResources.length > 0 && (
+                <CardFooter>
+                     <div className="flex gap-2">
+                        {task.relatedResources?.map(resource => (
+                            <Button key={resource.title} variant="outline" size="sm" asChild>
+                                <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                                    <LinkIcon className="w-4 h-4 mr-2" />
+                                    {resource.title}
+                                </a>
+                            </Button>
+                        ))}
+                     </div>
+                </CardFooter>
+            )}
         </Card>
     )
 }
-
-    
