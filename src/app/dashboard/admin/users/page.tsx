@@ -68,8 +68,8 @@ function UsersList() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {users.map((user) => (
-                                <TableRow key={user.email}>
+                            {users.map((user, index) => (
+                                <TableRow key={`${user.email}-${index}`}>
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{user.password}</TableCell>
