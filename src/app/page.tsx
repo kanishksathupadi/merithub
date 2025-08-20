@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks } from "lucide-react";
+import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,7 +25,7 @@ export default function Home() {
                 <Link href="/login">Member Login</Link>
             </Button>
              <Button asChild className="bg-accent text-black hover:bg-accent/90">
-              <Link href="#pricing">Get Started</Link>
+              <Link href="/signup">Get Started</Link>
             </Button>
           </div>
         </div>
@@ -44,7 +44,7 @@ export default function Home() {
                 Smarter Prep, Brighter Future.
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                Dymera uses AI to build your personalized roadmap for academic and extracurricular success. Get on-demand study help, generate practice quizzes, and follow a clear path to your goals.
+                Dymera uses AI to build your personalized roadmap, get on-demand study help, and provide feedback on your essays to ensure you stand out.
               </p>
               <div className="mt-8 space-x-4">
                 <Button size="lg" asChild className="bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
@@ -88,9 +88,9 @@ export default function Home() {
                 <p className="text-muted-foreground mt-1">Step-by-step Tasks</p>
               </div>
               <div className="flex flex-col items-center">
-                 <BookOpen className="w-10 h-10 text-primary mb-2" />
-                <h4 className="text-3xl lg:text-4xl font-bold text-foreground">On-Demand</h4>
-                <p className="text-muted-foreground mt-1">Study Tools</p>
+                 <PenSquare className="w-10 h-10 text-primary mb-2" />
+                <h4 className="text-3xl lg:text-4xl font-bold text-foreground">Instant</h4>
+                <p className="text-muted-foreground mt-1">Essay Feedback</p>
               </div>
               <div className="flex flex-col items-center">
                  <TrendingUp className="w-10 h-10 text-primary mb-2" />
@@ -115,14 +115,14 @@ export default function Home() {
                         <p className="text-muted-foreground mt-2">Our AI builds a dynamic, multi-year strategy based on deep analysis of your goals, strengths, and weaknesses.</p>
                     </div>
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <PenSquare className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <h4 className="text-xl font-semibold">AI Essay Review</h4>
+                        <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college and scholarship essays to improve clarity, structure, and impact.</p>
+                    </div>
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
                         <BookOpen className="w-12 h-12 text-primary mx-auto mb-4"/>
                         <h4 className="text-xl font-semibold">AI Study Buddy</h4>
                         <p className="text-muted-foreground mt-2">Instantly generate flashcards and quizzes for any topic, or find the web's best resource for a specific question.</p>
-                    </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <ListChecks className="w-12 h-12 text-primary mx-auto mb-4"/>
-                        <h4 className="text-xl font-semibold">Progress Tracking</h4>
-                        <p className="text-muted-foreground mt-2">Visualize your journey and celebrate your achievements as you complete tasks on your personalized roadmap.</p>
                     </div>
                 </div>
             </div>
@@ -201,11 +201,11 @@ export default function Home() {
                             </Avatar>
                             <div className="ml-4">
                                 <p className="font-semibold">Emily A.</p>
-                                <p className="text-sm text-muted-foreground">Future Engineer</p>
+                                <p className="text-sm text-muted-foreground">Future Valedictorian</p>
                             </div>
                         </div>
                         <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
-                        <p className="text-foreground/80 italic">"The progress tracker is so motivating! Seeing the checkmarks pile up on my roadmap keeps me focused on my goals every week."</p>
+                        <p className="text-foreground/80 italic">"The AI Essay Review tool is a game-changer. My common app essay is so much stronger now after getting instant feedback on my structure and clarity."</p>
                     </div>
                 </div>
             </div>
@@ -223,9 +223,9 @@ export default function Home() {
                         <h4 className="text-2xl font-semibold">Standard</h4>
                         <p className="text-4xl font-bold my-4">$29<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI-Powered Roadmap</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Progress Tracking</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI-Personalized Roadmap</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Detailed Progress Tracking</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy (Quizzes & Flashcards)</li>
                         </ul>
                         <Button asChild variant="outline" className="w-full mt-8 border-border hover:bg-accent/10">
                            <Link href="/signup?plan=standard">Choose Standard</Link>
@@ -239,6 +239,7 @@ export default function Home() {
                         <p className="text-4xl font-bold my-4">$49<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
                              <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Everything in Standard, plus:</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Essay Review Tool</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Mentor Match Directory</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Community Q&A Forum</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
@@ -259,3 +260,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
