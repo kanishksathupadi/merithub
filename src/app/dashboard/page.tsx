@@ -194,15 +194,6 @@ export default function DashboardPage() {
             <div className="space-y-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Quick Actions</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-2">
-                        <Button asChild variant="outline"><Link href="/dashboard/study-resources">AI Study Buddy</Link></Button>
-                        {userPlan === 'elite' && <Button asChild variant="outline"><Link href="/dashboard/essay-review">AI Essay Review</Link></Button>}
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
                         <CardTitle>Community Spotlight</CardTitle>
                     </CardHeader>
                     <CardContent>
