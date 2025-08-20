@@ -20,48 +20,7 @@ import Link from "next/link";
 import { moderatePost } from "@/ai/flows/moderate-post";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const initialForumPosts: Omit<ForumPost, 'id' | 'replies'>[] = [
-  {
-    user: "Jessica S.",
-    avatar: "JS",
-    hint: "female student",
-    avatarUrl: "https://images.unsplash.com/photo-1499887142886-791eca5918cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmZW1hbGUlMjBzdHVkZW50fGVufDB8fHx8MTc1NTU1NTU5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-    title: "Best way to prepare for the SAT essay section?",
-    content: "I'm finding it hard to structure my essays for the SAT. Does anyone have a good framework or resources they'd recommend? I'm aiming for a high score but my practice essays feel a bit weak.",
-    upvotes: 45,
-    tags: ["SAT", "Essays"],
-  },
-  {
-    user: "Michael I.",
-    avatar: "MI",
-    hint: "male student",
-    avatarUrl: "https://images.unsplash.com/photo-1624918479892-3e5df2910410?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYWxlJTIwc3R1ZGVudHxlbnwwfHx8fDE3NTU1NTU1OTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    title: "Has anyone participated in the Google Science Fair? Looking for tips.",
-    content: "I'm thinking of entering the Google Science Fair this year. It seems like a huge undertaking. If anyone has gone through it, I'd love to hear about your experience, how you picked a topic, and how you managed the project timeline.",
-    upvotes: 72,
-    tags: ["STEM", "Competitions"],
-  },
-  {
-    user: "Emily A.",
-    avatar: "EA",
-    hint: "student face",
-    avatarUrl: "https://images.unsplash.com/photo-1634219325274-53add2ddd28b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdHVkZW50JTIwZmFjZXxlbnwwfHx8fDE3NTU1NTU1OTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    title: "How to balance a heavy AP course load with extracurriculars?",
-    content: "Next year I'm taking 4 APs and I'm also captain of the debate team and in the school orchestra. I'm worried about burnout. How do you all stay organized and make sure you have time for everything, including sleep?",
-    upvotes: 102,
-    tags: ["Academics", "Time Management"],
-  },
-  {
-    user: "Chris L.",
-    avatar: "CL",
-    hint: "male student",
-    avatarUrl: "https://images.unsplash.com/photo-1529068755536-a5ade0dcb4e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxtYWxlJTIwc3R1ZGVudHxlbnwwfHx8fDE3NTU1NTU1OTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    title: "What are some unique extracurriculars for someone interested in medicine?",
-    content: "I want to go pre-med in college, and I already volunteer at the local hospital. I'm looking for something more unique to add to my application. Any ideas for extracurriculars that stand out for a future doctor?",
-    upvotes: 58,
-    tags: ["Extracurriculars", "Medicine"],
-  }
-];
+const initialForumPosts: Omit<ForumPost, 'id' | 'replies'>[] = [];
 
 const postSchema = z.object({
   title: z.string().min(10, "Title must be at least 10 characters long.").max(200, "Title is too long."),
