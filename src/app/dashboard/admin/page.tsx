@@ -132,7 +132,7 @@ export default function AdminPage() {
         });
 
         // --- Recent Signups ---
-        const signupsWithAvatars = allUsers.slice(-4).map((user: any) => ({
+        const signupsWithAvatars = [...allUsers].reverse().slice(0, 4).map((user: any) => ({
             ...user,
             avatar: user.name.charAt(0).toUpperCase(),
             hint: "student face", // generic hint
