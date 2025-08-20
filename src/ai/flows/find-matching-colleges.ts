@@ -5,32 +5,13 @@
  * @fileOverview AI agent that finds colleges matching a student's profile and preferences.
  *
  * - findMatchingColleges - A function that recommends colleges.
- * - FindMatchingCollegesInput - The input type for the findMatchingColleges function.
- * - FindMatchingCollegesOutput - The return type for the findMatchingColleges function.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import type { FindMatchingCollegesInput, FindMatchingCollegesOutput } from '@/lib/types';
+import { FindMatchingCollegesInputSchema, FindMatchingCollegesOutputSchema } from '@/lib/types';
 
-export const FindMatchingCollegesInputSchema = z.object({
-  filterQuery: z.string().describe('The user\'s filter query (e.g., "small colleges", "schools in california").'),
-  academicStrengths: z.string().describe('The academic strengths of the student.'),
-  academicWeaknesses: z.string().describe('The academic weaknesses of the student.'),
-  subjectsOfInterest: z.string().describe('Subjects and topics the student is passionate about.'),
-  collegeEnvironment: z.string().describe('The type of college learning environment the student prefers.'),
-  preferredLearningStyle: z.string().describe('The preferred learning style of the student.'),
-  currentExtracurriculars: z.string().describe('The current extracurricular activities of the student.'),
-  weeklyTimeAvailable: z.string().describe('The weekly time available for self-improvement in hours.'),
-  grade: z.coerce.number().describe('The current grade level of the student (5-12).'),
-});
-export type FindMatchingCollegesInput = z.infer<typeof FindMatchingCollegesInputSchema>;
-
-export const FindMatchingCollegesOutputSchema = z.array(z.object({
-    name: z.string().describe("The full name of the college or university."),
-    location: z.string().describe("The city and state of the college (e.g., 'Cambridge, MA')."),
-    reasoning: z.string().describe("A brief, one-sentence summary of why this college is an excellent match for this specific student, directly referencing their profile."),
-}));
-export type FindMatchingCollegesOutput = z.infer<typeof FindMatchingCollegesOutputSchema>;
 
 export async function findMatchingColleges(input: FindMatchingCollegesInput): Promise<FindMatchingCollegesOutput> {
   return findMatchingCollegesFlow(input);
