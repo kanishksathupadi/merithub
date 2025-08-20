@@ -53,7 +53,7 @@ export default function CalendarPage() {
 
         return (
             <div className="relative h-full w-full flex flex-col p-1 overflow-hidden">
-                <div className="absolute top-1 right-1">{props.children}</div>
+                <time dateTime={date.toISOString()} className="absolute top-1 right-1">{props.children}</time>
                 {dayTasks.length > 0 && (
                     <div className="flex flex-col gap-1 mt-6 overflow-y-auto">
                         {dayTasks.slice(0, 2).map((task) => (
@@ -95,13 +95,13 @@ export default function CalendarPage() {
                 <h1 className="text-3xl font-bold">Calendar</h1>
                 <p className="text-muted-foreground">Your tasks and deadlines at a glance.</p>
             </header>
-            <div className="border rounded-lg flex-1 flex">
+            <div className="border rounded-lg flex-1 overflow-auto">
                  <Calendar
                     mode="single"
-                    className="p-0 flex-1"
+                    className="p-0"
                     classNames={{
-                        months: "flex flex-col sm:space-x-4 sm:space-y-0 w-full",
-                        month: "space-y-4 flex-1 flex flex-col",
+                        months: "flex flex-col w-full",
+                        month: "space-y-4",
                         caption_label: "text-lg font-bold",
                         head_row: "flex justify-around",
                         head_cell: "text-muted-foreground rounded-md w-full font-normal text-sm",
@@ -110,8 +110,7 @@ export default function CalendarPage() {
                         day: "h-full w-full p-0 font-normal aria-selected:opacity-100",
                         day_selected: "bg-accent text-accent-foreground",
                         day_today: "bg-primary/10 text-primary-foreground",
-                        table: "w-full h-full flex-1 flex flex-col",
-                        tbody: "flex-1",
+                        table: "w-full h-full",
                     }}
                     components={{
                         Day: DayWithTasks
