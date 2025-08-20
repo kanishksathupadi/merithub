@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import type { RoadmapTask } from '@/lib/types';
-import { isSameDay, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
@@ -25,15 +25,12 @@ const getCategoryColor = (category: RoadmapTask['category']) => {
 };
 
 export default function CalendarPage() {
-    const [tasks, setTasks] = useState<RoadmapTask[]>([]);
     const [tasksByDate, setTasksByDate] = useState<{ [key: string]: RoadmapTask[] }>({});
 
     useEffect(() => {
         const storedTasks = localStorage.getItem('roadmapTasks');
         if (storedTasks) {
             const parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
-            setTasks(parsedTasks);
-
             const groupedTasks = parsedTasks.reduce((acc, task) => {
                 if (task.dueDate) {
                     const day = parseISO(task.dueDate).toDateString();
@@ -95,22 +92,23 @@ export default function CalendarPage() {
                 <h1 className="text-3xl font-bold">Calendar</h1>
                 <p className="text-muted-foreground">Your tasks and deadlines at a glance.</p>
             </header>
-            <div className="border rounded-lg flex-1 overflow-auto">
+            <div className="border rounded-lg flex-1 flex">
                  <Calendar
                     mode="single"
-                    className="p-0"
+                    className="p-0 flex-1"
                     classNames={{
-                        months: "flex flex-col w-full",
-                        month: "space-y-4",
+                        months: "flex flex-col flex-1",
+                        month: "space-y-4 flex flex-col flex-1",
                         caption_label: "text-lg font-bold",
                         head_row: "flex justify-around",
                         head_cell: "text-muted-foreground rounded-md w-full font-normal text-sm",
-                        row: "flex w-full mt-2 justify-around",
-                        cell: "h-32 w-full text-left text-sm p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 border-t border-l",
+                        row: "flex w-full mt-2 justify-around flex-1",
+                        cell: "w-full text-left text-sm p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 border-t border-l",
                         day: "h-full w-full p-0 font-normal aria-selected:opacity-100",
                         day_selected: "bg-accent text-accent-foreground",
                         day_today: "bg-primary/10 text-primary-foreground",
-                        table: "w-full h-full",
+                        table: "w-full h-full flex flex-col",
+                        tbody: "flex flex-col flex-1",
                     }}
                     components={{
                         Day: DayWithTasks
