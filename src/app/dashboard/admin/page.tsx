@@ -168,7 +168,7 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{userStats.totalUsers.toLocaleString()}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/active-users')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Daily Active Users</CardTitle>
             <LineChart className="h-4 w-4 text-muted-foreground" />
@@ -261,5 +261,3 @@ export default function AdminPage() {
     </div>
   )
 }
-
-    
