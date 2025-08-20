@@ -3,7 +3,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
-import { NextStepCard } from "@/components/dashboard/next-step-card";
+import { DailyGoalCard } from "@/components/dashboard/daily-goal-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Trophy } from "lucide-react";
 import Link from "next/link";
@@ -55,28 +55,19 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
 }
 
 function SuggestionView() {
-    const [suggestion, setSuggestion] = useState<SuggestNextStepOutput | null>(null);
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
     const [loading, setLoading] = useState(true);
-    const [userName, setUserName] = useState<string | null>(null);
 
     useEffect(() => {
-        const name = localStorage.getItem('userName');
-        if (name) {
-            setUserName(name);
-        }
-
         const getSuggestionAndTasks = async () => {
             const cachedSuggestion = localStorage.getItem('aiSuggestion');
             const cachedTasks = localStorage.getItem('roadmapTasks');
             
             if (cachedSuggestion && cachedTasks) {
                 try {
-                    setSuggestion(JSON.parse(cachedSuggestion));
                     setTasks(JSON.parse(cachedTasks));
                 } catch (error) {
                     console.error("Failed to parse cached data from localStorage", error);
-                    // Clear broken data
                     localStorage.removeItem('aiSuggestion');
                     localStorage.removeItem('roadmapTasks');
                 } finally {
@@ -94,12 +85,10 @@ function SuggestionView() {
                 const result = await fetchSuggestion({ ...onboardingData, grade: signupData.grade });
                 
                 if (result) {
-                    setSuggestion(result);
                     localStorage.setItem('aiSuggestion', JSON.stringify(result));
                     const newTasks = generateTasksFromSuggestion(result);
                     setTasks(newTasks);
                     localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
-                    // Dispatch storage event to notify other components
                     window.dispatchEvent(new Event('storage'));
                 }
             }
@@ -109,7 +98,6 @@ function SuggestionView() {
         getSuggestionAndTasks();
     }, []);
     
-    // This effect listens for task updates from other components (like the roadmap page)
     useEffect(() => {
         const handleStorageChange = () => {
             const storedTasks = localStorage.getItem('roadmapTasks');
@@ -129,13 +117,13 @@ function SuggestionView() {
         return <Skeleton className="h-48 w-full" />;
     }
 
-    if (!suggestion || tasks.length === 0) {
+    if (tasks.length === 0) {
         return <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>;
     }
     
     const nextTask = tasks.find(task => !task.completed);
 
-    return <NextStepCard nextTask={nextTask} />;
+    return <DailyGoalCard nextTask={nextTask} />;
 }
 
 const standardTiles = [
@@ -154,7 +142,6 @@ const eliteTiles = [
 
 export default function DashboardPage() {
     const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
-    const [userName, setUserName] = useState<string | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
@@ -165,17 +152,17 @@ export default function DashboardPage() {
         if (plan) {
             setUserPlan(plan);
         }
-        const name = localStorage.getItem('userName');
-        if (name) {
-            setUserName(name);
-        }
         
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
-            const signupData = JSON.parse(signupDataStr);
-            if(signupData.email === 'admin@dymera.com') {
-                setIsAdmin(true);
-                router.replace('/dashboard/admin');
+            try {
+                const signupData = JSON.parse(signupDataStr);
+                if(signupData.email === 'admin@dymera.com') {
+                    setIsAdmin(true);
+                    router.replace('/dashboard/admin');
+                }
+            } catch (e) {
+                console.error("Error parsing signupData", e)
             }
         }
         setLoading(false);
@@ -198,7 +185,7 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-                <h2 className="text-2xl font-semibold mb-4">Your Next Step</h2>
+                <h2 className="text-2xl font-semibold mb-4">Today's Goal</h2>
                 <Suspense fallback={<Skeleton className="h-48 w-full" />}>
                     <SuggestionView />
                 </Suspense>
