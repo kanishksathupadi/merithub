@@ -234,8 +234,8 @@ export default function AdminPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentSignups.map((user: any) => (
-                  <TableRow key={user.email}>
+                {recentSignups.map((user: any, index: number) => (
+                  <TableRow key={`${user.email}-${index}`}>
                     <TableCell className="font-medium flex items-center gap-2">
                         <Avatar className="w-8 h-8">
                             <AvatarImage src={user.avatarUrl} data-ai-hint={user.hint}/>
