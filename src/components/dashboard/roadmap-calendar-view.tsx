@@ -22,7 +22,7 @@ export function RoadmapCalendarView() {
         setTasks(parsedTasks);
       }
     } catch (error) {
-      console.error("Failed to parse roadmap tasks from localStorage", error);
+        console.error("Failed to parse roadmap tasks from localStorage", error);
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export function RoadmapCalendarView() {
                 head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
                 row: "flex w-full mt-2",
                 cell: "w-full text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                day: "h-32 w-full p-1 font-normal aria-selected:opacity-100 flex flex-col items-start justify-start",
+                day: "h-48 w-full p-1 font-normal aria-selected:opacity-100 flex flex-col items-start justify-start",
                 day_selected: "bg-accent text-accent-foreground",
                 day_today: "bg-muted text-foreground",
             }}
