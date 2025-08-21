@@ -4,8 +4,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { findScholarships, FindScholarshipsInputSchema, type FindScholarshipsOutput } from '@/ai/flows/find-scholarships';
-import type { FindScholarshipsInput } from '@/ai/flows/find-scholarships';
+import { findScholarships } from '@/ai/flows/find-scholarships';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -13,6 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Award, Loader2, Sparkles, Calendar, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import { FindScholarshipsInputSchema, type FindScholarshipsOutput, type FindScholarshipsInput } from '@/lib/types';
+
 
 export default function ScholarshipFinderPage() {
     const { toast } = useToast();

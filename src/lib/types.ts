@@ -89,3 +89,22 @@ export type UserNotification = {
     timestamp: string;
     read: boolean;
 };
+
+export const FindScholarshipsInputSchema = z.object({
+  academicProfile: z.string().describe("The student's academic profile, including GPA, test scores (SAT/ACT), and key subjects."),
+  extracurriculars: z.string().describe("The student's main extracurricular activities, achievements, and leadership roles."),
+  interests: z.string().describe("The student's personal interests, passions, and intended field of study."),
+  background: z.string().describe("The student's background, including any relevant demographic information (e.g., first-generation student, specific heritage) or financial need."),
+});
+export type FindScholarshipsInput = z.infer<typeof FindScholarshipsInputSchema>;
+
+export const FindScholarshipsOutputSchema = z.object({
+    scholarships: z.array(z.object({
+        name: z.string().describe("The name of the scholarship."),
+        amount: z.string().describe("The scholarship award amount (e.g., '$10,000' or 'Full Tuition')."),
+        deadline: z.string().describe("The application deadline for the scholarship."),
+        description: z.string().describe("A brief summary of the scholarship and its eligibility requirements."),
+        applicationUrl: z.string().url().describe("The direct, valid URL to the scholarship's application or information page."),
+    })).describe("A list of 5 to 7 relevant scholarships."),
+});
+export type FindScholarshipsOutput = z.infer<typeof FindScholarshipsOutputSchema>;
