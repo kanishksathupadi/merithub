@@ -46,9 +46,7 @@ export default function DashboardLayout({
       if (signupData.email === 'admin@dymera.com') {
         setIsAdmin(true);
       }
-      const { name, email } = signupData;
-      const firstLetter = name.charAt(0).toUpperCase();
-
+      
       if (!onboardingData) {
         router.push('/onboarding');
       } else if (!paymentComplete) {
@@ -56,21 +54,24 @@ export default function DashboardLayout({
       } else {
         setIsVerified(true);
         // Only generate avatar for non-admin users to avoid unnecessary calls
-        if (signupData.email !== 'admin@dymera.com') {
-            generateAvatar({ letter: firstLetter })
-                .then(result => {
-                    localStorage.setItem('userAvatar', result.imageUrl);
-                    setAvatarUrl(result.imageUrl);
-                    window.dispatchEvent(new Event('storage')); // Notify other components
-                })
-                .catch(err => {
-                    console.error("Failed to generate avatar", err)
-                    // Fallback to checking local storage if generation fails
-                    const storedAvatar = localStorage.getItem('userAvatar');
-                    if (storedAvatar) {
-                        setAvatarUrl(storedAvatar);
-                    }
-                });
+        if (signupData.email !== 'admin@dymera.com' && signupData.name) {
+            const firstLetter = signupData.name.charAt(0).toUpperCase();
+            const storedAvatar = localStorage.getItem('userAvatar');
+
+            // If avatar doesn't exist, generate it.
+            if (!storedAvatar) {
+                generateAvatar({ letter: firstLetter })
+                    .then(result => {
+                        localStorage.setItem('userAvatar', result.imageUrl);
+                        setAvatarUrl(result.imageUrl);
+                        window.dispatchEvent(new Event('storage')); // Notify other components
+                    })
+                    .catch(err => {
+                        console.error("Failed to generate avatar", err)
+                    });
+            } else {
+                 setAvatarUrl(storedAvatar);
+            }
         }
       }
     }
