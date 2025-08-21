@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { Calendar, dateFnsLocalizer, Views, NavigateAction } from 'react-big-calendar';
+import { useState, useEffect, useCallback } from "react";
+import { Calendar, dateFnsLocalizer, Views, NavigateAction, View } from 'react-big-calendar';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
@@ -96,11 +96,7 @@ export function RoadmapCalendarView() {
             );
             return { className };
         }}
-        onShowMore={(events, date) => {
-            // In a real app, you might open a modal here.
-            // For now, we can just log it.
-            console.log(`More events for ${date}:`, events);
-        }}
+        popup
       />
     </div>
   );

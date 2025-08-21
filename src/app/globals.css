@@ -89,7 +89,7 @@ body {
     @apply bg-background text-foreground;
   }
   .rbc-calendar {
-    @apply bg-transparent text-foreground;
+    @apply bg-card text-foreground;
   }
   .rbc-toolbar {
     @apply text-foreground mb-4;
@@ -113,13 +113,25 @@ body {
     @apply border-t border-r border-border/50;
   }
   .rbc-month-row {
-    @apply min-h-[120px];
+    @apply min-h-[120px] border-b border-border/50;
   }
   .rbc-today {
     @apply bg-primary/10;
   }
   .rbc-show-more {
       @apply text-primary hover:text-primary/80;
+  }
+  .rbc-event {
+    @apply bg-primary/20 text-primary-foreground p-1 rounded-md;
+  }
+  .rbc-event.rbc-selected {
+    @apply bg-primary;
+  }
+  .rbc-overlay {
+    @apply bg-background border border-border rounded-lg shadow-lg z-50;
+  }
+  .rbc-overlay-header {
+      @apply p-2 border-b border-border;
   }
 }
 
