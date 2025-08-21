@@ -51,6 +51,7 @@ export function LoginForm() {
   const handleGoogleLogin = () => {
     // This is a mock login for demo purposes.
     // In a real app, this would use Firebase Auth `signInWithPopup`.
+    // We assume the Google user has already signed up and completed the flow.
     const googleUser = {
         name: 'Gia Lee',
         email: 'gia.lee@example.com',
@@ -67,11 +68,18 @@ export function LoginForm() {
         weeklyTimeAvailable: "8",
     };
 
+    // Set all necessary data for a complete session
     localStorage.setItem('userName', googleUser.name);
     localStorage.setItem('userPlan', googleUser.plan);
     localStorage.setItem('signupData', JSON.stringify(googleUser));
     localStorage.setItem('onboardingData', JSON.stringify(googleOnboarding));
     localStorage.setItem('paymentComplete', 'true');
+    
+    // Ensure this user data is persisted for future logins
+    localStorage.setItem(`user-${googleUser.email}`, JSON.stringify(googleUser));
+    localStorage.setItem(`onboarding-${googleUser.email}`, JSON.stringify(googleOnboarding));
+    localStorage.setItem(`payment-${googleUser.email}`, 'true');
+
     router.push("/dashboard");
   }
 
