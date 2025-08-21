@@ -81,3 +81,11 @@ export const FindMatchingCollegesOutputSchema = z.array(z.object({
     reasoning: z.string().describe("A brief, one-sentence summary of why this college is an excellent match for this specific student, directly referencing their profile."),
 }));
 export type FindMatchingCollegesOutput = z.infer<typeof FindMatchingCollegesOutputSchema>;
+
+export type UserNotification = {
+    id: string;
+    title: string;
+    description: string;
+    timestamp: string;
+    read: boolean;
+};

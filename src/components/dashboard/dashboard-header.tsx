@@ -8,19 +8,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from '../ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from '../ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-
-const mockNotifications = [
-    { id: 1, title: "Task Completed!", description: "You earned 20 points for 'Master Quadratic Equations'." },
-    { id: 2, title: "New Message", description: "Dr. Evelyn Reed replied to your message." },
-    { id: 3, title: "Deadline Reminder", description: "Your application for the 'Tech Innovators Scholarship' is due tomorrow." },
-];
+import type { UserNotification } from '@/lib/types';
 
 export function DashboardHeader() {
     const [userName, setUserName] = useState<string | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
     const [isAdmin, setIsAdmin] = useState(false);
-    const [hasUnread, setHasUnread] = useState(true);
+    const [notifications, setNotifications] = useState<UserNotification[]>([]);
+    const [hasUnread, setHasUnread] = useState(false);
+
+    const loadNotifications = () => {
+        const storedNotifications = localStorage.getItem('userNotifications');
+        if (storedNotifications) {
+            const parsedNotifications: UserNotification[] = JSON.parse(storedNotifications);
+            const sortedNotifications = parsedNotifications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            setNotifications(sortedNotifications);
+            setHasUnread(sortedNotifications.some(n => !n.read));
+        }
+    };
 
     useEffect(() => {
         const name = localStorage.getItem('userName');
@@ -41,16 +47,30 @@ export function DashboardHeader() {
             setAvatarUrl(storedAvatar);
         }
 
-        const handleStorageChange = () => {
-          const newAvatar = localStorage.getItem('userAvatar');
-          const newName = localStorage.getItem('userName');
-          setAvatarUrl(newAvatar);
-          setUserName(newName);
+        loadNotifications();
+
+        const handleStorageChange = (event: StorageEvent) => {
+          if (event.key === 'userAvatar' || event.key === 'userName') {
+            const newAvatar = localStorage.getItem('userAvatar');
+            const newName = localStorage.getItem('userName');
+            setAvatarUrl(newAvatar);
+            setUserName(newName);
+          }
+          if (event.key === 'userNotifications') {
+            loadNotifications();
+          }
         }
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
 
     }, []);
+
+    const markAllAsRead = () => {
+        const updatedNotifications = notifications.map(n => ({...n, read: true}));
+        localStorage.setItem('userNotifications', JSON.stringify(updatedNotifications));
+        setNotifications(updatedNotifications);
+        setHasUnread(false);
+    };
 
     const displayName = userName || "User";
     const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
@@ -85,14 +105,16 @@ export function DashboardHeader() {
                     <DropdownMenuContent align="end" className="w-80">
                          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                          <DropdownMenuSeparator/>
-                        {mockNotifications.map(notification => (
-                            <DropdownMenuItem key={notification.id} className="flex flex-col items-start gap-1">
+                         {notifications.length > 0 ? notifications.map(notification => (
+                            <DropdownMenuItem key={notification.id} className={cn("flex flex-col items-start gap-1", !notification.read && "font-bold")}>
                                 <p className="font-semibold">{notification.title}</p>
                                 <p className="text-xs text-muted-foreground">{notification.description}</p>
                             </DropdownMenuItem>
-                        ))}
+                        )) : (
+                            <DropdownMenuItem className="text-center text-muted-foreground">No notifications yet.</DropdownMenuItem>
+                        )}
                          <DropdownMenuSeparator/>
-                         <DropdownMenuItem className="justify-center text-sm text-muted-foreground hover:bg-muted focus:bg-muted cursor-pointer" onClick={() => setHasUnread(false)}>
+                         <DropdownMenuItem className="justify-center text-sm text-muted-foreground hover:bg-muted focus:bg-muted cursor-pointer" onClick={markAllAsRead} disabled={!hasUnread}>
                             <Check className="w-4 h-4 mr-2" /> Mark all as read
                          </DropdownMenuItem>
                     </DropdownMenuContent>

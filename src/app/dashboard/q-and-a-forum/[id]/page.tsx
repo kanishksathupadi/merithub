@@ -16,6 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import type { ForumPost, ForumReply } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
+import { addNotification } from "@/lib/tracking";
 
 const replySchema = z.object({
   content: z.string().min(1, "Reply cannot be empty."),
@@ -29,11 +30,15 @@ export default function PostDetailPage() {
 
   const [post, setPost] = useState<ForumPost | null>(null);
   const [replies, setReplies] = useState<ForumReply[]>([]);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
       try {
         const savedPosts = localStorage.getItem("forumPosts");
+        const currentUserName = localStorage.getItem("userName");
+        setCurrentUser(currentUserName);
+
         if (savedPosts) {
           const posts: ForumPost[] = JSON.parse(savedPosts);
           const foundPost = posts.find(p => p.id === id);
@@ -41,7 +46,6 @@ export default function PostDetailPage() {
             setPost(foundPost);
             setReplies(foundPost.replies || []);
           } else {
-            // If post not found, redirect to forum page
             router.push('/dashboard/q-and-a-forum');
           }
         } else {
@@ -91,7 +95,6 @@ export default function PostDetailPage() {
     const updatedReplies = [...replies, newReply];
     setReplies(updatedReplies);
 
-    // Update localStorage
     try {
         const savedPosts = localStorage.getItem("forumPosts");
         if (savedPosts) {
@@ -106,6 +109,14 @@ export default function PostDetailPage() {
         }
     } catch (error) {
         console.error("Failed to save reply", error);
+    }
+    
+    // Check if the replier is different from the original poster to send a notification
+    if (currentUser && post.user !== currentUser) {
+        addNotification({
+            title: "New Reply on Your Post",
+            description: `"${newReply.user}" replied to your post: "${post.title.substring(0, 30)}..."`
+        })
     }
     
     toast({

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Link as LinkIcon, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
+import { addNotification } from "@/lib/tracking";
 
 const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building'];
 
@@ -31,7 +32,7 @@ export function RoadmapView() {
             dueDate: task.dueDate || new Date(Date.now() + index * 3 * 24 * 60 * 60 * 1000).toISOString(),
           }));
           setTasks(parsedTasks);
-          localStorage.setItem('roadmapTasks', JSON.stringify(parsedTasks));
+          // Don't re-save here as it could overwrite new data
         }
     } catch(error) {
         console.error("Failed to parse roadmap tasks from localStorage", error);
@@ -43,13 +44,26 @@ export function RoadmapView() {
   }, []);
 
   const toggleTask = (taskId: string) => {
-    const newTasks = tasks.map(task =>
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    );
+    const newTasks = tasks.map(task => {
+      if (task.id === taskId) {
+        const wasCompleted = task.completed;
+        const isNowCompleted = !wasCompleted;
+        // If the task is being marked as complete, generate a notification.
+        if (isNowCompleted) {
+          addNotification({
+            title: "Task Completed!",
+            description: `You earned ${task.points || 10} points for "${task.title}".`
+          });
+        }
+        return { ...task, completed: isNowCompleted };
+      }
+      return task;
+    });
+
     setTasks(newTasks);
     localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
     // Manually dispatch a storage event to notify other components like the progress page.
-    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
   };
 
   const getCategoryColor = (category: RoadmapTask['category']) => {
