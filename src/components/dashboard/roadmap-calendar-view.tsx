@@ -2,24 +2,68 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
+import format from 'date-fns/format'
+import parse from 'date-fns/parse'
+import startOfWeek from 'date-fns/startOfWeek'
+import getDay from 'date-fns/getDay'
+import enUS from 'date-fns/locale/en-US'
 import type { RoadmapTask } from "@/lib/types";
-import { format, parseISO, isSameDay } from "date-fns";
+import { parseISO } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { cn } from "@/lib/utils";
 
+const locales = {
+  'en-US': enUS,
+}
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+})
+
+interface CalendarEvent {
+    title: string;
+    start: Date;
+    end: Date;
+    allDay: boolean;
+    resource: RoadmapTask;
+}
+
+
+const getCategoryColor = (category: RoadmapTask['category']) => {
+    switch(category) {
+        case 'Academics': return 'bg-blue-500/20 border-blue-500 text-blue-200';
+        case 'Extracurriculars': return 'bg-green-500/20 border-green-500 text-green-200';
+        case 'Skill Building': return 'bg-yellow-500/20 border-yellow-500 text-yellow-200';
+        default: return 'bg-gray-500/20 border-gray-500 text-gray-200';
+    }
+}
+
 export function RoadmapCalendarView() {
-  const [tasks, setTasks] = useState<RoadmapTask[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
   useEffect(() => {
     try {
       let storedTasks = localStorage.getItem('roadmapTasks');
       if (storedTasks) {
         let parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
-        setTasks(parsedTasks);
+        const calendarEvents = parsedTasks.map(task => {
+            const eventDate = task.dueDate ? parseISO(task.dueDate) : new Date();
+            return {
+                title: task.title,
+                start: eventDate,
+                end: eventDate,
+                allDay: true,
+                resource: task,
+            };
+        });
+        setEvents(calendarEvents);
       }
     } catch (error) {
         console.error("Failed to parse roadmap tasks from localStorage", error);
@@ -28,74 +72,32 @@ export function RoadmapCalendarView() {
     }
   }, []);
   
-  const getCategoryColor = (category: RoadmapTask['category']) => {
-    switch(category) {
-        case 'Academics': return 'bg-blue-500 border-blue-500/50';
-        case 'Extracurriculars': return 'bg-green-500 border-green-500/50';
-        case 'Skill Building': return 'bg-yellow-500 border-yellow-500/50';
-        default: return 'bg-gray-500 border-gray-500/50';
-    }
-  }
-
-  const tasksByDay = (date: Date) => {
-    return tasks.filter(task => task.dueDate && isSameDay(parseISO(task.dueDate), date));
-  }
-  
-  const tasksForSelectedDay = selectedDate ? tasksByDay(selectedDate) : [];
 
   if (loading) {
     return (
-        <div className="flex flex-col gap-6 mt-4">
-            <Skeleton className="h-[400px] w-full" />
-            <Skeleton className="h-[200px] w-full" />
+        <div className="mt-4">
+            <Skeleton className="h-[calc(100vh-250px)] w-full" />
         </div>
     );
   }
 
   return (
-    <div className="mt-4">
-        <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={setSelectedDate}
-            className="rounded-md border p-0 w-full"
-            classNames={{
-                table: "w-full border-collapse space-y-1",
-                head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
-                row: "flex w-full mt-2",
-                cell: "w-full text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                day: "h-48 w-full p-1 font-normal aria-selected:opacity-100 flex flex-col items-start justify-start",
-                day_selected: "bg-accent text-accent-foreground",
-                day_today: "bg-muted text-foreground",
-            }}
-            components={{
-                DayContent: ({ date }) => {
-                    const dailyTasks = tasksByDay(date);
-                    const dayNumber = format(date, "d");
-                    return (
-                        <>
-                            <time dateTime={format(date, "yyyy-MM-dd")} className="p-1">{dayNumber}</time>
-                            {dailyTasks.length > 0 && (
-                                <div className="flex-1 w-full overflow-y-auto p-1 space-y-1">
-                                    {dailyTasks.map(task => (
-                                        <div 
-                                            key={task.id} 
-                                            className={cn(
-                                                "w-full rounded-sm px-1.5 py-0.5 text-xs text-white truncate border-l-2",
-                                                getCategoryColor(task.category),
-                                                task.completed && "opacity-50 line-through"
-                                            )}
-                                        >
-                                            {task.title}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </>
-                    );
-                }
-            }}
-            />
+    <div className="mt-4 h-full bg-card p-4 rounded-lg border">
+      <Calendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: '100%' }}
+        eventPropGetter={(event) => {
+            const className = cn(
+                "p-1 rounded-md text-xs border",
+                getCategoryColor(event.resource.category),
+                event.resource.completed && "opacity-50 line-through"
+            );
+            return { className };
+        }}
+      />
     </div>
   );
 }
