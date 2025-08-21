@@ -25,9 +25,8 @@ export const findOnlineResource = ai.defineTool(
   async (input) => {
     const prompt = `Find the single best, real, and publicly accessible online resource for the topic: "${input.query}".
 
-    IMPORTANT: You must use the validateResourceURL tool to verify the URL is valid and leads directly to the content. Prioritize well-known, high-quality sources like Khan Academy, Coursera, edX, university websites (.edu), official documentation, or major educational YouTube channels (like CrashCourse). Do not invent URLs. Your primary goal is to provide a working link.
-
-    If validation fails, you must try to find a different resource.`;
+    Prioritize well-known, high-quality sources like Khan Academy, Coursera, edX, university websites (.edu), official documentation, or major educational YouTube channels (like CrashCourse). Do not invent URLs. Your primary goal is to provide a working link.
+    `;
     
     let attempts = 0;
     const maxAttempts = 3;
@@ -37,7 +36,6 @@ export const findOnlineResource = ai.defineTool(
         const llmResponse = await ai.generate({
             prompt,
             model: 'googleai/gemini-2.0-flash',
-            tools: [validateResourceURL],
             output: {
                 schema: ResourceSchema,
             }
@@ -51,14 +49,14 @@ export const findOnlineResource = ai.defineTool(
             continue; // Try again
         }
         
-        // The LLM should have used the tool, but we can double-check here for robustness.
+        // **MANDATORY VALIDATION**: Programmatically validate the URL from the LLM response.
         const validation = await validateResourceURL({url: resource.url});
         if (validation.isValid) {
             return resource; // Success!
         }
         
         // If validation fails, log it and the loop will continue.
-        console.log(`Attempt ${attempts}: URL validation failed for ${resource.url}. Reason: ${validation.reasoning}`);
+        console.log(`Attempt ${attempts}: URL validation failed for ${resource.url}. Reason: ${validation.reasoning}. Retrying...`);
     }
     
     throw new Error(`Failed to find a valid resource for "${input.query}" after ${maxAttempts} attempts.`);
