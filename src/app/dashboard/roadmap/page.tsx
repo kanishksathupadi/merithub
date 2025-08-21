@@ -83,7 +83,7 @@ export default function RoadmapPage() {
 
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 h-full flex flex-col">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">My Roadmap</h1>
@@ -164,15 +164,15 @@ export default function RoadmapPage() {
           </DialogContent>
         </Dialog>
       </header>
-        <Tabs defaultValue="list" className="w-full">
+        <Tabs defaultValue="list" className="w-full flex-1 flex flex-col">
             <TabsList>
                 <TabsTrigger value="list"><List className="w-4 h-4 mr-2" />List View</TabsTrigger>
                 <TabsTrigger value="calendar"><Calendar className="w-4 h-4 mr-2" />Calendar View</TabsTrigger>
             </TabsList>
-            <TabsContent value="list">
+            <TabsContent value="list" className="flex-1">
                  <RoadmapView key={`list-${update}`} />
             </TabsContent>
-            <TabsContent value="calendar" className="h-[calc(100vh-22rem)] sm:h-[calc(100vh-18rem)]">
+            <TabsContent value="calendar" className="flex-1 h-[calc(100vh-18rem)]">
                 <RoadmapCalendarView key={`calendar-${update}`} />
             </TabsContent>
         </Tabs>

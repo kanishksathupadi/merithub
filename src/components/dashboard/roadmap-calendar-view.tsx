@@ -2,12 +2,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
-import format from 'date-fns/format'
-import parse from 'date-fns/parse'
-import startOfWeek from 'date-fns/startOfWeek'
-import getDay from 'date-fns/getDay'
-import enUS from 'date-fns/locale/en-US'
+import { Calendar, dateFnsLocalizer, Views, NavigateAction } from 'react-big-calendar';
+import format from 'date-fns/format';
+import parse from 'date-fns/parse';
+import startOfWeek from 'date-fns/startOfWeek';
+import getDay from 'date-fns/getDay';
+import enUS from 'date-fns/locale/en-US';
 import type { RoadmapTask } from "@/lib/types";
 import { parseISO } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 const locales = {
   'en-US': enUS,
-}
+};
 
 const localizer = dateFnsLocalizer({
   format,
@@ -24,7 +24,7 @@ const localizer = dateFnsLocalizer({
   startOfWeek,
   getDay,
   locales,
-})
+});
 
 interface CalendarEvent {
     title: string;
@@ -34,7 +34,6 @@ interface CalendarEvent {
     resource: RoadmapTask;
 }
 
-
 const getCategoryColor = (category: RoadmapTask['category']) => {
     switch(category) {
         case 'Academics': return 'bg-blue-500/20 border-blue-500 text-blue-200';
@@ -42,7 +41,7 @@ const getCategoryColor = (category: RoadmapTask['category']) => {
         case 'Skill Building': return 'bg-yellow-500/20 border-yellow-500 text-yellow-200';
         default: return 'bg-gray-500/20 border-gray-500 text-gray-200';
     }
-}
+};
 
 export function RoadmapCalendarView() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -71,7 +70,6 @@ export function RoadmapCalendarView() {
       setLoading(false);
     }
   }, []);
-  
 
   if (loading) {
     return (
@@ -89,6 +87,7 @@ export function RoadmapCalendarView() {
         startAccessor="start"
         endAccessor="end"
         style={{ height: '100%' }}
+        views={['month', 'week', 'day', 'agenda']}
         eventPropGetter={(event) => {
             const className = cn(
                 "p-1 rounded-md text-xs border",
@@ -96,6 +95,11 @@ export function RoadmapCalendarView() {
                 event.resource.completed && "opacity-50 line-through"
             );
             return { className };
+        }}
+        onShowMore={(events, date) => {
+            // In a real app, you might open a modal here.
+            // For now, we can just log it.
+            console.log(`More events for ${date}:`, events);
         }}
       />
     </div>

@@ -95,22 +95,31 @@ body {
     @apply text-foreground mb-4;
   }
   .rbc-toolbar button {
-      @apply text-foreground bg-secondary hover:bg-primary/20 disabled:opacity-50;
+    @apply text-foreground bg-secondary hover:bg-primary/20 disabled:opacity-50 rounded-md py-1 px-3 text-sm transition-colors;
+  }
+  .rbc-toolbar button.rbc-active {
+    @apply bg-primary/20 text-primary;
   }
   .rbc-header {
-      @apply border-b border-border p-2 text-center font-bold;
+    @apply border-b border-border p-2 text-center font-bold;
   }
   .rbc-day-bg {
-      @apply border-l border-border/50;
+    @apply border-l border-border/50;
   }
    .rbc-day-bg:first-child {
-      @apply border-l-0;
+    @apply border-l-0;
   }
   .rbc-month-view {
-      @apply border-t border-r border-border/50;
+    @apply border-t border-r border-border/50;
+  }
+  .rbc-month-row {
+    @apply min-h-[120px];
   }
   .rbc-today {
-      @apply bg-primary/10;
+    @apply bg-primary/10;
+  }
+  .rbc-show-more {
+      @apply text-primary hover:text-primary/80;
   }
 }
 
