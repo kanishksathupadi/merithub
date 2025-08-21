@@ -3,7 +3,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
-import { DailyGoalCard } from "@/components/dashboard/daily-goal-card";
+import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Trophy } from "lucide-react";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { trackFeatureUsage } from "@/lib/tracking";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
     try {
@@ -58,22 +59,26 @@ function SuggestionView() {
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const loadTasks = () => {
+        const storedTasks = localStorage.getItem('roadmapTasks');
+        if (storedTasks) {
+            try {
+                setTasks(JSON.parse(storedTasks));
+            } catch (error) {
+                console.error("Failed to parse tasks from localStorage", error);
+            }
+        }
+        return storedTasks ? JSON.parse(storedTasks) : [];
+    }
+
     useEffect(() => {
         const getSuggestionAndTasks = async () => {
             const cachedSuggestion = localStorage.getItem('aiSuggestion');
-            const cachedTasks = localStorage.getItem('roadmapTasks');
+            let currentTasks = loadTasks();
             
-            if (cachedSuggestion && cachedTasks) {
-                try {
-                    setTasks(JSON.parse(cachedTasks));
-                } catch (error) {
-                    console.error("Failed to parse cached data from localStorage", error);
-                    localStorage.removeItem('aiSuggestion');
-                    localStorage.removeItem('roadmapTasks');
-                } finally {
-                    setLoading(false);
-                    return;
-                }
+            if (cachedSuggestion && currentTasks.length > 0) {
+                setLoading(false);
+                return;
             }
 
             const onboardingDataStr = localStorage.getItem('onboardingData');
@@ -89,41 +94,36 @@ function SuggestionView() {
                     const newTasks = generateTasksFromSuggestion(result);
                     setTasks(newTasks);
                     localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
-                    window.dispatchEvent(new Event('storage'));
                 }
             }
             setLoading(false);
         };
 
         getSuggestionAndTasks();
-    }, []);
-    
-    useEffect(() => {
-        const handleStorageChange = () => {
-            const storedTasks = localStorage.getItem('roadmapTasks');
-            if (storedTasks) {
-                try {
-                    setTasks(JSON.parse(storedTasks));
-                } catch (error) {
-                    console.error("Failed to parse tasks from localStorage on storage event", error);
-                }
-            }
-        };
+        
+        const handleStorageChange = () => loadTasks();
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
+    const handleTaskToggle = (taskId: string) => {
+        const newTasks = tasks.map(task => 
+            task.id === taskId ? { ...task, completed: !task.completed } : task
+        );
+        setTasks(newTasks);
+        localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
+        window.dispatchEvent(new Event('storage'));
+    };
+
     if (loading) {
-        return <Skeleton className="h-48 w-full" />;
+        return <Skeleton className="h-56 w-full" />;
     }
 
     if (tasks.length === 0) {
         return <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>;
     }
     
-    const nextTask = tasks.find(task => !task.completed);
-
-    return <DailyGoalCard nextTask={nextTask} />;
+    return <NextStepCard tasks={tasks} onTaskToggle={handleTaskToggle} />;
 }
 
 const standardTiles = [
@@ -145,6 +145,7 @@ export default function DashboardPage() {
     const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [showWelcome, setShowWelcome] = useState(false);
     const router = useRouter();
 
 
@@ -161,11 +162,19 @@ export default function DashboardPage() {
                 if(signupData.email === 'admin@dymera.com') {
                     setIsAdmin(true);
                     router.replace('/dashboard/admin');
+                    return;
                 }
             } catch (e) {
                 console.error("Error parsing signupData", e)
             }
         }
+
+        const hasBeenWelcomed = localStorage.getItem('hasBeenWelcomed');
+        if (!hasBeenWelcomed) {
+            setShowWelcome(true);
+            localStorage.setItem('hasBeenWelcomed', 'true');
+        }
+
         setLoading(false);
     }, [router]);
 
@@ -178,41 +187,45 @@ export default function DashboardPage() {
     }
 
     const dashboardTiles = userPlan === 'elite' ? eliteTiles : standardTiles;
-    const gridCols = userPlan === 'elite' ? 'lg:grid-cols-3' : 'lg:grid-cols-2';
+    const gridCols = userPlan === 'elite' ? 'lg:grid-cols-4' : 'lg:grid-cols-2';
 
   return (
     <div className="space-y-8">
       <DashboardHeader />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-                <h2 className="text-2xl font-semibold mb-4">Today's Goal</h2>
-                <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-                    <SuggestionView />
-                </Suspense>
+      <Dialog open={showWelcome} onOpenChange={setShowWelcome}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle className="text-2xl">Welcome to Your Dashboard!</DialogTitle>
+                <DialogDescription className="pt-2">
+                    This is your command center for success. Here are two key places to start:
+                </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+                <div className="p-4 rounded-lg border bg-muted">
+                    <h3 className="font-semibold text-foreground">1. Your Next Step</h3>
+                    <p className="text-sm text-muted-foreground">This card shows you the very next task from your personalized plan. It's the best way to make consistent progress.</p>
+                </div>
+                 <div className="p-4 rounded-lg border bg-muted">
+                    <h3 className="font-semibold text-foreground">2. My Roadmap</h3>
+                    <p className="text-sm text-muted-foreground">Go here to see the full, long-term strategy the AI has built for you. You can see all your tasks and milestones.</p>
+                </div>
             </div>
-            <div className="space-y-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Community Spotlight</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex items-center gap-4">
-                            <div className="bg-primary/10 p-3 rounded-full text-primary">
-                                <Trophy/>
-                            </div>
-                            <div>
-                                <p className="font-semibold">Weekly Challenge</p>
-                                <p className="text-sm text-muted-foreground">Complete 5 tasks to earn a badge!</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+            <DialogFooter>
+                <Button onClick={() => setShowWelcome(false)}>Got It!</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+        <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Your Next Step</h2>
+            <Suspense fallback={<Skeleton className="h-56 w-full" />}>
+                <SuggestionView />
+            </Suspense>
         </div>
 
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Your Dashboard</h2>
+        <h2 className="text-2xl font-semibold mb-4">Your Toolkit</h2>
          <div className={cn(
             "grid grid-cols-1 md:grid-cols-2 gap-4",
             gridCols
