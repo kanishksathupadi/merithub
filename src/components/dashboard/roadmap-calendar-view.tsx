@@ -47,9 +47,9 @@ export function RoadmapCalendarView() {
     
   if (loading) {
     return (
-        <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-2"><Skeleton className="h-[400px] w-full" /></div>
-            <div><Skeleton className="h-[400px] w-full" /></div>
+        <div className="flex flex-col gap-6 mt-4">
+            <Skeleton className="h-[400px] w-full" />
+            <Skeleton className="h-[200px] w-full" />
         </div>
     );
   }
@@ -57,13 +57,21 @@ export function RoadmapCalendarView() {
   return (
     <Card className="mt-4">
         <CardContent className="p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
+            <div className="flex flex-col gap-6">
+                <div>
                      <Calendar
                         mode="single"
                         selected={selectedDate}
                         onSelect={setSelectedDate}
-                        className="rounded-md border"
+                        className="rounded-md border p-0 [&_td]:w-full [&_tr]:w-full"
+                         classNames={{
+                          table: "w-full border-collapse space-y-1",
+                          head_cell:
+                            "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
+                          row: "flex w-full mt-2",
+                          cell: "w-full h-16 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                          day: "h-16 w-full p-1 font-normal aria-selected:opacity-100",
+                        }}
                         modifiers={{
                            events: taskEventDays,
                         }}
@@ -72,15 +80,14 @@ export function RoadmapCalendarView() {
                         }}
                       />
                 </div>
-                <div className="lg:col-span-1">
+                <div>
                     <Card>
                         <CardHeader>
                             <CardTitle>
-                                {selectedDate ? format(selectedDate, "MMMM d, yyyy") : "No date selected"}
+                                Tasks for {selectedDate ? format(selectedDate, "MMMM d, yyyy") : "No date selected"}
                             </CardTitle>
-                            <CardDescription>Tasks for this day</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4 h-80 overflow-y-auto">
+                        <CardContent className="space-y-4 min-h-48">
                             {tasksForSelectedDay.length > 0 ? (
                                 tasksForSelectedDay.map(task => (
                                     <div key={task.id} className="p-3 rounded-lg bg-muted">
