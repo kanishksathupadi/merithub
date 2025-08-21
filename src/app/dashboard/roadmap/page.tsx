@@ -172,7 +172,7 @@ export default function RoadmapPage() {
             <TabsContent value="list">
                  <RoadmapView key={`list-${update}`} />
             </TabsContent>
-            <TabsContent value="calendar">
+            <TabsContent value="calendar" className="h-[calc(100vh-250px)]">
                 <RoadmapCalendarView key={`calendar-${update}`} />
             </TabsContent>
         </Tabs>
