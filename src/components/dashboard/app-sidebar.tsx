@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -126,6 +126,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             {userPlan === 'elite' && (
                 <SidebarGroup>
                     <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Elite Resources</h3>
+                     <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip="Scholarship Finder">
+                        <Link href="/dashboard/scholarship-finder"><Award/>Scholarship Finder</Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild tooltip="Mentor Match">
                         <Link href="/dashboard/mentor-match"><MessageSquare/>Mentor Match</Link>

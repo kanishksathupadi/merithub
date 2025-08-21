@@ -9,6 +9,7 @@ import '@/ai/flows/generate-study-guide.ts';
 import '@/ai/flows/moderate-post.ts';
 import '@/ai/flows/review-essay.ts';
 import '@/ai/flows/find-matching-colleges.ts';
+import '@/ai/flows/find-scholarships.ts';
 import '@/ai/tools/validate-academic-subject.ts';
 import '@/ai/tools/find-online-resource.ts';
 import '@/ai/tools/validate-avatar-image.ts';

@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const searchSchema = z.object({
-  topic: z.string().min(5, "Topic must be at least 5 characters long."),
+  topic: z.string().min(3, "Topic must be at least 3 characters long."),
 });
 
 const resourceFinderSchema = z.object({
@@ -42,7 +42,12 @@ export default function StudyResourcesPage() {
 
 
   const handleSearch = (values: z.infer<typeof searchSchema>) => {
-    router.push(`/dashboard/study-resources/options?topic=${encodeURIComponent(values.topic)}`);
+    const topic = values.topic.toLowerCase();
+    if (topic.includes('sat') || topic.includes('act')) {
+        router.push(`/dashboard/study-resources/practice-quiz?topic=${encodeURIComponent(values.topic)}`);
+    } else {
+        router.push(`/dashboard/study-resources/options?topic=${encodeURIComponent(values.topic)}`);
+    }
   };
   
   const handleFindResource = async (values: z.infer<typeof resourceFinderSchema>) => {
@@ -83,7 +88,7 @@ export default function StudyResourcesPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Lightbulb className="text-primary" /> AI Content Generator</CardTitle>
-            <CardDescription>Enter a topic to generate flashcards and quizzes.</CardDescription>
+            <CardDescription>Enter a topic (e.g., 'SAT Math', 'Cellular Respiration') to generate flashcards and quizzes.</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...searchForm}>
@@ -96,7 +101,7 @@ export default function StudyResourcesPage() {
                       <FormControl>
                         <div className="relative flex-1">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                          <Input placeholder="e.g., 'Cellular Respiration'" className="pl-10" {...field} />
+                          <Input placeholder="e.g., 'SAT Prep' or 'Cellular Respiration'" className="pl-10" {...field} />
                         </div>
                       </FormControl>
                       <FormMessage className="absolute" />
