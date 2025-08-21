@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, List, Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,8 @@ import * as z from "zod";
 import type { RoadmapTask } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RoadmapCalendarView } from "@/components/dashboard/roadmap-calendar-view";
 
 const taskSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
@@ -162,7 +164,18 @@ export default function RoadmapPage() {
           </DialogContent>
         </Dialog>
       </header>
-      <RoadmapView key={update} />
+        <Tabs defaultValue="list" className="w-full">
+            <TabsList>
+                <TabsTrigger value="list"><List className="w-4 h-4 mr-2" />List View</TabsTrigger>
+                <TabsTrigger value="calendar"><Calendar className="w-4 h-4 mr-2" />Calendar View</TabsTrigger>
+            </TabsList>
+            <TabsContent value="list">
+                 <RoadmapView key={`list-${update}`} />
+            </TabsContent>
+            <TabsContent value="calendar">
+                <RoadmapCalendarView key={`calendar-${update}`} />
+            </TabsContent>
+        </Tabs>
     </div>
   );
 }
