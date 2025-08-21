@@ -3,11 +3,12 @@
 
 import { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { RoadmapTask } from "@/lib/types";
 import { format, parseISO, isSameDay } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export function RoadmapCalendarView() {
   const [tasks, setTasks] = useState<RoadmapTask[]>([]);
@@ -30,21 +31,19 @@ export function RoadmapCalendarView() {
   
   const getCategoryColor = (category: RoadmapTask['category']) => {
     switch(category) {
-        case 'Academics': return 'bg-blue-500';
-        case 'Extracurriculars': return 'bg-green-500';
-        case 'Skill Building': return 'bg-yellow-500';
-        default: return 'bg-gray-500';
+        case 'Academics': return 'bg-blue-500 border-blue-500/50';
+        case 'Extracurriculars': return 'bg-green-500 border-green-500/50';
+        case 'Skill Building': return 'bg-yellow-500 border-yellow-500/50';
+        default: return 'bg-gray-500 border-gray-500/50';
     }
   }
 
-  const tasksForSelectedDay = selectedDate
-    ? tasks.filter(task => task.dueDate && isSameDay(parseISO(task.dueDate), selectedDate))
-    : [];
+  const tasksByDay = (date: Date) => {
+    return tasks.filter(task => task.dueDate && isSameDay(parseISO(task.dueDate), date));
+  }
+  
+  const tasksForSelectedDay = selectedDate ? tasksByDay(selectedDate) : [];
 
-  const taskEventDays = tasks
-    .filter(task => task.dueDate)
-    .map(task => parseISO(task.dueDate));
-    
   if (loading) {
     return (
         <div className="flex flex-col gap-6 mt-4">
@@ -56,57 +55,78 @@ export function RoadmapCalendarView() {
 
   return (
     <Card className="mt-4">
-        <CardContent className="p-4">
-            <div className="flex flex-col gap-6">
-                <div>
-                     <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={setSelectedDate}
-                        className="rounded-md border p-0 [&_td]:w-full [&_tr]:w-full"
-                         classNames={{
-                          table: "w-full border-collapse space-y-1",
-                          head_cell:
-                            "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
-                          row: "flex w-full mt-2",
-                          cell: "w-full h-16 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                          day: "h-16 w-full p-1 font-normal aria-selected:opacity-100",
-                        }}
-                        modifiers={{
-                           events: taskEventDays,
-                        }}
-                        modifiersClassNames={{
-                           events: "bg-primary/20 text-primary-foreground rounded-full",
-                        }}
-                      />
-                </div>
-                <div>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>
-                                Tasks for {selectedDate ? format(selectedDate, "MMMM d, yyyy") : "No date selected"}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4 min-h-48">
-                            {tasksForSelectedDay.length > 0 ? (
-                                tasksForSelectedDay.map(task => (
-                                    <div key={task.id} className="p-3 rounded-lg bg-muted">
-                                        <div className="flex justify-between items-start">
-                                            <p className="font-semibold text-sm">{task.title}</p>
-                                            <Badge variant="outline" className="text-xs whitespace-nowrap">
-                                                <span className={`w-2 h-2 mr-1.5 rounded-full ${getCategoryColor(task.category)}`}></span>
-                                                {task.category}
-                                            </Badge>
+        <CardContent className="p-4 grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+                 <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    className="rounded-md border p-0 w-full"
+                     classNames={{
+                      table: "w-full border-collapse space-y-1",
+                      head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
+                      row: "flex w-full mt-2",
+                      cell: "w-full h-32 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                      day: "h-full w-full p-1 font-normal aria-selected:opacity-100 flex flex-col items-start justify-start",
+                      day_selected: "bg-accent text-accent-foreground",
+                      day_today: "bg-muted text-foreground",
+                    }}
+                    components={{
+                        DayContent: ({ date }) => {
+                            const dailyTasks = tasksByDay(date);
+                            const dayNumber = format(date, "d");
+                            return (
+                                <>
+                                    <time dateTime={format(date, "yyyy-MM-dd")} className="p-1">{dayNumber}</time>
+                                    {dailyTasks.length > 0 && (
+                                        <div className="flex-1 w-full overflow-y-auto p-1 space-y-1">
+                                            {dailyTasks.map(task => (
+                                                <div 
+                                                    key={task.id} 
+                                                    className={cn(
+                                                        "w-full rounded-sm px-1.5 py-0.5 text-xs text-white truncate border-l-2",
+                                                        getCategoryColor(task.category),
+                                                        task.completed && "opacity-50 line-through"
+                                                    )}
+                                                >
+                                                    {task.title}
+                                                </div>
+                                            ))}
                                         </div>
-                                        {task.completed && <p className="text-xs text-green-500">Completed</p>}
+                                    )}
+                                </>
+                            );
+                        }
+                    }}
+                  />
+            </div>
+            <div>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>
+                            Tasks for {selectedDate ? format(selectedDate, "MMMM d, yyyy") : "No date selected"}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4 min-h-96">
+                        {tasksForSelectedDay.length > 0 ? (
+                            tasksForSelectedDay.map(task => (
+                                <div key={task.id} className="p-3 rounded-lg bg-muted">
+                                    <div className="flex justify-between items-start">
+                                        <p className="font-semibold text-sm">{task.title}</p>
+                                        <Badge variant="outline" className="text-xs whitespace-nowrap">
+                                            <span className={cn("w-2 h-2 mr-1.5 rounded-full", getCategoryColor(task.category).split(' ')[0])}></span>
+                                            {task.category}
+                                        </Badge>
                                     </div>
-                                ))
-                            ) : (
-                                <p className="text-sm text-muted-foreground text-center pt-8">No tasks scheduled for this day.</p>
-                            )}
-                        </CardContent>
-                    </Card>
-                </div>
+                                    <p className="text-xs text-muted-foreground mt-1">{task.description}</p>
+                                    {task.completed && <p className="text-xs text-green-500 mt-1">Completed</p>}
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-sm text-muted-foreground text-center pt-8">No tasks scheduled for this day.</p>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </CardContent>
     </Card>
