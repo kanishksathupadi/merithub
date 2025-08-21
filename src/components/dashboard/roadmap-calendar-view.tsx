@@ -75,8 +75,8 @@ export function RoadmapCalendarView() {
 
   if (loading) {
     return (
-        <div className="mt-4">
-            <Skeleton className="h-[calc(100vh-250px)] w-full" />
+        <div className="mt-4 h-full">
+            <Skeleton className="h-full w-full" />
         </div>
     );
   }
