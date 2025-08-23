@@ -32,52 +32,52 @@ export default function DashboardLayout({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const signupDataStr = localStorage.getItem('signupData');
-      const onboardingData = localStorage.getItem('onboardingData');
-      const paymentComplete = localStorage.getItem('paymentComplete');
+    // This runs only once on component mount.
+    // We check the user's status and immediately decide where they should be.
+    const signupDataStr = localStorage.getItem('signupData');
+    if (!signupDataStr) {
+      router.replace('/login'); // Use replace to avoid polluting browser history
+      return;
+    }
 
-      if (!signupDataStr) {
-        router.push('/login');
-        return;
-      }
-      
-      const signupData = JSON.parse(signupDataStr);
-      if (signupData.email === 'admin@dymera.com') {
-        setIsAdmin(true);
-      }
-      
-      if (!onboardingData) {
-        router.push('/onboarding');
-      } else if (!paymentComplete) {
-        router.push('/payment');
-      } else {
-        setIsVerified(true);
-        // Only generate avatar for non-admin users to avoid unnecessary calls
-        if (signupData.email !== 'admin@dymera.com' && signupData.name) {
-            const firstLetter = signupData.name.charAt(0).toUpperCase();
-            const storedAvatar = localStorage.getItem('userAvatar');
+    const signupData = JSON.parse(signupDataStr);
+    const onboardingData = localStorage.getItem('onboardingData');
+    const paymentComplete = localStorage.getItem('paymentComplete');
 
-            // If avatar doesn't exist, generate it.
-            if (!storedAvatar) {
-                generateAvatar({ letter: firstLetter })
-                    .then(result => {
-                        localStorage.setItem('userAvatar', result.imageUrl);
-                        setAvatarUrl(result.imageUrl);
-                        window.dispatchEvent(new Event('storage')); // Notify other components
-                    })
-                    .catch(err => {
-                        console.error("Failed to generate avatar", err)
-                    });
-            } else {
-                 setAvatarUrl(storedAvatar);
-            }
-        }
+    if (signupData.email === 'admin@dymera.com') {
+      setIsAdmin(true);
+    }
+
+    if (!onboardingData) {
+      router.replace('/onboarding');
+    } else if (!paymentComplete) {
+      router.replace('/payment');
+    } else {
+      // The user is fully verified, allow rendering and handle avatar in parallel.
+      setIsVerified(true);
+      
+      const firstLetter = signupData.name?.charAt(0).toUpperCase();
+      const storedAvatar = localStorage.getItem('userAvatar');
+
+      if (storedAvatar) {
+        setAvatarUrl(storedAvatar);
+      } else if (signupData.email !== 'admin@dymera.com' && firstLetter) {
+        // Generate avatar in the background without blocking UI
+        generateAvatar({ letter: firstLetter })
+          .then(result => {
+              localStorage.setItem('userAvatar', result.imageUrl);
+              setAvatarUrl(result.imageUrl);
+              window.dispatchEvent(new Event('storage')); // Notify other components
+          })
+          .catch(err => {
+              console.error("Failed to generate avatar", err);
+          });
       }
     }
-  }, [router, toast]);
+  }, [router]);
 
   if (!isVerified) {
+    // This loading state is now shown for a much shorter time, often imperceptibly.
     return (
         <div className="flex items-center justify-center min-h-screen">
             <p>Loading...</p>
