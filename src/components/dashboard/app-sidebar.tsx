@@ -83,7 +83,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
         <div className={cn("flex items-center gap-2", !open && "hidden")}>
           <Link href={isAdmin ? "/dashboard/admin" : "/dashboard"} className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
             <GraduationCap className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">Dymera</h1>
+            <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
           </Link>
         </div>
         <SidebarTrigger />
@@ -184,3 +184,5 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     </Sidebar>
   );
 }
+
+    

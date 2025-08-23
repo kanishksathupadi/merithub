@@ -12,7 +12,7 @@ export default function Home() {
         <div className="container mx-auto flex h-16 items-center">
           <Link href="/" className="flex items-center gap-2 mr-6">
             <GraduationCap className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">Dymera</h1>
+            <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
@@ -25,7 +25,7 @@ export default function Home() {
                 <Link href="/login">Member Login</Link>
             </Button>
              <Button asChild className="bg-accent text-black hover:bg-accent/90">
-              <Link href="#pricing">Get Started</Link>
+              <Link href="/signup">Get Started</Link>
             </Button>
           </div>
         </div>
@@ -44,11 +44,11 @@ export default function Home() {
                 Smarter Prep, Brighter Future.
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                Dymera uses AI to build a personalized roadmap, find best-fit colleges, provide instant essay feedback, and generate on-demand study help to ensure you stand out.
+                PinnaclePath uses AI to build a personalized roadmap, find best-fit colleges, provide instant essay feedback, and generate on-demand study help to ensure you stand out.
               </p>
               <div className="mt-8 space-x-4">
                 <Button size="lg" asChild className="bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
-                  <Link href="#pricing">
+                  <Link href="/signup">
                     <Rocket className="mr-2 h-5 w-5" />
                     Start Your Journey
                   </Link>
@@ -63,7 +63,7 @@ export default function Home() {
             <div className="mt-20">
                <Image
                 src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzbGVlayUyMGRhcmslMjBtb2RlJTIwYXBwbGljYXRpb24lMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzIyMTQ5NDAyfDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="A sleek application dashboard showing charts and data, representing the Dymera platform."
+                alt="A sleek application dashboard showing charts and data, representing the PinnaclePath platform."
                 width={1200}
                 height={400}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10 object-cover"
@@ -257,6 +257,7 @@ export default function Home() {
                         <ul className="space-y-3 text-muted-foreground flex-1">
                              <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Everything in Standard, plus:</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Essay Review Tool</li>
+                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Scholarship Finder</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Mentor Match Directory</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Community Q&A Forum</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
@@ -272,7 +273,7 @@ export default function Home() {
       </main>
 
       <footer className="container mx-auto text-center p-8 text-sm text-muted-foreground border-t border-border">
-        © {new Date().getFullYear()} Dymera. All Rights Reserved. For the ambitious.
+        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved. For the ambitious.
       </footer>
     </div>
   );

@@ -53,13 +53,13 @@ export default function PaymentPage() {
              <header className="absolute top-0 left-0 w-full p-4 sm:p-6">
                 <Link href="/" className="flex items-center gap-2">
                     <GraduationCap className="w-8 h-8 text-primary" />
-                    <h1 className="text-2xl font-bold tracking-tight">Dymera</h1>
+                    <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
                 </Link>
             </header>
             <Card className="w-full max-w-md shadow-xl border-border">
                 <CardHeader className="text-center">
                     <CardTitle className="text-3xl">Complete Your Purchase</CardTitle>
-                    <CardDescription>Secure your access to Dymera.</CardDescription>
+                    <CardDescription>Secure your access to PinnaclePath.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     {plan && (
@@ -119,3 +119,5 @@ export default function PaymentPage() {
         </div>
     );
 }
+
+    
