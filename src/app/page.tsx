@@ -290,7 +290,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
