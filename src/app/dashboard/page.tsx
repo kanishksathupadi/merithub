@@ -63,19 +63,23 @@ function SuggestionView() {
         const storedTasks = localStorage.getItem('roadmapTasks');
         if (storedTasks) {
             try {
-                setTasks(JSON.parse(storedTasks));
+                const parsedTasks = JSON.parse(storedTasks);
+                setTasks(parsedTasks);
+                return parsedTasks;
             } catch (error) {
                 console.error("Failed to parse tasks from localStorage", error);
             }
         }
-        return storedTasks ? JSON.parse(storedTasks) : [];
+        return [];
     }
 
     useEffect(() => {
         const getSuggestionAndTasks = async () => {
+            setLoading(true);
             const cachedSuggestion = localStorage.getItem('aiSuggestion');
-            let currentTasks = loadTasks();
+            const currentTasks = loadTasks();
             
+            // If we have a suggestion and tasks, the data is stable. Don't re-fetch.
             if (cachedSuggestion && currentTasks.length > 0) {
                 setLoading(false);
                 return;
@@ -188,7 +192,6 @@ export default function DashboardPage() {
     }
 
     const dashboardTiles = userPlan === 'elite' ? eliteTiles : standardTiles;
-    const gridCols = userPlan === 'elite' ? 'lg:grid-cols-4' : 'lg:grid-cols-2';
 
   return (
     <div className="space-y-8">
@@ -227,10 +230,7 @@ export default function DashboardPage() {
 
       <section>
         <h2 className="text-2xl font-semibold mb-4">Your Toolkit</h2>
-         <div className={cn(
-            "grid grid-cols-1 md:grid-cols-2 gap-4",
-            gridCols
-         )}>
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {dashboardTiles.map((tile) => (
                 <Link 
                     href={tile.href} 
