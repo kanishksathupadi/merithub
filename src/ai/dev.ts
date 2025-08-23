@@ -15,3 +15,4 @@ import '@/ai/tools/validate-academic-subject.ts';
 import '@/ai/tools/find-online-resource.ts';
 import '@/ai/tools/validate-avatar-image.ts';
 import '@/ai/tools/validate-resource-url.ts';
+

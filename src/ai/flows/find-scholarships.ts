@@ -52,3 +52,4 @@ const findScholarshipsFlow = ai.defineFlow(
     return output;
   }
 );
+
