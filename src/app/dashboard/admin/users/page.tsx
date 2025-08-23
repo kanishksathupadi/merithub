@@ -21,13 +21,25 @@ const getFromLocalStorage = (key: string, defaultValue: any) => {
     }
 };
 
+const getUniqueUsers = () => {
+    const allUsers = getFromLocalStorage('allSignups', []);
+    const uniqueUsers = allUsers.reduce((acc: any[], current: any) => {
+        if (!acc.find(item => item.email === current.email)) {
+            acc.push(current);
+        }
+        return acc;
+    }, []);
+    return uniqueUsers;
+};
+
+
 function UsersList() {
     const searchParams = useSearchParams();
     const planFilter = searchParams.get('plan');
     const [users, setUsers] = useState<any[]>([]);
 
     useEffect(() => {
-        const allUsers = getFromLocalStorage('allSignups', []);
+        const allUsers = getUniqueUsers();
         const filteredUsers = planFilter 
             ? allUsers.filter((user: any) => user.plan === planFilter)
             : allUsers;

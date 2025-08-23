@@ -20,12 +20,23 @@ const getFromLocalStorage = (key: string, defaultValue: any) => {
     }
 };
 
+const getUniqueUsers = () => {
+    const allUsers = getFromLocalStorage('allSignups', []);
+    const uniqueUsers = allUsers.reduce((acc: any[], current: any) => {
+        if (!acc.find(item => item.email === current.email)) {
+            acc.push(current);
+        }
+        return acc;
+    }, []);
+    return uniqueUsers;
+};
+
 function ActiveUsersList() {
     const [users, setUsers] = useState<any[]>([]);
 
     useEffect(() => {
-        const allUsers = getFromLocalStorage('allSignups', []);
-        // For this demo, "active users" are all users.
+        const allUsers = getUniqueUsers();
+        // For this demo, "active users" are all unique users.
         setUsers(allUsers);
     }, []);
 
