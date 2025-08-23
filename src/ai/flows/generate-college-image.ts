@@ -31,7 +31,7 @@ const generateCollegeImageFlow = ai.defineFlow(
     outputSchema: GenerateCollegeImageOutputSchema,
   },
   async ({collegeName}) => {
-    const prompt = `A scenic, beautiful, wide-angle photograph of the campus of ${collegeName}. Professional, high-quality, photorealistic.`;
+    const prompt = `A scenic, beautiful, and **accurate** wide-angle photograph of the real campus of **${collegeName}**. The image should be highly detailed, photorealistic, and look like a professional photograph taken at the location. Capture the unique architecture and atmosphere of the university.`;
     
     const {media} = await ai.generate({
         model: 'googleai/gemini-2.0-flash-preview-image-generation',
