@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -44,6 +45,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function SignupForm({ plan }: SignupFormProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,6 +68,17 @@ export function SignupForm({ plan }: SignupFormProps) {
         grade: 12,
         plan, // Use the plan from the current page
     };
+
+     // Check if user already exists
+    const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+    if (allSignups.some((user: any) => user.email === googleUser.email)) {
+        toast({
+            variant: "destructive",
+            title: "Account Exists",
+            description: "An account with this email already exists. Please log in.",
+        });
+        return;
+    }
     
     // Set current user's data for immediate session
     localStorage.setItem('userName', googleUser.name);
@@ -75,12 +88,9 @@ export function SignupForm({ plan }: SignupFormProps) {
     // Persist this new user's data for future logins
     localStorage.setItem(`user-${googleUser.email}`, JSON.stringify(googleUser));
 
-    // Add to allSignups list for admin panel, if not already there
-    const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-    if (!allSignups.some((user: any) => user.email === googleUser.email)) {
-        allSignups.push(googleUser);
-        localStorage.setItem('allSignups', JSON.stringify(allSignups));
-    }
+    // Add to allSignups list for admin panel
+    allSignups.push(googleUser);
+    localStorage.setItem('allSignups', JSON.stringify(allSignups));
 
     // A new user always goes to onboarding next
     router.push("/onboarding");
@@ -93,6 +103,22 @@ export function SignupForm({ plan }: SignupFormProps) {
       const { name, age, grade, email, password } = values;
       const newUser = { name, age, grade, email, password, plan };
 
+      // Check if user already exists
+      const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+      if (allSignups.some((user: any) => user.email === email)) {
+        form.setError("email", {
+            type: "manual",
+            message: "An account with this email already exists. Please log in.",
+        });
+        toast({
+            variant: "destructive",
+            title: "Account Exists",
+            description: "An account with this email already exists. Please log in.",
+        });
+        return;
+      }
+
+
       // Set current user's data for immediate login
       localStorage.setItem('userName', name);
       localStorage.setItem('userPlan', plan);
@@ -103,7 +129,6 @@ export function SignupForm({ plan }: SignupFormProps) {
       localStorage.setItem(`user-${email}`, JSON.stringify(newUser));
 
       // Add the new user to the list of all signups for the admin panel
-      const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
       allSignups.push(newUser);
       localStorage.setItem('allSignups', JSON.stringify(allSignups));
     }

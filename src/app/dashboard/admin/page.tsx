@@ -27,8 +27,17 @@ const getFromLocalStorage = (key: string, defaultValue: any) => {
 
 const getAllUsers = () => {
     if (typeof window === 'undefined') return [];
-    // Reads an array of all users who signed up in this browser.
-    return getFromLocalStorage('allSignups', []);
+    const allUsers = getFromLocalStorage('allSignups', []);
+    
+    // Deduplicate users based on email to ensure a unique list
+    const uniqueUsers = allUsers.reduce((acc: any[], current: any) => {
+        if (!acc.find(item => item.email === current.email)) {
+            acc.push(current);
+        }
+        return acc;
+    }, []);
+
+    return uniqueUsers;
 }
 
 function AdminHeader() {
