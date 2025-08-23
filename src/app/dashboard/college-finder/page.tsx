@@ -20,16 +20,26 @@ const filterSchema = z.object({
   filterQuery: z.string().optional(),
 });
 
-function CollegeCard({ college }: { college: FindMatchingCollegesOutput[0] }) {
+// A small, curated list of real university images from Unsplash.
+const collegeImages = [
+    'https://images.unsplash.com/photo-1562774053-6257c32d435d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1607237138185-e894ee31b3c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1592289322834-cavy9b9598d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1622325833255-207a9d01a520?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
+];
+
+function CollegeCard({ college, imageUrl }: { college: FindMatchingCollegesOutput[0], imageUrl: string }) {
     return (
         <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
                  <Image
-                    src={`https://placehold.co/600x400.png`}
-                    alt={`A placeholder image representing ${college.name}`}
+                    src={imageUrl}
+                    alt={`A scenic view of the ${college.name} campus`}
                     width={600}
                     height={400}
-                    className="rounded-t-lg object-cover"
+                    className="rounded-t-lg object-cover aspect-[3/2]"
                     data-ai-hint="college campus"
                   />
             </CardHeader>
@@ -115,7 +125,7 @@ export default function CollegeFinderPage() {
         if (colleges) {
             return (
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {colleges.map((college, index) => <CollegeCard key={index} college={college} />)}
+                    {colleges.map((college, index) => <CollegeCard key={index} college={college} imageUrl={collegeImages[index % collegeImages.length]} />)}
                 </div>
             )
         }

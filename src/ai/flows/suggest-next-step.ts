@@ -70,7 +70,10 @@ const prompt = ai.definePrompt({
   output: {schema: SuggestNextStepOutputSchema},
   tools: [validateAcademicSubject, findOnlineResource],
   model: 'googleai/gemini-2.0-flash',
-  prompt: `You are an AI assistant designed to provide a comprehensive, hyper-specific, and actionable long-term plan for students (ages 10-18) to achieve their goals.
+  prompt: `You are an AI assistant and expert educational advisor designed to provide a comprehensive, hyper-specific, and actionable long-term plan for students (ages 10-18) to achieve their goals.
+
+  **Core Principle: Be a Guide, Not a Mirror.**
+  Your role is to broaden the student's horizons. An interest like 'chess' isn't just about chess; it suggests a mind for strategy, logic, and patience. Connect this to diverse fields like computer science, economics, or even debate. Do not simply recommend chess-related activities. Help the student discover new possibilities based on the underlying traits their interests suggest. Create a plan that is inspiring and expansive.
 
   **Core Instructions:**
   1.  **No Vague Tasks:** Do NOT create vague tasks like "Improve your grades" or "Study for the SAT." Every task must be a concrete, measurable action.
