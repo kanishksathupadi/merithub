@@ -1,41 +1,62 @@
 
 "use client";
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useState, useEffect } from 'react';
 import { findScholarships } from '@/ai/flows/find-scholarships';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { Award, Loader2, Sparkles, Calendar, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FindScholarshipsInputSchema, type FindScholarshipsOutput, type FindScholarshipsInput } from '@/lib/types';
+import type { FindScholarshipsOutput, FindScholarshipsInput } from '@/lib/types';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 
 export default function ScholarshipFinderPage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [results, setResults] = useState<FindScholarshipsOutput | null>(null);
+    const [studentProfile, setStudentProfile] = useState<FindScholarshipsInput | null>(null);
 
-    const form = useForm<FindScholarshipsInput>({
-        resolver: zodResolver(FindScholarshipsInputSchema),
-        defaultValues: {
-            academicProfile: "",
-            extracurriculars: "",
-            interests: "",
-            background: "",
-        },
-    });
+    useEffect(() => {
+        // Automatically load the user's profile from localStorage on component mount.
+        const onboardingDataStr = localStorage.getItem('onboardingData');
+        const signupDataStr = localStorage.getItem('signupData');
 
-    const onSubmit = async (values: FindScholarshipsInput) => {
+        if (onboardingDataStr && signupDataStr) {
+            const onboardingData = JSON.parse(onboardingDataStr);
+            const signupData = JSON.parse(signupDataStr);
+            
+            // Map the existing data to the format expected by the scholarship AI.
+            setStudentProfile({
+                academicProfile: `Strengths: ${onboardingData.academicStrengths}. Weaknesses: ${onboardingData.academicWeaknesses}.`,
+                extracurriculars: onboardingData.currentExtracurriculars,
+                interests: onboardingData.subjectsOfInterest,
+                background: `Grade ${signupData.grade}. Learning Style: ${onboardingData.preferredLearningStyle}. College Environment: ${onboardingData.collegeEnvironment}.`,
+            });
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Could not load your profile. Please complete onboarding first.",
+            });
+        }
+    }, [toast]);
+
+    const handleFindScholarships = async () => {
+        if (!studentProfile) {
+             toast({ variant: "destructive", title: "Missing Profile", description: "Your student profile is not available." });
+             return;
+        }
         setIsLoading(true);
         setResults(null);
         try {
-            const result = await findScholarships(values);
+            const result = await findScholarships(studentProfile);
             setResults(result);
+             toast({
+                title: "Matches Found!",
+                description: "We've found scholarships tailored to your profile.",
+            });
         } catch (error) {
             console.error("Scholarship finder failed:", error);
             toast({
@@ -55,78 +76,21 @@ export default function ScholarshipFinderPage() {
                 <p className="text-muted-foreground">Discover financial aid opportunities tailored to your unique profile.</p>
             </header>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Tell Us About Yourself</CardTitle>
-                    <CardDescription>The more detail you provide, the better our AI can match you with relevant scholarships. Don't include sensitive personal information.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                             <div className="grid md:grid-cols-2 gap-6">
-                                <FormField
-                                    control={form.control}
-                                    name="academicProfile"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Academic Profile</FormLabel>
-                                            <FormControl>
-                                                <Textarea placeholder="e.g., 3.8 GPA, 1450 SAT, strong in English and History..." {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="extracurriculars"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Extracurriculars & Achievements</FormLabel>
-                                            <FormControl>
-                                                <Textarea placeholder="e.g., Captain of the debate team, volunteer at animal shelter, won state science fair..." {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                 <FormField
-                                    control={form.control}
-                                    name="interests"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Interests & Intended Major</FormLabel>
-                                            <FormControl>
-                                                <Textarea placeholder="e.g., Passionate about environmental science and filmmaking. Plan to major in Environmental Studies." {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                 <FormField
-                                    control={form.control}
-                                    name="background"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Personal Background</FormLabel>
-                                            <FormControl>
-                                                <Textarea placeholder="e.g., First-generation college student, specific heritage, reside in a rural area..." {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <Button type="submit" disabled={isLoading} className="w-full">
-                                {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2" />Find Scholarships</>}
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
+            <Alert>
+                <Award className="h-4 w-4" />
+                <AlertTitle>Ready to Find Scholarships?</AlertTitle>
+                <AlertDescription>
+                    We'll use the information from your onboarding profile to find the best matches. Click the button below to start the search.
+                </AlertDescription>
+            </Alert>
+            
+            <Button onClick={handleFindScholarships} disabled={isLoading || !studentProfile} className="w-full sm:w-auto">
+                {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2" />Find Scholarships For Me</>}
+            </Button>
 
             {isLoading && (
                 <div className="space-y-4">
+                    <h2 className="text-2xl font-bold">Finding Your Matches...</h2>
                     {Array.from({ length: 3 }).map((_, i) => (
                         <Card key={i}>
                             <CardHeader>
