@@ -75,12 +75,21 @@ export const FindMatchingCollegesInputSchema = z.object({
 });
 export type FindMatchingCollegesInput = z.infer<typeof FindMatchingCollegesInputSchema>;
 
-export const FindMatchingCollegesOutputSchema = z.array(z.object({
+const CollegeSchema = z.object({
     name: z.string().describe("The full name of the college or university."),
     location: z.string().describe("The city and state of the college (e.g., 'Cambridge, MA')."),
     reasoning: z.string().describe("A brief, one-sentence summary of why this college is an excellent match for this specific student, directly referencing their profile."),
-}));
+});
+
+export const FindMatchingCollegesOutputSchema = z.object({
+    reachSchools: z.array(CollegeSchema).describe("A list of 2 'reach' schools that are ambitious but potentially attainable."),
+    targetSchools: z.array(CollegeSchema).describe("A list of 2 'target' schools where the student's profile is a strong match."),
+    safetySchools: z.array(CollegeSchema).describe("A list of 2 'safety' schools where admission is very likely."),
+});
+
 export type FindMatchingCollegesOutput = z.infer<typeof FindMatchingCollegesOutputSchema>;
+export type College = z.infer<typeof CollegeSchema>;
+
 
 export type UserNotification = {
     id: string;

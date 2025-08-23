@@ -7,12 +7,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { findMatchingColleges } from '@/ai/flows/find-matching-colleges';
 import { generateCollegeImage } from '@/ai/flows/generate-college-image';
-import type { FindMatchingCollegesOutput, FindMatchingCollegesInput } from '@/lib/types';
+import type { FindMatchingCollegesOutput, FindMatchingCollegesInput, College } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { GraduationCap, Loader2, Search, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { GraduationCap, Loader2, Search, Sparkles, Image as ImageIcon, Target, TrendingUp, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
@@ -21,10 +21,14 @@ const filterSchema = z.object({
   filterQuery: z.string().optional(),
 });
 
-type CollegeWithImage = FindMatchingCollegesOutput[0] & { imageUrl?: string; imageLoading?: boolean };
+type CollegeWithImage = College & { imageUrl?: string; imageLoading?: boolean };
+type CategorizedColleges = {
+    reach: CollegeWithImage[];
+    target: CollegeWithImage[];
+    safety: CollegeWithImage[];
+}
 
-
-function CollegeCard({ college, isGenerating }: { college: CollegeWithImage, isGenerating: boolean }) {
+function CollegeCard({ college }: { college: CollegeWithImage }) {
     return (
         <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
@@ -41,7 +45,7 @@ function CollegeCard({ college, isGenerating }: { college: CollegeWithImage, isG
                     <div className="relative rounded-t-lg aspect-[3/2] bg-secondary flex flex-col items-center justify-center">
                         <ImageIcon className="w-16 h-16 text-muted-foreground" />
                         <p className="text-sm text-muted-foreground mt-2">Generating image...</p>
-                        {isGenerating && <Loader2 className="absolute top-4 right-4 animate-spin"/>}
+                        <Loader2 className="absolute top-4 right-4 animate-spin"/>
                     </div>
                  )}
             </CardHeader>
@@ -54,13 +58,29 @@ function CollegeCard({ college, isGenerating }: { college: CollegeWithImage, isG
     )
 }
 
+function CollegeCategorySection({ title, description, icon, colleges }: { title: string, description: string, icon: React.ReactNode, colleges: CollegeWithImage[] }) {
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center gap-3">
+                {icon}
+                <div>
+                    <h2 className="text-2xl font-bold">{title}</h2>
+                    <p className="text-muted-foreground">{description}</p>
+                </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {colleges.map((college) => <CollegeCard key={college.name} college={college} />)}
+            </div>
+        </div>
+    )
+}
+
 
 export default function CollegeFinderPage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
-    const [colleges, setColleges] = useState<CollegeWithImage[] | null>(null);
+    const [colleges, setColleges] = useState<CategorizedColleges | null>(null);
     const [studentProfile, setStudentProfile] = useState<Omit<FindMatchingCollegesInput, 'filterQuery'> | null>(null);
-    const [imageGenerationIndex, setImageGenerationIndex] = useState(-1);
 
     useEffect(() => {
         const onboardingDataStr = localStorage.getItem('onboardingData');
@@ -78,13 +98,21 @@ export default function CollegeFinderPage() {
         }
     }, [toast]);
     
-    const startImageGeneration = useCallback(async (collegeList: CollegeWithImage[]) => {
-        for (let i = 0; i < collegeList.length; i++) {
-            setImageGenerationIndex(i);
-            const college = collegeList[i];
+    const startImageGeneration = useCallback(async (categorizedColleges: CategorizedColleges) => {
+        const allColleges = [...categorizedColleges.reach, ...categorizedColleges.target, ...categorizedColleges.safety];
+
+        for (const college of allColleges) {
             try {
                 const result = await generateCollegeImage({ collegeName: college.name });
-                setColleges(prev => prev?.map(c => c.name === college.name ? { ...c, imageUrl: result.imageUrl } : c) ?? null);
+                setColleges(prev => {
+                    if (!prev) return null;
+                    const updateCategory = (cat: CollegeWithImage[]) => cat.map(c => c.name === college.name ? { ...c, imageUrl: result.imageUrl } : c);
+                    return {
+                        reach: updateCategory(prev.reach),
+                        target: updateCategory(prev.target),
+                        safety: updateCategory(prev.safety),
+                    }
+                });
             } catch (error) {
                 console.error(`Failed to generate image for ${college.name}`, error);
                  toast({
@@ -94,7 +122,6 @@ export default function CollegeFinderPage() {
                 });
             }
         }
-        setImageGenerationIndex(-1); // Done
     }, [toast]);
 
 
@@ -115,7 +142,13 @@ export default function CollegeFinderPage() {
                 ...studentProfile,
                 filterQuery: values.filterQuery || "best overall fit based on the student's profile",
             });
-            const collegesWithImageState: CollegeWithImage[] = result.map(c => ({...c, imageUrl: undefined, imageLoading: true}));
+            
+            const collegesWithImageState: CategorizedColleges = {
+                reach: result.reachSchools.map(c => ({...c, imageUrl: undefined})),
+                target: result.targetSchools.map(c => ({...c, imageUrl: undefined})),
+                safety: result.safetySchools.map(c => ({...c, imageUrl: undefined})),
+            };
+
             setColleges(collegesWithImageState);
             await startImageGeneration(collegesWithImageState);
 
@@ -170,23 +203,53 @@ export default function CollegeFinderPage() {
             </Card>
 
             {isLoading && !colleges && (
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <Card key={i}>
-                            <Skeleton className="h-48 w-full" />
-                            <CardContent className="p-6 space-y-4">
-                                <Skeleton className="h-6 w-3/4" />
-                                <Skeleton className="h-4 w-1/2" />
-                                <Skeleton className="h-16 w-full" />
-                            </CardContent>
-                        </Card>
+                 <div className="space-y-6">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="space-y-4">
+                             <Skeleton className="h-8 w-1/4" />
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {Array.from({ length: 2 }).map((_, j) => (
+                                <Card key={j}>
+                                    <Skeleton className="h-48 w-full" />
+                                    <CardContent className="p-6 space-y-4">
+                                        <Skeleton className="h-6 w-3/4" />
+                                        <Skeleton className="h-4 w-1/2" />
+                                        <Skeleton className="h-16 w-full" />
+                                    </CardContent>
+                                </Card>
+                                ))}
+                            </div>
+                        </div>
                     ))}
                 </div>
             )}
 
             {colleges && (
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {colleges.map((college, index) => <CollegeCard key={college.name} college={college} isGenerating={imageGenerationIndex === index} />)}
+                 <div className="space-y-12">
+                    {colleges.reach.length > 0 && (
+                        <CollegeCategorySection 
+                            title="Reach Schools"
+                            description="These are ambitious choices where your profile is competitive, but admission is still challenging."
+                            icon={<TrendingUp className="w-8 h-8 text-primary" />}
+                            colleges={colleges.reach}
+                        />
+                    )}
+                     {colleges.target.length > 0 && (
+                        <CollegeCategorySection 
+                            title="Target Schools"
+                            description="Your academic profile is a strong match for the typical student at these schools."
+                            icon={<Target className="w-8 h-8 text-green-500" />}
+                            colleges={colleges.target}
+                        />
+                    )}
+                     {colleges.safety.length > 0 && (
+                        <CollegeCategorySection 
+                            title="Safety Schools"
+                            description="You have a strong chance of admission to these schools, providing a solid foundation for your application list."
+                            icon={<ShieldCheck className="w-8 h-8 text-blue-500" />}
+                            colleges={colleges.safety}
+                        />
+                    )}
                 </div>
             )}
            
