@@ -6,7 +6,7 @@ import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 function ConditionalSidebarTrigger() {
@@ -31,12 +31,12 @@ export default function DashboardLayout({
   const [isAdmin, setIsAdmin] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    // This runs only once on component mount.
-    // We check the user's status and immediately decide where they should be.
+  // Use useLayoutEffect to run verification synchronously before the browser paints.
+  // This is the key to preventing any "loading" flicker.
+  useLayoutEffect(() => {
     const signupDataStr = localStorage.getItem('signupData');
     if (!signupDataStr) {
-      router.replace('/login'); // Use replace to avoid polluting browser history
+      router.replace('/login');
       return;
     }
 
@@ -53,36 +53,37 @@ export default function DashboardLayout({
     } else if (!paymentComplete) {
       router.replace('/payment');
     } else {
-      // The user is fully verified, allow rendering and handle avatar in parallel.
-      setIsVerified(true);
-      
+      setIsVerified(true); // User is fully verified, allow rendering.
+    }
+  }, [router]);
+
+  useEffect(() => {
+    // Handle non-critical side effects like avatar generation after verification.
+    if (isVerified) {
+      const signupData = JSON.parse(localStorage.getItem('signupData')!);
       const firstLetter = signupData.name?.charAt(0).toUpperCase();
       const storedAvatar = localStorage.getItem('userAvatar');
 
       if (storedAvatar) {
         setAvatarUrl(storedAvatar);
       } else if (signupData.email !== 'admin@dymera.com' && firstLetter) {
-        // Generate avatar in the background without blocking UI
         generateAvatar({ letter: firstLetter })
           .then(result => {
               localStorage.setItem('userAvatar', result.imageUrl);
               setAvatarUrl(result.imageUrl);
-              window.dispatchEvent(new Event('storage')); // Notify other components
+              window.dispatchEvent(new Event('storage'));
           })
           .catch(err => {
               console.error("Failed to generate avatar", err);
           });
       }
     }
-  }, [router]);
+  }, [isVerified]);
 
   if (!isVerified) {
-    // This loading state is now shown for a much shorter time, often imperceptibly.
-    return (
-        <div className="flex items-center justify-center min-h-screen">
-            <p>Loading...</p>
-        </div>
-    );
+    // This state is now effectively skipped for verified users,
+    // as useLayoutEffect runs before the first paint.
+    return null;
   }
 
   if (isAdmin) {
