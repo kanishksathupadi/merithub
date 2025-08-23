@@ -110,32 +110,44 @@ export default function Home() {
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <BrainCircuit className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
+                            <BrainCircuit className="w-8 h-8"/>
+                        </div>
                         <h4 className="text-xl font-semibold">Hyper-Personalized Roadmap</h4>
                         <p className="text-muted-foreground mt-2">Our AI builds a dynamic, multi-year strategy based on deep analysis of your goals, strengths, and weaknesses.</p>
                     </div>
                      <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <GraduationCap className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
+                            <GraduationCap className="w-8 h-8"/>
+                        </div>
                         <h4 className="text-xl font-semibold">AI College Finder</h4>
                         <p className="text-muted-foreground mt-2">Discover universities that perfectly match your academic profile, interests, and learning preferences.</p>
                     </div>
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <BookOpen className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
+                            <BookOpen className="w-8 h-8"/>
+                        </div>
                         <h4 className="text-xl font-semibold">AI Study Buddy</h4>
                         <p className="text-muted-foreground mt-2">Instantly generate flashcards and quizzes, or find the web's best resource for a specific question.</p>
                     </div>
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <TrendingUp className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
+                            <TrendingUp className="w-8 h-8"/>
+                        </div>
                         <h4 className="text-xl font-semibold">Progress Tracker</h4>
                         <p className="text-muted-foreground mt-2">Visualize your journey, track completed tasks, and watch your long-term goals get closer every day.</p>
                     </div>
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <PenSquare className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
+                            <PenSquare className="w-8 h-8"/>
+                        </div>
                         <h4 className="text-xl font-semibold">AI Essay Review (Elite)</h4>
                         <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college and scholarship essays to improve clarity, structure, and impact.</p>
                     </div>
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <Users className="w-12 h-12 text-primary mx-auto mb-4"/>
+                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
+                            <Users className="w-8 h-8"/>
+                        </div>
                         <h4 className="text-xl font-semibold">Mentor Match & Forum (Elite)</h4>
                         <p className="text-muted-foreground mt-2">Connect with experienced mentors and collaborate with peers in our exclusive Q&A community.</p>
                     </div>
