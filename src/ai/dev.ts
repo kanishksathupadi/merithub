@@ -10,7 +10,9 @@ import '@/ai/flows/moderate-post.ts';
 import '@/ai/flows/review-essay.ts';
 import '@/ai/flows/find-matching-colleges.ts';
 import '@/ai/flows/find-scholarships.ts';
+import '@/ai/flows/generate-college-image.ts';
 import '@/ai/tools/validate-academic-subject.ts';
 import '@/ai/tools/find-online-resource.ts';
 import '@/ai/tools/validate-avatar-image.ts';
 import '@/ai/tools/validate-resource-url.ts';
+

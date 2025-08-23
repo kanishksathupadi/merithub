@@ -1,17 +1,18 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { findMatchingColleges } from '@/ai/flows/find-matching-colleges';
+import { generateCollegeImage } from '@/ai/flows/generate-college-image';
 import type { FindMatchingCollegesOutput, FindMatchingCollegesInput } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { GraduationCap, Loader2, Search, Sparkles } from 'lucide-react';
+import { GraduationCap, Loader2, Search, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
@@ -20,28 +21,29 @@ const filterSchema = z.object({
   filterQuery: z.string().optional(),
 });
 
-// A small, curated list of real university images from Unsplash.
-const collegeImages = [
-    'https://images.unsplash.com/photo-1562774053-6257c32d435d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
-    'https://images.unsplash.com/photo-1607237138185-e894ee31b3c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
-    'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
-    'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
-    'https://images.unsplash.com/photo-1592289322834-cavy9b9598d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
-    'https://images.unsplash.com/photo-1622325833255-207a9d01a520?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc1NTUzMTM3MHww&ixlib=rb-4.1.0&q=80&w=1080',
-];
+type CollegeWithImage = FindMatchingCollegesOutput[0] & { imageUrl?: string; imageLoading?: boolean };
 
-function CollegeCard({ college, imageUrl }: { college: FindMatchingCollegesOutput[0], imageUrl: string }) {
+
+function CollegeCard({ college, isGenerating }: { college: CollegeWithImage, isGenerating: boolean }) {
     return (
         <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
-                 <Image
-                    src={imageUrl}
-                    alt={`A scenic view of the ${college.name} campus`}
-                    width={600}
-                    height={400}
-                    className="rounded-t-lg object-cover aspect-[3/2]"
-                    data-ai-hint="college campus"
-                  />
+                 {college.imageUrl ? (
+                    <Image
+                        src={college.imageUrl}
+                        alt={`An AI-generated scenic view of the ${college.name} campus`}
+                        width={600}
+                        height={400}
+                        className="rounded-t-lg object-cover aspect-[3/2]"
+                        data-ai-hint="college campus"
+                    />
+                 ) : (
+                    <div className="relative rounded-t-lg aspect-[3/2] bg-secondary flex flex-col items-center justify-center">
+                        <ImageIcon className="w-16 h-16 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground mt-2">Generating image...</p>
+                        {isGenerating && <Loader2 className="absolute top-4 right-4 animate-spin"/>}
+                    </div>
+                 )}
             </CardHeader>
             <CardContent className="p-6">
                 <CardTitle className="text-xl">{college.name}</CardTitle>
@@ -56,8 +58,9 @@ function CollegeCard({ college, imageUrl }: { college: FindMatchingCollegesOutpu
 export default function CollegeFinderPage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
-    const [colleges, setColleges] = useState<FindMatchingCollegesOutput | null>(null);
+    const [colleges, setColleges] = useState<CollegeWithImage[] | null>(null);
     const [studentProfile, setStudentProfile] = useState<Omit<FindMatchingCollegesInput, 'filterQuery'> | null>(null);
+    const [imageGenerationIndex, setImageGenerationIndex] = useState(-1);
 
     useEffect(() => {
         const onboardingDataStr = localStorage.getItem('onboardingData');
@@ -74,6 +77,26 @@ export default function CollegeFinderPage() {
             });
         }
     }, [toast]);
+    
+    const startImageGeneration = useCallback(async (collegeList: CollegeWithImage[]) => {
+        for (let i = 0; i < collegeList.length; i++) {
+            setImageGenerationIndex(i);
+            const college = collegeList[i];
+            try {
+                const result = await generateCollegeImage({ collegeName: college.name });
+                setColleges(prev => prev?.map(c => c.name === college.name ? { ...c, imageUrl: result.imageUrl } : c) ?? null);
+            } catch (error) {
+                console.error(`Failed to generate image for ${college.name}`, error);
+                 toast({
+                    variant: "destructive",
+                    title: "Image Generation Failed",
+                    description: `Could not create an image for ${college.name}.`,
+                });
+            }
+        }
+        setImageGenerationIndex(-1); // Done
+    }, [toast]);
+
 
     const form = useForm<z.infer<typeof filterSchema>>({
         resolver: zodResolver(filterSchema),
@@ -92,7 +115,10 @@ export default function CollegeFinderPage() {
                 ...studentProfile,
                 filterQuery: values.filterQuery || "best overall fit based on the student's profile",
             });
-            setColleges(result);
+            const collegesWithImageState: CollegeWithImage[] = result.map(c => ({...c, imageUrl: undefined, imageLoading: true}));
+            setColleges(collegesWithImageState);
+            await startImageGeneration(collegesWithImageState);
+
         } catch (error) {
             console.error("College finder failed:", error);
             toast({
@@ -105,33 +131,6 @@ export default function CollegeFinderPage() {
         }
     };
     
-    const memoizedColleges = useMemo(() => {
-        if (isLoading) {
-            return (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <Card key={i}>
-                            <Skeleton className="h-48 w-full" />
-                            <CardContent className="p-6 space-y-4">
-                                <Skeleton className="h-6 w-3/4" />
-                                <Skeleton className="h-4 w-1/2" />
-                                <Skeleton className="h-16 w-full" />
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            )
-        }
-        if (colleges) {
-            return (
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {colleges.map((college, index) => <CollegeCard key={index} college={college} imageUrl={collegeImages[index % collegeImages.length]} />)}
-                </div>
-            )
-        }
-        return null;
-    }, [colleges, isLoading]);
-
     return (
         <div className="space-y-8">
             <header>
@@ -170,7 +169,26 @@ export default function CollegeFinderPage() {
                 </CardContent>
             </Card>
 
-            {memoizedColleges}
+            {isLoading && !colleges && (
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <Card key={i}>
+                            <Skeleton className="h-48 w-full" />
+                            <CardContent className="p-6 space-y-4">
+                                <Skeleton className="h-6 w-3/4" />
+                                <Skeleton className="h-4 w-1/2" />
+                                <Skeleton className="h-16 w-full" />
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            )}
+
+            {colleges && (
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {colleges.map((college, index) => <CollegeCard key={college.name} college={college} isGenerating={imageGenerationIndex === index} />)}
+                </div>
+            )}
            
         </div>
     );
