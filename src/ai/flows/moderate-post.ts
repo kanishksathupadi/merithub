@@ -32,6 +32,7 @@ const prompt = ai.definePrompt({
   name: 'moderatePostPrompt',
   input: {schema: ModeratePostInputSchema},
   output: {schema: ModeratePostOutputSchema},
+  model: 'googleai/gemini-2.0-flash',
   prompt: `You are a content moderator for a Q&A forum designed for ambitious students (ages 10-18) focused on academic and extracurricular success. Your job is to ensure the environment is safe, supportive, and on-topic.
 
   Analyze the following post to determine if it is appropriate.
