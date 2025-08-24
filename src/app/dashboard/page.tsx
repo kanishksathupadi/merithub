@@ -205,7 +205,10 @@ function SuggestionView() {
     }
     
     return (
-        <div className="grid lg:grid-cols-2 gap-6 items-start">
+        <div className={cn(
+            "grid gap-6 items-start",
+            showCheckIn ? "lg:grid-cols-2" : "lg:grid-cols-1"
+        )}>
              {tasks.length > 0 ? (
                 <NextStepCard tasks={tasks} onTaskToggle={handleTaskToggle} />
              ) : (
