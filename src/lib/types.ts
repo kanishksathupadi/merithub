@@ -2,6 +2,17 @@
 
 import { z } from "zod";
 
+export type UserProfile = {
+    uid: string;
+    name: string;
+    email: string;
+    plan: 'standard' | 'elite';
+    age: number | null;
+    grade: number | null;
+    onboardingCompleted: boolean;
+    paymentCompleted: boolean;
+};
+
 export type RoadmapTask = {
     id: string;
     title: string;
@@ -117,3 +128,19 @@ export const FindScholarshipsOutputSchema = z.object({
     })).describe("A list of 5 to 7 relevant scholarships."),
 });
 export type FindScholarshipsOutput = z.infer<typeof FindScholarshipsOutputSchema>;
+
+export type ChatMessage = {
+  id: string;
+  text: string;
+  sender: 'user' | 'ai' | 'human';
+  timestamp: any; // Firestore Timestamp
+};
+
+export type Chat = {
+  id: string;
+  userId: string;
+  userName: string;
+  lastMessage: string;
+  lastUpdatedAt: any; // Firestore Timestamp
+  status: 'active' | 'human_requested' | 'resolved';
+};
