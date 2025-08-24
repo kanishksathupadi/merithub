@@ -1,9 +1,11 @@
 
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
+import { updateStudentPlan } from "@/ai/flows/update-student-plan";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
+import { CheckInCard } from "@/components/dashboard/check-in-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Trophy, Award } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +18,8 @@ import { trackFeatureUsage } from "@/lib/tracking";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
     try {
@@ -58,8 +62,9 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
 function SuggestionView() {
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
     const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
 
-    const loadTasks = () => {
+    const loadTasks = useCallback(() => {
         const storedTasks = localStorage.getItem('roadmapTasks');
         if (storedTasks) {
             try {
@@ -71,7 +76,7 @@ function SuggestionView() {
             }
         }
         return [];
-    }
+    }, []);
 
     useEffect(() => {
         const getSuggestionAndTasks = async () => {
@@ -79,7 +84,6 @@ function SuggestionView() {
             const cachedSuggestion = localStorage.getItem('aiSuggestion');
             const currentTasks = loadTasks();
             
-            // If we have a suggestion and tasks, the data is stable. Don't re-fetch.
             if (cachedSuggestion && currentTasks.length > 0) {
                 setLoading(false);
                 return;
@@ -108,7 +112,7 @@ function SuggestionView() {
         const handleStorageChange = () => loadTasks();
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
-    }, []);
+    }, [loadTasks]);
 
     const handleTaskToggle = (taskId: string) => {
         const newTasks = tasks.map(task => 
@@ -119,15 +123,52 @@ function SuggestionView() {
         window.dispatchEvent(new Event('storage'));
     };
 
-    if (loading) {
-        return <Skeleton className="h-56 w-full" />;
-    }
+    const handleCheckIn = async (checkInText: string) => {
+        setLoading(true);
+        try {
+            const result = await updateStudentPlan({ existingPlan: tasks, checkInText });
+            const { updatedPlan } = result;
 
-    if (tasks.length === 0) {
-        return <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>;
+            if (updatedPlan) {
+                setTasks(updatedPlan);
+                localStorage.setItem('roadmapTasks', JSON.stringify(updatedPlan));
+                window.dispatchEvent(new Event('storage'));
+                toast({
+                    title: "Plan Updated!",
+                    description: "Your roadmap has been updated with your latest input.",
+                });
+            }
+        } catch (error) {
+            console.error("Failed to update plan:", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "We couldn't update your plan at this time. Please try again.",
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="grid lg:grid-cols-2 gap-6">
+                <Skeleton className="h-56 w-full" />
+                <Skeleton className="h-56 w-full" />
+            </div>
+        )
     }
     
-    return <NextStepCard tasks={tasks} onTaskToggle={handleTaskToggle} />;
+    return (
+        <div className="grid lg:grid-cols-2 gap-6 items-start">
+             {tasks.length > 0 ? (
+                <NextStepCard tasks={tasks} onTaskToggle={handleTaskToggle} />
+             ) : (
+                <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>
+             )}
+             <CheckInCard onCheckIn={handleCheckIn} isLoading={loading} />
+        </div>
+    )
 }
 
 const standardTiles = [
@@ -222,7 +263,7 @@ export default function DashboardPage() {
       </Dialog>
       
         <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">Your Next Step</h2>
+            <h2 className="text-2xl font-semibold">Your Personalized Plan</h2>
             <Suspense fallback={<Skeleton className="h-56 w-full" />}>
                 <SuggestionView />
             </Suspense>
