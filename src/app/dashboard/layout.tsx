@@ -7,7 +7,6 @@ import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/com
 import { Toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useLayoutEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
 
 function ConditionalSidebarTrigger() {
     const { open, isMobile } = useSidebar();
@@ -26,13 +25,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { toast } = useToast();
   const [isVerified, setIsVerified] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   // Use useLayoutEffect to run verification synchronously before the browser paints.
-  // This is the key to preventing any "loading" flicker.
+  // This is the key to preventing any "loading" flicker for verified users.
   useLayoutEffect(() => {
     const signupDataStr = localStorage.getItem('signupData');
     if (!signupDataStr) {
@@ -80,9 +78,10 @@ export default function DashboardLayout({
     }
   }, [isVerified]);
 
+  // If the user is not yet verified, we return null.
+  // Because this check runs in useLayoutEffect, this happens before the browser can paint,
+  // preventing any flicker or loading state from showing on the screen.
   if (!isVerified) {
-    // This state is now effectively skipped for verified users,
-    // as useLayoutEffect runs before the first paint.
     return null;
   }
 
