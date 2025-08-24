@@ -19,6 +19,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
+import { usersCollection } from "@/lib/firebase-collections";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -57,82 +61,79 @@ export function SignupForm({ plan }: SignupFormProps) {
     },
   });
 
-  function handleGoogleSignup() {
-    // This is a mock signup for demo purposes.
-    // In a real app, this would use Firebase Auth `signInWithPopup` and get user info from the result.
-    const googleUser = {
-        name: 'Gia Lee',
-        email: 'gia.lee@example.com',
-        password: 'google_oauth_user', // Not used, but good for data structure consistency
-        age: 17,
-        grade: 12,
-        plan, // Use the plan from the current page
-    };
+ async function handleGoogleSignup() {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      const userRef = doc(usersCollection, user.uid);
+      const userDoc = await getDoc(userRef);
 
-     // Check if user already exists
-    const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-    if (allSignups.some((user: any) => user.email === googleUser.email)) {
-        toast({
-            variant: "destructive",
-            title: "Account Exists",
-            description: "An account with this email already exists. Please log in.",
-        });
-        return;
+      if (userDoc.exists()) {
+        // User already exists, so just log them in
+        router.push('/dashboard');
+      } else {
+        // New user, create their profile
+        const newUserProfile = {
+          uid: user.uid,
+          name: user.displayName || "Google User",
+          email: user.email!,
+          plan: plan,
+          // For Google Sign-Up, we might not have age/grade immediately
+          age: null, 
+          grade: null,
+          onboardingCompleted: false,
+          paymentCompleted: false,
+        };
+        await setDoc(userRef, newUserProfile);
+        router.push('/onboarding');
+      }
+    } catch (error: any) {
+      console.error("Google Sign-Up Error: ", error);
+      toast({
+        variant: "destructive",
+        title: "Google Sign-Up Failed",
+        description: error.message || "An unexpected error occurred.",
+      });
     }
-    
-    // Set current user's data for immediate session
-    localStorage.setItem('userName', googleUser.name);
-    localStorage.setItem('userPlan', googleUser.plan);
-    localStorage.setItem('signupData', JSON.stringify(googleUser));
-    
-    // Persist this new user's data for future logins
-    localStorage.setItem(`user-${googleUser.email}`, JSON.stringify(googleUser));
-
-    // Add to allSignups list for admin panel
-    allSignups.push(googleUser);
-    localStorage.setItem('allSignups', JSON.stringify(allSignups));
-
-    // A new user always goes to onboarding next
-    router.push("/onboarding");
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Signup submitted", { ...values, plan });
-    
-    if (typeof window !== 'undefined') {
-      const { name, age, grade, email, password } = values;
-      const newUser = { name, age, grade, email, password, plan };
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+        // Step 1: Create the user in Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+        const user = userCredential.user;
 
-      // Check if user already exists
-      const allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-      if (allSignups.some((user: any) => user.email === email)) {
-        form.setError("email", {
-            type: "manual",
-            message: "An account with this email already exists. Please log in.",
+        // Step 2: Update the user's profile with their name
+        await updateProfile(user, { displayName: values.name });
+
+        // Step 3: Create a user document in Firestore with additional details
+        const userRef = doc(usersCollection, user.uid);
+        await setDoc(userRef, {
+            uid: user.uid,
+            name: values.name,
+            email: values.email,
+            age: values.age,
+            grade: values.grade,
+            plan: plan,
+            onboardingCompleted: false,
+            paymentCompleted: false,
         });
+
+        console.log("User created successfully and data saved to Firestore.");
+        router.push("/onboarding");
+
+    } catch (error: any) {
+        console.error("Signup Error:", error);
         toast({
             variant: "destructive",
-            title: "Account Exists",
-            description: "An account with this email already exists. Please log in.",
+            title: "Signup Failed",
+            description: error.code === 'auth/email-already-in-use' 
+                ? "This email is already registered. Please log in." 
+                : error.message,
         });
-        return;
-      }
-
-
-      // Set current user's data for immediate login
-      localStorage.setItem('userName', name);
-      localStorage.setItem('userPlan', plan);
-      // Store the main signup data under its own key for direct lookup
-      localStorage.setItem('signupData', JSON.stringify(newUser));
-      
-      // *** Persist user data for future logins ***
-      localStorage.setItem(`user-${email}`, JSON.stringify(newUser));
-
-      // Add the new user to the list of all signups for the admin panel
-      allSignups.push(newUser);
-      localStorage.setItem('allSignups', JSON.stringify(allSignups));
     }
-    router.push("/onboarding");
   }
 
   return (
@@ -243,3 +244,5 @@ export function SignupForm({ plan }: SignupFormProps) {
     </Card>
   );
 }
+
+    

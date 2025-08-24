@@ -19,6 +19,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getDoc, doc } from "firebase/firestore";
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { usersCollection } from "@/lib/firebase-collections";
+
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -48,109 +53,56 @@ export function LoginForm() {
     },
   });
   
-  const handleGoogleLogin = () => {
-    // This is a mock login for demo purposes.
-    // In a real app, this would use Firebase Auth `signInWithPopup`.
-    // We assume the Google user has already signed up and completed the flow.
-    const googleUser = {
-        name: 'Gia Lee',
-        email: 'gia.lee@example.com',
-        plan: 'elite',
-        grade: 12
-    };
-    const googleOnboarding = {
-        academicStrengths: "Physics, Creative Writing",
-        academicWeaknesses: "Memorization",
-        subjectsOfInterest: "Astrophysics, poetry",
-        collegeEnvironment: "A small liberal arts college with a strong physics program.",
-        preferredLearningStyle: "visual",
-        currentExtracurriculars: "Astronomy Club, Literary Magazine",
-        weeklyTimeAvailable: "8",
-    };
-
-    // Set all necessary data for a complete session
-    localStorage.setItem('userName', googleUser.name);
-    localStorage.setItem('userPlan', googleUser.plan);
-    localStorage.setItem('signupData', JSON.stringify(googleUser));
-    localStorage.setItem('onboardingData', JSON.stringify(googleOnboarding));
-    localStorage.setItem('paymentComplete', 'true');
-    
-    // Ensure this user data is persisted for future logins
-    localStorage.setItem(`user-${googleUser.email}`, JSON.stringify(googleUser));
-    localStorage.setItem(`onboarding-${googleUser.email}`, JSON.stringify(googleOnboarding));
-    localStorage.setItem(`payment-${googleUser.email}`, 'true');
-
-    router.push("/dashboard");
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      // onAuthStateChanged will handle the redirect
+    } catch (error: any) {
+      console.error("Google Sign-In Error: ", error);
+      toast({
+        variant: "destructive",
+        title: "Google Sign-In Failed",
+        description: error.message || "An unexpected error occurred.",
+      });
+    }
   }
 
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    if (typeof window !== 'undefined') {
-      // Admin User Check (special case)
-      if (values.email === 'admin@dymera.com' && values.password === 'adminpassword') {
-        const adminSignupData = { name: 'Admin User', email: values.email, plan: 'elite', grade: 11 };
-        const adminOnboardingData = {
-          academicStrengths: "Mathematics, Computer Science",
-          academicWeaknesses: "Public Speaking, History",
-          subjectsOfInterest: "Artificial Intelligence, Robotics, Quantum Physics",
-          collegeEnvironment: "A large, collaborative research university with a strong engineering program.",
-          preferredLearningStyle: "kinesthetic",
-          currentExtracurriculars: "Robotics Club, Coding Competitions",
-          weeklyTimeAvailable: "10",
-        };
-        localStorage.setItem('userName', 'Admin User');
-        localStorage.setItem('userPlan', 'elite');
-        localStorage.setItem('signupData', JSON.stringify(adminSignupData));
-        localStorage.setItem('onboardingData', JSON.stringify(adminOnboardingData));
-        localStorage.setItem('paymentComplete', 'true'); // Bypass payment
-        router.push("/dashboard/admin");
-        return; 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+      // onAuthStateChanged in a layout component will handle redirection.
+      // For now, we manually check where to send the user.
+      const user = auth.currentUser;
+      if (!user) throw new Error("User not found after login.");
+
+      if (user.email === 'admin@dymera.com') {
+          router.push('/dashboard/admin');
+          return;
       }
-      
-      // Standard User Login
-      const storedUserData = localStorage.getItem(`user-${values.email}`);
-      
-      if (storedUserData) {
-        try {
-            const userData = JSON.parse(storedUserData);
-            if (userData.password === values.password) {
-              // This is the user, log them in.
-              // CRITICAL: Set the full user data object for the session.
-              localStorage.setItem('signupData', JSON.stringify(userData));
-              localStorage.setItem('userName', userData.name);
-              localStorage.setItem('userPlan', userData.plan);
-              
-              // CRITICAL FIX: Restore onboarding and payment data for existing users
-              const onboardingData = localStorage.getItem(`onboarding-${values.email}`);
-              const paymentComplete = !!localStorage.getItem(`payment-${values.email}`);
 
-              if (onboardingData) {
-                localStorage.setItem('onboardingData', onboardingData);
-              }
-              if (paymentComplete) {
-                localStorage.setItem('paymentComplete', 'true');
-              }
-
-              // Now check where to send them.
-              if (!onboardingData) {
-                router.push("/onboarding");
-              } else if (!paymentComplete) {
-                router.push("/payment");
-              } else {
-                router.push("/dashboard");
-              }
-              return;
-            }
-        } catch(e) {
-            console.error("Failed to parse user data", e);
+      const userDocRef = doc(usersCollection, user.uid);
+      const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (!userData.onboardingCompleted) {
+          router.push('/onboarding');
+        } else if (!userData.paymentCompleted) {
+          router.push('/payment');
+        } else {
+          router.push('/dashboard');
         }
+      } else {
+        // This case should ideally not happen if signup is correct
+        router.push('/onboarding');
       }
-
-      // This code will only be reached if the login credentials are bad or the user doesn't exist.
+    } catch (error: any) {
+      console.error("Login Error:", error);
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "Invalid email or password. Please try again or sign up.",
+        description: "Invalid email or password. Please try again.",
       });
     }
   }
@@ -228,3 +180,5 @@ export function LoginForm() {
     </Card>
   );
 }
+
+    

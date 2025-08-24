@@ -24,7 +24,7 @@ export default function Home() {
             <Button asChild variant="ghost">
                 <Link href="/login">Member Login</Link>
             </Button>
-             <Button asChild className="bg-accent text-black hover:bg-accent/90">
+             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Link href="/#pricing">Get Started</Link>
             </Button>
           </div>
@@ -47,13 +47,13 @@ export default function Home() {
                 PinnaclePath uses AI to build a personalized roadmap, find best-fit colleges, provide instant essay feedback, and generate on-demand study help to ensure you stand out.
               </p>
               <div className="mt-8 space-x-4">
-                <Button size="lg" asChild className="bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
+                <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
                   <Link href="/#pricing">
                     <Rocket className="mr-2 h-5 w-5" />
                     Start Your Journey
                   </Link>
                 </Button>
-                <Button variant="outline" size="lg" asChild className="border-border hover:bg-accent/10">
+                <Button variant="outline" size="lg" asChild className="border-border hover:bg-primary/10">
                   <Link href="#features">
                     Learn More
                   </Link>
@@ -162,25 +162,38 @@ export default function Home() {
               <h3 className="text-4xl font-bold tracking-tight">Your Path to Excellence in 3 Steps</h3>
                <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our streamlined process makes it simple to get started on your journey to success.</p>
             </div>
-            <div className="grid md:grid-cols-3 gap-12 items-start relative">
-                <div className="absolute top-8 left-0 w-full h-px bg-border hidden md:block">
-                    <div className="h-px bg-primary w-full"></div>
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+                <Image
+                    src="https://images.unsplash.com/photo-1516542076529-1ea3854896f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdHVkZW50JTIwdXNpbmclMjBjb21wdXRlcnxlbnwwfHx8fDE3MjM4MjQxMDJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                    alt="A student using a laptop for their academic work, illustrating the PinnaclePath process."
+                    width={800}
+                    height={600}
+                    className="rounded-xl shadow-xl ring-1 ring-border/10 object-cover"
+                    data-ai-hint="student computer"
+                />
+                <div className="space-y-8">
+                    <div className="flex gap-4">
+                        <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold">1</div>
+                        <div>
+                            <h4 className="text-xl font-semibold">Complete Your Profile</h4>
+                            <p className="text-muted-foreground mt-1">Provide a comprehensive overview of your academic record, extracurriculars, and future aspirations.</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-4">
+                         <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold">2</div>
+                        <div>
+                            <h4 className="text-xl font-semibold">Receive Your AI Strategy</h4>
+                            <p className="text-muted-foreground mt-1">Our system analyzes your data to generate a bespoke, long-term roadmap with actionable milestones.</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-4">
+                        <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold">3</div>
+                        <div>
+                            <h4 className="text-xl font-semibold">Execute and Achieve</h4>
+                            <p className="text-muted-foreground mt-1">Follow your plan, track your progress, and use powerful AI tools to overcome any academic challenge.</p>
+                        </div>
+                    </div>
                 </div>
-              <div className="flex flex-col items-center text-center relative">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-muted z-10">1</div>
-                <h4 className="text-xl font-semibold mt-4">Complete Your Profile</h4>
-                <p className="text-muted-foreground mt-2">Provide a comprehensive overview of your academic record, extracurriculars, and future aspirations.</p>
-              </div>
-              <div className="flex flex-col items-center text-center relative">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-muted z-10">2</div>
-                <h4 className="text-xl font-semibold mt-4">Receive Your AI Strategy</h4>
-                <p className="text-muted-foreground mt-2">Our system analyzes your data to generate a bespoke, long-term roadmap with actionable milestones.</p>
-              </div>
-              <div className="flex flex-col items-center text-center relative">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground text-2xl font-bold mb-4 border-4 border-muted z-10">3</div>
-                <h4 className="text-xl font-semibold mt-4">Execute and Achieve</h4>
-                <p className="text-muted-foreground mt-2">Follow your plan, track your progress, and use powerful AI tools to overcome any academic challenge.</p>
-              </div>
             </div>
           </div>
         </section>
@@ -203,7 +216,7 @@ export default function Home() {
                                 <p className="text-sm text-muted-foreground">High School Junior</p>
                             </div>
                         </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
+                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-primary fill-primary"/>)}</div>
                         <p className="text-foreground/80 italic">"The AI College Finder was incredible. It suggested schools I hadn't even heard of that were a perfect fit for my niche interest in historical linguistics."</p>
                     </div>
                      <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
@@ -217,7 +230,7 @@ export default function Home() {
                                 <p className="text-sm text-muted-foreground">AP Student</p>
                             </div>
                         </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
+                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-primary fill-primary"/>)}</div>
                         <p className="text-foreground/80 italic">"The AI Study Buddy's Resource Finder is my go-to. It consistently finds the best, most relevant articles and videos, saving me hours of searching."</p>
                     </div>
                      <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
@@ -231,7 +244,7 @@ export default function Home() {
                                 <p className="text-sm text-muted-foreground">Future Valedictorian</p>
                             </div>
                         </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-accent fill-accent"/>)}</div>
+                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-primary fill-primary"/>)}</div>
                         <p className="text-foreground/80 italic">"The AI Essay Review tool is a game-changer. My common app essay is so much stronger now after getting instant feedback on my structure and clarity."</p>
                     </div>
                 </div>
@@ -256,7 +269,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy (Quizzes & Flashcards)</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Resource Finder</li>
                         </ul>
-                        <Button asChild variant="outline" className="w-full mt-8 border-border hover:bg-accent/10">
+                        <Button asChild variant="outline" className="w-full mt-8 border-border hover:bg-primary/10">
                            <Link href="/signup?plan=standard">Choose Standard</Link>
                         </Button>
                     </div>
@@ -274,7 +287,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Community Q&A Forum</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
                         </ul>
-                        <Button asChild className="w-full mt-8 bg-accent text-black hover:bg-accent/90 shadow-lg shadow-accent/30">
+                        <Button asChild className="w-full mt-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
                             <Link href="/signup?plan=elite">Choose Elite</Link>
                         </Button>
                     </div>

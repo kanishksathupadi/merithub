@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 222 84% 4.9%;
+    --background: 224 82% 3.5%;
     --foreground: 210 40% 98%;
     --card: 222 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -17,7 +17,7 @@
     --secondary-foreground: 210 40% 98%;
     --muted: 217 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 39 100% 50%; /* Bright Orange: #FFA500 */
+    --accent: 197 71% 51%; 
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -40,7 +40,7 @@
     --sidebar-ring: hsl(197, 71%, 51%);
   }
   .dark {
-    --background: 222 84% 4.9%;
+    --background: 224 82% 3.5%;
     --foreground: 210 40% 98%;
     --card: 222 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -52,7 +52,7 @@
     --secondary-foreground: 210 40% 98%;
     --muted: 217 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 39 100% 50%; /* Bright Orange: #FFA500 */
+    --accent: 197 71% 51%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -106,3 +106,5 @@
       linear-gradient(to bottom, hsl(var(--primary) / 0.05) 1px, transparent 1px);
   }
 }
+
+    
