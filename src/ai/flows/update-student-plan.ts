@@ -61,7 +61,7 @@ const prompt = ai.definePrompt({
 
   **Student's Existing Roadmap:**
   \`\`\`json
-  {{{jsonStringify existingPlan}}}
+  {{{existingPlanJson}}}
   \`\`\`
 
   **Student's New Check-In:**
@@ -77,12 +77,15 @@ const updateStudentPlanFlow = ai.defineFlow(
     inputSchema: UpdateStudentPlanInputSchema,
     outputSchema: UpdateStudentPlanOutputSchema,
   },
-  async input => {
-    // The prompt needs the plan as a string, so we need a custom invoker.
+  async (input) => {
+    // Convert the plan object to a JSON string before passing it to the prompt.
+    const existingPlanJson = JSON.stringify(input.existingPlan, null, 2);
+
     const {output} = await prompt({
-        ...input,
-        jsonStringify: (obj: any) => JSON.stringify(obj, null, 2),
+      ...input,
+      existingPlanJson, // Pass the JSON string to the prompt
     });
+
     if (!output) {
         throw new Error("Failed to update the student plan.");
     }
