@@ -59,16 +59,24 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
+        const email = userEmail;
+        // Clear session-specific data
         localStorage.removeItem('signupData');
         localStorage.removeItem('onboardingData');
         localStorage.removeItem('paymentComplete');
         localStorage.removeItem('userAvatar');
         localStorage.removeItem('welcomeEmailSent');
-        localStorage.removeItem('aiSuggestion');
-        localStorage.removeItem('roadmapTasks');
-        localStorage.removeItem('forumPosts');
         localStorage.removeItem('userName');
         localStorage.removeItem('userPlan');
+        localStorage.removeItem('hasBeenWelcomed');
+
+        // Note: We are intentionally NOT clearing user-specific persisted data like:
+        // - `onboarding-${email}`
+        // - `payment-${email}`
+        // - `roadmapTasks-${email}`
+        // - `aiSuggestion-${email}`
+        // - `allSignups`
+        // This ensures that when the user logs back in, their progress is restored.
     }
     router.push('/');
   };
@@ -184,5 +192,3 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     </Sidebar>
   );
 }
-
-    

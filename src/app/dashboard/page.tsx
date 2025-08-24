@@ -62,10 +62,23 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
 function SuggestionView() {
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showCheckIn, setShowCheckIn] = useState(false);
     const { toast } = useToast();
 
+    const getEmail = () => {
+         const signupDataStr = localStorage.getItem('signupData');
+         if (!signupDataStr) return null;
+         try {
+             return JSON.parse(signupDataStr).email;
+         } catch {
+             return null;
+         }
+    }
+
     const loadTasks = useCallback(() => {
-        const storedTasks = localStorage.getItem('roadmapTasks');
+        const email = getEmail();
+        if (!email) return [];
+        const storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
         if (storedTasks) {
             try {
                 const parsedTasks = JSON.parse(storedTasks);
@@ -78,32 +91,59 @@ function SuggestionView() {
         return [];
     }, []);
 
+    const saveTasks = (tasksToSave: RoadmapTask[]) => {
+         const email = getEmail();
+         if (!email) return;
+         localStorage.setItem(`roadmapTasks-${email}`, JSON.stringify(tasksToSave));
+         setTasks(tasksToSave);
+         window.dispatchEvent(new Event('storage'));
+    }
+
     useEffect(() => {
         const getSuggestionAndTasks = async () => {
             setLoading(true);
-            const cachedSuggestion = localStorage.getItem('aiSuggestion');
+            const email = getEmail();
+            if (!email) {
+                setLoading(false);
+                return;
+            };
+
+            const cachedSuggestion = localStorage.getItem(`aiSuggestion-${email}`);
             const currentTasks = loadTasks();
             
             if (cachedSuggestion && currentTasks.length > 0) {
                 setLoading(false);
-                return;
-            }
+            } else {
+                const onboardingDataStr = localStorage.getItem('onboardingData');
+                const signupDataStr = localStorage.getItem('signupData');
 
-            const onboardingDataStr = localStorage.getItem('onboardingData');
-            const signupDataStr = localStorage.getItem('signupData');
-
-            if (onboardingDataStr && signupDataStr) {
-                const onboardingData = JSON.parse(onboardingDataStr);
-                const signupData = JSON.parse(signupDataStr);
-                const result = await fetchSuggestion({ ...onboardingData, grade: signupData.grade });
-                
-                if (result) {
-                    localStorage.setItem('aiSuggestion', JSON.stringify(result));
-                    const newTasks = generateTasksFromSuggestion(result);
-                    setTasks(newTasks);
-                    localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
+                if (onboardingDataStr && signupDataStr) {
+                    const onboardingData = JSON.parse(onboardingDataStr);
+                    const signupData = JSON.parse(signupDataStr);
+                    const result = await fetchSuggestion({ ...onboardingData, grade: signupData.grade });
+                    
+                    if (result) {
+                        localStorage.setItem(`aiSuggestion-${email}`, JSON.stringify(result));
+                        const newTasks = generateTasksFromSuggestion(result);
+                        saveTasks(newTasks);
+                    }
                 }
             }
+
+            // Check-in card visibility logic
+            const lastCheckInStr = localStorage.getItem(`lastCheckIn-${email}`);
+            if (lastCheckInStr) {
+                const lastCheckInTime = new Date(lastCheckInStr).getTime();
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+                if (Date.now() - lastCheckInTime < twentyFourHours) {
+                    setShowCheckIn(false);
+                } else {
+                    setShowCheckIn(true);
+                }
+            } else {
+                setShowCheckIn(true);
+            }
+
             setLoading(false);
         };
 
@@ -118,21 +158,26 @@ function SuggestionView() {
         const newTasks = tasks.map(task => 
             task.id === taskId ? { ...task, completed: !task.completed } : task
         );
-        setTasks(newTasks);
-        localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
-        window.dispatchEvent(new Event('storage'));
+        saveTasks(newTasks);
     };
 
     const handleCheckIn = async (checkInText: string) => {
         setLoading(true);
+        const email = getEmail();
+        if (!email) {
+             toast({ variant: "destructive", title: "Error", description: "Could not find user profile." });
+             setLoading(false);
+             return;
+        };
+
         try {
             const result = await updateStudentPlan({ existingPlan: tasks, checkInText });
             const { updatedPlan } = result;
 
             if (updatedPlan) {
-                setTasks(updatedPlan);
-                localStorage.setItem('roadmapTasks', JSON.stringify(updatedPlan));
-                window.dispatchEvent(new Event('storage'));
+                saveTasks(updatedPlan);
+                localStorage.setItem(`lastCheckIn-${email}`, new Date().toISOString());
+                setShowCheckIn(false);
                 toast({
                     title: "Plan Updated!",
                     description: "Your roadmap has been updated with your latest input.",
@@ -166,7 +211,7 @@ function SuggestionView() {
              ) : (
                 <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>
              )}
-             <CheckInCard onCheckIn={handleCheckIn} isLoading={loading} />
+            {showCheckIn && <CheckInCard onCheckIn={handleCheckIn} isLoading={loading} />}
         </div>
     )
 }
