@@ -19,10 +19,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
-import { usersCollection } from "@/lib/firebase-collections";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -61,77 +57,49 @@ export function SignupForm({ plan }: SignupFormProps) {
     },
   });
 
- async function handleGoogleSignup() {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      
-      const userRef = doc(usersCollection, user.uid);
-      const userDoc = await getDoc(userRef);
-
-      if (userDoc.exists()) {
-        // User already exists, so just log them in
-        router.push('/dashboard');
-      } else {
-        // New user, create their profile
-        const newUserProfile = {
-          uid: user.uid,
-          name: user.displayName || "Google User",
-          email: user.email!,
-          plan: plan,
-          // For Google Sign-Up, we might not have age/grade immediately
-          age: null, 
-          grade: null,
-          onboardingCompleted: false,
-          paymentCompleted: false,
-        };
-        await setDoc(userRef, newUserProfile);
-        router.push('/onboarding');
-      }
-    } catch (error: any) {
-      console.error("Google Sign-Up Error: ", error);
-      toast({
-        variant: "destructive",
-        title: "Google Sign-Up Failed",
-        description: error.message || "An unexpected error occurred.",
-      });
-    }
+  const handleGoogleSignup = () => {
+    toast({
+      variant: "destructive",
+      title: "Feature Not Available",
+      description: "Google Sign-Up is not available in this demo.",
+    });
   }
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    if (typeof window === 'undefined') return;
+    
     try {
-        // Step 1: Create the user in Firebase Auth
-        const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-        const user = userCredential.user;
+        const allSignupsStr = localStorage.getItem('allSignups');
+        const allSignups = allSignupsStr ? JSON.parse(allSignupsStr) : [];
+        
+        const userExists = allSignups.some((u: any) => u.email === values.email);
+        if (userExists) {
+            toast({
+                variant: "destructive",
+                title: "Email Already Registered",
+                description: "This email is already in use. Please log in.",
+            });
+            return;
+        }
 
-        // Step 2: Update the user's profile with their name
-        await updateProfile(user, { displayName: values.name });
+        const newUser = { ...values, plan };
 
-        // Step 3: Create a user document in Firestore with additional details
-        const userRef = doc(usersCollection, user.uid);
-        await setDoc(userRef, {
-            uid: user.uid,
-            name: values.name,
-            email: values.email,
-            age: values.age,
-            grade: values.grade,
-            plan: plan,
-            onboardingCompleted: false,
-            paymentCompleted: false,
-        });
+        // Save new user to the list of all users
+        allSignups.push(newUser);
+        localStorage.setItem('allSignups', JSON.stringify(allSignups));
 
-        console.log("User created successfully and data saved to Firestore.");
+        // Set the current user's data for this session
+        localStorage.setItem('signupData', JSON.stringify(newUser));
+        localStorage.setItem('userName', newUser.name);
+        localStorage.setItem('userPlan', newUser.plan);
+
         router.push("/onboarding");
-
-    } catch (error: any) {
-        console.error("Signup Error:", error);
+    } catch (error) {
+         console.error("Signup Error:", error);
         toast({
             variant: "destructive",
             title: "Signup Failed",
-            description: error.code === 'auth/email-already-in-use' 
-                ? "This email is already registered. Please log in." 
-                : error.message,
+            description: "An unexpected error occurred. Please try again.",
         });
     }
   }
@@ -244,5 +212,3 @@ export function SignupForm({ plan }: SignupFormProps) {
     </Card>
   );
 }
-
-    

@@ -19,11 +19,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getDoc, doc } from "firebase/firestore";
-import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { usersCollection } from "@/lib/firebase-collections";
-
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -41,7 +36,6 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     )
 }
 
-
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
@@ -52,58 +46,87 @@ export function LoginForm() {
       password: "",
     },
   });
-  
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      // onAuthStateChanged will handle the redirect
-    } catch (error: any) {
-      console.error("Google Sign-In Error: ", error);
+
+  const handleGoogleLogin = () => {
       toast({
-        variant: "destructive",
-        title: "Google Sign-In Failed",
-        description: error.message || "An unexpected error occurred.",
+          variant: "destructive",
+          title: "Feature Not Available",
+          description: "Google Sign-In is not available in this demo.",
       });
-    }
   }
 
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    // This is a mock login flow that uses localStorage.
+    if (typeof window === 'undefined') return;
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      // onAuthStateChanged in a layout component will handle redirection.
-      // For now, we manually check where to send the user.
-      const user = auth.currentUser;
-      if (!user) throw new Error("User not found after login.");
-
-      if (user.email === 'admin@dymera.com') {
-          router.push('/dashboard/admin');
-          return;
-      }
-
-      const userDocRef = doc(usersCollection, user.uid);
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        if (!userData.onboardingCompleted) {
-          router.push('/onboarding');
-        } else if (!userData.paymentCompleted) {
-          router.push('/payment');
-        } else {
-          router.push('/dashboard');
+        if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
+            // Special case for admin login
+            const adminData = {
+                name: 'Admin',
+                email: 'admin@dymera.com',
+                plan: 'elite',
+            };
+            localStorage.setItem('signupData', JSON.stringify(adminData));
+            localStorage.setItem('userName', 'Admin');
+            localStorage.setItem('userPlan', 'elite');
+            localStorage.setItem('paymentComplete', 'true');
+            localStorage.setItem('onboardingData', JSON.stringify({})); // Mock onboarding
+            router.push('/dashboard/admin');
+            return;
         }
-      } else {
-        // This case should ideally not happen if signup is correct
-        router.push('/onboarding');
-      }
-    } catch (error: any) {
-      console.error("Login Error:", error);
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
-      });
+
+
+        const allSignupsStr = localStorage.getItem('allSignups');
+        if (allSignupsStr) {
+            const allSignups = JSON.parse(allSignupsStr);
+            const user = allSignups.find((u: any) => u.email === values.email && u.password === values.password);
+
+            if (user) {
+                // User found, "log them in"
+                localStorage.setItem('signupData', JSON.stringify(user));
+                localStorage.setItem('userName', user.name);
+                localStorage.setItem('userPlan', user.plan);
+
+                // Check their progress in the funnel
+                const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
+                const paymentComplete = localStorage.getItem(`payment-${user.email}`);
+
+                 if (onboardingComplete) {
+                    localStorage.setItem('onboardingData', onboardingComplete);
+                 }
+                 if (paymentComplete) {
+                    localStorage.setItem('paymentComplete', paymentComplete);
+                 }
+
+                if (!onboardingComplete) {
+                    router.push('/onboarding');
+                } else if (!paymentComplete) {
+                    router.push('/payment');
+                } else {
+                    router.push('/dashboard');
+                }
+            } else {
+                 toast({
+                    variant: "destructive",
+                    title: "Login Failed",
+                    description: "Invalid email or password. Please try again.",
+                });
+            }
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Login Failed",
+                description: "No users found. Please sign up first.",
+            });
+        }
+    } catch (error) {
+         console.error("Login Error:", error);
+        toast({
+            variant: "destructive",
+            title: "An Error Occurred",
+            description: "Something went wrong during login.",
+        });
     }
   }
 
@@ -180,5 +203,3 @@ export function LoginForm() {
     </Card>
   );
 }
-
-    
