@@ -19,6 +19,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { auth } from "@/lib/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -57,42 +59,50 @@ export function SignupForm({ plan }: SignupFormProps) {
     },
   });
 
-  const handleGoogleSignup = () => {
-    // This is a self-contained prototype implementation of Google Sign-In.
-    const googleUser = {
-        name: "Alex Garcia",
-        email: "alex.garcia@example.com",
-    };
+  const handleGoogleSignup = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const googleUser = result.user;
 
-    let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-    let userExists = allSignups.some((u: any) => u.email === googleUser.email);
-    
-    if (userExists) {
-        toast({
-            variant: "destructive",
-            title: "Email Already Registered",
-            description: "This Google account is already in use. Please log in.",
-        });
-        router.push('/login');
-        return;
+      let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+      let userExists = allSignups.some((u: any) => u.email === googleUser.email);
+      
+      if (userExists) {
+          toast({
+              variant: "destructive",
+              title: "Email Already Registered",
+              description: "This Google account is already in use. Please log in.",
+          });
+          router.push('/login');
+          return;
+      }
+
+      const newUser = {
+          name: googleUser.displayName || 'Google User',
+          email: googleUser.email,
+          plan,
+          password: 'google_user_password', // Mock password for demo
+          age: 17, // default age
+          grade: 11, // default grade
+      };
+
+      allSignups.push(newUser);
+      localStorage.setItem('allSignups', JSON.stringify(allSignups));
+      localStorage.setItem('signupData', JSON.stringify(newUser));
+      localStorage.setItem('userName', newUser.name);
+      localStorage.setItem('userPlan', newUser.plan);
+
+      router.push("/onboarding");
+
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      toast({
+        variant: "destructive",
+        title: "Google Sign-In Failed",
+        description: "Could not sign in with Google. Please ensure popups are enabled and try again.",
+      });
     }
-
-    const newUser = {
-        name: googleUser.name,
-        email: googleUser.email,
-        plan,
-        password: 'google_user_password', // Mock password for demo
-        age: 17,
-        grade: 11,
-    };
-
-    allSignups.push(newUser);
-    localStorage.setItem('allSignups', JSON.stringify(allSignups));
-    localStorage.setItem('signupData', JSON.stringify(newUser));
-    localStorage.setItem('userName', newUser.name);
-    localStorage.setItem('userPlan', newUser.plan);
-
-    router.push("/onboarding");
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -242,5 +252,3 @@ export function SignupForm({ plan }: SignupFormProps) {
     </Card>
   );
 }
-
-    
