@@ -19,9 +19,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { app } from "@/lib/firebase";
-
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -50,62 +47,47 @@ export function LoginForm() {
     },
   });
 
-  const handleGoogleLogin = async () => {
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    try {
-        const result = await signInWithPopup(auth, provider);
-        const googleUser = result.user;
+  const handleGoogleLogin = () => {
+    // This is a MOCK login function for prototyping.
+    const mockGoogleUser = {
+        name: 'Google User',
+        email: 'google.user@example.com',
+        plan: 'standard', // Default plan
+        password: 'mockPassword', // Mock password for consistency
+        age: 16, 
+        grade: 10,
+    };
+
+    let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+    let user = allSignups.find((u: any) => u.email === mockGoogleUser.email);
+
+    if (user) {
+        // Existing mock user
+        localStorage.setItem('signupData', JSON.stringify(user));
+        localStorage.setItem('userName', user.name);
+        localStorage.setItem('userPlan', user.plan);
         
-        let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-        let user = allSignups.find((u: any) => u.email === googleUser.email);
+        const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
+        const paymentComplete = localStorage.getItem(`payment-${user.email}`);
 
-        if (user) {
-            // Existing user
-            localStorage.setItem('signupData', JSON.stringify(user));
-            localStorage.setItem('userName', user.name);
-            localStorage.setItem('userPlan', user.plan);
-            
-            const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
-            const paymentComplete = localStorage.getItem(`payment-${user.email}`);
-
-            if (!onboardingComplete) router.push('/onboarding');
-            else if (!paymentComplete) router.push('/payment');
-            else router.push('/dashboard');
-        } else {
-            // New user via Google - create a profile and send to onboarding
-            user = {
-                name: googleUser.displayName || 'New User',
-                email: googleUser.email!,
-                plan: 'standard', // Default plan for new Google sign-ins
-                // Mock age/grade, they will be asked in onboarding if needed,
-                // but our current onboarding doesn't use these fields.
-                age: 16, 
-                grade: 10,
-            };
-            allSignups.push(user);
-            localStorage.setItem('allSignups', JSON.stringify(allSignups));
-            localStorage.setItem('signupData', JSON.stringify(user));
-            localStorage.setItem('userName', user.name);
-            localStorage.setItem('userPlan', user.plan);
-            router.push('/onboarding');
-        }
-
-    } catch (error) {
-        console.error("Google Sign-In Error", error);
-        toast({
-            variant: "destructive",
-            title: "Google Sign-In Failed",
-            description: "Could not sign in with Google. Please try again.",
-        });
+        if (!onboardingComplete) router.push('/onboarding');
+        else if (!paymentComplete) router.push('/payment');
+        else router.push('/dashboard');
+    } else {
+        // New user via Google - create a profile and send to onboarding
+        allSignups.push(mockGoogleUser);
+        localStorage.setItem('allSignups', JSON.stringify(allSignups));
+        localStorage.setItem('signupData', JSON.stringify(mockGoogleUser));
+        localStorage.setItem('userName', mockGoogleUser.name);
+        localStorage.setItem('userPlan', mockGoogleUser.plan);
+        router.push('/onboarding');
     }
-  }
+  };
 
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (typeof window === 'undefined') return;
 
-    // Special case for admin login, works on any deployment
     if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
         const adminData = {
             name: 'Admin',
@@ -249,3 +231,5 @@ export function LoginForm() {
     </Card>
   );
 }
+
+    

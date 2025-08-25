@@ -19,8 +19,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { app } from "@/lib/firebase";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -59,50 +57,37 @@ export function SignupForm({ plan }: SignupFormProps) {
     },
   });
 
-  const handleGoogleSignup = async () => {
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    try {
-        const result = await signInWithPopup(auth, provider);
-        const googleUser = result.user;
+  const handleGoogleSignup = () => {
+     // This is a MOCK signup function for prototyping.
+    const mockGoogleUser = {
+        name: 'Google User',
+        email: 'google.user@example.com',
+        plan, // Use the plan from the signup page
+        password: 'mockPassword',
+        age: 16,
+        grade: 10,
+    };
 
-        let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-        let userExists = allSignups.some((u: any) => u.email === googleUser.email);
-        
-        if (userExists) {
-            toast({
-                variant: "destructive",
-                title: "Email Already Registered",
-                description: "This Google account is already in use. Please log in.",
-            });
-            router.push('/login');
-            return;
-        }
-
-        const newUser = {
-            name: googleUser.displayName || 'New User',
-            email: googleUser.email!,
-            plan, // Use the plan from the signup page
-            age: 16,
-            grade: 10,
-        };
-
-        allSignups.push(newUser);
-        localStorage.setItem('allSignups', JSON.stringify(allSignups));
-        localStorage.setItem('signupData', JSON.stringify(newUser));
-        localStorage.setItem('userName', newUser.name);
-        localStorage.setItem('userPlan', newUser.plan);
-
-        router.push("/onboarding");
-
-    } catch (error) {
-        console.error("Google Sign-Up Error", error);
+    let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+    let userExists = allSignups.some((u: any) => u.email === mockGoogleUser.email);
+    
+    if (userExists) {
         toast({
             variant: "destructive",
-            title: "Google Sign-Up Failed",
-            description: "Could not sign up with Google. Please try again.",
+            title: "Email Already Registered",
+            description: "This Google account is already in use. Please log in.",
         });
+        router.push('/login');
+        return;
     }
+
+    allSignups.push(mockGoogleUser);
+    localStorage.setItem('allSignups', JSON.stringify(allSignups));
+    localStorage.setItem('signupData', JSON.stringify(mockGoogleUser));
+    localStorage.setItem('userName', mockGoogleUser.name);
+    localStorage.setItem('userPlan', mockGoogleUser.plan);
+
+    router.push("/onboarding");
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -252,3 +237,5 @@ export function SignupForm({ plan }: SignupFormProps) {
     </Card>
   );
 }
+
+    
