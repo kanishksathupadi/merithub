@@ -2,7 +2,7 @@
 'use server';
 
 /**
- * @fileOverview AI agent that reviews a student's essay.
+ * @fileOverview AI agent that acts as a writing coach for a student's essay.
  *
  * - reviewEssay - A function that provides feedback on an essay.
  * - ReviewEssayInput - The input type for the reviewEssay function.
@@ -19,22 +19,10 @@ const ReviewEssayInputSchema = z.object({
 export type ReviewEssayInput = z.infer<typeof ReviewEssayInputSchema>;
 
 const ReviewEssayOutputSchema = z.object({
-    clarity: z.object({
-        score: z.number().min(0).max(100).describe("A score from 0-100 on the essay's clarity and focus."),
-        feedback: z.string().describe("Specific, constructive feedback on the essay's clarity."),
-    }),
-    grammar: z.object({
-        score: z.number().min(0).max(100).describe("A score from 0-100 on the essay's grammar and mechanics."),
-        feedback: z.string().describe("Specific, constructive feedback on the essay's grammar and spelling."),
-    }),
-    structure: z.object({
-        score: z.number().min(0).max(100).describe("A score from 0-100 on the essay's structure and organization."),
-        feedback: z.string().describe("Specific, constructive feedback on the essay's structure, including intro, body, and conclusion."),
-    }),
-    overall: z.object({
-        score: z.number().min(0).max(100).describe("An overall score from 0-100 for the essay."),
-        feedback: z.string().describe("A summary of the essay's strengths and areas for improvement."),
-    }),
+    reviewTitle: z.string().describe("A positive and encouraging title for the feedback, like 'Great Start!' or 'Excellent Ideas Here!'"),
+    whatIsWorkingWell: z.string().describe("Specific, positive feedback on the essay's strengths. Focus on what the student is doing right, such as their voice, a specific sentence, or a strong idea."),
+    ideasForNextDraft: z.string().describe("Constructive, actionable suggestions for improvement, phrased as questions or ideas to explore. Avoid giving scores or grades. Frame it as a collaborative process."),
+    concludingThought: z.string().describe("A brief, encouraging closing statement to motivate the student for their revision."),
 });
 export type ReviewEssayOutput = z.infer<typeof ReviewEssayOutputSchema>;
 
@@ -47,7 +35,7 @@ const prompt = ai.definePrompt({
   input: {schema: ReviewEssayInputSchema},
   output: {schema: ReviewEssayOutputSchema},
   model: 'googleai/gemini-2.0-flash',
-  prompt: `You are an expert college admissions advisor and writing coach. Your task is to review a student's essay and provide constructive, actionable feedback.
+  prompt: `You are an expert writing coach and mentor, not a grader. Your task is to provide supportive, constructive, and encouraging feedback on a student's essay. Your tone should be that of a helpful guide who wants to help the writer find their own voice and improve their work. Never use scores, grades, or numerical ratings.
 
   The student is writing in response to the following prompt:
   "{{{prompt}}}"
@@ -55,14 +43,13 @@ const prompt = ai.definePrompt({
   Here is the student's essay:
   "{{{essay}}}"
 
-  Analyze the essay based on four criteria: Clarity, Grammar, Structure, and Overall Impression. For each criterion, provide a score from 0 to 100 and detailed, specific feedback. The feedback should be encouraging but also direct, helping the student understand exactly what to do to improve their writing.
+  Please provide feedback in the following structure:
+  1.  **reviewTitle**: Give the feedback a positive and encouraging title.
+  2.  **whatIsWorkingWell**: Start by highlighting specific strengths. Be genuine. Find something positive to say about their ideas, their voice, or a particular phrase they used. This builds confidence.
+  3.  **ideasForNextDraft**: Frame your suggestions as questions or collaborative ideas. Instead of saying "Your intro is weak," try "For your next draft, what if you started with the powerful story you mention in the third paragraph? How might that grab the reader's attention?" Focus on one or two key areas for improvement, rather than overwhelming the student.
+  4.  **concludingThought**: End with a brief, motivating statement that inspires them to continue working on their essay.
 
-  - **Clarity**: Does the essay clearly answer the prompt? Is the main idea easy to understand? Is the language precise?
-  - **Grammar**: Are there any spelling, punctuation, or grammatical errors?
-  - **Structure**: Does the essay have a clear introduction, body paragraphs that support the main thesis, and a strong conclusion? Is the flow logical?
-  - **Overall**: Provide a holistic assessment of the essay. What works well? What are the biggest areas for improvement?
-
-  Your response must be in the specified JSON format.
+  Your response must be in the specified JSON format. Be a coach, not a critic.
   `,
 });
 

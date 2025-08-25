@@ -17,16 +17,20 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Rocket } from "lucide-react";
+import { CalendarIcon, Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { auth } from "@/lib/firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  age: z.coerce.number().min(10, {message: "Must be at least 10 years old."}).max(18, {message: "Must be 18 or younger."}),
+  birthdate: z.date({
+    required_error: "A date of birth is required.",
+  }),
   grade: z.coerce.number().min(5, {message: "Grade must be 5 or higher."}).max(12, {message: "Grade must be 12 or lower."}),
 });
 
@@ -54,17 +58,19 @@ export function SignupForm({ plan }: SignupFormProps) {
       name: "",
       email: "",
       password: "",
-      age: undefined,
       grade: undefined,
     },
   });
 
   const handleGoogleSignup = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const googleUser = result.user;
+    // This is a self-contained prototype function for Google Sign-In.
+    // It uses localStorage to simulate the user flow without Firebase.
+    const googleUser = {
+      name: 'Elena Rodriguez',
+      email: 'elena.rodriguez@example.com',
+    };
 
+    try {
       let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
       let userExists = allSignups.some((u: any) => u.email === googleUser.email);
       
@@ -78,29 +84,33 @@ export function SignupForm({ plan }: SignupFormProps) {
           return;
       }
 
+      // Create a new user profile since one doesn't exist
       const newUser = {
-          name: googleUser.displayName || 'Google User',
+          name: googleUser.name,
           email: googleUser.email,
           plan,
-          password: 'google_user_password', // Mock password for demo
-          age: 17, // default age
+          password: 'google_user_password', // Mock password for the prototype
+          birthdate: new Date('2007-05-15'), // default birthdate
           grade: 11, // default grade
       };
 
       allSignups.push(newUser);
       localStorage.setItem('allSignups', JSON.stringify(allSignups));
+
+      // Set session data for the new user
       localStorage.setItem('signupData', JSON.stringify(newUser));
       localStorage.setItem('userName', newUser.name);
       localStorage.setItem('userPlan', newUser.plan);
 
+      // New users always go to onboarding
       router.push("/onboarding");
 
     } catch (error) {
-      console.error("Google Sign-In Error:", error);
-      toast({
+       console.error("Local Storage Error:", error);
+       toast({
         variant: "destructive",
-        title: "Google Sign-In Failed",
-        description: "Could not sign in with Google. Please ensure popups are enabled and try again.",
+        title: "Prototype Error",
+        description: "Could not perform Google Sign-Up simulation. Your browser might be blocking local storage.",
       });
     }
   };
@@ -212,19 +222,47 @@ export function SignupForm({ plan }: SignupFormProps) {
               )}
             />
             <div className="flex gap-4">
-              <FormField
+                <FormField
                 control={form.control}
-                name="age"
+                name="birthdate"
                 render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Age</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="16" {...field} value={field.value ?? ''} />
-                    </FormControl>
+                    <FormItem className="flex flex-col flex-1">
+                    <FormLabel>Date of birth</FormLabel>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                        <FormControl>
+                            <Button
+                            variant={"outline"}
+                            className={cn(
+                                "pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                            )}
+                            >
+                            {field.value ? (
+                                format(field.value, "PPP")
+                            ) : (
+                                <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                        </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                                date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                        />
+                        </PopoverContent>
+                    </Popover>
                     <FormMessage />
-                  </FormItem>
+                    </FormItem>
                 )}
-              />
+                />
               <FormField
                 control={form.control}
                 name="grade"

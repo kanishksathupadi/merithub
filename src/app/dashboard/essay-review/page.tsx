@@ -7,13 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { reviewEssay, type ReviewEssayOutput } from '@/ai/flows/review-essay';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Lightbulb, Loader2, Sparkles, Star, CheckCircle, BarChart } from 'lucide-react';
+import { Loader2, Sparkles, Wand2, Lightbulb, ThumbsUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Progress } from '@/components/ui/progress';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const essaySchema = z.object({
@@ -21,17 +19,16 @@ const essaySchema = z.object({
   essay: z.string().min(50, "Essay must be at least 50 characters long."),
 });
 
-const FeedbackCard = ({ title, score, feedback }: { title: string, score: number, feedback: string }) => (
+const FeedbackCard = ({ title, content, icon }: { title: string, content: string, icon: React.ReactNode }) => (
     <Card>
         <CardHeader>
-            <CardTitle className="flex justify-between items-center">
+            <CardTitle className="flex items-center gap-2">
+                {icon}
                 <span>{title}</span>
-                <span className="text-primary">{score}/100</span>
             </CardTitle>
         </CardHeader>
         <CardContent>
-            <Progress value={score} className="mb-4 h-2" />
-            <p className="text-muted-foreground">{feedback}</p>
+            <p className="text-muted-foreground whitespace-pre-wrap">{content}</p>
         </CardContent>
     </Card>
 );
@@ -69,15 +66,15 @@ export default function EssayReviewPage() {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-3xl font-bold">AI Essay Review</h1>
-                <p className="text-muted-foreground">Get instant, detailed feedback on your college and scholarship essays.</p>
+                <h1 className="text-3xl font-bold">AI Writing Coach</h1>
+                <p className="text-muted-foreground">Get supportive, constructive feedback to strengthen your writing.</p>
             </header>
 
             {!feedback ? (
                 <Card>
                     <CardHeader>
                         <CardTitle>Submit Your Essay</CardTitle>
-                        <CardDescription>Paste the essay prompt and your response below.</CardDescription>
+                        <CardDescription>Paste the essay prompt and your response below. Our AI coach will provide feedback to help you improve.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Form {...form}>
@@ -109,7 +106,7 @@ export default function EssayReviewPage() {
                                     )}
                                 />
                                 <Button type="submit" disabled={isLoading} className="w-full">
-                                    {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2" />Review My Essay</>}
+                                    {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2" />Get Feedback</>}
                                 </Button>
                             </form>
                         </Form>
@@ -117,20 +114,27 @@ export default function EssayReviewPage() {
                 </Card>
             ) : (
                 <div className="space-y-6">
-                     <Alert>
-                        <BarChart className="h-4 w-4" />
-                        <AlertTitle className="flex justify-between items-center">
-                           <span>Overall Score: {feedback.overall.score}/100</span>
+                     <Alert className="bg-primary/5 border-primary/20">
+                        <Wand2 className="h-4 w-4 text-primary" />
+                        <AlertTitle className="text-primary flex justify-between items-center">
+                           <span>{feedback.reviewTitle}</span>
                            <Button variant="secondary" onClick={() => setFeedback(null)}>Review Another Essay</Button>
                         </AlertTitle>
-                        <AlertDescription className="mt-2">
-                           {feedback.overall.feedback}
+                        <AlertDescription className="mt-2 text-primary/80">
+                           {feedback.concludingThought}
                         </AlertDescription>
                     </Alert>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        <FeedbackCard title="Clarity" score={feedback.clarity.score} feedback={feedback.clarity.feedback} />
-                        <FeedbackCard title="Grammar" score={feedback.grammar.score} feedback={feedback.grammar.feedback} />
-                        <FeedbackCard title="Structure" score={feedback.structure.score} feedback={feedback.structure.feedback} />
+                    <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
+                        <FeedbackCard 
+                            title="What's Working Well" 
+                            content={feedback.whatIsWorkingWell}
+                            icon={<ThumbsUp className="text-green-500"/>}
+                        />
+                         <FeedbackCard 
+                            title="Ideas for Your Next Draft" 
+                            content={feedback.ideasForNextDraft}
+                            icon={<Lightbulb className="text-yellow-400"/>}
+                        />
                     </div>
                 </div>
             )}

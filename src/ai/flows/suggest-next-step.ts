@@ -33,29 +33,29 @@ const ResourceSchema = z.object({
 
 const AcademicsAndSkillsTaskSchema = z.object({
     title: z.string().describe("A concise, action-oriented title for the task (e.g., 'Master Quadratic Equations')."),
-    description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important."),
+    description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important for their long-term growth."),
     resource: ResourceSchema.describe('An online resource to help with the task. This is REQUIRED for Academics and Skill Building tasks.'),
 });
 
 const ExtracurricularsTaskSchema = z.object({
     title: z.string().describe("A concise, action-oriented title for the task (e.g., 'Run for Treasurer in Student Government')."),
-    description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important."),
+    description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important for their long-term growth."),
     resource: ResourceSchema.optional().describe('An optional online resource to help with the task. If provided, the URL must be valid.'),
 });
 
 
 const PlanSchema = z.object({
     grade: z.string().describe('The grade level for this part of the plan (e.g., "9th Grade", "10th Grade").'),
-    focus: z.string().describe('The main theme or focus for that grade level (e.g., "Building Foundational Skills").'),
-    academics: z.array(AcademicsAndSkillsTaskSchema).describe('A list of specific, actionable academic goals. DO NOT create vague tasks like "Improve Math Grades." Focus on mastering specific concepts from their weaknesses.'),
-    extracurriculars: z.array(ExtracurricularsTaskSchema).describe("A list of specific, actionable extracurricular activities. Instead of just listing an activity, suggest a concrete action within it (e.g., 'Run for Treasurer in Student Government')."),
-    skillBuilding: z.array(AcademicsAndSkillsTaskSchema).describe("A list of specific, actionable skills to develop (e.g., 'Complete a Python for Beginners course')."),
+    focus: z.string().describe('The main theme or focus for that grade level (e.g., "Building Foundational Skills," "Exploring Leadership Opportunities").'),
+    academics: z.array(AcademicsAndSkillsTaskSchema).describe('A list of specific, actionable academic goals. DO NOT create vague tasks like "Improve Math Grades." Focus on mastering specific concepts derived from their weaknesses.'),
+    extracurriculars: z.array(ExtracurricularsTaskSchema).describe("A list of specific, actionable extracurricular activities. Instead of just listing an activity, suggest a concrete action within it (e.g., 'Launch a coding club blog')."),
+    skillBuilding: z.array(AcademicsAndSkillsTaskSchema).describe("A list of specific, actionable skills to develop that connect their interests to future opportunities (e.g., 'Complete a Python for Beginners course to explore your interest in robotics')."),
 });
 
 
 const SuggestNextStepOutputSchema = z.object({
   title: z.string().describe("A concise, inspirational title for the student's strategic plan (e.g., 'The Innovator's Path to STEM Excellence')."),
-  introduction: z.string().describe('A brief, encouraging introductory paragraph explaining the logic behind the plan.'),
+  introduction: z.string().describe('A brief, encouraging introductory paragraph explaining the logic behind the plan, highlighting how it builds on their passions.'),
   plan: z.array(PlanSchema).describe('A year-by-year plan from the student\'s current grade through 12th grade.'),
 });
 export type SuggestNextStepOutput = z.infer<typeof SuggestNextStepOutputSchema>;
@@ -70,19 +70,20 @@ const prompt = ai.definePrompt({
   output: {schema: SuggestNextStepOutputSchema},
   tools: [validateAcademicSubject, findOnlineResource],
   model: 'googleai/gemini-2.0-flash',
-  prompt: `You are an AI assistant and expert educational advisor designed to provide a comprehensive, hyper-specific, and actionable long-term plan for students (ages 10-18) to achieve their goals.
+  prompt: `You are an AI assistant and expert educational advisor designed to provide a comprehensive, hyper-specific, and actionable long-term plan for students. Your tone is that of an encouraging and insightful coach.
 
-  **Core Principle: Be a Guide, Not a Mirror.**
+  **Core Principle: Be an Expansive Guide, Not a Mirror.**
   Your role is to broaden the student's horizons. An interest like 'chess' isn't just about chess; it suggests a mind for strategy, logic, and patience. Connect this to diverse fields like computer science, economics, or even debate. Do not simply recommend chess-related activities. Help the student discover new possibilities based on the underlying traits their interests suggest. Create a plan that is inspiring and expansive.
 
   **Core Instructions:**
-  1.  **No Vague Tasks:** Do NOT create vague tasks like "Improve your grades" or "Study for the SAT." Every task must be a concrete, measurable action.
-  2.  **Action-Oriented Titles:** All task titles must start with an action verb (e.g., "Master," "Complete," "Build," "Publish," "Lead").
-  3.  **Mandatory and Validated Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course. This tool automatically validates that the URL works.
-  4.  **Optional but Validated Resources:** For 'extracurriculars' tasks, a resource is optional. However, IF YOU PROVIDE a resource, you MUST use the 'findOnlineResource' tool to ensure it is a valid, working link. Do not provide a resource if you cannot find a valid one.
-  5.  **Target Weaknesses:** For academic tasks, directly address the student's 'academicWeaknesses'. If a weakness is 'Physics', create a task like "Master the concept of Kinematics" and find a resource for it.
-  6.  **Validate Subjects:** Before creating a plan, you MUST validate that the provided 'academicStrengths' and 'academicWeaknesses' are real subjects or skills using the 'validateAcademicSubject' tool.
-  7.  **Year-by-Year Plan:** Provide a clear, year-by-year plan from the student's current grade level through 12th grade.
+  1.  **Age-Specific Advice**: Tailor the plan based on the student's grade. Younger students (grades 5-8) should have plans focused on exploration, curiosity, and foundational skills. Older students (grades 9-12) should have plans that become progressively more focused on college prep, leadership, and real-world application of skills.
+  2.  **No Vague Tasks:** Do NOT create vague tasks like "Improve your grades" or "Study for the SAT." Every task must be a concrete, measurable action.
+  3.  **Action-Oriented Titles:** All task titles must start with an action verb (e.g., "Master," "Complete," "Build," "Publish," "Lead").
+  4.  **Mandatory and Validated Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course.
+  5.  **Optional but Validated Resources:** For 'extracurriculars' tasks, a resource is optional. However, IF YOU PROVIDE one, you MUST use the 'findOnlineResource' tool to ensure it is valid.
+  6.  **Target Weaknesses Constructively:** Frame academic tasks as skill-building opportunities, not just fixing deficits. If a weakness is 'Physics', create a task like "Master the Concept of Kinematics" and find a resource.
+  7.  **Validate Subjects:** You MUST validate that 'academicStrengths' and 'academicWeaknesses' are real subjects using the 'validateAcademicSubject' tool.
+  8.  **Year-by-Year Plan:** Provide a clear, year-by-year plan from the student's current grade level through 12th grade.
 
   **Student Information:**
   - Current Grade: {{{grade}}}
@@ -94,7 +95,7 @@ const prompt = ai.definePrompt({
   - Current Extracurriculars: {{{currentExtracurriculars}}}
   - Weekly Time Available: {{{weeklyTimeAvailable}}} hours
 
-  Your response must be a perfectly structured JSON object with a title, an introduction, and an array of plans. Each grade-level plan must include a focus and lists of hyper-specific tasks for Academics, Extracurriculars, and Skill Building.
+  Your response must be a perfectly structured JSON object with a title, an encouraging introduction, and an array of plans. Each grade-level plan must include a focus and lists of hyper-specific tasks for Academics, Extracurriculars, and Skill Building.
   
   All responses must be in English.
   `,

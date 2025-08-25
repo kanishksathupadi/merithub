@@ -19,9 +19,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { auth } from "@/lib/firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -36,7 +33,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
             <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.655-3.356-11.303-7.918l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
             <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,35.508,44,30.016,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
         </svg>
-    )
+    );
 }
 
 export function LoginForm() {
@@ -51,60 +48,68 @@ export function LoginForm() {
   });
 
   const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
+    // This is a self-contained prototype function for Google Sign-In.
+    // It uses localStorage to simulate the user flow without Firebase.
+    const googleUser = {
+      name: 'Elena Rodriguez',
+      email: 'elena.rodriguez@example.com',
+    };
+
     try {
-      const result = await signInWithPopup(auth, provider);
-      const googleUser = result.user;
+        let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+        let user = allSignups.find((u: any) => u.email === googleUser.email);
 
-      let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-      let user = allSignups.find((u: any) => u.email === googleUser.email);
+        if (user) {
+            // Existing user, log them in and check their progress
+            localStorage.setItem('signupData', JSON.stringify(user));
+            localStorage.setItem('userName', user.name);
+            localStorage.setItem('userPlan', user.plan);
+            
+            // Restore progress from persisted storage
+            const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
+            const paymentComplete = localStorage.getItem(`payment-${user.email}`);
 
-      if (user) {
-        // Existing user, log them in and check their progress
-        localStorage.setItem('signupData', JSON.stringify(user));
-        localStorage.setItem('userName', user.name);
-        localStorage.setItem('userPlan', user.plan);
-        
-        const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
-        const paymentComplete = localStorage.getItem(`payment-${user.email}`);
+            if (onboardingComplete) localStorage.setItem('onboardingData', onboardingComplete);
+            if (paymentComplete) localStorage.setItem('paymentComplete', 'true');
 
-        // Restore session storage for the layout checks
-        if (onboardingComplete) localStorage.setItem('onboardingData', onboardingComplete);
-        if (paymentComplete) localStorage.setItem('paymentComplete', 'true');
+            // Redirect based on progress
+            if (!onboardingComplete) {
+                router.push('/onboarding');
+            } else if (!paymentComplete) {
+                router.push('/payment');
+            } else {
+                router.push('/dashboard');
+            }
 
-        if (!onboardingComplete) {
-          router.push('/onboarding');
-        } else if (!paymentComplete) {
-          router.push('/payment');
         } else {
-          router.push('/dashboard');
+            // This is a new user via Google. Create a full profile for them.
+            const newUser = {
+                name: googleUser.name,
+                email: googleUser.email,
+                plan: 'elite', // Default new Google signups to the elite plan
+                password: 'google_user_password', // Mock password for the prototype
+                age: 17, 
+                grade: 11,
+            };
+
+            allSignups.push(newUser);
+            localStorage.setItem('allSignups', JSON.stringify(allSignups));
+
+            // Set session data for the new user
+            localStorage.setItem('signupData', JSON.stringify(newUser));
+            localStorage.setItem('userName', newUser.name);
+            localStorage.setItem('userPlan', newUser.plan);
+
+            // Send them to onboarding as they are a new user
+            router.push('/onboarding');
         }
-
-      } else {
-        // New user via Google, create a profile and send to onboarding
-        const newUser = {
-            name: googleUser.displayName || 'Google User',
-            email: googleUser.email,
-            plan: 'elite', // Default to elite for simplicity
-            password: 'google_user_password', // Mock password
-            age: 17, 
-            grade: 11,
-        };
-
-        allSignups.push(newUser);
-        localStorage.setItem('allSignups', JSON.stringify(allSignups));
-        localStorage.setItem('signupData', JSON.stringify(newUser));
-        localStorage.setItem('userName', newUser.name);
-        localStorage.setItem('userPlan', newUser.plan);
-        router.push('/onboarding');
-      }
     } catch (error) {
-      console.error("Google Sign-In Error:", error);
-      toast({
-        variant: "destructive",
-        title: "Google Sign-In Failed",
-        description: "Could not sign in with Google. Please ensure popups are enabled and try again.",
-      });
+         console.error("Local Storage Error:", error);
+         toast({
+            variant: "destructive",
+            title: "Prototype Error",
+            description: "Could not perform Google Sign-In simulation. Your browser might be blocking local storage.",
+        });
     }
   };
 
@@ -121,7 +126,8 @@ export function LoginForm() {
         localStorage.setItem('signupData', JSON.stringify(adminData));
         localStorage.setItem('userName', 'Admin');
         localStorage.setItem('userPlan', 'elite');
-        localStorage.setItem('onboardingData', JSON.stringify({})); // Mock onboarding
+        // Ensure the layout doesn't redirect the admin
+        localStorage.setItem('onboardingData', JSON.stringify({})); 
         localStorage.setItem('paymentComplete', 'true');
         router.push('/dashboard/admin');
         return;
@@ -138,6 +144,7 @@ export function LoginForm() {
                 localStorage.setItem('userName', user.name);
                 localStorage.setItem('userPlan', user.plan);
 
+                // Clear old session data before checking persisted data
                 localStorage.removeItem('onboardingData');
                 localStorage.removeItem('paymentComplete');
 
@@ -151,6 +158,7 @@ export function LoginForm() {
                     localStorage.setItem('paymentComplete', 'true');
                  }
 
+                // Redirect based on completion status
                 if (!onboardingComplete) {
                     router.push('/onboarding');
                 } else if (!paymentComplete) {
