@@ -19,6 +19,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { app } from "@/lib/firebase";
+
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -31,7 +34,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
             <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
             <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
             <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.655-3.356-11.303-7.918l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
-d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,35.508,44,30.016,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,35.508,44,30.016,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
         </svg>
     )
 }
@@ -47,56 +50,89 @@ export function LoginForm() {
     },
   });
 
-  const handleGoogleLogin = () => {
-      toast({
-          variant: "destructive",
-          title: "Feature Not Available",
-          description: "Google Sign-In is not available in this demo.",
-      });
-  }
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // This is a mock login flow that uses localStorage.
-    if (typeof window === 'undefined') return;
-
+  const handleGoogleLogin = async () => {
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
     try {
-        if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
-            // Special case for admin login
-            const adminData = {
-                name: 'Admin',
-                email: 'admin@dymera.com',
-                plan: 'elite',
-            };
-            localStorage.setItem('signupData', JSON.stringify(adminData));
-            localStorage.setItem('userName', 'Admin');
-            localStorage.setItem('userPlan', 'elite');
-            // Admin doesn't need to go through onboarding/payment
-            localStorage.setItem('onboardingData', JSON.stringify({})); // Mock onboarding
-            localStorage.setItem(`onboarding-${adminData.email}`, JSON.stringify({}));
-            localStorage.setItem('paymentComplete', 'true');
-            localStorage.setItem(`payment-${adminData.email}`, 'true');
+        const result = await signInWithPopup(auth, provider);
+        const googleUser = result.user;
+        
+        let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+        let user = allSignups.find((u: any) => u.email === googleUser.email);
 
-            router.push('/dashboard/admin');
-            return;
+        if (user) {
+            // Existing user
+            localStorage.setItem('signupData', JSON.stringify(user));
+            localStorage.setItem('userName', user.name);
+            localStorage.setItem('userPlan', user.plan);
+            
+            const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
+            const paymentComplete = localStorage.getItem(`payment-${user.email}`);
+
+            if (!onboardingComplete) router.push('/onboarding');
+            else if (!paymentComplete) router.push('/payment');
+            else router.push('/dashboard');
+        } else {
+            // New user via Google
+            user = {
+                name: googleUser.displayName || 'New User',
+                email: googleUser.email!,
+                plan: 'standard', // Default plan
+                age: 18, // Mock age
+                grade: 12, // Mock grade
+            };
+            allSignups.push(user);
+            localStorage.setItem('allSignups', JSON.stringify(allSignups));
+            localStorage.setItem('signupData', JSON.stringify(user));
+            localStorage.setItem('userName', user.name);
+            localStorage.setItem('userPlan', user.plan);
+            router.push('/onboarding');
         }
 
+    } catch (error) {
+        console.error("Google Sign-In Error", error);
+        toast({
+            variant: "destructive",
+            title: "Google Sign-In Failed",
+            description: "Could not sign in with Google. Please try again.",
+        });
+    }
+  }
 
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    if (typeof window === 'undefined') return;
+
+    // Special case for admin login, works on any deployment
+    if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
+        const adminData = {
+            name: 'Admin',
+            email: 'admin@dymera.com',
+            plan: 'elite',
+        };
+        localStorage.setItem('signupData', JSON.stringify(adminData));
+        localStorage.setItem('userName', 'Admin');
+        localStorage.setItem('userPlan', 'elite');
+        localStorage.setItem('onboardingData', JSON.stringify({})); // Mock onboarding
+        localStorage.setItem('paymentComplete', 'true');
+        router.push('/dashboard/admin');
+        return;
+    }
+
+    try {
         const allSignupsStr = localStorage.getItem('allSignups');
         if (allSignupsStr) {
             const allSignups = JSON.parse(allSignupsStr);
             const user = allSignups.find((u: any) => u.email === values.email && u.password === values.password);
 
             if (user) {
-                // User found, "log them in" by setting their session data
                 localStorage.setItem('signupData', JSON.stringify(user));
                 localStorage.setItem('userName', user.name);
                 localStorage.setItem('userPlan', user.plan);
 
-                // Clear any stale session data before checking persisted data
                 localStorage.removeItem('onboardingData');
                 localStorage.removeItem('paymentComplete');
 
-                // Check for user's persisted progress in the funnel
                 const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
                 const paymentComplete = localStorage.getItem(`payment-${user.email}`);
 
