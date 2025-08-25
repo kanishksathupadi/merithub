@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award, Star } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -10,10 +10,40 @@ import React, { useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { Card, CardContent } from "../ui/card";
 
 interface AppSidebarProps {
   avatarUrl: string | null;
 }
+
+function UpgradeCard() {
+  return (
+    <Card className="bg-primary/10 border-primary/20 m-2">
+      <CardContent className="p-4 text-center">
+        <div className="mb-2 flex justify-center">
+          <div className="w-10 h-10 bg-primary/20 text-primary rounded-full flex items-center justify-center">
+            <Rocket className="w-6 h-6"/>
+          </div>
+        </div>
+        <h4 className="font-semibold text-sm">Upgrade to Elite</h4>
+        <p className="text-xs text-muted-foreground mt-1 mb-3">Unlock all features and get exclusive mentor access.</p>
+        <Button size="sm" className="w-full">Upgrade</Button>
+      </CardContent>
+    </Card>
+  )
+}
+
+function EliteCard() {
+   return (
+    <div className="m-2 p-3 rounded-lg bg-yellow-400/10 border border-yellow-400/20 text-center">
+      <div className="flex items-center justify-center gap-2">
+         <Star className="w-4 h-4 text-yellow-300" />
+        <span className="text-sm font-semibold text-yellow-300">Elite Plan Active</span>
+      </div>
+    </div>
+  )
+}
+
 
 export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const [userName, setUserName] = useState<string | null>(null);
@@ -160,6 +190,12 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
         )}
 
       </SidebarMenu>
+      
+        <div className={cn("px-2", !open && "hidden")}>
+          {userPlan === 'standard' && <UpgradeCard />}
+          {userPlan === 'elite' && <EliteCard />}
+        </div>
+
 
       <SidebarSeparator />
 
