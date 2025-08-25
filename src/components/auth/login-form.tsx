@@ -19,6 +19,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { auth } from "@/lib/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -47,22 +49,17 @@ export function LoginForm() {
     },
   });
 
-  const handleGoogleLogin = () => {
-    // This is a MOCK login function for prototyping.
-    const mockGoogleUser = {
-        name: 'Google User',
-        email: 'google.user@example.com',
-        plan: 'standard', // Default plan
-        password: 'mockPassword', // Mock password for consistency
-        age: 16, 
-        grade: 10,
-    };
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const googleUser = result.user;
+      
+      let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+      let user = allSignups.find((u: any) => u.email === googleUser.email);
 
-    let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-    let user = allSignups.find((u: any) => u.email === mockGoogleUser.email);
-
-    if (user) {
-        // Existing mock user
+      if (user) {
+        // Existing user, log them in
         localStorage.setItem('signupData', JSON.stringify(user));
         localStorage.setItem('userName', user.name);
         localStorage.setItem('userPlan', user.plan);
@@ -70,17 +67,39 @@ export function LoginForm() {
         const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
         const paymentComplete = localStorage.getItem(`payment-${user.email}`);
 
+        if (onboardingComplete) localStorage.setItem('onboardingData', onboardingComplete);
+        if (paymentComplete) localStorage.setItem('paymentComplete', paymentComplete);
+
         if (!onboardingComplete) router.push('/onboarding');
         else if (!paymentComplete) router.push('/payment');
         else router.push('/dashboard');
-    } else {
-        // New user via Google - create a profile and send to onboarding
-        allSignups.push(mockGoogleUser);
+
+      } else {
+        // New user via Google, create a profile and send to onboarding
+        const newUser = {
+            name: googleUser.displayName,
+            email: googleUser.email,
+            plan: 'standard', // Default plan for new Google signups
+            password: '', // No password for Google users
+            age: 16, // Default age, can be collected in onboarding
+            grade: 10, // Default grade
+        };
+
+        allSignups.push(newUser);
         localStorage.setItem('allSignups', JSON.stringify(allSignups));
-        localStorage.setItem('signupData', JSON.stringify(mockGoogleUser));
-        localStorage.setItem('userName', mockGoogleUser.name);
-        localStorage.setItem('userPlan', mockGoogleUser.plan);
+        localStorage.setItem('signupData', JSON.stringify(newUser));
+        localStorage.setItem('userName', newUser.name);
+        localStorage.setItem('userPlan', newUser.plan);
         router.push('/onboarding');
+      }
+
+    } catch (error) {
+        console.error("Google Sign-In Error:", error);
+        toast({
+            variant: "destructive",
+            title: "Google Sign-In Failed",
+            description: "Could not sign in with Google. Please try again or use email/password.",
+        });
     }
   };
 
@@ -231,5 +250,3 @@ export function LoginForm() {
     </Card>
   );
 }
-
-    
