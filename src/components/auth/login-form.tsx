@@ -73,13 +73,15 @@ export function LoginForm() {
             else if (!paymentComplete) router.push('/payment');
             else router.push('/dashboard');
         } else {
-            // New user via Google
+            // New user via Google - create a profile and send to onboarding
             user = {
                 name: googleUser.displayName || 'New User',
                 email: googleUser.email!,
-                plan: 'standard', // Default plan
-                age: 18, // Mock age
-                grade: 12, // Mock grade
+                plan: 'standard', // Default plan for new Google sign-ins
+                // Mock age/grade, they will be asked in onboarding if needed,
+                // but our current onboarding doesn't use these fields.
+                age: 16, 
+                grade: 10,
             };
             allSignups.push(user);
             localStorage.setItem('allSignups', JSON.stringify(allSignups));

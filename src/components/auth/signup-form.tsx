@@ -19,6 +19,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { app } from "@/lib/firebase";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -57,13 +59,51 @@ export function SignupForm({ plan }: SignupFormProps) {
     },
   });
 
-  const handleGoogleSignup = () => {
-    toast({
-      variant: "destructive",
-      title: "Feature Not Available",
-      description: "Google Sign-Up is not available in this demo.",
-    });
-  }
+  const handleGoogleSignup = async () => {
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const googleUser = result.user;
+
+        let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
+        let userExists = allSignups.some((u: any) => u.email === googleUser.email);
+        
+        if (userExists) {
+            toast({
+                variant: "destructive",
+                title: "Email Already Registered",
+                description: "This Google account is already in use. Please log in.",
+            });
+            router.push('/login');
+            return;
+        }
+
+        const newUser = {
+            name: googleUser.displayName || 'New User',
+            email: googleUser.email!,
+            plan, // Use the plan from the signup page
+            age: 16,
+            grade: 10,
+        };
+
+        allSignups.push(newUser);
+        localStorage.setItem('allSignups', JSON.stringify(allSignups));
+        localStorage.setItem('signupData', JSON.stringify(newUser));
+        localStorage.setItem('userName', newUser.name);
+        localStorage.setItem('userPlan', newUser.plan);
+
+        router.push("/onboarding");
+
+    } catch (error) {
+        console.error("Google Sign-Up Error", error);
+        toast({
+            variant: "destructive",
+            title: "Google Sign-Up Failed",
+            description: "Could not sign up with Google. Please try again.",
+        });
+    }
+  };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (typeof window === 'undefined') return;
