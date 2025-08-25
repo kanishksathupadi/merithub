@@ -39,14 +39,22 @@ export default function DashboardLayout({
     }
 
     const signupData = JSON.parse(signupDataStr);
-    const onboardingData = localStorage.getItem('onboardingData');
-    const paymentComplete = localStorage.getItem('paymentComplete');
-
+    
     if (signupData.email === 'admin@dymera.com') {
       setIsAdmin(true);
+      setIsVerified(true);
+      return;
     }
 
-    if (!onboardingData) {
+    // This data is set upon completion of each step
+    const onboardingComplete = localStorage.getItem(`onboarding-${signupData.email}`);
+    const paymentComplete = localStorage.getItem(`payment-${signupData.email}`);
+
+    // Restore session data for this check
+    if (onboardingComplete) localStorage.setItem('onboardingData', onboardingComplete);
+    if (paymentComplete) localStorage.setItem('paymentComplete', 'true');
+
+    if (!onboardingComplete) {
       router.replace('/onboarding');
     } else if (!paymentComplete) {
       router.replace('/payment');
@@ -109,3 +117,5 @@ export default function DashboardLayout({
     </SidebarProvider>
   );
 }
+
+    

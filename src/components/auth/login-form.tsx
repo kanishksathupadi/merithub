@@ -61,7 +61,7 @@ export function LoginForm() {
     let user = allSignups.find((u: any) => u.email === googleUser.email);
 
     if (user) {
-      // Existing user, log them in
+      // Existing user, log them in and check their progress
       localStorage.setItem('signupData', JSON.stringify(user));
       localStorage.setItem('userName', user.name);
       localStorage.setItem('userPlan', user.plan);
@@ -69,12 +69,17 @@ export function LoginForm() {
       const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
       const paymentComplete = localStorage.getItem(`payment-${user.email}`);
 
+      // Restore session storage for the layout checks
       if (onboardingComplete) localStorage.setItem('onboardingData', onboardingComplete);
-      if (paymentComplete) localStorage.setItem('paymentComplete', paymentComplete);
+      if (paymentComplete) localStorage.setItem('paymentComplete', 'true');
 
-      if (!onboardingComplete) router.push('/onboarding');
-      else if (!paymentComplete) router.push('/payment');
-      else router.push('/dashboard');
+      if (!onboardingComplete) {
+        router.push('/onboarding');
+      } else if (!paymentComplete) {
+        router.push('/payment');
+      } else {
+        router.push('/dashboard');
+      }
 
     } else {
       // New user via Google, create a profile and send to onboarding
@@ -136,7 +141,7 @@ export function LoginForm() {
                     localStorage.setItem('onboardingData', onboardingComplete);
                  }
                  if (paymentComplete) {
-                    localStorage.setItem('paymentComplete', paymentComplete);
+                    localStorage.setItem('paymentComplete', 'true');
                  }
 
                 if (!onboardingComplete) {
@@ -243,3 +248,5 @@ export function LoginForm() {
     </Card>
   );
 }
+
+    
