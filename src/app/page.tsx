@@ -65,8 +65,8 @@ export default function Home() {
                 src="https://images.unsplash.com/photo-1718879339396-f9b25359a35a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbGVlayUyMGRhcmslMjBtb2RlJTIwYXBwbGljYXRpb24lMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzIyMTQ5NDAyfDA&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="A sleek, AI-generated application dashboard showing charts and data, representing the PinnaclePath platform."
                 width={1200}
-                height={400}
-                className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10 object-cover"
+                height={600}
+                className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10 object-cover aspect-[2/1]"
                 data-ai-hint="app dashboard"
               />
             </div>
@@ -303,3 +303,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
