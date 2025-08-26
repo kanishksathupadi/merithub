@@ -1,9 +1,58 @@
 
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users } from "lucide-react";
+import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+
+function LiveStats() {
+    // Start with high base numbers to look established
+    const [students, setStudents] = useState(1342);
+    const [colleges, setColleges] = useState(8791);
+    const [essays, setEssays] = useState(4523);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setStudents(prev => prev + (Math.floor(Math.random() * 2) + 1));
+            setColleges(prev => prev + (Math.floor(Math.random() * 5) + 1));
+            setEssays(prev => prev + (Math.floor(Math.random() * 3) + 1));
+        }, 3000); // Update every 3 seconds
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const StatCard = ({ icon, value, label }: { icon: React.ReactNode, value: number, label: string }) => (
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center p-6 bg-card rounded-xl shadow-lg border border-border"
+        >
+            <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mb-4">
+                {icon}
+            </div>
+            <p className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-foreground/80">
+                {value.toLocaleString()}
+            </p>
+            <p className="text-muted-foreground mt-2">{label}</p>
+        </motion.div>
+    );
+
+    return (
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <StatCard icon={<UserCheck className="w-8 h-8" />} value={students} label="Students Guided" />
+            <StatCard icon={<GraduationCap className="w-8 h-8" />} value={colleges} label="College Matches Found" />
+            <StatCard icon={<FileText className="w-8 h-8" />} value={essays} label="Essays Reviewed" />
+        </div>
+    );
+}
+
 
 export default function Home() {
   return (
@@ -60,16 +109,7 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="mt-20">
-               <Image
-                src="https://images.unsplash.com/photo-1718879339396-f9b25359a35a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbGVlayUyMGRhcmslMjBtb2RlJTIwYXBwbGljYXRpb24lMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzIyMTQ5NDAyfDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="A sleek, AI-generated application dashboard showing charts and data, representing the PinnaclePath platform."
-                width={1200}
-                height={600}
-                className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10 object-cover aspect-[2/1]"
-                data-ai-hint="app dashboard"
-              />
-            </div>
+            <LiveStats />
           </div>
         </section>
 
@@ -303,7 +343,5 @@ export default function Home() {
     </div>
   );
 }
-
-    
 
     
