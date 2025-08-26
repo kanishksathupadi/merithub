@@ -62,8 +62,8 @@ export default function Home() {
             </div>
             <div className="mt-20">
                <Image
-                src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzbGVlayUyMGRhcmslMjBtb2RlJTIwYXBwbGljYXRpb24lMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzIyMTQ5NDAyfDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="A sleek application dashboard showing charts and data, representing the PinnaclePath platform."
+                src="https://images.unsplash.com/photo-1718879339396-f9b25359a35a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbGVlayUyMGRhcmslMjBtb2RlJTIwYXBwbGljYXRpb24lMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzIyMTQ5NDAyfDA&ixlib=rb-4.1.0&q=80&w=1080"
+                alt="A sleek, AI-generated application dashboard showing charts and data, representing the PinnaclePath platform."
                 width={1200}
                 height={400}
                 className="rounded-xl shadow-2xl mx-auto ring-1 ring-border/10 object-cover"
