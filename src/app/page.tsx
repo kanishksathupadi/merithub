@@ -16,7 +16,7 @@ function LiveStats() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // This function now runs only on the client, after the initial render.
+        // This function now runs only on the client, after the initial render, to avoid hydration errors.
         const getFromLocalStorage = (key: string, defaultValue: any) => {
             try {
                 const item = window.localStorage.getItem(key);
@@ -28,26 +28,17 @@ function LiveStats() {
         };
 
         const allUsers = getFromLocalStorage('allSignups', []);
-        const userCount = allUsers.length > 0 ? allUsers.length : 1;
+        const userCount = allUsers.length > 0 ? allUsers.length : 1; // Start with at least 1 user for display purposes
 
-        const initialStats = {
+        const realStats = {
             students: 1342 + userCount,
-            colleges: 8791 + (userCount * 6),
-            essays: 4523 + (userCount * 3),
+            colleges: 8791 + (userCount * 6), // Assume each user finds ~6 colleges
+            essays: 4523 + (userCount * 3), // Assume each user gets ~3 essays reviewed
         };
         
-        setStats(initialStats);
+        setStats(realStats);
         setLoading(false);
 
-        const interval = setInterval(() => {
-            setStats(prev => ({
-                students: prev.students + (Math.floor(Math.random() * 2) + 1),
-                colleges: prev.colleges + (Math.floor(Math.random() * 5) + 1),
-                essays: prev.essays + (Math.floor(Math.random() * 3) + 1),
-            }));
-        }, 3000);
-
-        return () => clearInterval(interval);
     }, []); // Empty dependency array ensures this runs once on mount.
 
     const StatCard = ({ icon, value, label, isLoading }: { icon: React.ReactNode, value: number, label: string, isLoading: boolean }) => (
@@ -207,7 +198,7 @@ export default function Home() {
                         <h4 className="text-xl font-semibold">AI Essay Review (Elite)</h4>
                         <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college and scholarship essays to improve clarity, structure, and impact.</p>
                     </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-1_05">
                         <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
                             <Users className="w-8 h-8"/>
                         </div>
@@ -366,3 +357,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
