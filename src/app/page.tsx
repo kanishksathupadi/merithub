@@ -12,55 +12,45 @@ import { cn } from "@/lib/utils";
 
 
 function LiveStats() {
-    // Helper to safely parse JSON from localStorage
-    const getFromLocalStorage = (key: string, defaultValue: any) => {
-        if (typeof window === 'undefined') return defaultValue;
-        try {
-            const item = window.localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
-        } catch (error) {
-            console.error(`Error parsing localStorage key "${key}":`, error);
-            return defaultValue;
-        }
-    };
-
-    const getInitialCounts = () => {
-        if (typeof window === 'undefined') {
-            return { students: 1342, colleges: 8791, essays: 4523 };
-        }
-        const allUsers = getFromLocalStorage('allSignups', []);
-        const userCount = allUsers.length > 0 ? allUsers.length : 1; // Start with at least 1 to have some base numbers
-
-        // Derive other stats from user count to make them feel connected and real
-        const students = 1342 + userCount;
-        const colleges = 8791 + (userCount * 6); // Assume each user gets 6 college recs
-        const essays = 4523 + (userCount * 3);   // Assume each user reviews 3 essays
-
-        return { students, colleges, essays };
-    };
-
-    const [students, setStudents] = useState(getInitialCounts().students);
-    const [colleges, setColleges] = useState(getInitialCounts().colleges);
-    const [essays, setEssays] = useState(getInitialCounts().essays);
+    const [stats, setStats] = useState({ students: 0, colleges: 0, essays: 0 });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // This effect runs once on mount to set the initial "real" stats
-        const initialStats = getInitialCounts();
-        setStudents(initialStats.students);
-        setColleges(initialStats.colleges);
-        setEssays(initialStats.essays);
+        // This function now runs only on the client, after the initial render.
+        const getFromLocalStorage = (key: string, defaultValue: any) => {
+            try {
+                const item = window.localStorage.getItem(key);
+                return item ? JSON.parse(item) : defaultValue;
+            } catch (error) {
+                console.error(`Error parsing localStorage key "${key}":`, error);
+                return defaultValue;
+            }
+        };
 
-        // This interval provides the "live" feeling by slowly incrementing the stats
+        const allUsers = getFromLocalStorage('allSignups', []);
+        const userCount = allUsers.length > 0 ? allUsers.length : 1;
+
+        const initialStats = {
+            students: 1342 + userCount,
+            colleges: 8791 + (userCount * 6),
+            essays: 4523 + (userCount * 3),
+        };
+        
+        setStats(initialStats);
+        setLoading(false);
+
         const interval = setInterval(() => {
-            setStudents(prev => prev + (Math.floor(Math.random() * 2) + 1));
-            setColleges(prev => prev + (Math.floor(Math.random() * 5) + 1));
-            setEssays(prev => prev + (Math.floor(Math.random() * 3) + 1));
-        }, 3000); // Update every 3 seconds
+            setStats(prev => ({
+                students: prev.students + (Math.floor(Math.random() * 2) + 1),
+                colleges: prev.colleges + (Math.floor(Math.random() * 5) + 1),
+                essays: prev.essays + (Math.floor(Math.random() * 3) + 1),
+            }));
+        }, 3000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, []); // Empty dependency array ensures this runs once on mount.
 
-    const StatCard = ({ icon, value, label }: { icon: React.ReactNode, value: number, label: string }) => (
+    const StatCard = ({ icon, value, label, isLoading }: { icon: React.ReactNode, value: number, label: string, isLoading: boolean }) => (
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -71,7 +61,7 @@ function LiveStats() {
                 {icon}
             </div>
             <p className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-foreground/80">
-                {value.toLocaleString()}
+                 {isLoading ? "..." : value.toLocaleString()}
             </p>
             <p className="text-muted-foreground mt-2">{label}</p>
         </motion.div>
@@ -79,9 +69,9 @@ function LiveStats() {
 
     return (
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <StatCard icon={<UserCheck className="w-8 h-8" />} value={students} label="Students Guided" />
-            <StatCard icon={<GraduationCap className="w-8 h-8" />} value={colleges} label="College Matches Found" />
-            <StatCard icon={<FileText className="w-8 h-8" />} value={essays} label="Essays Reviewed" />
+            <StatCard icon={<UserCheck className="w-8 h-8" />} value={stats.students} label="Students Guided" isLoading={loading} />
+            <StatCard icon={<GraduationCap className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" isLoading={loading} />
+            <StatCard icon={<FileText className="w-8 h-8" />} value={stats.essays} label="Essays Reviewed" isLoading={loading} />
         </div>
     );
 }
