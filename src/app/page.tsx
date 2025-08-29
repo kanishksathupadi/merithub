@@ -6,7 +6,7 @@ import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, Br
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -15,34 +15,47 @@ function LiveStats() {
     const [stats, setStats] = useState({ students: 0, colleges: 0, essays: 0 });
     const [loading, setLoading] = useState(true);
 
+    const getRealStats = useCallback(() => {
+        if (typeof window === 'undefined') {
+            return { students: 0, colleges: 0, essays: 0 };
+        }
+        try {
+            const allUsers = JSON.parse(localStorage.getItem('allSignups') || '[]');
+            const collegeStats = JSON.parse(localStorage.getItem('collegeFinderStats') || '{"count": 0}');
+            const essayStats = JSON.parse(localStorage.getItem('essayReviewStats') || '{"count": 0}');
+            
+            return {
+                students: allUsers.length,
+                colleges: collegeStats.count,
+                essays: essayStats.count,
+            };
+        } catch (error) {
+            console.error("Error reading stats from localStorage:", error);
+            return { students: 0, colleges: 0, essays: 0 };
+        }
+    }, []);
+
     useEffect(() => {
-        // This function now runs only on the client, after the initial render, to avoid hydration errors.
-        const getFromLocalStorage = (key: string, defaultValue: any) => {
-            try {
-                const item = window.localStorage.getItem(key);
-                return item ? JSON.parse(item) : defaultValue;
-            } catch (error) {
-                console.error(`Error parsing localStorage key "${key}":`, error);
-                return defaultValue;
+        // Set initial stats on client-side mount to avoid hydration errors
+        setStats(getRealStats());
+        setLoading(false);
+
+        // Listen for changes in localStorage from other tabs/windows
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === 'allSignups' || event.key === 'collegeFinderStats' || event.key === 'essayReviewStats') {
+                setStats(getRealStats());
             }
         };
 
-        const allUsers = getFromLocalStorage('allSignups', []);
-        const userCount = allUsers.length;
+        window.addEventListener('storage', handleStorageChange);
 
-        const realStats = {
-            students: userCount,
-            colleges: (userCount * 6), // Assume each user finds ~6 colleges
-            essays: (userCount * 3), // Assume each user gets ~3 essays reviewed
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
         };
-        
-        setStats(realStats);
-        setLoading(false);
-
-    }, []); // Empty dependency array ensures this runs once on mount.
+    }, [getRealStats]);
 
     const StatCard = ({ icon, value, label, isLoading }: { icon: React.ReactNode, value: number, label: string, isLoading: boolean }) => (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -198,7 +211,7 @@ export default function Home() {
                         <h4 className="text-xl font-semibold">AI Essay Review (Elite)</h4>
                         <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college and scholarship essays to improve clarity, structure, and impact.</p>
                     </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-1_05">
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
                         <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
                             <Users className="w-8 h-8"/>
                         </div>
@@ -357,4 +370,3 @@ export default function Home() {
     </div>
   );
 }
-

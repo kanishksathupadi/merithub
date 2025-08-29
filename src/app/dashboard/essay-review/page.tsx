@@ -33,6 +33,16 @@ const FeedbackCard = ({ title, content, icon }: { title: string, content: string
     </Card>
 );
 
+const trackEssayReviewStat = () => {
+    try {
+        const stats = JSON.parse(localStorage.getItem('essayReviewStats') || '{"count": 0}');
+        stats.count += 1;
+        localStorage.setItem('essayReviewStats', JSON.stringify(stats));
+        window.dispatchEvent(new StorageEvent('storage', { key: 'essayReviewStats' }));
+    } catch (error) {
+        console.error("Failed to track essay review stats:", error);
+    }
+};
 
 export default function EssayReviewPage() {
     const { toast } = useToast();
@@ -50,6 +60,7 @@ export default function EssayReviewPage() {
         try {
             const result = await reviewEssay(values);
             setFeedback(result);
+            trackEssayReviewStat(); // Track the successful review
             toast({ title: "Feedback Generated!", description: "Your essay review is ready." });
         } catch (error) {
             console.error("Essay review failed:", error);

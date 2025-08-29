@@ -130,6 +130,20 @@ export default function CollegeFinderPage() {
         defaultValues: { filterQuery: "" },
     });
 
+    const trackCollegeStat = (collegesFound: FindMatchingCollegesOutput) => {
+        try {
+            const count = collegesFound.reachSchools.length + collegesFound.targetSchools.length + collegesFound.safetySchools.length;
+            if (count > 0) {
+                const stats = JSON.parse(localStorage.getItem('collegeFinderStats') || '{"count": 0}');
+                stats.count += count;
+                localStorage.setItem('collegeFinderStats', JSON.stringify(stats));
+                window.dispatchEvent(new StorageEvent('storage', { key: 'collegeFinderStats' }));
+            }
+        } catch (error) {
+            console.error("Failed to track college finder stats:", error);
+        }
+    };
+
     const onSubmit = async (values: z.infer<typeof filterSchema>) => {
         if (!studentProfile) {
              toast({ variant: "destructive", title: "Missing Profile", description: "Your student profile is not available." });
@@ -143,6 +157,8 @@ export default function CollegeFinderPage() {
                 filterQuery: values.filterQuery || "best overall fit based on the student's profile",
             });
             
+            trackCollegeStat(result);
+
             const collegesWithImageState: CategorizedColleges = {
                 reach: result.reachSchools.map(c => ({...c, imageUrl: undefined})),
                 target: result.targetSchools.map(c => ({...c, imageUrl: undefined})),
