@@ -28,12 +28,12 @@ function LiveStats() {
         };
 
         const allUsers = getFromLocalStorage('allSignups', []);
-        const userCount = allUsers.length > 0 ? allUsers.length : 1; // Start with at least 1 user for display purposes
+        const userCount = allUsers.length;
 
         const realStats = {
-            students: 1342 + userCount,
-            colleges: 8791 + (userCount * 6), // Assume each user finds ~6 colleges
-            essays: 4523 + (userCount * 3), // Assume each user gets ~3 essays reviewed
+            students: userCount,
+            colleges: (userCount * 6), // Assume each user finds ~6 colleges
+            essays: (userCount * 3), // Assume each user gets ~3 essays reviewed
         };
         
         setStats(realStats);
@@ -358,4 +358,3 @@ export default function Home() {
   );
 }
 
-    
