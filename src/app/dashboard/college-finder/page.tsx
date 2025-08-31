@@ -95,6 +95,12 @@ export default function CollegeFinderPage() {
             setStudentProfile({ ...onboardingData, grade: signupData.grade });
 
             const signupDate = new Date(signupData.signupTimestamp);
+            if (isNaN(signupDate.getTime())) {
+                // Invalid date from localStorage, default to unlocked to avoid crashing.
+                setIsLocked(false);
+                return;
+            }
+
             const daysSinceSignup = differenceInDays(new Date(), signupDate);
             const daysToUnlock = 7;
             
