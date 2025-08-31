@@ -44,6 +44,10 @@ export default function PortfolioPage() {
     const [error, setError] = useState<string | null>(null);
     
     useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
         if (!userId) {
             setError("User ID not found in the URL.");
             setLoading(false);
@@ -121,7 +125,18 @@ export default function PortfolioPage() {
     }
     
     if (!portfolio || !portfolio.user) {
-        return null;
+        return (
+             <div className="flex flex-col items-center justify-center min-h-screen text-center p-4 bg-muted">
+                <Card className="max-w-md">
+                    <CardHeader>
+                        <CardTitle>Error Loading Portfolio</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-destructive">Could not find user data to display.</p>
+                    </CardContent>
+                </Card>
+            </div>
+        )
     }
     
     const { user, tasks, suggestionTitle, suggestionIntro } = portfolio;
@@ -192,3 +207,5 @@ export default function PortfolioPage() {
         </div>
     );
 }
+
+    
