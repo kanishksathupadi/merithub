@@ -12,6 +12,20 @@ import type { FindScholarshipsOutput, FindScholarshipsInput } from '@/lib/types'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 
+const trackScholarshipStat = (scholarshipsFound: FindScholarshipsOutput) => {
+    try {
+        const count = scholarshipsFound.scholarships.length;
+        if (count > 0) {
+            const stats = JSON.parse(localStorage.getItem('scholarshipFinderStats') || '{"count": 0}');
+            stats.count += count;
+            localStorage.setItem('scholarshipFinderStats', JSON.stringify(stats));
+            window.dispatchEvent(new StorageEvent('storage', { key: 'scholarshipFinderStats' }));
+        }
+    } catch (error) {
+        console.error("Failed to track scholarship finder stats:", error);
+    }
+};
+
 export default function ScholarshipFinderPage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
@@ -53,6 +67,7 @@ export default function ScholarshipFinderPage() {
         try {
             const result = await findScholarships(studentProfile);
             setResults(result);
+            trackScholarshipStat(result);
              toast({
                 title: "Matches Found!",
                 description: "We've found scholarships tailored to your profile.",
@@ -134,3 +149,5 @@ export default function ScholarshipFinderPage() {
         </div>
     );
 }
+
+    

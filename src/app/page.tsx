@@ -12,26 +12,28 @@ import { cn } from "@/lib/utils";
 
 
 function LiveStats() {
-    const [stats, setStats] = useState({ students: 0, colleges: 0, essays: 0 });
+    const [stats, setStats] = useState({ students: 0, colleges: 0, essays: 0, scholarships: 0 });
     const [loading, setLoading] = useState(true);
 
     const getRealStats = useCallback(() => {
         if (typeof window === 'undefined') {
-            return { students: 0, colleges: 0, essays: 0 };
+            return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
         }
         try {
             const allUsers = JSON.parse(localStorage.getItem('allSignups') || '[]');
             const collegeStats = JSON.parse(localStorage.getItem('collegeFinderStats') || '{"count": 0}');
             const essayStats = JSON.parse(localStorage.getItem('essayReviewStats') || '{"count": 0}');
+            const scholarshipStats = JSON.parse(localStorage.getItem('scholarshipFinderStats') || '{"count": 0}');
             
             return {
                 students: allUsers.length,
                 colleges: collegeStats.count,
                 essays: essayStats.count,
+                scholarships: scholarshipStats.count,
             };
         } catch (error) {
             console.error("Error reading stats from localStorage:", error);
-            return { students: 0, colleges: 0, essays: 0 };
+            return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
         }
     }, []);
 
@@ -42,7 +44,7 @@ function LiveStats() {
 
         // Listen for changes in localStorage from other tabs/windows
         const handleStorageChange = (event: StorageEvent) => {
-            if (event.key === 'allSignups' || event.key === 'collegeFinderStats' || event.key === 'essayReviewStats') {
+            if (event.key === 'allSignups' || event.key === 'collegeFinderStats' || event.key === 'essayReviewStats' || event.key === 'scholarshipFinderStats') {
                 setStats(getRealStats());
             }
         };
@@ -72,9 +74,10 @@ function LiveStats() {
     );
 
     return (
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <StatCard icon={<UserCheck className="w-8 h-8" />} value={stats.students} label="Students Guided" isLoading={loading} />
-            <StatCard icon={<GraduationCap className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" isLoading={loading} />
+            <StatCard icon={<GraduationCap className="w-8 h-8" />} value={stats.colleges} label="College Matches" isLoading={loading} />
+            <StatCard icon={<Award className="w-8 h-8" />} value={stats.scholarships} label="Scholarships Discovered" isLoading={loading} />
             <StatCard icon={<FileText className="w-8 h-8" />} value={stats.essays} label="Essays Reviewed" isLoading={loading} />
         </div>
     );
@@ -93,7 +96,6 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
             <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
-            <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
           </nav>
           <div className="flex items-center gap-2 ml-auto">
@@ -264,59 +266,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
-        {/* Testimonials Section */}
-        <section id="testimonials" className="py-24 bg-background">
-            <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
-                    <h3 className="text-4xl font-bold tracking-tight">From Ambitious Students, For Ambitious Students</h3>
-                </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
-                        <div className="flex items-center mb-4">
-                            <Avatar>
-                                <AvatarImage src="https://images.unsplash.com/photo-1610012525054-b6ab57df6105?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmZW1hbGUlMjBzdHVkZW50fGVufDB8fHx8MTc1NTM0NTY5N3ww&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="female student" />
-                                <AvatarFallback>JS</AvatarFallback>
-                            </Avatar>
-                            <div className="ml-4">
-                                <p className="font-semibold">Jessica S.</p>
-                                <p className="text-sm text-muted-foreground">High School Junior</p>
-                            </div>
-                        </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-primary fill-primary"/>)}</div>
-                        <p className="text-foreground/80 italic">"The AI College Finder was incredible. It suggested schools I hadn't even heard of that were a perfect fit for my niche interest in historical linguistics."</p>
-                    </div>
-                     <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
-                        <div className="flex items-center mb-4">
-                            <Avatar>
-                                <AvatarImage src="https://images.unsplash.com/photo-1624918479892-3e5df2910410?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYWxlJTIwc3R1ZGVudHxlbnwwfHx8fDE3NTUzNDU2OTd8MA&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="male student" />
-                                <AvatarFallback>MI</AvatarFallback>
-                            </Avatar>
-                            <div className="ml-4">
-                                <p className="font-semibold">Michael I.</p>
-                                <p className="text-sm text-muted-foreground">AP Student</p>
-                            </div>
-                        </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-primary fill-primary"/>)}</div>
-                        <p className="text-foreground/80 italic">"The AI Study Buddy's Resource Finder is my go-to. It consistently finds the best, most relevant articles and videos, saving me hours of searching."</p>
-                    </div>
-                     <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
-                        <div className="flex items-center mb-4">
-                            <Avatar>
-                                <AvatarImage src="https://images.unsplash.com/photo-1631304672439-f6ef24965cc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzdHVkZW50JTIwZmFjZXxlbnwwfHx8fDE3NTU0MDkwNjd8MA&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="student face" />
-                                <AvatarFallback>EA</AvatarFallback>
-                            </Avatar>
-                            <div className="ml-4">
-                                <p className="font-semibold">Emily A.</p>
-                                <p className="text-sm text-muted-foreground">Future Valedictorian</p>
-                            </div>
-                        </div>
-                        <div className="flex mb-2">{[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-primary fill-primary"/>)}</div>
-                        <p className="text-foreground/80 italic">"The AI Essay Review tool is a game-changer. My common app essay is so much stronger now after getting instant feedback on my structure and clarity."</p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         {/* Pricing Section */}
         <section id="pricing" className="py-24 bg-muted/50">
@@ -370,3 +319,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
