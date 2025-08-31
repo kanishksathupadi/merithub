@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award, Star } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award, Star, Share2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "../ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 interface AppSidebarProps {
   avatarUrl: string | null;
@@ -48,10 +49,12 @@ function EliteCard() {
 export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const [userName, setUserName] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(propAvatarUrl);
   const { open } = useSidebar();
   const router = useRouter();
+  const { toast } = useToast();
 
 
   useEffect(() => {
@@ -61,6 +64,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       if (signupDataStr) {
           const signupData = JSON.parse(signupDataStr);
           setUserEmail(signupData.email);
+          setUserId(signupData.userId);
       }
       if (name) {
           setUserName(name);
@@ -86,6 +90,16 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   useEffect(() => {
     setAvatarUrl(propAvatarUrl);
   }, [propAvatarUrl]);
+
+  const handleSharePortfolio = () => {
+    if (!userId) {
+        toast({ variant: "destructive", title: "Could not generate link" });
+        return;
+    };
+    const url = `${window.location.origin}/portfolio/${userId}`;
+    navigator.clipboard.writeText(url);
+    toast({ title: "Portfolio link copied to clipboard!" });
+  }
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
@@ -218,6 +232,9 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                      <Link href="/dashboard/settings" className="flex items-center gap-2">
                         <Settings className="w-4 h-4" /> Settings
                     </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSharePortfolio} className="flex items-center gap-2 cursor-pointer">
+                    <Share2 className="w-4 h-4" /> Share Portfolio
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
                     <LogOut className="w-4 h-4" /> Log Out

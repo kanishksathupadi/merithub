@@ -23,6 +23,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -86,12 +87,14 @@ export function SignupForm({ plan }: SignupFormProps) {
 
       // Create a new user profile since one doesn't exist
       const newUser = {
+          userId: uuidv4(),
           name: googleUser.name,
           email: googleUser.email,
           plan,
           password: 'google_user_password', // Mock password for the prototype
           birthdate: new Date('2007-05-15'), // default birthdate
           grade: 11, // default grade
+          signupTimestamp: new Date().toISOString(),
       };
 
       allSignups.push(newUser);
@@ -132,7 +135,12 @@ export function SignupForm({ plan }: SignupFormProps) {
             return;
         }
 
-        const newUser = { ...values, plan };
+        const newUser = { 
+            ...values,
+            plan,
+            userId: uuidv4(),
+            signupTimestamp: new Date().toISOString(),
+        };
 
         // Save new user to the list of all users
         allSignups.push(newUser);
