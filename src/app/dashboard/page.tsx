@@ -4,6 +4,7 @@
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { updateStudentPlan } from "@/ai/flows/update-student-plan";
+import { getStrategicBriefing, type StrategicBriefingOutput } from "@/ai/flows/get-strategic-briefing";
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { CheckInCard } from "@/components/dashboard/check-in-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -61,6 +62,7 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
 
 function SuggestionView() {
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
+    const [briefing, setBriefing] = useState<StrategicBriefingOutput | null>(null);
     const [loading, setLoading] = useState(true);
     const [showCheckIn, setShowCheckIn] = useState(false);
     const { toast } = useToast();
@@ -75,28 +77,40 @@ function SuggestionView() {
          }
     }
 
-    const loadTasks = useCallback(() => {
+    const loadTasksAndBriefing = useCallback(async () => {
         const email = getEmail();
         if (!email) return [];
         const storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
+        let currentTasks = [];
         if (storedTasks) {
             try {
-                const parsedTasks = JSON.parse(storedTasks);
-                setTasks(parsedTasks);
-                return parsedTasks;
+                currentTasks = JSON.parse(storedTasks);
+                setTasks(currentTasks);
             } catch (error) {
                 console.error("Failed to parse tasks from localStorage", error);
             }
         }
-        return [];
+        
+        if (currentTasks.length > 0) {
+            try {
+                const briefingResult = await getStrategicBriefing({ plan: currentTasks });
+                setBriefing(briefingResult);
+            } catch (error) {
+                console.error("Failed to get strategic briefing:", error);
+                setBriefing(null);
+            }
+        }
+
+        return currentTasks;
     }, []);
 
-    const saveTasks = (tasksToSave: RoadmapTask[]) => {
+    const saveTasks = async (tasksToSave: RoadmapTask[]) => {
          const email = getEmail();
          if (!email) return;
          localStorage.setItem(`roadmapTasks-${email}`, JSON.stringify(tasksToSave));
          setTasks(tasksToSave);
          window.dispatchEvent(new Event('storage'));
+         await loadTasksAndBriefing();
     }
 
     useEffect(() => {
@@ -109,10 +123,10 @@ function SuggestionView() {
             };
 
             const cachedSuggestion = localStorage.getItem(`aiSuggestion-${email}`);
-            const currentTasks = loadTasks();
+            const currentTasks = await loadTasksAndBriefing();
             
             if (cachedSuggestion && currentTasks.length > 0) {
-                setLoading(false);
+                 setLoading(false);
             } else {
                 const onboardingDataStr = localStorage.getItem('onboardingData');
                 const signupDataStr = localStorage.getItem('signupData');
@@ -125,7 +139,7 @@ function SuggestionView() {
                     if (result) {
                         localStorage.setItem(`aiSuggestion-${email}`, JSON.stringify(result));
                         const newTasks = generateTasksFromSuggestion(result);
-                        saveTasks(newTasks);
+                        await saveTasks(newTasks);
                     }
                 }
             }
@@ -149,10 +163,10 @@ function SuggestionView() {
 
         getSuggestionAndTasks();
         
-        const handleStorageChange = () => loadTasks();
+        const handleStorageChange = () => { loadTasksAndBriefing(); };
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
-    }, [loadTasks]);
+    }, [loadTasksAndBriefing]);
 
     const handleTaskToggle = (taskId: string) => {
         const newTasks = tasks.map(task => 
@@ -175,7 +189,7 @@ function SuggestionView() {
             const { updatedPlan } = result;
 
             if (updatedPlan) {
-                saveTasks(updatedPlan);
+                await saveTasks(updatedPlan);
                 localStorage.setItem(`lastCheckIn-${email}`, new Date().toISOString());
                 setShowCheckIn(false);
                 toast({
@@ -198,8 +212,8 @@ function SuggestionView() {
     if (loading) {
         return (
             <div className="grid lg:grid-cols-2 gap-6">
-                <Skeleton className="h-56 w-full" />
-                <Skeleton className="h-56 w-full" />
+                <Skeleton className="h-64 w-full" />
+                <Skeleton className="h-64 w-full" />
             </div>
         )
     }
@@ -209,10 +223,10 @@ function SuggestionView() {
             "grid gap-6 items-start",
             showCheckIn ? "lg:grid-cols-2" : "lg:grid-cols-1"
         )}>
-             {tasks.length > 0 ? (
-                <NextStepCard tasks={tasks} onTaskToggle={handleTaskToggle} />
+             {briefing ? (
+                <NextStepCard briefing={briefing} tasks={tasks} onTaskToggle={handleTaskToggle} />
              ) : (
-                <Card><CardContent className="pt-6"><p>Failed to load your strategic plan. Please try refreshing the page.</p></CardContent></Card>
+                <Card><CardContent className="pt-6"><p>Generating your strategic plan. If this takes more than a moment, please try refreshing the page.</p></CardContent></Card>
              )}
             {showCheckIn && <CheckInCard onCheckIn={handleCheckIn} isLoading={loading} />}
         </div>
@@ -296,8 +310,8 @@ export default function DashboardPage() {
             </DialogHeader>
             <div className="space-y-4">
                 <div className="p-4 rounded-lg border bg-muted">
-                    <h3 className="font-semibold text-foreground">1. Your Next Step</h3>
-                    <p className="text-sm text-muted-foreground">This card shows you the very next task from your personalized plan. It's the best way to make consistent progress.</p>
+                    <h3 className="font-semibold text-foreground">1. Your AI Strategic Briefing</h3>
+                    <p className="text-sm text-muted-foreground">This card shows your most important mission and the 'why' behind it. It's the best way to make strategic progress.</p>
                 </div>
                  <div className="p-4 rounded-lg border bg-muted">
                     <h3 className="font-semibold text-foreground">2. My Roadmap</h3>
@@ -311,8 +325,8 @@ export default function DashboardPage() {
       </Dialog>
       
         <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">Your Personalized Plan</h2>
-            <Suspense fallback={<Skeleton className="h-56 w-full" />}>
+            <h2 className="text-2xl font-semibold">Your AI Strategic Briefing</h2>
+            <Suspense fallback={<Skeleton className="h-64 w-full" />}>
                 <SuggestionView />
             </Suspense>
         </div>
