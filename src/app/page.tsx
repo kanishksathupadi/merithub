@@ -146,7 +146,7 @@ const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = f
             {features.map((feature, index) => (
                 <li key={index} className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-primary flex-shrink-0"/>
-                    <span className={cn(feature.includes("plus:") && "font-bold text-foreground")}>
+                    <span className={cn(feature.includes("plus:") && "text-foreground/90")}>
                        {feature.includes("plus:") ? feature : <span>{feature}</span>}
                     </span>
                 </li>
@@ -360,7 +360,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy (Quizzes &amp; Flashcards)</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Resource Finder</li>
                         </ul>
-                        <Button asChild variant="secondary" className="w-full mt-8">
+                        <Button asChild variant="outline" className="w-full mt-8">
                            <Link href="/signup?plan=standard">Choose Standard</Link>
                         </Button>
                     </div>
@@ -375,7 +375,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Community Q&amp;A Forum</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
                         </ul>
-                        <Button asChild variant="secondary" className="w-full mt-8">
+                        <Button asChild className="w-full mt-8">
                             <Link href="/signup?plan=elite">Choose Elite</Link>
                         </Button>
                     </div>
@@ -391,3 +391,6 @@ export default function Home() {
     </div>
   );
 }
+
+
+    
