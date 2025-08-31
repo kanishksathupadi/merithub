@@ -339,7 +339,7 @@ export default function DashboardPage() {
                                 <tile.icon className="w-6 h-6" />
                             </div>
                             <div>
-                                <CardTitle className="text-xl">{tile.title}</CardTitle>
+                                <CardTitle className="text-lg">{tile.title}</CardTitle>
                             </div>
                         </CardHeader>
                         <CardContent>
@@ -353,3 +353,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+`,
