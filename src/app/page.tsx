@@ -38,22 +38,17 @@ function LiveStats() {
     }, []);
 
     useEffect(() => {
-        // Set initial stats on client-side mount to avoid hydration errors
         setStats(getRealStats());
         setLoading(false);
 
-        // Listen for changes in localStorage from other tabs/windows
         const handleStorageChange = (event: StorageEvent) => {
-            if (event.key === 'allSignups' || event.key === 'collegeFinderStats' || event.key === 'essayReviewStats' || event.key === 'scholarshipFinderStats') {
+            if (['allSignups', 'collegeFinderStats', 'essayReviewStats', 'scholarshipFinderStats'].includes(event.key!)) {
                 setStats(getRealStats());
             }
         };
 
         window.addEventListener('storage', handleStorageChange);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, [getRealStats]);
 
     const StatCard = ({ icon, value, label, isLoading }: { icon: React.ReactNode, value: number, label: string, isLoading: boolean }) => (
@@ -69,15 +64,15 @@ function LiveStats() {
             <p className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-foreground/80">
                  {isLoading ? "..." : value.toLocaleString()}
             </p>
-            <p className="text-muted-foreground mt-2">{label}</p>
+            <p className="text-muted-foreground mt-2 text-sm text-center h-10 flex items-center">{label}</p>
         </motion.div>
     );
 
     return (
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <StatCard icon={<UserCheck className="w-8 h-8" />} value={stats.students} label="Students Guided" isLoading={loading} />
-            <StatCard icon={<GraduationCap className="w-8 h-8" />} value={stats.colleges} label="College Matches" isLoading={loading} />
-            <StatCard icon={<Award className="w-8 h-8" />} value={stats.scholarships} label="Scholarships Discovered" isLoading={loading} />
+            <StatCard icon={<GraduationCap className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" isLoading={loading} />
+            <StatCard icon={<Award className="w-8 h-8" />} value={stats.scholarships} label="Scholarships Found" isLoading={loading} />
             <StatCard icon={<FileText className="w-8 h-8" />} value={stats.essays} label="Essays Reviewed" isLoading={loading} />
         </div>
     );
@@ -268,7 +263,7 @@ export default function Home() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-24 bg-muted/50">
+        <section id="pricing" className="py-24 bg-background">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">Invest in Your Future</h3>
@@ -319,5 +314,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
