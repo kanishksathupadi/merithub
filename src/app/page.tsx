@@ -179,11 +179,11 @@ export default function Home() {
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
           </nav>
           <div className="flex items-center gap-2 ml-auto">
-            <Button asChild variant="outline">
+            <Button asChild variant="secondary">
                 <Link href="/login">Member Login</Link>
             </Button>
              <PricingModal>
-                <Button variant="outline">Get Started</Button>
+                <Button variant="secondary">Get Started</Button>
             </PricingModal>
           </div>
         </div>
