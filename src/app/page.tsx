@@ -85,7 +85,7 @@ function PricingModal({ children }: { children: React.ReactNode }) {
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="max-w-4xl p-8">
-                <DialogHeader className="mb-6">
+                <DialogHeader>
                     <DialogTitle className="text-4xl font-bold tracking-tight text-center">Invest in Your Future</DialogTitle>
                     <DialogDescription className="text-muted-foreground mt-2 text-center max-w-2xl mx-auto">
                         Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.
@@ -146,8 +146,8 @@ const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = f
             {features.map((feature, index) => (
                 <li key={index} className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-primary flex-shrink-0"/>
-                    <span className={cn(feature.includes("plus:") && "text-foreground/90")}>
-                       {feature.includes("plus:") ? <span>{feature.replace("Everything in Standard, plus:", "")}</span> : <span>{feature}</span>}
+                    <span className={cn(feature.includes("Everything in Standard, plus:") && "text-foreground/90")}>
+                        {feature}
                     </span>
                 </li>
             ))}
