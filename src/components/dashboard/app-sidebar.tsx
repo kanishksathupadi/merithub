@@ -58,9 +58,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
 
   useEffect(() => {
+    const updateUserState = () => {
       const name = localStorage.getItem('userName');
       const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
       const signupDataStr = localStorage.getItem('signupData');
+      const storedAvatar = localStorage.getItem('userAvatar');
       
       if (signupDataStr) {
           try {
@@ -77,25 +79,15 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       if (plan) {
         setUserPlan(plan);
       }
-      const storedAvatar = localStorage.getItem('userAvatar');
       if (storedAvatar) {
         setAvatarUrl(storedAvatar);
       }
-      
-      const handleStorageChange = () => {
-        const newAvatar = localStorage.getItem('userAvatar');
-        const newName = localStorage.getItem('userName');
-        setAvatarUrl(newAvatar);
-        setUserName(newName);
+    };
 
-        const newSignupDataStr = localStorage.getItem('signupData');
-        if (newSignupDataStr) {
-          const newSignupData = JSON.parse(newSignupDataStr);
-          setUserId(newSignupData.userId);
-        }
-      }
-      window.addEventListener('storage', handleStorageChange);
-      return () => window.removeEventListener('storage', handleStorageChange);
+    updateUserState(); // Initial load
+      
+    window.addEventListener('storage', updateUserState);
+    return () => window.removeEventListener('storage', updateUserState);
   }, []);
 
   useEffect(() => {
@@ -104,7 +96,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
   const handleSharePortfolio = () => {
     if (!userId) {
-        toast({ variant: "destructive", title: "Could not generate link" });
+        toast({ variant: "destructive", title: "Could not generate link", description: "User ID not found. Please try logging in again." });
         return;
     };
     const url = `${window.location.origin}/portfolio/${userId}`;
