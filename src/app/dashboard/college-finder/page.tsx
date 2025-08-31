@@ -16,7 +16,7 @@ import { GraduationCap, Loader2, Search, Sparkles, Image as ImageIcon, Target, T
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
-import { differenceInDays, formatDistanceToNow } from 'date-fns';
+import { differenceInDays, formatDistanceToNow, addDays } from 'date-fns';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const filterSchema = z.object({
@@ -101,7 +101,7 @@ export default function CollegeFinderPage() {
             if (daysSinceSignup >= daysToUnlock) {
                 setIsLocked(false);
             } else {
-                const unlockDate = new Date(signupDate.setDate(signupDate.getDate() + daysToUnlock));
+                const unlockDate = addDays(signupDate, daysToUnlock);
                 setUnlocksIn(formatDistanceToNow(unlockDate, { addSuffix: true }));
             }
         } else {
