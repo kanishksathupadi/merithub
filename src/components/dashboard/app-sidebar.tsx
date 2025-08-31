@@ -61,11 +61,12 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       const name = localStorage.getItem('userName');
       const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
       const signupDataStr = localStorage.getItem('signupData');
+      
       if (signupDataStr) {
           try {
             const signupData = JSON.parse(signupDataStr);
             setUserEmail(signupData.email);
-            setUserId(signupData.userId);
+            setUserId(signupData.userId); // This is the key change
           } catch(e) {
             console.error("Failed to parse signupData", e)
           }
@@ -86,6 +87,12 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
         const newName = localStorage.getItem('userName');
         setAvatarUrl(newAvatar);
         setUserName(newName);
+
+        const newSignupDataStr = localStorage.getItem('signupData');
+        if (newSignupDataStr) {
+          const newSignupData = JSON.parse(newSignupDataStr);
+          setUserId(newSignupData.userId);
+        }
       }
       window.addEventListener('storage', handleStorageChange);
       return () => window.removeEventListener('storage', handleStorageChange);
