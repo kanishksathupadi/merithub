@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 
 function LiveStats() {
@@ -78,6 +80,89 @@ function LiveStats() {
     );
 }
 
+function PricingModal({ children }: { children: React.ReactNode }) {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent className="max-w-4xl p-8">
+                <DialogHeader className="text-center mb-8">
+                    <DialogTitle className="text-4xl font-bold tracking-tight">Invest in Your Future</DialogTitle>
+                    <DialogDescription className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+                        Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                    <PricingCard 
+                        plan="Standard"
+                        price="$7"
+                        features={[
+                            "AI-Personalized Roadmap",
+                            "AI College Finder",
+                            "Detailed Progress Tracking",
+                            "AI Study Buddy (Quizzes & Flashcards)",
+                            "AI Resource Finder"
+                        ]}
+                        buttonVariant="outline"
+                        href="/signup?plan=standard"
+                    />
+                    <PricingCard 
+                        plan="Elite"
+                        price="$12"
+                        isPopular={true}
+                        features={[
+                            "Everything in Standard, plus:",
+                            "AI Essay Review Tool",
+                            "AI Scholarship Finder",
+                            "Mentor Match Directory",
+                            "Community Q&A Forum",
+                            "Priority Support"
+                        ]}
+                        buttonVariant="default"
+                        href="/signup?plan=elite"
+                    />
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+interface PricingCardProps {
+    plan: string;
+    price: string;
+    features: string[];
+    href: string;
+    buttonVariant: "default" | "outline";
+    isPopular?: boolean;
+}
+
+const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = false }: PricingCardProps) => (
+    <div className={cn(
+        "p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col",
+        isPopular && "border-primary"
+    )}>
+        {isPopular && (
+            <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">Most Popular</div>
+            </div>
+        )}
+        <h4 className={cn("text-2xl font-semibold", isPopular && "text-primary")}>{plan}</h4>
+        <p className="text-4xl font-bold my-4">{price}<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
+        <ul className="space-y-3 text-muted-foreground flex-1">
+            {features.map((feature, index) => (
+                <li key={index} className="flex items-center gap-2">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0"/>
+                    <span className={cn(index > 0 && feature.includes("plus:") ? "font-bold text-foreground" : "")}>
+                       {feature.includes("plus:") ? feature : <span>{feature}</span>}
+                    </span>
+                </li>
+            ))}
+        </ul>
+        <Button asChild variant={buttonVariant} className="w-full mt-8">
+           <Link href={href}>Choose {plan}</Link>
+        </Button>
+    </div>
+);
+
 
 export default function Home() {
   return (
@@ -97,9 +182,9 @@ export default function Home() {
             <Button asChild variant="ghost">
                 <Link href="/login">Member Login</Link>
             </Button>
-             <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link href="/#pricing">Get Started</Link>
-            </Button>
+             <PricingModal>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+            </PricingModal>
           </div>
         </div>
       </header>
@@ -120,12 +205,12 @@ export default function Home() {
                 PinnaclePath uses AI to build a personalized roadmap, find best-fit colleges, provide instant essay feedback, and generate on-demand study help to ensure you stand out.
               </p>
               <div className="mt-8 space-x-4">
-                <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
-                  <Link href="/#pricing">
-                    <Rocket className="mr-2 h-5 w-5" />
-                    Start Your Journey
-                  </Link>
-                </Button>
+                 <PricingModal>
+                    <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
+                        <Rocket className="mr-2 h-5 w-5" />
+                        Start Your Journey
+                    </Button>
+                </PricingModal>
                 <Button variant="outline" size="lg" asChild className="border-border hover:bg-primary/10">
                   <Link href="#features">
                     Learn More
@@ -314,3 +399,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
