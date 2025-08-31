@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award, Star, Share2 } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award, Star, Share2, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -94,16 +94,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     setAvatarUrl(propAvatarUrl);
   }, [propAvatarUrl]);
 
-  const handleSharePortfolio = () => {
-    if (!userId) {
-        toast({ variant: "destructive", title: "Could not generate link", description: "User ID not found. Please try logging in again." });
-        return;
-    };
-    const url = `${window.location.origin}/portfolio/${userId}`;
-    navigator.clipboard.writeText(url);
-    toast({ title: "Portfolio link copied to clipboard!" });
-  }
-
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
         const email = userEmail;
@@ -173,6 +163,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="My Portfolio">
+                <Link href="/dashboard/portfolio"><UserCircle/>My Portfolio</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="AI Study Buddy">
                 <Link href="/dashboard/study-resources"><BookOpen/>AI Study Buddy</Link>
                 </SidebarMenuButton>
@@ -235,9 +230,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                      <Link href="/dashboard/settings" className="flex items-center gap-2">
                         <Settings className="w-4 h-4" /> Settings
                     </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSharePortfolio} className="flex items-center gap-2 cursor-pointer">
-                    <Share2 className="w-4 h-4" /> Share Portfolio
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer">
                     <LogOut className="w-4 h-4" /> Log Out
