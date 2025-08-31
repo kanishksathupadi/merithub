@@ -188,7 +188,7 @@ export function LoginForm() {
             description: "Something went wrong during login.",
         });
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-md shadow-xl border-border">

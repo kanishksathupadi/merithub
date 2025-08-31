@@ -16,6 +16,7 @@ import { addNotification } from "@/lib/tracking";
 const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building'];
 
 const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
+  if (typeof window === 'undefined') return;
   try {
     const allUsersStr = localStorage.getItem('allSignups');
     if (allUsersStr) {
@@ -31,7 +32,7 @@ const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
   } catch(e) {
     console.error("Failed to update master user list:", e);
   }
-}
+};
 
 export function RoadmapView() {
   const [tasks, setTasks] = useState<RoadmapTask[]>([]);
@@ -40,6 +41,7 @@ export function RoadmapView() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     try {
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {

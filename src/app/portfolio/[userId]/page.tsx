@@ -76,11 +76,13 @@ export default function PortfolioPage() {
             const completedTasks = (user.tasks || []).filter(t => t.completed);
             
             // In a real app, avatar would be in the DB. We can't access another session's avatar.
-            // So we'll have to rely on the fallback.
+            // We'll have to rely on the fallback for this prototype.
             const userAvatar = undefined;
 
-            const suggestionTitle = user.suggestion?.title || "Personalized Strategic Plan";
-            const suggestionIntro = user.suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
+            const suggestionStr = localStorage.getItem(`aiSuggestion-${user.email}`);
+            const suggestion = suggestionStr ? JSON.parse(suggestionStr) : null;
+            const suggestionTitle = suggestion?.title || "Personalized Strategic Plan";
+            const suggestionIntro = suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
 
             setPortfolio({
                 user: { ...user, avatarUrl: userAvatar },

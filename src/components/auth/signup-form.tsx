@@ -157,7 +157,7 @@ export function SignupForm({ plan }: SignupFormProps) {
             description: "An unexpected error occurred. Please try again.",
         });
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-md shadow-xl border-border">
