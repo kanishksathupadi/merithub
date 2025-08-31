@@ -368,7 +368,7 @@ export default function Home() {
                         <h4 className="text-2xl font-semibold text-primary">Elite</h4>
                         <p className="text-4xl font-bold my-4">$12<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
-                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Everything in Standard, plus:</li>
+                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/><span className="text-foreground/90">Everything in Standard, plus:</span></li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Essay Review Tool</li>
                              <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Scholarship Finder</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Mentor Match Directory</li>
@@ -391,3 +391,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
