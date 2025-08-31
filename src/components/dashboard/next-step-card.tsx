@@ -2,15 +2,17 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Lightbulb, CheckCircle, ArrowRight, Link as LinkIcon, Sparkles, Loader2, Target, BrainCircuit } from "lucide-react";
+import { Lightbulb, CheckCircle, ArrowRight, Link as LinkIcon, Sparkles, Loader2, Target, BrainCircuit, ListChecks } from "lucide-react";
 import type { RoadmapTask } from "@/lib/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
 import { addNotification } from "@/lib/tracking";
-import { useState } from "react";
+import { useState }from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { StrategicBriefingOutput } from "@/ai/flows/get-strategic-briefing";
+import { Separator } from "../ui/separator";
+import { cn } from "@/lib/utils";
 
 
 type NextStepCardProps = {
@@ -49,6 +51,9 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
     const missionTask = tasks.find(t => t.id === priorityMission.id);
     const resource = missionTask?.relatedResources?.[0];
 
+    // Get the next 3 incomplete tasks that are NOT the priority mission
+    const upcomingTasks = tasks.filter(task => !task.completed && task.id !== priorityMission.id).slice(0, 3);
+
     const handleComplete = () => {
         if (!missionTask) return;
         setIsCompleting(true);
@@ -81,8 +86,8 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                     </div>
                     <p className="text-foreground/90">{bigPicture}</p>
                 </CardHeader>
-                <CardContent className="space-y-6 flex-1 flex flex-col justify-between">
-                    <div>
+                <CardContent className="space-y-6 flex-1 flex flex-col">
+                    <div className="flex-1">
                         <div className="p-4 rounded-lg bg-background/50 border border-primary/30">
                             <h3 className="font-bold text-lg text-primary flex items-center gap-2">
                                 <Target className="w-5 h-5"/>
@@ -102,25 +107,41 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                     </div>
                      
                     <div className="space-y-2">
-                        <div className="flex flex-wrap gap-2">
-                            {resource && (
-                                <Button asChild variant="outline">
-                                    <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                                        <LinkIcon className="mr-2 h-4 w-4" />
-                                        View Resource
-                                    </a>
-                                </Button>
-                            )}
-                            <Button asChild variant="secondary">
-                                <Link href="/dashboard/roadmap">
-                                    View Full Roadmap <ArrowRight className="ml-2 h-4 w-4" />
-                                </Link>
+                        {resource && (
+                            <Button asChild variant="outline" size="sm">
+                                <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                                    <LinkIcon className="mr-2 h-4 w-4" />
+                                    View Resource for Mission
+                                </a>
                             </Button>
-                        </div>
-                        <Button onClick={handleComplete} disabled={isCompleting} size="lg" className="w-full !mt-6">
+                        )}
+                        <Button onClick={handleComplete} disabled={isCompleting} size="lg" className="w-full">
                             {isCompleting ? <Loader2 className="animate-spin"/> : <><CheckCircle className="mr-2 h-5 w-5" /> Complete Mission</>}
                         </Button>
                     </div>
+
+                    {upcomingTasks.length > 0 && (
+                        <>
+                            <Separator className="my-4"/>
+                            <div>
+                                <h3 className="font-semibold mb-2 flex items-center gap-2 text-muted-foreground">
+                                    <ListChecks className="w-5 h-5" />
+                                    Next On Deck
+                                </h3>
+                                <div className="space-y-2">
+                                    {upcomingTasks.map(task => (
+                                        <div key={task.id} className="text-sm p-2 bg-muted rounded-md flex items-center justify-between">
+                                            <span className={cn(task.completed && "line-through text-muted-foreground")}>{task.title}</span>
+                                            <Badge variant="secondary">{task.category}</Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                                <Button variant="link" asChild className="p-0 h-auto mt-2 text-sm">
+                                    <Link href="/dashboard/roadmap">View full roadmap &rarr;</Link>
+                                </Button>
+                            </div>
+                        </>
+                    )}
 
                 </CardContent>
             </motion.div>
