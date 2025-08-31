@@ -102,13 +102,12 @@ function PricingModal({ children }: { children: React.ReactNode }) {
                             "AI Study Buddy (Quizzes & Flashcards)",
                             "AI Resource Finder"
                         ]}
-                        buttonVariant="outline"
+                        buttonVariant="secondary"
                         href="/signup?plan=standard"
                     />
                     <PricingCard 
                         plan="Elite"
                         price="$12"
-                        isPopular={true}
                         features={[
                             "Everything in Standard, plus:",
                             "AI Essay Review Tool",
@@ -117,7 +116,7 @@ function PricingModal({ children }: { children: React.ReactNode }) {
                             "Community Q&A Forum",
                             "Priority Support"
                         ]}
-                        buttonVariant="default"
+                        buttonVariant="secondary"
                         href="/signup?plan=elite"
                     />
                 </div>
@@ -131,20 +130,15 @@ interface PricingCardProps {
     price: string;
     features: string[];
     href: string;
-    buttonVariant: "default" | "outline";
+    buttonVariant: "default" | "outline" | "secondary";
     isPopular?: boolean;
 }
 
 const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = false }: PricingCardProps) => (
     <div className={cn(
-        "p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col",
+        "p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full",
         isPopular && "border-primary"
     )}>
-        {isPopular && (
-            <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
-                <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">Most Popular</div>
-            </div>
-        )}
         <h4 className={cn("text-2xl font-semibold", isPopular && "text-primary")}>{plan}</h4>
         <p className="text-4xl font-bold my-4">{price}<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
         <ul className="space-y-3 text-muted-foreground flex-1">
@@ -179,7 +173,7 @@ export default function Home() {
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
           </nav>
           <div className="flex items-center gap-2 ml-auto">
-            <Button asChild variant="secondary">
+             <Button asChild variant="secondary">
                 <Link href="/login">Member Login</Link>
             </Button>
              <PricingModal>
@@ -355,7 +349,7 @@ export default function Home() {
                     <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.</p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col">
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full">
                         <h4 className="text-2xl font-semibold">Standard</h4>
                         <p className="text-4xl font-bold my-4">$7<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
@@ -365,14 +359,11 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy (Quizzes &amp; Flashcards)</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Resource Finder</li>
                         </ul>
-                        <Button asChild variant="outline" className="w-full mt-8">
+                        <Button asChild variant="secondary" className="w-full mt-8">
                            <Link href="/signup?plan=standard">Choose Standard</Link>
                         </Button>
                     </div>
-                    <div className="p-8 bg-primary/10 rounded-xl shadow-lg border border-primary flex flex-col relative">
-                         <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
-                            <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">Most Popular</div>
-                        </div>
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full relative">
                         <h4 className="text-2xl font-semibold text-primary">Elite</h4>
                         <p className="text-4xl font-bold my-4">$12<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
@@ -383,7 +374,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Community Q&amp;A Forum</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
                         </ul>
-                        <Button asChild className="w-full mt-8">
+                        <Button asChild variant="secondary" className="w-full mt-8">
                             <Link href="/signup?plan=elite">Choose Elite</Link>
                         </Button>
                     </div>
