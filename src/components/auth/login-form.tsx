@@ -131,15 +131,15 @@ export function LoginForm() {
     try {
         const allSignupsStr = localStorage.getItem('allSignups');
         if (allSignupsStr) {
-            const allSignups = JSON.parse(allSignupsStr);
-            const user = allSignups.find((u: any) => u.email === values.email && u.password === values.password);
+            let allSignups = JSON.parse(allSignupsStr);
+            let user = allSignups.find((u: any) => u.email === values.email && u.password === values.password);
 
             if (user) {
                 // Ensure the user has a userId, assign one if missing (for backwards compatibility with older stored users)
                 if (!user.userId) {
                     user.userId = uuidv4();
-                    const updatedSignups = allSignups.map((u: any) => u.email === user.email ? user : u);
-                    localStorage.setItem('allSignups', JSON.stringify(updatedSignups));
+                    allSignups = allSignups.map((u: any) => u.email === user.email ? user : u);
+                    localStorage.setItem('allSignups', JSON.stringify(allSignups));
                 }
 
                 localStorage.setItem('signupData', JSON.stringify(user));

@@ -62,9 +62,13 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
       const signupDataStr = localStorage.getItem('signupData');
       if (signupDataStr) {
-          const signupData = JSON.parse(signupDataStr);
-          setUserEmail(signupData.email);
-          setUserId(signupData.userId);
+          try {
+            const signupData = JSON.parse(signupDataStr);
+            setUserEmail(signupData.email);
+            setUserId(signupData.userId);
+          } catch(e) {
+            console.error("Failed to parse signupData", e)
+          }
       }
       if (name) {
           setUserName(name);

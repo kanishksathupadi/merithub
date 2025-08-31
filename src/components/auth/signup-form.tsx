@@ -89,7 +89,7 @@ export function SignupForm({ plan }: SignupFormProps) {
           email: googleUser.email,
           plan,
           password: 'google_user_password', 
-          birthdate: new Date('2007-05-15'),
+          birthdate: new Date('2007-05-15').toISOString(),
           grade: 11,
           signupTimestamp: new Date().toISOString(),
       };
