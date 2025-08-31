@@ -92,6 +92,8 @@ export function SignupForm({ plan }: SignupFormProps) {
           birthdate: new Date('2007-05-15').toISOString(),
           grade: 11,
           signupTimestamp: new Date().toISOString(),
+          tasks: [],
+          suggestion: null,
       };
 
       allSignups.push(newUser);
@@ -135,6 +137,8 @@ export function SignupForm({ plan }: SignupFormProps) {
             plan,
             userId: uuidv4(),
             signupTimestamp: new Date().toISOString(),
+            tasks: [],
+            suggestion: null,
         };
 
         allSignups.push(newUser);

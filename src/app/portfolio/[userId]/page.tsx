@@ -18,6 +18,8 @@ interface UserData {
     plan: 'standard' | 'elite';
     avatarUrl?: string;
     signupTimestamp: string;
+    tasks?: RoadmapTask[];
+    suggestion?: { title: string; introduction: string; };
 }
 
 interface PortfolioData {
@@ -57,7 +59,7 @@ export default function PortfolioPage() {
         try {
             const allUsersStr = localStorage.getItem('allSignups');
             if (!allUsersStr) {
-                setError("No user data found in storage. This feature works by sharing from a device where a user is logged in.");
+                setError("No user data found in storage. This feature works by sharing from a device where a user has logged in.");
                 setLoading(false);
                 return;
             }
@@ -71,20 +73,17 @@ export default function PortfolioPage() {
                 return;
             }
 
-            // Note: Avatars are stored per-session, so we can't reliably get another user's generated avatar.
-            // In a real app, this URL would come from a database. For the prototype, we'll use a fallback.
+            const completedTasks = (user.tasks || []).filter(t => t.completed);
+            
+            // In a real app, avatar would be in the DB. We can't access another session's avatar.
+            // So we'll have to rely on the fallback.
+            const userAvatar = undefined;
 
-            const roadmapTasksStr = localStorage.getItem(`roadmapTasks-${user.email}`);
-            const roadmapTasks: RoadmapTask[] = roadmapTasksStr ? JSON.parse(roadmapTasksStr) : [];
-            const completedTasks = roadmapTasks.filter(t => t.completed);
-
-            const suggestionStr = localStorage.getItem(`aiSuggestion-${user.email}`);
-            const suggestion = suggestionStr ? JSON.parse(suggestionStr) : null;
-            const suggestionTitle = suggestion?.title || "Personalized Strategic Plan";
-            const suggestionIntro = suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
+            const suggestionTitle = user.suggestion?.title || "Personalized Strategic Plan";
+            const suggestionIntro = user.suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
 
             setPortfolio({
-                user: { ...user, avatarUrl: undefined }, // Explicitly not using local avatar
+                user: { ...user, avatarUrl: userAvatar },
                 tasks: completedTasks,
                 suggestionTitle,
                 suggestionIntro,
@@ -207,6 +206,3 @@ export default function PortfolioPage() {
         </div>
     );
 }
-
-
-    

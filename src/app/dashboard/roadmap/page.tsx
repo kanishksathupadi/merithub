@@ -22,6 +22,24 @@ const taskSchema = z.object({
   category: z.enum(['Academics', 'Extracurriculars', 'Skill Building']),
 });
 
+const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
+  try {
+    const allUsersStr = localStorage.getItem('allSignups');
+    if (allUsersStr) {
+      let allUsers = JSON.parse(allUsersStr);
+      allUsers = allUsers.map((user: any) => {
+        if (user.email === email) {
+          return { ...user, tasks: updatedTasks };
+        }
+        return user;
+      });
+      localStorage.setItem('allSignups', JSON.stringify(allUsers));
+    }
+  } catch(e) {
+    console.error("Failed to update master user list:", e);
+  }
+}
+
 export default function RoadmapPage() {
   const [update, setUpdate] = useState(0);
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -47,11 +65,16 @@ export default function RoadmapPage() {
   });
 
   const onSubmit = (values: z.infer<typeof taskSchema>) => {
-    let userName = "User";
+    let userEmail: string | null = null;
     const signupDataStr = localStorage.getItem('signupData');
     if (signupDataStr) {
         const signupData = JSON.parse(signupDataStr);
-        userName = signupData.name || "User";
+        userEmail = signupData.email;
+    }
+
+    if (!userEmail) {
+      toast({ variant: "destructive", title: "Error", description: "Could not identify user." });
+      return;
     }
     
     const newTask: RoadmapTask = {
@@ -64,10 +87,13 @@ export default function RoadmapPage() {
       relatedResources: [],
     };
     
-    const storedTasks = localStorage.getItem('roadmapTasks');
-    const tasks = storedTasks ? JSON.parse(storedTasks) : [];
+    const storedTasksStr = localStorage.getItem(`roadmapTasks-${userEmail}`);
+    const tasks = storedTasksStr ? JSON.parse(storedTasksStr) : [];
     const updatedTasks = [...tasks, newTask];
-    localStorage.setItem('roadmapTasks', JSON.stringify(updatedTasks));
+
+    localStorage.setItem(`roadmapTasks-${userEmail}`, JSON.stringify(updatedTasks));
+    updateMasterUserList(userEmail, updatedTasks);
+
     window.dispatchEvent(new Event('storage'));
     
     toast({

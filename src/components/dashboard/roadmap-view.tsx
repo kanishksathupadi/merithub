@@ -13,30 +13,52 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { addNotification } from "@/lib/tracking";
 
-const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building'];
+const categories: RoadmapTask['category'][] = ['Academics', 'Exturriculars', 'Skill Building'];
+
+const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
+  try {
+    const allUsersStr = localStorage.getItem('allSignups');
+    if (allUsersStr) {
+      let allUsers = JSON.parse(allUsersStr);
+      allUsers = allUsers.map((user: any) => {
+        if (user.email === email) {
+          return { ...user, tasks: updatedTasks };
+        }
+        return user;
+      });
+      localStorage.setItem('allSignups', JSON.stringify(allUsers));
+    }
+  } catch(e) {
+    console.error("Failed to update master user list:", e);
+  }
+}
 
 export function RoadmapView() {
   const [tasks, setTasks] = useState<RoadmapTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
     try {
-        let storedTasks = localStorage.getItem('roadmapTasks');
+        const signupDataStr = localStorage.getItem('signupData');
+        if (signupDataStr) {
+          const signupData = JSON.parse(signupDataStr);
+          setUserEmail(signupData.email);
+        }
+
+        let storedTasks = localStorage.getItem(`roadmapTasks-${signupDataStr ? JSON.parse(signupDataStr).email : ''}`);
         if (storedTasks) {
-          // Add mock points and due dates for demo purposes
           let parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
           parsedTasks = parsedTasks.map((task, index) => ({
             ...task,
-            points: task.points || Math.floor(Math.random() * 20) + 10, // 10-30 points
+            points: task.points || Math.floor(Math.random() * 20) + 10,
             dueDate: task.dueDate || new Date(Date.now() + index * 3 * 24 * 60 * 60 * 1000).toISOString(),
           }));
           setTasks(parsedTasks);
-          // Don't re-save here as it could overwrite new data
         }
     } catch(error) {
         console.error("Failed to parse roadmap tasks from localStorage", error);
-        // If parsing fails, clear the broken data.
         localStorage.removeItem('roadmapTasks');
     } finally {
         setLoading(false);
@@ -44,11 +66,12 @@ export function RoadmapView() {
   }, []);
 
   const toggleTask = (taskId: string) => {
+    if (!userEmail) return;
+
     const newTasks = tasks.map(task => {
       if (task.id === taskId) {
         const wasCompleted = task.completed;
         const isNowCompleted = !wasCompleted;
-        // If the task is being marked as complete, generate a notification.
         if (isNowCompleted) {
           addNotification({
             title: "Task Completed!",
@@ -61,8 +84,8 @@ export function RoadmapView() {
     });
 
     setTasks(newTasks);
-    localStorage.setItem('roadmapTasks', JSON.stringify(newTasks));
-    // Manually dispatch a storage event to notify other components like the progress page.
+    localStorage.setItem(`roadmapTasks-${userEmail}`, JSON.stringify(newTasks));
+    updateMasterUserList(userEmail, newTasks);
     window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
   };
 
