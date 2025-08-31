@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
+import { getYear, setYear, isBefore } from "date-fns";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -36,6 +37,33 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
         </svg>
     );
 }
+
+// Automatically update grade based on school year cutoff (e.g., August 1st)
+const updateUserGrade = (user: any) => {
+    if (!user.birthdate || !user.lastLoginTimestamp) {
+        return user;
+    }
+    
+    const lastLogin = new Date(user.lastLoginTimestamp);
+    const today = new Date();
+    
+    // Define the school year cutoff (August 1st)
+    const currentYearCutoff = setYear(new Date(0, 7, 1), getYear(today)); // August 1st of current year
+    const lastLoginYearCutoff = setYear(new Date(0, 7, 1), getYear(lastLogin)); // August 1st of last login year
+
+    // If last login was before this year's cutoff and today is after, they've passed a summer
+    if (isBefore(lastLogin, currentYearCutoff) && !isBefore(today, currentYearCutoff)) {
+        // Increment grade if not already at max
+        if (user.grade < 12) {
+            user.grade += 1;
+            console.log(`User grade updated to ${user.grade}`);
+        }
+    }
+
+    user.lastLoginTimestamp = today.toISOString();
+    return user;
+};
+
 
 export function LoginForm() {
   const router = useRouter();
@@ -60,6 +88,7 @@ export function LoginForm() {
 
         if (user) {
             // Existing user, log them in and check their progress
+            user = updateUserGrade(user);
             localStorage.setItem('signupData', JSON.stringify(user));
             localStorage.setItem('userName', user.name);
             localStorage.setItem('userPlan', user.plan);
@@ -86,9 +115,13 @@ export function LoginForm() {
                 email: googleUser.email,
                 plan: 'elite', // Default new Google signups to the elite plan
                 password: 'google_user_password', // Mock password for the prototype
-                age: 17, 
+                birthdate: new Date('2007-05-15').toISOString(),
                 grade: 11,
+                school: "Northwood High School",
                 signupTimestamp: new Date().toISOString(),
+                lastLoginTimestamp: new Date().toISOString(),
+                tasks: [],
+                suggestion: null,
             };
 
             allSignups.push(newUser);
@@ -138,9 +171,14 @@ export function LoginForm() {
                 // Ensure the user has a userId, assign one if missing (for backwards compatibility with older stored users)
                 if (!user.userId) {
                     user.userId = uuidv4();
-                    allSignups = allSignups.map((u: any) => u.email === user.email ? user : u);
-                    localStorage.setItem('allSignups', JSON.stringify(allSignups));
                 }
+
+                user = updateUserGrade(user);
+
+                // Save updated user data back to the master list
+                allSignups = allSignups.map((u: any) => u.email === user.email ? user : u);
+                localStorage.setItem('allSignups', JSON.stringify(allSignups));
+
 
                 localStorage.setItem('signupData', JSON.stringify(user));
                 localStorage.setItem('userName', user.name);

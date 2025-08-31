@@ -24,6 +24,7 @@ import { Calendar } from "../ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
+import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -33,6 +34,7 @@ const formSchema = z.object({
     required_error: "A date of birth is required.",
   }),
   grade: z.coerce.number().min(5, {message: "Grade must be 5 or higher."}).max(12, {message: "Grade must be 12 or lower."}),
+  school: z.string().min(3, { message: "Please select your school." }),
 });
 
 interface SignupFormProps {
@@ -60,6 +62,7 @@ export function SignupForm({ plan }: SignupFormProps) {
       email: "",
       password: "",
       grade: undefined,
+      school: "",
     },
   });
 
@@ -91,7 +94,9 @@ export function SignupForm({ plan }: SignupFormProps) {
           password: 'google_user_password', 
           birthdate: new Date('2007-05-15').toISOString(),
           grade: 11,
+          school: 'Northwood High School',
           signupTimestamp: new Date().toISOString(),
+          lastLoginTimestamp: new Date().toISOString(),
           tasks: [],
           suggestion: null,
       };
@@ -137,6 +142,7 @@ export function SignupForm({ plan }: SignupFormProps) {
             plan,
             userId: uuidv4(),
             signupTimestamp: new Date().toISOString(),
+            lastLoginTimestamp: new Date().toISOString(),
             tasks: [],
             suggestion: null,
         };
@@ -275,13 +281,29 @@ export function SignupForm({ plan }: SignupFormProps) {
                   <FormItem className="flex-1">
                     <FormLabel>Grade</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="11" {...field} value={field.value ?? ''} />
+                      <Input type="number" placeholder="e.g., 11" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+             <FormField
+                control={form.control}
+                name="school"
+                render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                        <FormLabel>School</FormLabel>
+                        <FormControl>
+                           <SchoolAutocomplete
+                                value={field.value}
+                                onValueChange={field.onChange}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
             <Button type="submit" className="w-full !mt-6 bg-primary text-primary-foreground hover:bg-primary/90">Create Account</Button>
           </form>
         </Form>
