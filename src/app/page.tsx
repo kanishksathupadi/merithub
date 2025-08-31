@@ -118,7 +118,6 @@ function PricingModal({ children }: { children: React.ReactNode }) {
                         ]}
                         buttonVariant="secondary"
                         href="/signup?plan=elite"
-                        isPopular={true}
                     />
                 </div>
             </DialogContent>
@@ -147,7 +146,7 @@ const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = f
                 <li key={index} className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-primary flex-shrink-0"/>
                     <span className={cn(feature.includes("plus:") && "text-foreground/90")}>
-                       {feature.includes("plus:") ? feature : <span>{feature}</span>}
+                       {feature.includes("plus:") ? <span>{feature.replace("Everything in Standard, plus:", "")}</span> : <span>{feature}</span>}
                     </span>
                 </li>
             ))}
@@ -292,8 +291,8 @@ export default function Home() {
                         <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
                             <Users className="w-8 h-8"/>
                         </div>
-                        <h4 className="text-xl font-semibold">Mentor Match &amp; Forum (Elite)</h4>
-                        <p className="text-muted-foreground mt-2">Connect with experienced mentors and collaborate with peers in our exclusive Q&amp;A community.</p>
+                        <h4 className="text-xl font-semibold">Mentor Match & Forum (Elite)</h4>
+                        <p className="text-muted-foreground mt-2">Connect with experienced mentors and collaborate with peers in our exclusive Q&A community.</p>
                     </div>
                 </div>
             </div>
@@ -391,6 +390,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-    
