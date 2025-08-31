@@ -44,8 +44,8 @@ export default function PaymentPage() {
     };
 
     const planDetails = {
-        standard: { name: "Standard Plan", price: "$29.00/mo" },
-        elite: { name: "Elite Plan", price: "$49.00/mo" }
+        standard: { name: "Standard Plan", price: "$7.00/mo" },
+        elite: { name: "Elite Plan", price: "$12.00/mo" }
     }
 
     return (

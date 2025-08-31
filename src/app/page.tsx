@@ -272,7 +272,7 @@ export default function Home() {
                 <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col">
                         <h4 className="text-2xl font-semibold">Standard</h4>
-                        <p className="text-4xl font-bold my-4">$29<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
+                        <p className="text-4xl font-bold my-4">$7<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI-Personalized Roadmap</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI College Finder</li>
@@ -289,7 +289,7 @@ export default function Home() {
                             <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">Most Popular</div>
                         </div>
                         <h4 className="text-2xl font-semibold text-primary">Elite</h4>
-                        <p className="text-4xl font-bold my-4">$49<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
+                        <p className="text-4xl font-bold my-4">$12<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
                              <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Everything in Standard, plus:</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Essay Review Tool</li>
