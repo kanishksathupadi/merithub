@@ -179,11 +179,11 @@ export default function Home() {
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
           </nav>
           <div className="flex items-center gap-2 ml-auto">
-            <Button asChild variant="ghost">
+            <Button asChild variant="outline">
                 <Link href="/login">Member Login</Link>
             </Button>
              <PricingModal>
-                <Button variant="ghost">Get Started</Button>
+                <Button variant="outline">Get Started</Button>
             </PricingModal>
           </div>
         </div>
@@ -399,5 +399,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
