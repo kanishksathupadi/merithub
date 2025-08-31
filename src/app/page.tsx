@@ -183,7 +183,7 @@ export default function Home() {
                 <Link href="/login">Member Login</Link>
             </Button>
              <PricingModal>
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+                <Button variant="ghost">Get Started</Button>
             </PricingModal>
           </div>
         </div>
