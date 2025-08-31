@@ -64,8 +64,6 @@ export function SignupForm({ plan }: SignupFormProps) {
   });
 
   const handleGoogleSignup = async () => {
-    // This is a self-contained prototype function for Google Sign-In.
-    // It uses localStorage to simulate the user flow without Firebase.
     const googleUser = {
       name: 'Elena Rodriguez',
       email: 'elena.rodriguez@example.com',
@@ -85,27 +83,24 @@ export function SignupForm({ plan }: SignupFormProps) {
           return;
       }
 
-      // Create a new user profile since one doesn't exist
       const newUser = {
           userId: uuidv4(),
           name: googleUser.name,
           email: googleUser.email,
           plan,
-          password: 'google_user_password', // Mock password for the prototype
-          birthdate: new Date('2007-05-15'), // default birthdate
-          grade: 11, // default grade
+          password: 'google_user_password', 
+          birthdate: new Date('2007-05-15'),
+          grade: 11,
           signupTimestamp: new Date().toISOString(),
       };
 
       allSignups.push(newUser);
       localStorage.setItem('allSignups', JSON.stringify(allSignups));
 
-      // Set session data for the new user
       localStorage.setItem('signupData', JSON.stringify(newUser));
       localStorage.setItem('userName', newUser.name);
       localStorage.setItem('userPlan', newUser.plan);
 
-      // New users always go to onboarding
       router.push("/onboarding");
 
     } catch (error) {
@@ -142,11 +137,9 @@ export function SignupForm({ plan }: SignupFormProps) {
             signupTimestamp: new Date().toISOString(),
         };
 
-        // Save new user to the list of all users
         allSignups.push(newUser);
         localStorage.setItem('allSignups', JSON.stringify(allSignups));
 
-        // Set the current user's data for this session
         localStorage.setItem('signupData', JSON.stringify(newUser));
         localStorage.setItem('userName', newUser.name);
         localStorage.setItem('userPlan', newUser.plan);

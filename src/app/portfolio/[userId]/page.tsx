@@ -69,7 +69,9 @@ export default function PortfolioPage() {
                 return;
             }
 
-            const userAvatar = localStorage.getItem('userAvatar');
+            const userAvatarStr = localStorage.getItem('userAvatar');
+            const userAvatar = userAvatarStr && userAvatarStr !== 'null' ? userAvatarStr : undefined;
+
 
             const roadmapTasksStr = localStorage.getItem(`roadmapTasks-${user.email}`);
             const roadmapTasks: RoadmapTask[] = roadmapTasksStr ? JSON.parse(roadmapTasksStr) : [];
@@ -82,7 +84,7 @@ export default function PortfolioPage() {
             const suggestionIntro = suggestion?.introduction || "A plan for success.";
 
             setPortfolio({
-                user: { ...user, avatarUrl: userAvatar || undefined },
+                user: { ...user, avatarUrl: userAvatar },
                 tasks: completedTasks,
                 points: totalPoints,
                 suggestionTitle,

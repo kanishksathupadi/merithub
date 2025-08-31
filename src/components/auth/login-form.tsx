@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { v4 as uuidv4 } from "uuid";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -48,8 +49,6 @@ export function LoginForm() {
   });
 
   const handleGoogleLogin = async () => {
-    // This is a self-contained prototype function for Google Sign-In.
-    // It uses localStorage to simulate the user flow without Firebase.
     const googleUser = {
       name: 'Elena Rodriguez',
       email: 'elena.rodriguez@example.com',
@@ -65,14 +64,12 @@ export function LoginForm() {
             localStorage.setItem('userName', user.name);
             localStorage.setItem('userPlan', user.plan);
             
-            // Restore progress from persisted storage
             const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
             const paymentComplete = localStorage.getItem(`payment-${user.email}`);
 
             if (onboardingComplete) localStorage.setItem('onboardingData', onboardingComplete);
             if (paymentComplete) localStorage.setItem('paymentComplete', 'true');
 
-            // Redirect based on progress
             if (!onboardingComplete) {
                 router.push('/onboarding');
             } else if (!paymentComplete) {
@@ -84,23 +81,21 @@ export function LoginForm() {
         } else {
             // This is a new user via Google. Create a full profile for them.
             const newUser = {
+                userId: uuidv4(),
                 name: googleUser.name,
                 email: googleUser.email,
                 plan: 'elite', // Default new Google signups to the elite plan
                 password: 'google_user_password', // Mock password for the prototype
                 age: 17, 
                 grade: 11,
+                signupTimestamp: new Date().toISOString(),
             };
 
             allSignups.push(newUser);
             localStorage.setItem('allSignups', JSON.stringify(allSignups));
-
-            // Set session data for the new user
             localStorage.setItem('signupData', JSON.stringify(newUser));
             localStorage.setItem('userName', newUser.name);
             localStorage.setItem('userPlan', newUser.plan);
-
-            // Send them to onboarding as they are a new user
             router.push('/onboarding');
         }
     } catch (error) {
@@ -122,11 +117,11 @@ export function LoginForm() {
             name: 'Admin',
             email: 'admin@dymera.com',
             plan: 'elite',
+            userId: 'admin-user-id',
         };
         localStorage.setItem('signupData', JSON.stringify(adminData));
         localStorage.setItem('userName', 'Admin');
         localStorage.setItem('userPlan', 'elite');
-        // Ensure the layout doesn't redirect the admin
         localStorage.setItem('onboardingData', JSON.stringify({})); 
         localStorage.setItem('paymentComplete', 'true');
         router.push('/dashboard/admin');
@@ -140,11 +135,17 @@ export function LoginForm() {
             const user = allSignups.find((u: any) => u.email === values.email && u.password === values.password);
 
             if (user) {
+                // Ensure the user has a userId, assign one if missing (for backwards compatibility with older stored users)
+                if (!user.userId) {
+                    user.userId = uuidv4();
+                    const updatedSignups = allSignups.map((u: any) => u.email === user.email ? user : u);
+                    localStorage.setItem('allSignups', JSON.stringify(updatedSignups));
+                }
+
                 localStorage.setItem('signupData', JSON.stringify(user));
                 localStorage.setItem('userName', user.name);
                 localStorage.setItem('userPlan', user.plan);
 
-                // Clear old session data before checking persisted data
                 localStorage.removeItem('onboardingData');
                 localStorage.removeItem('paymentComplete');
 
@@ -158,7 +159,6 @@ export function LoginForm() {
                     localStorage.setItem('paymentComplete', 'true');
                  }
 
-                // Redirect based on completion status
                 if (!onboardingComplete) {
                     router.push('/onboarding');
                 } else if (!paymentComplete) {
