@@ -109,7 +109,7 @@ export function LoginForm() {
   };
 
 
-  const onSubmit = (values: z.infer<typeof formSchema>>) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (typeof window === 'undefined') return;
 
     if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
@@ -263,5 +263,3 @@ export function LoginForm() {
     </Card>
   );
 }
-
-    
