@@ -237,7 +237,7 @@ export function SignupForm({ plan }: SignupFormProps) {
                 control={form.control}
                 name="birthdate"
                 render={({ field }) => (
-                    <FormItem className="flex flex-col flex-1">
+                    <FormItem className="flex-1">
                     <FormLabel>Date of birth</FormLabel>
                     <Popover>
                         <PopoverTrigger asChild>
@@ -245,7 +245,7 @@ export function SignupForm({ plan }: SignupFormProps) {
                             <Button
                             variant={"outline"}
                             className={cn(
-                                "pl-3 text-left font-normal",
+                                "w-full pl-3 text-left font-normal",
                                 !field.value && "text-muted-foreground"
                             )}
                             >
