@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { addNotification } from "@/lib/tracking";
 
-const categories: RoadmapTask['category'][] = ['Academics', 'Exturriculars', 'Skill Building'];
+const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building'];
 
 const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
   try {
@@ -44,26 +44,29 @@ export function RoadmapView() {
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
           const signupData = JSON.parse(signupDataStr);
-          setUserEmail(signupData.email);
-        }
+          const email = signupData.email;
+          setUserEmail(email);
 
-        let storedTasks = localStorage.getItem(`roadmapTasks-${signupDataStr ? JSON.parse(signupDataStr).email : ''}`);
-        if (storedTasks) {
-          let parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
-          parsedTasks = parsedTasks.map((task, index) => ({
-            ...task,
-            points: task.points || Math.floor(Math.random() * 20) + 10,
-            dueDate: task.dueDate || new Date(Date.now() + index * 3 * 24 * 60 * 60 * 1000).toISOString(),
-          }));
-          setTasks(parsedTasks);
+            let storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
+            if (storedTasks) {
+            let parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
+            parsedTasks = parsedTasks.map((task, index) => ({
+                ...task,
+                points: task.points || Math.floor(Math.random() * 20) + 10,
+                dueDate: task.dueDate || new Date(Date.now() + index * 3 * 24 * 60 * 60 * 1000).toISOString(),
+            }));
+            setTasks(parsedTasks);
+            }
         }
     } catch(error) {
         console.error("Failed to parse roadmap tasks from localStorage", error);
-        localStorage.removeItem('roadmapTasks');
+        if (userEmail) {
+            localStorage.removeItem(`roadmapTasks-${userEmail}`);
+        }
     } finally {
         setLoading(false);
     }
-  }, []);
+  }, [userEmail]);
 
   const toggleTask = (taskId: string) => {
     if (!userEmail) return;
