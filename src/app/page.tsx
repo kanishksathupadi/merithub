@@ -85,9 +85,9 @@ function PricingModal({ children }: { children: React.ReactNode }) {
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="max-w-4xl p-8">
-                <DialogHeader className="text-center mb-8">
+                <DialogHeader className="text-center mb-6">
                     <DialogTitle className="text-4xl font-bold tracking-tight">Invest in Your Future</DialogTitle>
-                    <DialogDescription className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+                    <DialogDescription className="text-muted-foreground mt-2 max-w-2xl mx-auto">
                         Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.
                     </DialogDescription>
                 </DialogHeader>
@@ -118,6 +118,7 @@ function PricingModal({ children }: { children: React.ReactNode }) {
                         ]}
                         buttonVariant="secondary"
                         href="/signup?plan=elite"
+                        isPopular={true}
                     />
                 </div>
             </DialogContent>
@@ -136,7 +137,7 @@ interface PricingCardProps {
 
 const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = false }: PricingCardProps) => (
     <div className={cn(
-        "p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full",
+        "p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full bg-grid-primary/5",
         isPopular && "border-primary"
     )}>
         <h4 className={cn("text-2xl font-semibold", isPopular && "text-primary")}>{plan}</h4>
@@ -145,7 +146,7 @@ const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = f
             {features.map((feature, index) => (
                 <li key={index} className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-primary flex-shrink-0"/>
-                    <span className={cn(index > 0 && feature.includes("plus:") ? "font-bold text-foreground" : "")}>
+                    <span className={cn(feature.includes("plus:") && "font-bold text-foreground")}>
                        {feature.includes("plus:") ? feature : <span>{feature}</span>}
                     </span>
                 </li>
@@ -349,7 +350,7 @@ export default function Home() {
                     <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.</p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full">
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full bg-grid-primary/5">
                         <h4 className="text-2xl font-semibold">Standard</h4>
                         <p className="text-4xl font-bold my-4">$7<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
@@ -363,7 +364,7 @@ export default function Home() {
                            <Link href="/signup?plan=standard">Choose Standard</Link>
                         </Button>
                     </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full relative">
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-primary flex flex-col h-full relative bg-grid-primary/5">
                         <h4 className="text-2xl font-semibold text-primary">Elite</h4>
                         <p className="text-4xl font-bold my-4">$12<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
