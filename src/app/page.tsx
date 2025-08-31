@@ -365,7 +365,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy (Quizzes &amp; Flashcards)</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Resource Finder</li>
                         </ul>
-                        <Button asChild variant="outline" className="w-full mt-8 border-border hover:bg-primary/10">
+                        <Button asChild variant="outline" className="w-full mt-8">
                            <Link href="/signup?plan=standard">Choose Standard</Link>
                         </Button>
                     </div>
@@ -383,7 +383,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Community Q&amp;A Forum</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
                         </ul>
-                        <Button asChild className="w-full mt-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
+                        <Button asChild className="w-full mt-8">
                             <Link href="/signup?plan=elite">Choose Elite</Link>
                         </Button>
                     </div>
