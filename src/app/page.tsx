@@ -183,7 +183,7 @@ export default function Home() {
                 <Link href="/login">Member Login</Link>
             </Button>
              <PricingModal>
-                <Button variant="secondary">Get Started</Button>
+                <Button>Get Started</Button>
             </PricingModal>
           </div>
         </div>
