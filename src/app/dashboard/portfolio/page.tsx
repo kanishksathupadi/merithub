@@ -58,12 +58,19 @@ export default function MyPortfolioPage() {
 
             const user: UserData = JSON.parse(signupDataStr);
             const userAvatar = localStorage.getItem('userAvatar');
+            const email = user.email;
 
-            const roadmapTasksStr = localStorage.getItem(`roadmapTasks-${user.email}`);
+            if (!email) {
+                setError("Could not load your profile email. Please log in again.");
+                setLoading(false);
+                return;
+            }
+
+            const roadmapTasksStr = localStorage.getItem(`roadmapTasks-${email}`);
             const roadmapTasks: RoadmapTask[] = roadmapTasksStr ? JSON.parse(roadmapTasksStr) : [];
             const completedTasks = roadmapTasks.filter(t => t.completed);
 
-            const suggestionStr = localStorage.getItem(`aiSuggestion-${user.email}`);
+            const suggestionStr = localStorage.getItem(`aiSuggestion-${email}`);
             const suggestion = suggestionStr ? JSON.parse(suggestionStr) : null;
             const suggestionTitle = suggestion?.title || "Personalized Strategic Plan";
             const suggestionIntro = suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
@@ -214,3 +221,5 @@ export default function MyPortfolioPage() {
         </div>
     );
 }
+
+    
