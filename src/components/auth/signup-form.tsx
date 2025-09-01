@@ -12,6 +12,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -25,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
+import { Checkbox } from "../ui/checkbox";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -35,6 +37,9 @@ const formSchema = z.object({
   }),
   grade: z.coerce.number().min(5, {message: "Grade must be 5 or higher."}).max(12, {message: "Grade must be 12 or lower."}),
   school: z.string().min(3, { message: "Please select your school." }),
+  acceptTerms: z.boolean().refine((val) => val === true, {
+    message: "You must accept the Terms of Service to continue.",
+  }),
 });
 
 interface SignupFormProps {
@@ -63,61 +68,15 @@ export function SignupForm({ plan }: SignupFormProps) {
       password: "",
       grade: undefined,
       school: "",
+      acceptTerms: false,
     },
   });
 
   const handleGoogleSignup = async () => {
-    const googleUser = {
-      name: 'Elena Rodriguez',
-      email: 'elena.rodriguez@example.com',
-    };
-
-    try {
-      let allSignups = JSON.parse(localStorage.getItem('allSignups') || '[]');
-      let userExists = allSignups.some((u: any) => u.email === googleUser.email);
-      
-      if (userExists) {
-          toast({
-              variant: "destructive",
-              title: "Email Already Registered",
-              description: "This Google account is already in use. Please log in.",
-          });
-          router.push('/login');
-          return;
-      }
-
-      const newUser = {
-          userId: uuidv4(),
-          name: googleUser.name,
-          email: googleUser.email,
-          plan,
-          password: 'google_user_password', 
-          birthdate: new Date('2007-05-15').toISOString(),
-          grade: 11,
-          school: 'Northwood High School',
-          signupTimestamp: new Date().toISOString(),
-          lastLoginTimestamp: new Date().toISOString(),
-          tasks: [],
-          suggestion: null,
-      };
-
-      allSignups.push(newUser);
-      localStorage.setItem('allSignups', JSON.stringify(allSignups));
-
-      localStorage.setItem('signupData', JSON.stringify(newUser));
-      localStorage.setItem('userName', newUser.name);
-      localStorage.setItem('userPlan', newUser.plan);
-
-      router.push("/onboarding");
-
-    } catch (error) {
-       console.error("Local Storage Error:", error);
-       toast({
-        variant: "destructive",
-        title: "Prototype Error",
-        description: "Could not perform Google Sign-Up simulation. Your browser might be blocking local storage.",
-      });
-    }
+    toast({
+        title: "Feature Not Implemented",
+        description: "Google Sign-Up is for demonstration purposes only.",
+    });
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -304,6 +263,36 @@ export function SignupForm({ plan }: SignupFormProps) {
                     </FormItem>
                 )}
             />
+
+            <FormField
+              control={form.control}
+              name="acceptTerms"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm !mt-6">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Accept terms and conditions
+                    </FormLabel>
+                    <FormDescription>
+                      By creating an account, you agree to our{' '}
+                      <Link href="/terms-of-service" className="text-primary hover:underline" target="_blank">
+                        Terms of Service
+                      </Link>
+                      .
+                    </FormDescription>
+                     <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+
             <Button type="submit" className="w-full !mt-6 bg-primary text-primary-foreground hover:bg-primary/90">Create Account</Button>
           </form>
         </Form>

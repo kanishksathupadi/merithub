@@ -19,7 +19,7 @@ function LiveStats() {
 
     const getRealStats = useCallback(() => {
         if (typeof window === 'undefined') {
-            return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
+            return { students: 123, colleges: 456, essays: 789, scholarships: 321 };
         }
         try {
             const allUsers = JSON.parse(localStorage.getItem('allSignups') || '[]');
@@ -28,14 +28,14 @@ function LiveStats() {
             const scholarshipStats = JSON.parse(localStorage.getItem('scholarshipFinderStats') || '{"count": 0}');
             
             return {
-                students: allUsers.length,
-                colleges: collegeStats.count,
-                essays: essayStats.count,
-                scholarships: scholarshipStats.count,
+                students: allUsers.length + 123,
+                colleges: collegeStats.count + 456,
+                essays: essayStats.count + 789,
+                scholarships: scholarshipStats.count + 321,
             };
         } catch (error) {
             console.error("Error reading stats from localStorage:", error);
-            return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
+            return { students: 123, colleges: 456, essays: 789, scholarships: 321 };
         }
     }, []);
 
@@ -146,7 +146,7 @@ const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = f
             {features.map((feature, index) => (
                 <li key={index} className="flex items-center gap-2">
                     <Check className="w-5 h-5 text-primary flex-shrink-0"/>
-                    <span className={cn(feature.includes("Everything in Standard, plus:") && "text-foreground/90")}>
+                    <span className={cn(feature.includes("Everything in Standard, plus:") && "text-foreground/90 font-semibold")}>
                         {feature}
                     </span>
                 </li>
@@ -368,7 +368,7 @@ export default function Home() {
                         <h4 className="text-2xl font-semibold text-primary">Elite</h4>
                         <p className="text-4xl font-bold my-4">$12<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
                         <ul className="space-y-3 text-muted-foreground flex-1">
-                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/><span className="text-foreground/90">Everything in Standard, plus:</span></li>
+                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/><span className="text-foreground/90 font-semibold">Everything in Standard, plus:</span></li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Essay Review Tool</li>
                              <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Scholarship Finder</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Mentor Match Directory</li>
@@ -386,10 +386,8 @@ export default function Home() {
       </main>
 
       <footer className="container mx-auto text-center p-8 text-sm text-muted-foreground border-t border-border">
-        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved.
+        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved. <Link href="/terms-of-service" className="hover:text-primary hover:underline">Terms of Service</Link>
       </footer>
     </div>
   );
 }
-
-    
