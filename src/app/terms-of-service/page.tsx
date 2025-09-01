@@ -22,14 +22,6 @@ export default function TermsOfServicePage() {
                     <p className="text-muted-foreground mt-2">Last Updated: {new Date().toLocaleDateString()}</p>
                 </header>
 
-                <Alert variant="destructive" className="mb-8">
-                    <ShieldAlert className="h-4 w-4" />
-                    <AlertTitle>Legal Disclaimer</AlertTitle>
-                    <AlertDescription>
-                        The following document is a placeholder and not a legally binding agreement. It is for demonstration purposes only. You must consult with a qualified legal professional to draft a Terms of Service agreement that is appropriate for your specific situation and jurisdiction.
-                    </AlertDescription>
-                </Alert>
-
                 <div className="space-y-6 text-foreground/80 text-sm">
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">1. Introduction</h3>
@@ -38,7 +30,7 @@ export default function TermsOfServicePage() {
 
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">2. Use of Our Services</h3>
-                        <p>You must be of legal age to form a binding contract to use our Services, or have the consent of a parent or legal guardian who agrees to be bound by these Terms on your behalf. You agree to use our Services only for lawful purposes and in accordance with these Terms. You are responsible for all activity that occurs under your account. You agree not to:</p>
+                        <p>You must have the consent of a parent or legal guardian who agrees to be bound by these Terms on your behalf if you are considered a minor in your jurisdiction. You agree to use our Services only for lawful purposes and in accordance with these Terms. You are responsible for all activity that occurs under your account. You agree not to:</p>
                         <ul className="list-disc pl-6 mt-2 space-y-1">
                             <li>Use the Services in any way that violates any applicable federal, state, local, or international law or regulation.</li>
                             <li>Engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the Services, or which, as determined by us, may harm PinnaclePath or users of the Services.</li>
@@ -76,10 +68,6 @@ export default function TermsOfServicePage() {
                         <h3 className="text-xl font-semibold text-foreground">8. Changes to the Terms of Service</h3>
                         <p>We may revise and update these Terms of Service from time to time in our sole discretion. All changes are effective immediately when we post them. Your continued use of the Services following the posting of revised Terms of Service means that you accept and agree to the changes. You are expected to check this page frequently so you are aware of any changes, as they are binding on you.</p>
                     </section>
-                </div>
-
-                <div className="mt-12 text-center">
-                    <Button onClick={() => router.back()}>Back</Button>
                 </div>
             </div>
         </div>
