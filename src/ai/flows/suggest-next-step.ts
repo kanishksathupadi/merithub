@@ -22,7 +22,7 @@ const SuggestNextStepInputSchema = z.object({
   preferredLearningStyle: z.string().describe('The preferred learning style of the student.'),
   currentExtracurriculars: z.string().describe('The current extracurricular activities of the student.'),
   weeklyTimeAvailable: z.string().describe('The weekly time available for self-improvement in hours.'),
-  grade: z.coerce.number().describe('The current grade level of the student (5-12).'),
+  grade: z.coerce.number().describe('The current grade level of the student (K-12, where K is 0).'),
 });
 export type SuggestNextStepInput = z.infer<typeof SuggestNextStepInputSchema>;
 
@@ -82,7 +82,7 @@ const prompt = ai.definePrompt({
   - **Strategic Extracurriculars**: Frame extracurricular tasks around impact and leadership, not just participation. "Become treasurer of the debate team and manage its budget" is better than "Participate in debate."
 
   **Core Instructions:**
-  1.  **Age-Specific Advice**: Tailor the plan based on the student's grade. Younger students (grades 5-8) should have plans focused on exploration and curiosity. Older students (grades 9-12) should have plans that become progressively more focused on college prep, leadership, and developing their "spike."
+  1.  **Age-Specific Advice**: Tailor the plan based on the student's grade. Younger students (grades K-8) should have plans focused on exploration and curiosity. Older students (grades 9-12) should have plans that become progressively more focused on college prep, leadership, and developing their "spike."
   2.  **No Vague Tasks:** Do NOT create vague tasks like "Improve your grades" or "Study for the SAT." Every task must be a concrete, measurable action.
   3.  **Action-Oriented Titles:** All task titles must start with an action verb (e.g., "Master," "Complete," "Build," "Publish," "Lead").
   4.  **Mandatory and Validated Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course.

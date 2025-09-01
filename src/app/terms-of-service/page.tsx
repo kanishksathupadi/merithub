@@ -33,7 +33,7 @@ export default function TermsOfServicePage() {
 
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">2. Use of Our Services</h3>
-                        <p>You must be at least 13 years old to use our Services. You agree to use our Services only for lawful purposes and in accordance with these Terms. You are responsible for all activity that occurs under your account. You agree not to:</p>
+                        <p>You must be of legal age to form a binding contract to use our Services, or have the consent of a parent or legal guardian who agrees to be bound by these Terms on your behalf. You agree to use our Services only for lawful purposes and in accordance with these Terms. You are responsible for all activity that occurs under your account. You agree not to:</p>
                         <ul className="list-disc pl-6 mt-2 space-y-1">
                             <li>Use the Services in any way that violates any applicable federal, state, local, or international law or regulation.</li>
                             <li>Engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the Services, or which, as determined by us, may harm PinnaclePath or users of the Services.</li>

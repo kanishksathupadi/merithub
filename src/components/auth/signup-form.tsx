@@ -35,7 +35,7 @@ const formSchema = z.object({
   birthdate: z.date({
     required_error: "A date of birth is required.",
   }),
-  grade: z.coerce.number().min(5, {message: "Grade must be 5 or higher."}).max(12, {message: "Grade must be 12 or lower."}),
+  grade: z.coerce.number().min(0, {message: "Please enter a valid grade (K=0)."}).max(12, {message: "Grade must be 12 or lower."}),
   school: z.string().min(3, { message: "Please select your school." }),
   acceptTerms: z.boolean().refine((val) => val === true, {
     message: "You must accept the Terms of Service to continue.",
@@ -238,7 +238,7 @@ export function SignupForm({ plan }: SignupFormProps) {
                 name="grade"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Grade</FormLabel>
+                    <FormLabel>Grade (K=0)</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 11" {...field} value={field.value ?? ''} />
                     </FormControl>
