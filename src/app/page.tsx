@@ -386,7 +386,7 @@ export default function Home() {
       </main>
 
       <footer className="container mx-auto text-center p-8 text-sm text-muted-foreground border-t border-border">
-        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved. For the ambitious.
+        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved.
       </footer>
     </div>
   );
