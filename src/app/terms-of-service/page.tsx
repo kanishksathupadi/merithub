@@ -33,14 +33,13 @@ export default function TermsOfServicePage() {
 
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">2. Use of Our Services</h3>
-                        <p>You must be at least 13 years old to use our Services. You agree to use our Services only for lawful purposes and in accordance with these Terms. You are responsible for all activity that occurs under your account. You agree not to:
-                            <ul className="list-disc pl-6 mt-2 space-y-1">
-                                <li>Use the Services in any way that violates any applicable federal, state, local, or international law or regulation.</li>
-                                <li>Engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the Services, or which, as determined by us, may harm PinnaclePath or users of the Services.</li>
-                                <li>Use any robot, spider, or other automatic device, process, or means to access the Services for any purpose, including monitoring or copying any of the material on the Services.</li>
-                                <li>Introduce any viruses, trojan horses, worms, logic bombs, or other material which is malicious or technologically harmful.</li>
-                            </ul>
-                        </p>
+                        <p>You must be at least 13 years old to use our Services. You agree to use our Services only for lawful purposes and in accordance with these Terms. You are responsible for all activity that occurs under your account. You agree not to:</p>
+                        <ul className="list-disc pl-6 mt-2 space-y-1">
+                            <li>Use the Services in any way that violates any applicable federal, state, local, or international law or regulation.</li>
+                            <li>Engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the Services, or which, as determined by us, may harm PinnaclePath or users of the Services.</li>
+                            <li>Use any robot, spider, or other automatic device, process, or means to access the Services for any purpose, including monitoring or copying any of the material on the Services.</li>
+                            <li>Introduce any viruses, trojan horses, worms, logic bombs, or other material which is malicious or technologically harmful.</li>
+                        </ul>
                     </section>
 
                     <section className="space-y-2">
