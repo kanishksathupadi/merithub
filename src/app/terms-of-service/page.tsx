@@ -1,7 +1,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, ShieldExclamation } from "lucide-react";
+import { GraduationCap, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
 export default function TermsOfServicePage() {
@@ -18,7 +18,7 @@ export default function TermsOfServicePage() {
                 </header>
 
                 <Alert variant="destructive" className="mb-8">
-                    <ShieldExclamation className="h-4 w-4" />
+                    <ShieldAlert className="h-4 w-4" />
                     <AlertTitle>Legal Disclaimer</AlertTitle>
                     <AlertDescription>
                         The following document is a placeholder and not a legally binding agreement. It is for demonstration purposes only. You must consult with a qualified legal professional to draft a Terms of Service agreement that is appropriate for your specific situation and jurisdiction.
