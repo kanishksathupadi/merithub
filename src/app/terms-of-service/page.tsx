@@ -1,10 +1,15 @@
 
+"use client";
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function TermsOfServicePage() {
+    const router = useRouter();
+
     return (
         <div className="bg-muted min-h-screen">
             <div className="container mx-auto py-12 px-4 max-w-4xl">
@@ -74,9 +79,7 @@ export default function TermsOfServicePage() {
                 </div>
 
                 <div className="mt-12 text-center">
-                    <Button asChild>
-                        <Link href="/signup">Back to Signup</Link>
-                    </Button>
+                    <Button onClick={() => router.back()}>Back</Button>
                 </div>
             </div>
         </div>

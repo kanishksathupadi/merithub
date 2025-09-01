@@ -19,7 +19,7 @@ function LiveStats() {
 
     const getRealStats = useCallback(() => {
         if (typeof window === 'undefined') {
-            return { students: 123, colleges: 456, essays: 789, scholarships: 321 };
+            return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
         }
         try {
             const allUsers = JSON.parse(localStorage.getItem('allSignups') || '[]');
@@ -28,14 +28,14 @@ function LiveStats() {
             const scholarshipStats = JSON.parse(localStorage.getItem('scholarshipFinderStats') || '{"count": 0}');
             
             return {
-                students: allUsers.length + 123,
-                colleges: collegeStats.count + 456,
-                essays: essayStats.count + 789,
-                scholarships: scholarshipStats.count + 321,
+                students: allUsers.length,
+                colleges: collegeStats.count,
+                essays: essayStats.count,
+                scholarships: scholarshipStats.count,
             };
         } catch (error) {
             console.error("Error reading stats from localStorage:", error);
-            return { students: 123, colleges: 456, essays: 789, scholarships: 321 };
+            return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
         }
     }, []);
 
