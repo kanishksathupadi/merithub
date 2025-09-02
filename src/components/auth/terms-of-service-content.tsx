@@ -6,57 +6,84 @@ import { ShieldAlert } from "lucide-react";
 export default function TermsOfServiceContent() {
     return (
         <div className="space-y-6 text-foreground/80 text-sm">
-            <Alert variant="destructive" className="mb-8">
-                <ShieldAlert className="h-4 w-4" />
-                <AlertTitle>Legal Disclaimer</AlertTitle>
-                <AlertDescription>
-                    The following document is a placeholder and not a legally binding agreement. It is for demonstration purposes only. You must consult with a qualified legal professional to draft a Terms of Service agreement that is appropriate for your specific situation and jurisdiction.
-                </AlertDescription>
-            </Alert>
             <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">1. Introduction</h3>
-                <p>Welcome to PinnaclePath. These Terms of Service ("Terms") govern your use of the PinnaclePath website, applications, and services (collectively, the "Services"), provided by PinnaclePath Inc. ("PinnaclePath", "we", "us", or "our"). By accessing or using our Services, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, do not use our Services.</p>
+                <h3 className="text-xl font-semibold text-foreground">1. Introduction & Agreement to Terms</h3>
+                <p>These Terms of Service ("Terms") constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and PinnaclePath Inc. (“we,” “us,” or “our”), concerning your access to and use of the PinnaclePath website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the “Service”).</p>
+                <p>By accessing the Service, you acknowledge that you have read, understood, and agree to be bound by all of these Terms. If you do not agree with all of these Terms, then you are expressly prohibited from using the Service and you must discontinue use immediately. We reserve the right, in our sole discretion, to make changes or modifications to these Terms at any time and for any reason. We will alert you about any changes by updating the “Last Updated” date of these Terms, and you waive any right to receive specific notice of each such change.</p>
             </section>
 
             <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">2. Use of Our Services</h3>
-                <p>You must be of legal age to form a binding contract to use our Services, or have the consent of a parent or legal guardian who agrees to be bound by these Terms on your behalf. You agree to use our Services only for lawful purposes and in accordance with these Terms. You are responsible for all activity that occurs under your account. You agree not to:</p>
+                <h3 className="text-xl font-semibold text-foreground">2. User Accounts and Security</h3>
+                <p>To access most features of the Service, you must register for an account. When you register for an account, you may be required to provide us with some information about yourself, such as your email address or other contact information. You agree that the information you provide to us is accurate and that you will keep it accurate and up-to-date at all times. You are solely responsible for maintaining the confidentiality of your account and password, and you accept responsibility for all activities that occur under your account. If you have reason to believe that your account is no longer secure, then you must immediately notify us.</p>
+            </section>
+
+            <section className="space-y-2">
+                <h3 className="text-xl font-semibold text/foreground">3. Payment, Subscriptions, and Refunds</h3>
+                <p>Certain features of the Service may require you to pay fees. Before you pay any fees, you will have an opportunity to review and accept the fees that you will be charged. All fees are in U.S. Dollars and are non-refundable, except as required by law.</p>
+                <p>The Service may include automatically recurring payments for periodic charges (“Subscription Service”). If you activate a Subscription Service, you authorize us to periodically charge, on a going-forward basis and until cancellation of either the recurring payments or your account, all accrued sums on or before the payment due date for the accrued sums. The “Subscription Billing Date” is the date when you purchase your first subscription to the Service. Your account will be charged automatically on the Subscription Billing Date all applicable fees for the next subscription period. The subscription will continue unless and until you cancel your subscription or we terminate it.</p>
+            </section>
+
+            <section className="space-y-2">
+                <h3 className="text-xl font-semibold text-foreground">4. Intellectual Property Rights</h3>
+                <p>The Service and its entire contents, features, and functionality (including but not limited to all information, software, text, displays, images, video, and audio, and the design, selection, and arrangement thereof) are owned by PinnaclePath, its licensors, or other providers of such material and are protected by United States and international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws. These Terms permit you to use the Service for your personal, non-commercial use only. You must not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any of the material on our Service, except as it is created and owned by you (such as your own data).</p>
+            </section>
+
+            <section className="space-y-2">
+                <h3 className="text-xl font-semibold text-foreground">5. Prohibited Activities & User Conduct</h3>
+                <p>You may not access or use the Service for any purpose other than that for which we make the Service available. The Service may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us. As a user of the Service, you agree not to:</p>
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                    <li>Use the Services in any way that violates any applicable federal, state, local, or international law or regulation.</li>
-                    <li>Engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the Services, or which, as determined by us, may harm PinnaclePath or users of the Services.</li>
-                    <li>Use any robot, spider, or other automatic device, process, or means to access the Services for any purpose, including monitoring or copying any of the material on the Services.</li>
-                    <li>Introduce any viruses, trojan horses, worms, logic bombs, or other material which is malicious or technologically harmful.</li>
+                    <li>Systematically retrieve data or other content from the Service to create or compile, directly or indirectly, a collection, compilation, database, or directory without written permission from us.</li>
+                    <li>Make any unauthorized use of the Service, including collecting usernames and/or email addresses of users by electronic or other means for the purpose of sending unsolicited email, or creating user accounts by automated means or under false pretenses.</li>
+                    <li>Circumvent, disable, or otherwise interfere with security-related features of the Service.</li>
+                    <li>Engage in unauthorized framing of or linking to the Service.</li>
+                    <li>Trick, defraud, or mislead us and other users, especially in any attempt to learn sensitive account information such as user passwords.</li>
+                    <li>Interfere with, disrupt, or create an undue burden on the Service or the networks or services connected to the Service.</li>
+                    <li>Attempt to impersonate another user or person or use the username of another user.</li>
+                    <li>Use any information obtained from the Service in order to harass, abuse, or harm another person.</li>
+                    <li>Use the Service as part of any effort to compete with us or otherwise use the Service and/or the Content for any revenue-generating endeavor or commercial enterprise.</li>
+                    <li>Decipher, decompile, disassemble, or reverse engineer any of the software comprising or in any way making up a part of the Service.</li>
                 </ul>
             </section>
 
-            <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">3. Intellectual Property Rights</h3>
-                <p>The Services and their entire contents, features, and functionality (including but not limited to all information, software, text, displays, images, video, and audio, and the design, selection, and arrangement thereof) are owned by PinnaclePath, its licensors, or other providers of such material and are protected by United States and international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws. You are not permitted to reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any of the material on our Services, except as follows: you may store files that are automatically cached by your Web browser for display enhancement purposes.</p>
+             <section className="space-y-2">
+                <h3 className="text-xl font-semibold text-foreground">6. User Generated Contributions</h3>
+                <p>The Service may provide you with the opportunity to create, submit, post, display, transmit, perform, publish, distribute, or broadcast content and materials to us or on the Service, including but not limited to text, writings, video, audio, photographs, graphics, comments, suggestions, or personal information or other material (collectively, "Contributions"). Contributions may be viewable by other users of the Service and through third-party websites. As such, any Contributions you transmit may be treated as non-confidential and non-proprietary. When you create or make available any Contributions, you thereby represent and warrant that you are the creator and owner of your Contributions and have all necessary rights to grant us the license to use them.</p>
             </section>
 
             <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">4. User Contributions</h3>
-                <p>The Services may contain message boards, forums, and other interactive features that allow users to post, submit, publish, display, or transmit to other users or other persons content or materials (collectively, "User Contributions") on or through the Services. All User Contributions must comply with these Terms. Any User Contribution you post to the site will be considered non-confidential and non-proprietary. By providing any User Contribution on the Services, you grant us and our affiliates and service providers, and each of their and our respective licensees, successors, and assigns the right to use, reproduce, modify, perform, display, distribute, and otherwise disclose to third parties any such material.</p>
+                <h3 className="text-xl font-semibold text-foreground">7. Copyright Infringement (DMCA Policy)</h3>
+                <p>We respect the intellectual property rights of others. If you believe that any material available on or through the Service infringes upon any copyright you own or control, please immediately notify our designated Copyright Agent using the contact information provided below (a “Notification”). A copy of your Notification will be sent to the person who posted or stored the material addressed in the Notification.</p>
             </section>
 
             <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">5. Disclaimer of Warranties</h3>
-                <p>YOUR USE OF THE SERVICES, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICES IS AT YOUR OWN RISK. THE SERVICES, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICES ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER PINNACLEPATH NOR ANY PERSON ASSOCIATED WITH PINNACLEPATH MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE SERVICES.</p>
+                <h3 className="text-xl font-semibold text-foreground">8. Termination of Use</h3>
+                <p>We may, in our sole discretion, suspend or terminate your account and your ability to use the Service, at any time, for any reason, including for any breach of these Terms. You may terminate your account at any time by contacting customer service. Upon termination, you will remain liable for all amounts due through the date of termination.</p>
             </section>
 
             <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">6. Limitation on Liability</h3>
-                <p>TO THE FULLEST EXTENT PROVIDED BY LAW, IN NO EVENT WILL PINNACLEPATH, ITS AFFILIATES, OR THEIR LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS, OR DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE, OR INABILITY TO USE, THE SERVICES, ANY WEBSITES LINKED TO IT, ANY CONTENT ON THE SERVICES OR SUCH OTHER WEBSITES, INCLUDING ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO, PERSONAL INJURY, PAIN AND SUFFERING, EMOTIONAL DISTRESS, LOSS OF REVENUE, LOSS OF PROFITS, LOSS OF BUSINESS OR ANTICIPATED SAVINGS, LOSS OF USE, LOSS OF GOODWILL, LOSS OF DATA, AND WHETHER CAUSED BY TORT (INCLUDING NEGLIGENCE), BREACH OF CONTRACT, OR OTHERWISE, EVEN IF FORESEEABLE.</p>
+                <h3 className="text-xl font-semibold text-foreground">9. Disclaimer of Warranties</h3>
+                <p>YOUR USE OF THE SERVICE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICE IS AT YOUR OWN RISK. THE SERVICE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICE ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER PINNACLEPATH NOR ANY PERSON ASSOCIATED WITH PINNACLEPATH MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE SERVICE.</p>
             </section>
 
             <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">7. Governing Law and Jurisdiction</h3>
-                <p>All matters relating to the Services and these Terms and any dispute or claim arising therefrom or related thereto (in each case, including non-contractual disputes or claims), shall be governed by and construed in accordance with the internal laws of the State of Delaware without giving effect to any choice or conflict of law provision or rule. Any legal suit, action, or proceeding arising out of, or related to, these Terms or the Services shall be instituted exclusively in the federal courts of the United States or the courts of the State of Delaware.</p>
+                <h3 className="text-xl font-semibold text-foreground">10. Limitation on Liability</h3>
+                <p>TO THE FULLEST EXTENT PROVIDED BY LAW, IN NO EVENT WILL PINNACLEPATH, ITS AFFILIATES, OR THEIR LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS, OR DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE, OR INABILITY TO USE, THE SERVICE, ANY WEBSITES LINKED TO IT, ANY CONTENT ON THE SERVICE OR SUCH OTHER WEBSITES, INCLUDING ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES.</p>
+            </section>
+
+             <section className="space-y-2">
+                <h3 className="text-xl font-semibold text-foreground">11. Indemnification</h3>
+                <p>You agree to defend, indemnify, and hold harmless PinnaclePath, its affiliates, licensors, and service providers, and its and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the Service, including, but not limited to, your User Contributions, any use of the Service's content, services, and products other than as expressly authorized in these Terms.</p>
             </section>
 
             <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">8. Changes to the Terms of Service</h3>
-                <p>We may revise and update these Terms of Service from time to time in our sole discretion. All changes are effective immediately when we post them. Your continued use of the Services following the posting of revised Terms of Service means that you accept and agree to the changes. You are expected to check this page frequently so you are aware of any changes, as they are binding on you.</p>
+                <h3 className="text-xl font-semibold text-foreground">12. Governing Law and Dispute Resolution</h3>
+                <p>All matters relating to the Service and these Terms and any dispute or claim arising therefrom or related thereto shall be governed by and construed in accordance with the internal laws of the State of Delaware without giving effect to any choice or conflict of law provision or rule. Any legal suit, action, or proceeding arising out of, or related to, these Terms or the Service shall be instituted exclusively in the federal courts of the United States or the courts of the State of Delaware.</p>
+                <p>At our sole discretion, we may require you to submit any disputes arising from the use of these Terms or the Service, including disputes arising from or concerning their interpretation, violation, invalidity, non-performance, or termination, to final and binding arbitration under the Rules of Arbitration of the American Arbitration Association applying Delaware law.</p>
+            </section>
+
+            <section className="space-y-2">
+                <h3 className="text-xl font-semibold text-foreground">13. Miscellaneous</h3>
+                <p>These Terms and any policies or operating rules posted by us on the Service or in respect to the Service constitute the entire agreement and understanding between you and us. Our failure to exercise or enforce any right or provision of these Terms shall not operate as a waiver of such right or provision. If any provision or part of a provision of these Terms is determined to be unlawful, void, or unenforceable, that provision or part of the provision is deemed severable from these Terms and does not affect the validity and enforceability of any remaining provisions.</p>
             </section>
         </div>
     );
