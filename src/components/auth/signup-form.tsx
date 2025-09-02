@@ -28,9 +28,6 @@ import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Checkbox } from "../ui/checkbox";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "../ui/dialog";
-import { ScrollArea } from "../ui/scroll-area";
-import TermsOfServiceContent from "./terms-of-service-content";
 
 
 const formSchema = z.object({
@@ -65,7 +62,6 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export function SignupForm({ plan }: SignupFormProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const [isTermsCheckboxEnabled, setIsTermsCheckboxEnabled] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -128,14 +124,6 @@ export function SignupForm({ plan }: SignupFormProps) {
             title: "Signup Failed",
             description: "An unexpected error occurred. Please try again.",
         });
-    }
-  };
-
-  const handleTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    const target = event.currentTarget;
-    // Enable checkbox if user has scrolled to the bottom (with a 20px tolerance)
-    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 20) {
-      setIsTermsCheckboxEnabled(true);
     }
   };
 
@@ -288,31 +276,17 @@ export function SignupForm({ plan }: SignupFormProps) {
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      disabled={!isTermsCheckboxEnabled}
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className={cn(!isTermsCheckboxEnabled && "text-muted-foreground")}>
+                    <FormLabel>
                       Accept terms and conditions
                     </FormLabel>
                     <FormDescription>
                       By creating an account, you agree to our{' '}
-                       <Dialog>
-                            <DialogTrigger asChild>
-                                <Button variant="link" className="p-0 h-auto">Terms of Service</Button>
-                            </DialogTrigger>
-                             <DialogContent className="max-w-2xl">
-                                <DialogHeader>
-                                    <DialogTitle>Terms of Service</DialogTitle>
-                                </DialogHeader>
-                                 <ScrollArea className="h-96 pr-6" onScroll={handleTermsScroll}>
-                                    <TermsOfServiceContent />
-                                </ScrollArea>
-                                <DialogFooter>
-                                    {!isTermsCheckboxEnabled && <p className="text-sm text-muted-foreground mr-auto">Please scroll to the bottom to continue.</p>}
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                       <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
+                            Terms of Service
+                       </a>
                       .
                     </FormDescription>
                      <FormMessage />
