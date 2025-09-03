@@ -27,6 +27,12 @@ const SupportChatInputSchema = z.object({
   chatHistory: z.array(ChatMessageSchema).describe("The history of the conversation so far."),
 });
 
+const PromptInputSchema = SupportChatInputSchema.extend({
+    onboardingDataJson: z.string(),
+    roadmapJson: z.string(),
+});
+
+
 export type SupportChatInput = z.infer<typeof SupportChatInputSchema>;
 
 const SupportChatOutputSchema = z.object({
@@ -43,7 +49,7 @@ export async function supportChat(input: SupportChatInput): Promise<SupportChatO
 
 const prompt = ai.definePrompt({
   name: 'supportChatPrompt',
-  input: {schema: SupportChatInputSchema},
+  input: {schema: PromptInputSchema},
   output: {schema: SupportChatOutputSchema},
   model: 'googleai/gemini-1.5-flash-latest',
   prompt: `You are PinnacleBot, an expert AI academic advisor and mentor for the PinnaclePath platform. Your tone is encouraging, supportive, and knowledgeable. You are talking directly to a student.
@@ -65,12 +71,12 @@ const prompt = ai.definePrompt({
   - Name: {{{studentProfile.name}}}
   - Grade: {{{studentProfile.grade}}}
   - Onboarding Info: \`\`\`json
-    {{{JSONstringify studentProfile.onboardingData}}}
+    {{{onboardingDataJson}}}
     \`\`\`
 
   **Student's Full Roadmap:**
   \`\`\`json
-  {{{JSONstringify roadmap}}}
+  {{{roadmapJson}}}
   \`\`\`
 
   **Conversation History:**
@@ -80,15 +86,6 @@ const prompt = ai.definePrompt({
 
   Based on the latest user message in the history, provide a helpful response and determine if escalation is required.
   `,
-  customize: (prompt, input) => {
-    return {
-      ...prompt,
-      custom: {
-        ...input,
-        JSONstringify: (obj: any) => JSON.stringify(obj, null, 2),
-      }
-    };
-  }
 });
 
 
@@ -107,7 +104,14 @@ const supportChatFlow = ai.defineFlow(
         };
     }
 
-    const {output} = await prompt(input);
+    const onboardingDataJson = JSON.stringify(input.studentProfile.onboardingData, null, 2);
+    const roadmapJson = JSON.stringify(input.roadmap, null, 2);
+
+    const {output} = await prompt({
+        ...input,
+        onboardingDataJson,
+        roadmapJson,
+    });
 
     if (!output) {
         throw new Error("Failed to generate a chat response.");
