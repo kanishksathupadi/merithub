@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award, Star, Share2, UserCircle } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award, Star, Share2, UserCircle, MessageSquareWarning } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -135,11 +135,18 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarMenu className="flex-1 px-2 pt-4">
         {isAdmin ? (
+            <>
             <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Dashboard">
                     <Link href="/dashboard/admin"><LayoutDashboard/>Dashboard</Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
+             <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Support Requests">
+                    <Link href="/dashboard/admin/support-requests"><MessageSquareWarning/>Support Requests</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            </>
         ) : (
           <>
             <SidebarMenuItem>

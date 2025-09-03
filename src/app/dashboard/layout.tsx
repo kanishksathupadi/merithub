@@ -96,7 +96,7 @@ export default function DashboardLayout({
 
   if (isAdmin) {
     return (
-        <div className="p-4 sm:p-6 lg:p-8 flex-1">
+        <div className="p-6 sm:p-8 lg:p-12 flex-1">
             {children}
             <Toaster />
         </div>
@@ -109,7 +109,7 @@ export default function DashboardLayout({
         <AppSidebar avatarUrl={avatarUrl} />
         <SidebarInset>
             <ConditionalSidebarTrigger />
-            <div className="p-4 sm:p-6 lg:p-8 flex-1">
+            <div className="p-6 sm:p-8 lg:p-12 flex-1">
                 {children}
             </div>
             <Toaster />

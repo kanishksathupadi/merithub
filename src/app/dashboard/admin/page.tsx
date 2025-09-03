@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Users, LineChart, Star, Crown, Settings, LogOut } from "lucide-react";
+import { Users, LineChart, Star, Crown, Settings, LogOut, MessageSquareWarning } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -120,10 +120,11 @@ const formatFeatureName = (name: string) => {
 export default function AdminPage() {
     const [userStats, setUserStats] = useState({
         totalUsers: 0,
-        dailyActive: 0, // This remains a mock value as tracking this is complex without a backend
+        dailyActive: 0,
         standardUsers: 0,
         eliteUsers: 0,
     });
+    const [supportRequests, setSupportRequests] = useState(0);
     const [featureEngagementData, setFeatureEngagementData] = useState([]);
     const [recentSignups, setRecentSignups] = useState([]);
     const router = useRouter();
@@ -139,6 +140,10 @@ export default function AdminPage() {
             standardUsers,
             eliteUsers
         });
+
+        // --- Support Requests ---
+        const requests = getFromLocalStorage('humanChatRequests', []);
+        setSupportRequests(requests.filter((r: any) => r.status === 'pending').length);
 
         // --- Recent Signups ---
         const signupsWithAvatars = [...allUsers].reverse().slice(0, 4).map((user: any) => ({
@@ -186,13 +191,13 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{userStats.dailyActive.toLocaleString()}</div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users?plan=standard')}>
+        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/support-requests')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Standard Plans</CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Support Requests</CardTitle>
+            <MessageSquareWarning className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{userStats.standardUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{supportRequests}</div>
           </CardContent>
         </Card>
         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users?plan=elite')}>

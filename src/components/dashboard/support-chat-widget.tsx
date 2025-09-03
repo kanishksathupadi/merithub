@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { supportChat } from '@/ai/flows/support-chat';
 import type { OnboardingData, RoadmapTask } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { v4 as uuidv4 } from 'uuid';
 
 type ChatMessage = {
     role: 'user' | 'model';
@@ -25,7 +26,7 @@ export function SupportChatWidget() {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [userData, setUserData] = useState<{
-        studentProfile: { name: string; grade: number; onboardingData: OnboardingData | null };
+        studentProfile: { userId: string, name: string; grade: number; onboardingData: OnboardingData | null };
         roadmap: RoadmapTask[];
     } | null>(null);
 
@@ -48,13 +49,14 @@ export function SupportChatWidget() {
 
                     const loadedUserData = {
                         studentProfile: {
+                            userId: signupData.userId,
                             name: signupData.name,
                             grade: signupData.grade,
                             onboardingData: onboardingData,
                         },
                         roadmap: roadmapTasks,
                     };
-                    setUserData(loadedUserData);
+                    setUserData(loadedUserData as any);
 
                     // Fetch initial greeting immediately after setting data
                     if (messages.length === 0) {
@@ -98,6 +100,43 @@ export function SupportChatWidget() {
         }
     }, [messages]);
 
+    const handleHumanRequest = () => {
+        if (!userData) return;
+        
+        try {
+            const requests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
+            const existingRequest = requests.find((r: any) => r.userId === userData.studentProfile.userId);
+
+            if (existingRequest) {
+                toast({ title: "Request Already Sent", description: "You've already requested to speak with a human. We'll be in touch soon!" });
+                return;
+            }
+
+            const newRequest = {
+                userId: userData.studentProfile.userId,
+                userName: userData.studentProfile.name,
+                timestamp: new Date().toISOString(),
+                status: 'pending',
+                chatHistory: [...messages, { role: 'model', content: '--- User requested human support ---' }]
+            };
+            
+            requests.push(newRequest);
+            localStorage.setItem('humanChatRequests', JSON.stringify(requests));
+
+            const humanSupportMessage: ChatMessage = {
+                role: 'model',
+                content: "I've notified our human support team. They will review our conversation and get back to you shortly. You can close this chat for now."
+            };
+            setMessages(prev => [...prev, humanSupportMessage]);
+
+            toast({ title: "Request Sent!", description: "A human mentor will reach out to you soon." });
+
+        } catch(e) {
+             console.error("Failed to log human support request:", e);
+             toast({ variant: 'destructive', title: "Error", description: "Could not submit your request. Please try again." });
+        }
+    };
+
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -120,9 +159,14 @@ export function SupportChatWidget() {
             if (result.escalationRequired) {
                 toast({
                     title: "Human Help Recommended",
-                    description: "It looks like a human mentor could help you best with this. Check out the Mentor Match page.",
+                    description: "It looks like a human mentor could help you best with this. I've noted this in our chat.",
                     duration: 8000,
                 })
+                 const escalationMessage: ChatMessage = {
+                    role: 'model',
+                    content: "It seems like this is a situation where a human mentor could provide the best guidance. I've flagged this conversation for our team. Feel free to use the 'Talk to a Human' button above to send a direct request."
+                };
+                setMessages(prev => [...prev, escalationMessage]);
             }
         } catch (error) {
             console.error("Chat API error:", error);
@@ -159,9 +203,9 @@ export function SupportChatWidget() {
                         className="fixed bottom-24 right-6 z-50"
                     >
                         <Card className="w-80 h-[500px] shadow-2xl flex flex-col">
-                            <CardHeader className="flex flex-row justify-between items-center">
-                                <CardTitle>AI Support Chat</CardTitle>
-                                <Button variant="outline" size="sm">Talk to a Human</Button>
+                            <CardHeader className="flex-row items-center justify-between">
+                                <CardTitle className="text-base">AI Support Chat</CardTitle>
+                                <Button variant="outline" size="sm" onClick={handleHumanRequest}>Talk to a Human</Button>
                             </CardHeader>
                             <CardContent className="flex-1 overflow-hidden p-0">
                                 <ScrollArea className="h-full p-4" ref={scrollAreaRef}>
