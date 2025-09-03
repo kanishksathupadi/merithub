@@ -129,10 +129,8 @@ export const FindScholarshipsOutputSchema = z.object({
 export type FindScholarshipsOutput = z.infer<typeof FindScholarshipsOutputSchema>;
 
 export type ChatMessage = {
-  id: string;
-  text: string;
-  sender: 'user' | 'ai' | 'human';
-  timestamp: any; // Firestore Timestamp
+    role: 'user' | 'model' | 'human';
+    content: string;
 };
 
 export type Chat = {

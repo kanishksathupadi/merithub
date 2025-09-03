@@ -5,7 +5,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, BrainCircuit, User } from 'lucide-react';
+import { ArrowLeft, BrainCircuit, User, Send, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
@@ -13,13 +13,17 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import type { ChatMessage } from '@/lib/types';
+
 
 interface ChatRequest {
     userId: string;
     userName: string;
     timestamp: string;
     status: 'pending' | 'resolved';
-    chatHistory: { role: 'user' | 'model', content: string }[];
+    chatHistory: ChatMessage[];
 }
 
 const getFromLocalStorage = (key: string, defaultValue: any) => {
@@ -33,20 +37,63 @@ const getFromLocalStorage = (key: string, defaultValue: any) => {
     }
 };
 
+const saveToLocalStorage = (key: string, value: any) => {
+    if (typeof window === 'undefined') return;
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error(`Error saving to localStorage key "${key}":`, error);
+    }
+}
+
 function SupportRequestsList() {
+    const { toast } = useToast();
     const [requests, setRequests] = useState<ChatRequest[]>([]);
+    const [adminMessage, setAdminMessage] = useState("");
+    const [currentChatId, setCurrentChatId] = useState<string | null>(null);
     
     useEffect(() => {
         const allRequests = getFromLocalStorage('humanChatRequests', []);
         setRequests(allRequests);
     }, []);
 
+    const updateChatGlobally = (updatedRequests: ChatRequest[]) => {
+        setRequests(updatedRequests);
+        saveToLocalStorage('humanChatRequests', updatedRequests);
+        // This event allows other components (like the student's widget) to update if they are open.
+        window.dispatchEvent(new StorageEvent('storage', { key: 'humanChatRequests' }));
+    }
+
     const markAsResolved = (userId: string) => {
         const updatedRequests = requests.map(req => 
             req.userId === userId ? { ...req, status: 'resolved' } : req
         );
-        setRequests(updatedRequests);
-        localStorage.setItem('humanChatRequests', JSON.stringify(updatedRequests));
+        updateChatGlobally(updatedRequests);
+    };
+
+    const handleAdminSendMessage = (e: React.FormEvent, userId: string) => {
+        e.preventDefault();
+        if (!adminMessage.trim()) return;
+
+        const newMessage: ChatMessage = {
+            role: 'human',
+            content: adminMessage,
+        };
+
+        const updatedRequests = requests.map(req => {
+            if (req.userId === userId) {
+                return { ...req, chatHistory: [...req.chatHistory, newMessage] };
+            }
+            return req;
+        });
+
+        updateChatGlobally(updatedRequests);
+        setAdminMessage("");
+
+        toast({
+            title: "Message Sent!",
+            description: `Your message has been sent to ${requests.find(r => r.userId === userId)?.userName}.`,
+        });
     };
 
     const pageTitle = "Human Support Requests";
@@ -94,28 +141,51 @@ function SupportRequestsList() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right space-x-2">
-                                        <Dialog>
+                                        <Dialog onOpenChange={(open) => !open && setCurrentChatId(null)}>
                                             <DialogTrigger asChild>
-                                                <Button variant="outline" size="sm">View Chat</Button>
+                                                <Button variant="outline" size="sm" onClick={() => setCurrentChatId(req.userId)}>View & Respond</Button>
                                             </DialogTrigger>
-                                            <DialogContent className="max-w-2xl">
+                                            <DialogContent className="max-w-2xl h-[90vh] flex flex-col">
                                                 <DialogHeader>
                                                     <DialogTitle>Chat History with {req.userName}</DialogTitle>
-                                                    <DialogDescription>Review the conversation leading to the support request.</DialogDescription>
+                                                    <DialogDescription>Review and respond to the conversation.</DialogDescription>
                                                 </DialogHeader>
-                                                 <ScrollArea className="h-96 w-full rounded-md border p-4">
+                                                <ScrollArea className="flex-1 w-full rounded-md border p-4">
                                                     <div className="space-y-4">
                                                         {req.chatHistory.map((msg, index) => (
-                                                            <div key={index} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                                                {msg.role === 'model' && <Avatar className="w-8 h-8"><AvatarFallback><BrainCircuit/></AvatarFallback></Avatar>}
-                                                                <div className={`max-w-[80%] rounded-lg px-3 py-2 ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                                                                    <p className="text-sm">{msg.content}</p>
+                                                            <div key={index} className={cn('flex items-end gap-2', {
+                                                                'justify-end': msg.role === 'user',
+                                                                'justify-start': msg.role === 'model' || msg.role === 'human'
+                                                            })}>
+                                                                {(msg.role === 'model' || msg.role === 'human') && (
+                                                                    <Avatar className="w-8 h-8">
+                                                                        <AvatarFallback>
+                                                                            {msg.role === 'model' ? <BrainCircuit/> : <ShieldCheck />}
+                                                                        </AvatarFallback>
+                                                                    </Avatar>
+                                                                )}
+                                                                <div className={cn('max-w-[80%] rounded-lg px-3 py-2 text-sm', {
+                                                                    'bg-primary text-primary-foreground': msg.role === 'user',
+                                                                    'bg-muted': msg.role === 'model',
+                                                                    'bg-green-600/20 border border-green-500/50 text-foreground': msg.role === 'human'
+                                                                })}>
+                                                                    <p>{msg.content}</p>
                                                                 </div>
                                                                  {msg.role === 'user' && <Avatar className="w-8 h-8"><AvatarFallback><User/></AvatarFallback></Avatar>}
                                                             </div>
                                                         ))}
                                                     </div>
                                                 </ScrollArea>
+                                                 <form onSubmit={(e) => handleAdminSendMessage(e, req.userId)} className="flex items-center gap-2 border-t pt-4">
+                                                    <Input 
+                                                        placeholder="Type your response..."
+                                                        value={adminMessage}
+                                                        onChange={(e) => setAdminMessage(e.target.value)}
+                                                    />
+                                                    <Button type="submit" size="icon">
+                                                        <Send className="w-4 h-4"/>
+                                                    </Button>
+                                                </form>
                                             </DialogContent>
                                         </Dialog>
                                         <Button size="sm" onClick={() => markAsResolved(req.userId)} disabled={req.status === 'resolved'}>
