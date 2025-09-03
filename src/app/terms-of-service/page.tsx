@@ -19,7 +19,7 @@ export default function TermsOfServicePage() {
                         <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
                     </Link>
                     <h2 className="text-4xl font-bold tracking-tight">Terms of Service</h2>
-                    <p className="text-muted-foreground mt-2">Last Updated: {new Date().toLocaleDateString()}</p>
+                    <p className="text-muted-foreground mt-2">Last Updated: 09/03/2025</p>
                 </header>
 
                 <div className="space-y-6 text-foreground/80 text-sm">
