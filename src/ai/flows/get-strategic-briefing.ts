@@ -44,7 +44,7 @@ const prompt = ai.definePrompt({
   name: 'getStrategicBriefingPrompt',
   input: {schema: StrategicBriefingInputSchema},
   output: {schema: StrategicBriefingOutputSchema},
-  model: 'googleai/gemini-1.5-flash-latest',
+  model: 'googleai/gemini-2.0-flash',
   prompt: `You are an expert educational strategist and mentor. Your task is to analyze a student's current roadmap and provide a "Strategic Briefing" to guide their focus. Do not just list tasks. Provide insight and context.
 
   **Instructions:**
