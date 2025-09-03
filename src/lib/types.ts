@@ -143,3 +143,13 @@ export type Chat = {
   lastUpdatedAt: any; // Firestore Timestamp
   status: 'active' | 'human_requested' | 'resolved';
 };
+
+export type OnboardingData = {
+  academicStrengths: string;
+  academicWeaknesses: string;
+  subjectsOfInterest: string;
+  collegeEnvironment: string;
+  preferredLearningStyle: string;
+  currentExtracurriculars: string;
+  weeklyTimeAvailable: string;
+};

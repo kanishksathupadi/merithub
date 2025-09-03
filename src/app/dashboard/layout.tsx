@@ -3,6 +3,7 @@
 
 import { generateAvatar } from "@/ai/flows/generate-avatar";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
+import { SupportChatWidget } from "@/components/dashboard/support-chat-widget";
 import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
@@ -112,6 +113,7 @@ export default function DashboardLayout({
                 {children}
             </div>
             <Toaster />
+            <SupportChatWidget />
         </SidebarInset>
       </div>
     </SidebarProvider>
