@@ -31,9 +31,10 @@ export function SupportChatWidget() {
 
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-     useEffect(() => {
-        if (isOpen) {
-            // Load user data when the chat is opened
+    useEffect(() => {
+        // This effect runs only when the chat widget is opened for the first time.
+        // It loads the necessary user data and fetches the initial greeting.
+        if (isOpen && !userData) {
             try {
                 const signupDataStr = localStorage.getItem('signupData');
                 const onboardingDataStr = localStorage.getItem('onboardingData');
@@ -45,33 +46,40 @@ export function SupportChatWidget() {
                     const onboardingData = JSON.parse(onboardingDataStr);
                     const roadmapTasks = JSON.parse(roadmapTasksStr);
 
-                    setUserData({
+                    const loadedUserData = {
                         studentProfile: {
                             name: signupData.name,
                             grade: signupData.grade,
                             onboardingData: onboardingData,
                         },
                         roadmap: roadmapTasks,
+                    };
+                    setUserData(loadedUserData);
+
+                    // Fetch initial greeting immediately after setting data
+                    if (messages.length === 0) {
+                        setIsLoading(true);
+                        supportChat({
+                            ...loadedUserData,
+                            studentProfile: loadedUserData.studentProfile as any,
+                            chatHistory: [],
+                        })
+                        .then(result => {
+                            setMessages([{ role: 'model', content: result.response }]);
+                        })
+                        .catch(err => {
+                            toast({ variant: 'destructive', title: "Error", description: "Couldn't connect to the AI assistant."});
+                            console.error(err);
+                        })
+                        .finally(() => setIsLoading(false));
+                    }
+                } else {
+                     toast({
+                        variant: "destructive",
+                        title: "Could not load profile",
+                        description: "Complete onboarding for the AI to provide personalized advice."
                     });
                 }
-                 // Fetch initial greeting if messages are empty
-                if (messages.length === 0 && userData) {
-                    setIsLoading(true);
-                    supportChat({
-                        studentProfile: userData.studentProfile as any,
-                        roadmap: userData.roadmap,
-                        chatHistory: [],
-                    })
-                    .then(result => {
-                        setMessages([{ role: 'model', content: result.response }]);
-                    })
-                    .catch(err => {
-                        toast({ variant: 'destructive', title: "Error", description: "Couldn't connect to the AI assistant."});
-                        console.error(err);
-                    })
-                    .finally(() => setIsLoading(false));
-                }
-
             } catch (e) {
                 console.error("Failed to load user data for chat:", e);
                 toast({
@@ -81,10 +89,10 @@ export function SupportChatWidget() {
                 });
             }
         }
-    }, [isOpen, messages.length, toast, userData]);
+    }, [isOpen, userData, messages.length, toast]);
 
     useEffect(() => {
-        // Auto-scroll to bottom
+        // Auto-scroll to bottom whenever messages change
         if (scrollAreaRef.current) {
             scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
         }
