@@ -125,7 +125,7 @@ export function RoadmapView() {
 
       <div className="space-y-4 mt-4">
         {filteredTasks.length > 0 ? (
-            filteredTasks.map(task => <TaskCard key={task.id} task={task} onToggle={toggleTask} getCategoryColor={getCategoryColor} />)
+            filteredTasks.map(task => <TaskCard key={task.id} task={task} onToggle={onToggle} getCategoryColor={getCategoryColor} />)
         ) : (
             <Card className="mt-4">
                 <CardContent className="p-6 text-center text-muted-foreground">
