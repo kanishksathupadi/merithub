@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText } from "lucide-react";
+import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 
@@ -173,6 +173,7 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
             <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
+            <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
              <Link href="#faq" className="hover:text-primary transition-colors">FAQ</Link>
           </nav>
@@ -326,12 +327,12 @@ export default function Home() {
                         <p className="text-muted-foreground mt-4">Begin by telling us about yourself. Our comprehensive onboarding process captures your academic strengths, personal passions, extracurricular activities, and future aspirations. This detailed profile is the foundation of your entire personalized experience.</p>
                     </div>
                     <Image
-                        src="https://images.unsplash.com/photo-1557999233-444a7b74f88e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdHVkZW50JTIwZmlsbGluZyUyMG91dCUyMGFuJTIwYXBwbGljYXRpb258ZW58MHx8fHwxNzI1MDQ4OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080"
+                        src="https://images.unsplash.com/photo-1517842645767-c6f90415ad90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzdHVkZW50JTIwd3JpdGluZ3xlbnwwfHx8fDE3MjU5MjI5ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
                         alt="A student filling out a detailed form on a laptop."
                         width={800}
                         height={600}
                         className="rounded-xl shadow-xl ring-1 ring-border/10 object-cover"
-                        data-ai-hint="student application"
+                        data-ai-hint="student writing"
                     />
                 </div>
                  <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -367,8 +368,79 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
 
+        {/* Why Choose Us Section */}
+        <section className="py-24 bg-muted/50">
+            <div className="container mx-auto px-4">
+                <div className="text-center mb-16">
+                    <h3 className="text-4xl font-bold tracking-tight">Why PinnaclePath?</h3>
+                    <p className="text-muted-foreground mt-3 max-w-3xl mx-auto">While traditional methods offer generic advice, PinnaclePath provides a hyper-personalized, data-driven engine for your success. Here’s how we compare:</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-8 text-center">
+                    <Card className="p-8">
+                        <CardTitle className="mb-4 text-xl">Traditional Counseling</CardTitle>
+                        <ul className="space-y-3 text-left text-muted-foreground text-sm">
+                            <li className="flex items-start gap-2"><X className="w-4 h-4 text-destructive mt-1 shrink-0"/>Limited availability, often by appointment only.</li>
+                            <li className="flex items-start gap-2"><X className="w-4 h-4 text-destructive mt-1 shrink-0"/>Advice is based on general experience, not your specific data.</li>
+                            <li className="flex items-start gap-2"><X className="w-4 h-4 text-destructive mt-1 shrink-0"/>Static plans that are hard to adapt to new interests.</li>
+                            <li className="flex items-start gap-2"><X className="w-4 h-4 text-destructive mt-1 shrink-0"/>High cost, often thousands of dollars per year.</li>
+                        </ul>
+                    </Card>
+                     <Card className="p-8 border-primary ring-2 ring-primary">
+                        <CardTitle className="mb-4 text-xl flex items-center justify-center gap-2 text-primary">
+                            <Star className="w-5 h-5"/>
+                            PinnaclePath
+                        </CardTitle>
+                        <ul className="space-y-3 text-left text-muted-foreground text-sm">
+                            <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>24/7 AI mentor, available anytime, anywhere.</li>
+                            <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Hyper-personalized strategy based on your unique profile.</li>
+                            <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Dynamic roadmap that evolves as you grow.</li>
+                            <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Affordable monthly subscription.</li>
+                        </ul>
+                    </Card>
+                     <Card className="p-8">
+                        <CardTitle className="mb-4 text-xl">Self-Guided</CardTitle>
+                         <ul className="space-y-3 text-left text-muted-foreground text-sm">
+                            <li className="flex items-start gap-2"><X className="w-4 h-4 text-destructive mt-1 shrink-0"/>Information overload from endless online searching.</li>
+                            <li className="flex items-start gap-2"><X className="w-4 h-4 text-destructive mt-1 shrink-0"/>No clear path or strategy, leading to confusion.</li>
+                            <li className="flex items-start gap-2"><X className="w-4 h-4 text-destructive mt-1 shrink-0"/>Difficult to stay motivated and track progress effectively.</li>
+                            <li className="flex items-start gap-2"><X className="w-4 h-4 text-destructive mt-1 shrink-0"/>Risk of missing key opportunities and deadlines.</li>
+                        </ul>
+                    </Card>
+                </div>
+            </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section id="testimonials" className="py-24 bg-background">
+            <div className="container mx-auto px-4 max-w-4xl text-center">
+                <h3 className="text-4xl font-bold tracking-tight">Built for Ambitious Students</h3>
+                <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our platform empowers students to take control of their future, build a compelling profile, and achieve their biggest goals.</p>
+                <div className="mt-12 grid md:grid-cols-2 gap-8 text-left">
+                    <Card className="p-6 bg-card">
+                        <p className="text-muted-foreground mb-4">"The AI roadmap helped me identify a 'spike' in computational biology I never would have found on my own. I went from just liking science to presenting my own research project at the state science fair."</p>
+                        <div className="flex items-center gap-3">
+                            <Avatar><AvatarFallback>S</AvatarFallback></Avatar>
+                            <div>
+                                <p className="font-semibold">Sarah L.</p>
+                                <p className="text-sm text-muted-foreground">11th Grade Student</p>
+                            </div>
+                        </div>
+                    </Card>
+                    <Card className="p-6 bg-card">
+                        <p className="text-muted-foreground mb-4">"As a parent, seeing my son's progress tracked visually gave me so much peace of mind. The AI essay reviewer was like having an expert writing coach available 24/7. It was a game-changer for his college applications."</p>
+                         <div className="flex items-center gap-3">
+                            <Avatar><AvatarFallback>M</AvatarFallback></Avatar>
+                            <div>
+                                <p className="font-semibold">Mark T.</p>
+                                <p className="text-sm text-muted-foreground">Parent of a 12th Grader</p>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+        </section>
+        
         {/* Pricing Section */}
         <section id="pricing" className="py-24 bg-muted/50">
             <div className="container mx-auto px-4">
@@ -417,32 +489,34 @@ export default function Home() {
                     <h3 className="text-4xl font-bold tracking-tight">Frequently Asked Questions</h3>
                     <p className="text-muted-foreground mt-3">Have questions? We have answers.</p>
                 </div>
-                <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1">
-                        <AccordionTrigger>Is PinnaclePath suitable for middle school students?</AccordionTrigger>
-                        <AccordionContent>
-                        Yes! PinnaclePath is designed for students from middle school through high school. For younger students, our AI focuses on exploration, skill-building, and discovering new interests. As students get older, the AI's recommendations become more focused on college preparation, leadership, and building a standout profile.
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-2">
-                        <AccordionTrigger>How is this different from a traditional college counselor?</AccordionTrigger>
-                        <AccordionContent>
-                        PinnaclePath acts as a 24/7 AI mentor that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking. Our Elite plan also includes a directory to connect with human mentors, offering the best of both worlds.
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-3">
-                        <AccordionTrigger>Can I cancel my subscription at any time?</AccordionTrigger>
-                        <AccordionContent>
-                        Absolutely. You can cancel your subscription at any time through your account settings. You will retain access to your plan's features until the end of your current billing period.
-                        </AccordionContent>
-                    </AccordionItem>
-                     <AccordionItem value="item-4">
-                        <AccordionTrigger>Is my personal and academic data secure?</AccordionTrigger>
-                        <AccordionContent>
-                        Data privacy and security are our top priorities. We use industry-standard encryption and security protocols to protect your information. Your data is used solely to power the AI and personalize your experience. We do not sell your data to third parties. Please see our Privacy Policy for full details.
-                        </AccordionContent>
-                    </AccordionItem>
-                </Accordion>
+                <div className="AccordionFAQ w-full">
+                    <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="item-1">
+                            <AccordionTrigger>Is PinnaclePath suitable for elementary school students?</AccordionTrigger>
+                            <AccordionContent>
+                            Yes! PinnaclePath is designed for students from elementary school through high school. For younger students, our AI focuses on exploration, skill-building, and discovering new interests. As students get older, the AI's recommendations become more focused on college preparation, leadership, and building a standout profile.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-2">
+                            <AccordionTrigger>How is this different from a traditional college counselor?</AccordionTrigger>
+                            <AccordionContent>
+                            PinnaclePath acts as a 24/7 AI mentor that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking. Our Elite plan also includes a directory to connect with human mentors, offering the best of both worlds.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-3">
+                            <AccordionTrigger>Can I cancel my subscription at any time?</AccordionTrigger>
+                            <AccordionContent>
+                            Absolutely. You can cancel your subscription at any time through your account settings. You will retain access to your plan's features until the end of your current billing period.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-4">
+                            <AccordionTrigger>Is my personal and academic data secure?</AccordionTrigger>
+                            <AccordionContent>
+                            Data privacy and security are our top priorities. We use industry-standard encryption and security protocols to protect your information. Your data is used solely to power the AI and personalize your experience. We do not sell your data to third parties. Please see our Privacy Policy for full details.
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                </div>
             </div>
         </section>
 
@@ -491,3 +565,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
