@@ -327,12 +327,12 @@ export default function Home() {
                         <p className="text-muted-foreground mt-4">Begin by telling us about yourself. Our comprehensive onboarding process captures your academic strengths, personal passions, extracurricular activities, and future aspirations. This detailed profile is the foundation of your entire personalized experience.</p>
                     </div>
                     <Image
-                        src="https://images.unsplash.com/photo-1517842645767-c6f90415ad90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzdHVkZW50JTIwd3JpdGluZ3xlbnwwfHx8fDE3MjU5MjI5ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                        src="https://images.unsplash.com/photo-1622117515670-fcb02499491f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8c3R1ZGVudCUyMGZpbGxpbmclMjBvdXQlMjBmb3JtfGVufDB8fHx8MTc1NzAyODQxMnww&ixlib=rb-4.1.0&q=80&w=1080"
                         alt="A student filling out a detailed form on a laptop."
                         width={800}
                         height={600}
                         className="rounded-xl shadow-xl ring-1 ring-border/10 object-cover"
-                        data-ai-hint="student writing"
+                        data-ai-hint="student form"
                     />
                 </div>
                  <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -565,5 +565,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
