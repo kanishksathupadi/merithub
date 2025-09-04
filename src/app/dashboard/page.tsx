@@ -80,11 +80,12 @@ function SuggestionView() {
 
     const loadTasksAndBriefing = useCallback(async (email: string | null) => {
         if (!email) return [];
-        const storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
-        let currentTasks = [];
-        if (storedTasks) {
+        
+        const storedTasksStr = localStorage.getItem(`roadmapTasks-${email}`);
+        let currentTasks: RoadmapTask[] = [];
+        if (storedTasksStr) {
             try {
-                currentTasks = JSON.parse(storedTasks);
+                currentTasks = JSON.parse(storedTasksStr);
                 setTasks(currentTasks);
             } catch (error) {
                 console.error("Failed to parse tasks from localStorage", error);
@@ -92,24 +93,51 @@ function SuggestionView() {
         }
         
         if (currentTasks.length > 0) {
+            const cachedBriefingStr = localStorage.getItem(`strategicBriefing-${email}`);
+            if (cachedBriefingStr) {
+                try {
+                    const cachedBriefing = JSON.parse(cachedBriefingStr);
+                    // Basic validation to ensure the cached briefing matches the plan's state
+                    const incompleteCount = currentTasks.filter(t => !t.completed).length;
+                    if (incompleteCount === 0 && cachedBriefing.priorityMission.id === 'completed') {
+                         setBriefing(cachedBriefing);
+                         return currentTasks;
+                    }
+                    if (incompleteCount > 0 && currentTasks.some(t => t.id === cachedBriefing.priorityMission.id && !t.completed)) {
+                        setBriefing(cachedBriefing);
+                        return currentTasks;
+                    }
+                } catch (e) {
+                    console.error("Failed to parse cached briefing", e);
+                }
+            }
+
+            // If no valid cache, generate a new briefing
             try {
                 const briefingResult = await getStrategicBriefing({ plan: currentTasks });
                 setBriefing(briefingResult);
+                localStorage.setItem(`strategicBriefing-${email}`, JSON.stringify(briefingResult));
             } catch (error) {
                 console.error("Failed to get strategic briefing:", error);
+                toast({
+                    variant: "destructive",
+                    title: "Could not generate AI briefing.",
+                    description: "There was an issue contacting the AI. Please try again later."
+                })
                 setBriefing(null);
             }
         }
 
         return currentTasks;
-    }, []);
+    }, [toast]);
+
 
     const saveTasks = useCallback(async (tasksToSave: RoadmapTask[]) => {
          if (!email) return;
          localStorage.setItem(`roadmapTasks-${email}`, JSON.stringify(tasksToSave));
          setTasks(tasksToSave);
-         // Do not dispatch a generic storage event here to avoid re-triggering this whole component.
-         // Let individual components that need to update listen for more specific events if needed.
+         // Invalidate briefing cache on task change
+         localStorage.removeItem(`strategicBriefing-${email}`);
          await loadTasksAndBriefing(email);
     }, [email, loadTasksAndBriefing]);
 
