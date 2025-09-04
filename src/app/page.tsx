@@ -536,24 +536,24 @@ export default function Home() {
                  <div>
                     <h4 className="font-semibold mb-3">Platform</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li><Link href="#features" className="hover:text-primary">Features</Link></li>
-                        <li><Link href="#pricing" className="hover:text-primary">Pricing</Link></li>
+                        <li><Link href="/#features" className="hover:text-primary">Features</Link></li>
+                        <li><Link href="/#pricing" className="hover:text-primary">Pricing</Link></li>
                         <li><Link href="/login" className="hover:text-primary">Login</Link></li>
                     </ul>
                  </div>
                  <div>
                     <h4 className="font-semibold mb-3">Company</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li><Link href="#" className="hover:text-primary">About Us</Link></li>
-                        <li><Link href="#" className="hover:text-primary">Careers</Link></li>
-                        <li><Link href="#" className="hover:text-primary">Contact</Link></li>
+                        <li><Link href="/about" className="hover:text-primary">About Us</Link></li>
+                        <li><Link href="/careers" className="hover:text-primary">Careers</Link></li>
+                        <li><Link href="/contact" className="hover:text-primary">Contact</Link></li>
                     </ul>
                  </div>
                  <div>
                     <h4 className="font-semibold mb-3">Legal</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                         <li><Link href="/terms-of-service" className="hover:text-primary">Terms of Service</Link></li>
-                        <li><Link href="#" className="hover:text-primary">Privacy Policy</Link></li>
+                        <li><Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link></li>
                     </ul>
                  </div>
              </div>

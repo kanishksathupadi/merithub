@@ -1,9 +1,8 @@
 
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, ShieldAlert } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -12,17 +11,29 @@ export default function TermsOfServicePage() {
 
     return (
         <div className="bg-muted min-h-screen">
-            <div className="container mx-auto py-12 px-4 max-w-4xl">
-                 <header className="mb-8 text-center">
-                    <Link href="/" className="inline-flex items-center gap-2 mb-4">
+            <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/80 backdrop-blur-sm">
+                <div className="container mx-auto flex h-16 items-center">
+                    <Link href="/" className="flex items-center gap-2 mr-6">
                         <GraduationCap className="w-8 h-8 text-primary" />
                         <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
                     </Link>
+                    <div className="flex items-center gap-2 ml-auto">
+                        <Button asChild variant="ghost">
+                            <Link href="/login">Member Login</Link>
+                        </Button>
+                        <Button asChild>
+                            <Link href="/signup">Get Started</Link>
+                        </Button>
+                    </div>
+                </div>
+            </header>
+            <div className="container mx-auto py-12 px-4 max-w-4xl bg-background mt-8 rounded-lg border">
+                 <header className="mb-8 text-center border-b pb-8">
                     <h2 className="text-4xl font-bold tracking-tight">Terms of Service</h2>
                     <p className="text-muted-foreground mt-2">Last Updated: 09/03/2025</p>
                 </header>
 
-                <div className="space-y-6 text-foreground/80 text-sm">
+                <div className="prose prose-invert prose-lg mx-auto text-foreground/80 text-sm space-y-6">
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">1. Introduction</h3>
                         <p>Welcome to PinnaclePath. These Terms of Service ("Terms") govern your use of the PinnaclePath website, applications, and services (collectively, the "Services"), provided by PinnaclePath Inc. ("PinnaclePath", "we", "us", or "our"). By accessing or using our Services, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, do not use our Services.</p>
