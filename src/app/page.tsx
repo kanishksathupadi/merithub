@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 
@@ -195,13 +195,13 @@ export default function Home() {
           <div className="container relative mx-auto px-4">
             <div className="max-w-4xl mx-auto">
                <div className="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold mb-4 border border-primary/20 text-primary">
-                Your Personal AI Mentor for Academic Success
+                Your AI Co-Pilot for Academic & Career Victory
               </div>
               <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
                 Smarter Prep, Brighter Future.
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                PinnaclePath uses AI to build a personalized roadmap, find best-fit colleges, provide instant essay feedback, and generate on-demand study help to ensure you stand out.
+                PinnaclePath moves beyond simple planning. We use AI to build your unique strategy, sharpen your skills, and craft a standout profile that gets you noticed.
               </p>
               <div className="mt-8 space-x-4">
                  <PricingModal>
@@ -219,6 +219,33 @@ export default function Home() {
             </div>
             <LiveStats />
           </div>
+        </section>
+        
+        {/* Who Is This For? Section */}
+        <section id="who-is-this-for" className="py-24 bg-muted/50">
+            <div className="container mx-auto px-4">
+                <div className="text-center mb-16">
+                    <h3 className="text-4xl font-bold tracking-tight">Built For Every Stage of the Journey</h3>
+                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Whether you're just starting high school or you're a parent supporting your child, PinnaclePath is your strategic partner.</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-8">
+                    <Card className="p-8 text-center">
+                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback className="text-2xl">9th</AvatarFallback></Avatar>
+                        <h4 className="text-xl font-semibold">The Ambitious 9th Grader</h4>
+                        <p className="text-muted-foreground mt-2">Lay the perfect foundation. We'll help you explore your interests, build foundational skills, and choose extracurriculars that will grow with you, setting you up for long-term success.</p>
+                    </Card>
+                    <Card className="p-8 text-center border-primary ring-2 ring-primary">
+                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback className="text-2xl">11th</AvatarFallback></Avatar>
+                        <h4 className="text-xl font-semibold">The Stressed-Out 11th Grader</h4>
+                        <p className="text-muted-foreground mt-2">Turn stress into strategy. It's crunch time. We'll help you sharpen your "spike," prepare for standardized tests, and start crafting a compelling narrative for your college applications.</p>
+                    </Card>
+                    <Card className="p-8 text-center">
+                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback><Users/></AvatarFallback></Avatar>
+                        <h4 className="text-xl font-semibold">The Supportive Parent</h4>
+                        <p className="text-muted-foreground mt-2">Be their best advocate. Get clarity on your child's progress with our visual trackers and provide them with the best tools to succeed, from essay reviews to on-demand study help.</p>
+                    </Card>
+                </div>
+            </div>
         </section>
 
         {/* Features Section */}
@@ -275,48 +302,55 @@ export default function Home() {
             </div>
         </section>
 
-        {/* The PinnaclePath Difference Section */}
-        <section className="py-24 bg-muted/50">
+        {/* Feature Spotlight Section */}
+        <section id="feature-spotlight" className="py-24 bg-muted/50">
             <div className="container mx-auto px-4">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
-                     <Image
-                        src="https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xsYWJvcmF0aXZlJTIwdGVhbXxlbnwwfHx8fDE3MjQ1NjA0OTB8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                        alt="A diverse group of students collaborating and planning their future."
-                        width={800}
-                        height={600}
-                        className="rounded-xl shadow-xl ring-1 ring-border/10 object-cover"
-                        data-ai-hint="collaborative team"
-                    />
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
-                        <h3 className="text-4xl font-bold tracking-tight">The PinnaclePath Difference</h3>
-                        <p className="text-muted-foreground">We go beyond checklists and deadlines. Our philosophy is built on the belief that a successful academic journey is about building a unique and compelling story, not just being well-rounded.</p>
+                        <Badge variant="outline" className="border-primary/50 text-primary">Feature Spotlight</Badge>
+                        <h3 className="text-4xl font-bold tracking-tight">Go Beyond Checklists with an AI-Powered Strategic Roadmap</h3>
+                        <p className="text-muted-foreground text-lg">A simple to-do list isn't enough. Your PinnaclePath Roadmap is a living, intelligent plan that adapts to your growth and helps you build a compelling, unique narrative for college admissions.</p>
                         <ul className="space-y-4">
-                            <li className="flex gap-4">
-                                <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary font-bold"><Target /></div>
+                            <li className="flex gap-3">
+                                <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0"/>
                                 <div>
-                                    <h4 className="text-lg font-semibold">Develop Your "Spike"</h4>
-                                    <p className="text-muted-foreground mt-1 text-sm">Top colleges don't look for well-rounded students; they look for specialists who will contribute a unique talent to their campus. Our AI helps you identify and cultivate a "spike"—a deep, impressive talent that makes you stand out.</p>
+                                    <h4 className="font-semibold">Narrative-Driven Tasks</h4>
+                                    <p className="text-muted-foreground text-sm">Every task is designed to build upon your "spike," turning your interests into a powerful story of leadership and impact.</p>
                                 </div>
                             </li>
-                            <li className="flex gap-4">
-                                <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary font-bold"><BrainCircuit /></div>
+                             <li className="flex gap-3">
+                                <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0"/>
                                 <div>
-                                    <h4 className="text-lg font-semibold">AI as Your Personal Mentor</h4>
-                                    <p className="text-muted-foreground mt-1 text-sm">Our platform isn't just a task manager. It's a strategic partner that analyzes your profile, suggests expansive new opportunities, and provides proactive guidance, acting as your personal mentor 24/7.</p>
+                                    <h4 className="font-semibold">AI-Sourced Resources</h4>
+                                    <p className="text-muted-foreground text-sm">Each academic and skill-building task comes with a validated, high-quality online resource, found by AI to help you learn effectively.</p>
+                                </div>
+                            </li>
+                             <li className="flex gap-3">
+                                <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0"/>
+                                <div>
+                                    <h4 className="font-semibold">Adapts With You</h4>
+                                    <p className="text-muted-foreground text-sm">Tell the AI about new interests or challenges in a weekly check-in, and it will intelligently modify your plan, adding new tasks and refining your strategy.</p>
                                 </div>
                             </li>
                         </ul>
                     </div>
+                     <Image
+                        src="https://images.unsplash.com/photo-1542744095-291d1f67b221?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdHVkZW50JTIwcGxhbm5pbmclMjBvbiUyMGNvbXB1dGVyfGVufDB8fHx8MTc0NTM5MjM5OHww&ixlib=rb-4.1.0&q=80&w=1080"
+                        alt="A screenshot of the PinnaclePath dashboard showing the personalized roadmap."
+                        width={800}
+                        height={600}
+                        className="rounded-xl shadow-2xl ring-1 ring-border/10 object-cover"
+                        data-ai-hint="student planning computer"
+                    />
                 </div>
             </div>
         </section>
-
 
         {/* How It Works Section */}
         <section id="how-it-works" className="py-24 bg-background">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <h3 className="text-4xl font-bold tracking-tight">Your Path to Excellence</h3>
+              <h3 className="text-4xl font-bold tracking-tight">Your Path to Excellence in 3 Steps</h3>
                <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our streamlined process makes it simple to get started on your journey to success.</p>
             </div>
             <div className="space-y-24">
