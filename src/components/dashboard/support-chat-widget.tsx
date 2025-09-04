@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -28,18 +28,21 @@ export function SupportChatWidget() {
 
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-    // This effect handles loading the current user's chat state from localStorage
-    const loadChatState = () => {
-         if (!userData) return;
-        const allRequests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
-        const myRequest = allRequests.find((r: any) => r.userId === userData.studentProfile.userId);
-        if (myRequest) {
-            setMessages(myRequest.chatHistory);
+    const loadChatState = useCallback(() => {
+        if (!userData) return;
+        try {
+            const allRequests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
+            const myRequest = allRequests.find((r: any) => r.userId === userData.studentProfile.userId);
+            if (myRequest) {
+                setMessages(myRequest.chatHistory);
+            }
+        } catch (error) {
+            console.error("Failed to load chat state from storage:", error);
         }
-    };
-    
+    }, [userData]);
+
+
     useEffect(() => {
-        // Run once on open to load user data and fetch initial greeting
         if (isOpen && !userData) {
             try {
                 const signupDataStr = localStorage.getItem('signupData');
@@ -62,30 +65,6 @@ export function SupportChatWidget() {
                         roadmap: roadmapTasks,
                     };
                     setUserData(loadedUserData as any);
-
-                    // Check if there's an existing support request for this user
-                    const allRequests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
-                    const myRequest = allRequests.find((r: any) => r.userId === signupData.userId);
-
-                    if (myRequest) {
-                        setMessages(myRequest.chatHistory);
-                    } else if (messages.length === 0) {
-                        // No existing chat, get initial greeting
-                        setIsLoading(true);
-                        supportChat({
-                            ...loadedUserData,
-                            studentProfile: loadedUserData.studentProfile as any,
-                            chatHistory: [],
-                        })
-                        .then(result => {
-                            setMessages([{ role: 'model', content: result.response }]);
-                        })
-                        .catch(err => {
-                            toast({ variant: 'destructive', title: "Error", description: "Couldn't connect to the AI assistant."});
-                            console.error(err);
-                        })
-                        .finally(() => setIsLoading(false));
-                    }
                 } else {
                      toast({
                         variant: "destructive",
@@ -98,19 +77,43 @@ export function SupportChatWidget() {
                 toast({ variant: "destructive", title: "Could not load profile" });
             }
         }
-    }, [isOpen, userData, messages.length, toast]);
+    }, [isOpen, userData, toast]);
+    
+    useEffect(() => {
+        if (userData && messages.length === 0) {
+            const allRequests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
+            const myRequest = allRequests.find((r: any) => r.userId === userData.studentProfile.userId);
+
+            if (myRequest) {
+                setMessages(myRequest.chatHistory);
+            } else {
+                setIsLoading(true);
+                supportChat({
+                    ...userData,
+                    studentProfile: userData.studentProfile as any,
+                    chatHistory: [],
+                })
+                .then(result => {
+                    setMessages([{ role: 'model', content: result.response }]);
+                })
+                .catch(err => {
+                    toast({ variant: 'destructive', title: "Error", description: "Couldn't connect to the AI assistant."});
+                    console.error(err);
+                })
+                .finally(() => setIsLoading(false));
+            }
+        }
+    }, [userData, messages.length, toast]);
 
     useEffect(() => {
-        // Auto-scroll to bottom whenever messages change
         if (scrollAreaRef.current) {
             scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
         }
         
-        // Listen for storage changes to update chat in real-time
         window.addEventListener('storage', loadChatState);
         return () => window.removeEventListener('storage', loadChatState);
 
-    }, [messages, userData]); // Rerun if userData is loaded
+    }, [messages, loadChatState]);
 
     const handleHumanRequest = () => {
         if (!userData) return;
@@ -132,7 +135,6 @@ export function SupportChatWidget() {
                 chatHistory: [...messages, { role: 'user', content: '--- User requested human support ---' }]
             };
             
-            // Remove old request if it exists, then add new one
             const otherRequests = requests.filter((r: any) => r.userId !== userData.studentProfile.userId);
             const updatedRequests = [...otherRequests, newRequest];
 
@@ -142,7 +144,7 @@ export function SupportChatWidget() {
                 role: 'model',
                 content: "I've notified our human support team. They will review our conversation and get back to you here in this chat window. You can close this chat for now."
             };
-            setMessages(newRequest.chatHistory); // Update local messages state
+            setMessages(newRequest.chatHistory); 
             
             toast({ title: "Request Sent!", description: "A human mentor will respond in this chat window soon." });
 
@@ -158,8 +160,8 @@ export function SupportChatWidget() {
         if (!input.trim() || isLoading || !userData) return;
 
         const newUserMessage: ChatMessage = { role: 'user', content: input };
-        const newMessages = [...messages, newUserMessage];
-        setMessages(newMessages);
+        const currentMessages = [...messages, newUserMessage];
+        setMessages(currentMessages);
         setInput('');
         setIsLoading(true);
 
@@ -167,18 +169,12 @@ export function SupportChatWidget() {
             const result = await supportChat({
                 ...userData,
                 studentProfile: userData.studentProfile as any,
-                chatHistory: newMessages,
+                chatHistory: currentMessages,
             });
             
             const newAIMessage: ChatMessage = { role: 'model', content: result.response };
-            const finalMessages = [...newMessages, newAIMessage];
-            setMessages(finalMessages);
-
-            // If a human request is active, update its history too
-            const requests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
-            const updatedRequests = requests.map((r: any) => r.userId === userData.studentProfile.userId ? {...r, chatHistory: finalMessages} : r);
-            localStorage.setItem('humanChatRequests', JSON.stringify(updatedRequests));
-
+            
+            let finalMessages = [...currentMessages, newAIMessage];
 
             if (result.escalationRequired) {
                 toast({
@@ -190,12 +186,19 @@ export function SupportChatWidget() {
                     role: 'model',
                     content: "It seems like this is a situation where a human mentor could provide the best guidance. I've flagged this conversation for our team. Feel free to use the 'Talk to a Human' button above to send a direct request."
                 };
-                setMessages(prev => [...prev, escalationMessage]);
+                finalMessages = [...finalMessages, escalationMessage];
             }
+
+            setMessages(finalMessages);
+
+            const requests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
+            const updatedRequests = requests.map((r: any) => r.userId === userData.studentProfile.userId ? {...r, chatHistory: finalMessages} : r);
+            localStorage.setItem('humanChatRequests', JSON.stringify(updatedRequests));
+
         } catch (error) {
             console.error("Chat API error:", error);
             const errorMessage: ChatMessage = { role: 'model', content: 'Sorry, I ran into an error. Please try again.' };
-            setMessages([...newMessages, errorMessage]);
+            setMessages(prev => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
         }

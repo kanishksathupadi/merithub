@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Suspense, useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback, useMemo } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { updateStudentPlan } from "@/ai/flows/update-student-plan";
 import { getStrategicBriefing, type StrategicBriefingOutput } from "@/ai/flows/get-strategic-briefing";
@@ -67,18 +67,18 @@ function SuggestionView() {
     const [showCheckIn, setShowCheckIn] = useState(false);
     const { toast } = useToast();
 
-    const getEmail = () => {
-         const signupDataStr = localStorage.getItem('signupData');
-         if (!signupDataStr) return null;
-         try {
-             return JSON.parse(signupDataStr).email;
-         } catch {
-             return null;
-         }
-    }
+    const email = useMemo(() => {
+        if (typeof window === 'undefined') return null;
+        const signupDataStr = localStorage.getItem('signupData');
+        if (!signupDataStr) return null;
+        try {
+            return JSON.parse(signupDataStr).email;
+        } catch {
+            return null;
+        }
+    }, []);
 
-    const loadTasksAndBriefing = useCallback(async () => {
-        const email = getEmail();
+    const loadTasksAndBriefing = useCallback(async (email: string | null) => {
         if (!email) return [];
         const storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
         let currentTasks = [];
@@ -104,26 +104,25 @@ function SuggestionView() {
         return currentTasks;
     }, []);
 
-    const saveTasks = async (tasksToSave: RoadmapTask[]) => {
-         const email = getEmail();
+    const saveTasks = useCallback(async (tasksToSave: RoadmapTask[]) => {
          if (!email) return;
          localStorage.setItem(`roadmapTasks-${email}`, JSON.stringify(tasksToSave));
          setTasks(tasksToSave);
-         window.dispatchEvent(new Event('storage'));
-         await loadTasksAndBriefing();
-    }
+         // Do not dispatch a generic storage event here to avoid re-triggering this whole component.
+         // Let individual components that need to update listen for more specific events if needed.
+         await loadTasksAndBriefing(email);
+    }, [email, loadTasksAndBriefing]);
 
     useEffect(() => {
         const getSuggestionAndTasks = async () => {
             setLoading(true);
-            const email = getEmail();
             if (!email) {
                 setLoading(false);
                 return;
             };
 
             const cachedSuggestion = localStorage.getItem(`aiSuggestion-${email}`);
-            const currentTasks = await loadTasksAndBriefing();
+            const currentTasks = await loadTasksAndBriefing(email);
             
             if (cachedSuggestion && currentTasks.length > 0) {
                  setLoading(false);
@@ -162,11 +161,7 @@ function SuggestionView() {
         };
 
         getSuggestionAndTasks();
-        
-        const handleStorageChange = () => { loadTasksAndBriefing(); };
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, [loadTasksAndBriefing]);
+    }, [email, loadTasksAndBriefing, saveTasks]);
 
     const handleTaskToggle = (taskId: string) => {
         const newTasks = tasks.map(task => 
@@ -177,7 +172,6 @@ function SuggestionView() {
 
     const handleCheckIn = async (checkInText: string) => {
         setLoading(true);
-        const email = getEmail();
         if (!email) {
              toast({ variant: "destructive", title: "Error", description: "Could not find user profile." });
              setLoading(false);
