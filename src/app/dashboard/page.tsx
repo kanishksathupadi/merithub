@@ -233,16 +233,16 @@ function SuggestionView() {
 
     if (loading) {
         return (
-            <div className="grid lg:grid-cols-2 gap-6">
-                <Skeleton className="h-64 w-full" />
-                <Skeleton className="h-64 w-full" />
+            <div className="grid lg:grid-cols-2 gap-8">
+                <Skeleton className="h-72 w-full" />
+                <Skeleton className="h-72 w-full" />
             </div>
         )
     }
     
     return (
         <div className={cn(
-            "grid gap-6 items-start",
+            "grid gap-8 items-start",
             showCheckIn ? "lg:grid-cols-2" : "lg:grid-cols-1"
         )}>
              {briefing ? (
@@ -319,7 +319,7 @@ export default function DashboardPage() {
     const dashboardTiles = userPlan === 'elite' ? eliteTiles : standardTiles;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <DashboardHeader />
 
       <Dialog open={showWelcome} onOpenChange={setShowWelcome}>
@@ -346,39 +346,39 @@ export default function DashboardPage() {
         </DialogContent>
       </Dialog>
       
-        <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">Your AI Strategic Briefing</h2>
-            <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+        <section>
+            <h2 className="text-2xl font-semibold tracking-tight">Your AI Strategic Briefing</h2>
+            <p className="text-muted-foreground mb-4">Your AI-powered guide to what matters most right now.</p>
+            <Suspense fallback={<Skeleton className="h-72 w-full" />}>
                 <SuggestionView />
             </Suspense>
-        </div>
+        </section>
 
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Your Toolkit</h2>
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h2 className="text-2xl font-semibold tracking-tight">Your Toolkit</h2>
+        <p className="text-muted-foreground mb-4">Explore all the features available to you.</p>
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {dashboardTiles.map((tile) => (
                 <Link 
                     href={tile.href} 
                     key={tile.title} 
                     onClick={() => trackFeatureUsage(tile.feature)}
-                    className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg"
+                    className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg group"
                 >
                     <Card className={cn(
-                        "hover:border-primary/50 hover:bg-primary/5 transition-colors h-full",
+                        "hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 h-full flex flex-col",
                          tile.isElite && "border-yellow-400/30 bg-yellow-400/5 hover:border-yellow-400/50 hover:bg-yellow-400/10"
                     )}>
-                        <CardHeader className="flex flex-row items-center gap-4">
+                        <CardHeader className="flex-row items-center gap-4 pb-2">
                              <div className={cn(
-                                "p-3 rounded-lg",
+                                "p-3 rounded-lg group-hover:scale-110 transition-transform",
                                 tile.isElite ? "bg-yellow-400/10 text-yellow-300" : "bg-primary/10 text-primary"
                             )}>
                                 <tile.icon className="w-6 h-6" />
                             </div>
-                            <div>
-                                <CardTitle className="text-lg">{tile.title}</CardTitle>
-                            </div>
+                            <CardTitle className="text-lg">{tile.title}</CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="pt-0 flex-1">
                              <CardDescription>{tile.description}</CardDescription>
                         </CardContent>
                     </Card>
@@ -389,3 +389,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
