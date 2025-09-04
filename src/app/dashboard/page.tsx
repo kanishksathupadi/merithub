@@ -8,7 +8,7 @@ import { getStrategicBriefing, type StrategicBriefingOutput } from "@/ai/flows/g
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { CheckInCard } from "@/components/dashboard/check-in-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Trophy, Award } from "lucide-react";
+import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Trophy, Award, CheckCircle, X, Info } from "lucide-react";
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,8 +18,8 @@ import { cn } from "@/lib/utils";
 import { trackFeatureUsage } from "@/lib/tracking";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
@@ -233,18 +233,15 @@ function SuggestionView() {
 
     if (loading) {
         return (
-            <div className="grid lg:grid-cols-2 gap-8">
+             <div className="space-y-6">
                 <Skeleton className="h-72 w-full" />
-                <Skeleton className="h-72 w-full" />
+                <Skeleton className="h-48 w-full" />
             </div>
         )
     }
     
     return (
-        <div className={cn(
-            "grid gap-8 items-start",
-            showCheckIn ? "lg:grid-cols-2" : "lg:grid-cols-1"
-        )}>
+        <div className="space-y-6">
              {briefing ? (
                 <NextStepCard briefing={briefing} tasks={tasks} onTaskToggle={handleTaskToggle} />
              ) : (
@@ -256,19 +253,102 @@ function SuggestionView() {
 }
 
 const standardTiles = [
-    { title: "My Roadmap", description: "View your personalized tasks.", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap" },
-    { title: "Progress Tracker", description: "Visualize your achievements.", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker" },
-    { title: "AI Study Buddy", description: "Generate guides and quizzes.", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy" },
-    { title: "College Finder", description: "Discover colleges that fit you.", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder" },
+    { title: "My Roadmap", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap" },
+    { title: "Progress Tracker", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker" },
+    { title: "AI Study Buddy", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy" },
+    { title: "College Finder", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder" },
 ];
 
 const eliteTiles = [
     ...standardTiles,
-    { title: "Scholarship Finder", description: "Get AI-powered scholarship matches.", icon: Award, href: "/dashboard/scholarship-finder", isElite: true, feature: "scholarshipFinder" },
-    { title: "AI Essay Review", description: "Get feedback on your essays.", icon: PenSquare, href: "/dashboard/essay-review", isElite: true, feature: "essayReview" },
-    { title: "Mentor Match", description: "Connect with experienced mentors.", icon: MessageSquare, href: "/dashboard/mentor-match", isElite: true, feature: "mentorMatch" },
-    { title: "Q&A Forum", description: "Ask questions and get answers.", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum" },
+    { title: "Scholarship Finder", icon: Award, href: "/dashboard/scholarship-finder", isElite: true, feature: "scholarshipFinder" },
+    { title: "AI Essay Review", icon: PenSquare, href: "/dashboard/essay-review", isElite: true, feature: "essayReview" },
+    { title: "Mentor Match", icon: MessageSquare, href: "/dashboard/mentor-match", isElite: true, feature: "mentorMatch" },
+    { title: "Q&A Forum", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum" },
 ]
+
+const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
+    return (
+         <Alert className="relative bg-primary/5 border-primary/20">
+            <Info className="h-4 w-4 text-primary" />
+            <AlertTitle className="text-primary font-semibold">Welcome to Your Dashboard!</AlertTitle>
+            <AlertDescription className="text-primary/80">
+                This is your command center. Start with your **AI Strategic Briefing** to see your most important next step, or explore your full plan in **My Roadmap**.
+            </AlertDescription>
+            <button onClick={onDismiss} className="absolute top-2 right-2 p-1">
+                <X className="h-4 w-4 text-primary/60 hover:text-primary"/>
+            </button>
+        </Alert>
+    )
+}
+
+const KeyStats = () => {
+    const [stats, setStats] = useState({ completed: 0, points: 0 });
+
+    useEffect(() => {
+        const email = localStorage.getItem('signupData') ? JSON.parse(localStorage.getItem('signupData')!).email : null;
+        if (email) {
+            const tasksStr = localStorage.getItem(`roadmapTasks-${email}`);
+            if (tasksStr) {
+                const tasks: RoadmapTask[] = JSON.parse(tasksStr);
+                const completedTasks = tasks.filter(t => t.completed);
+                const totalPoints = completedTasks.reduce((sum, task) => sum + (task.points || 0), 0);
+                setStats({ completed: completedTasks.length, points: totalPoints });
+            }
+        }
+    }, []);
+    
+    return (
+         <Card>
+            <CardHeader>
+                <CardTitle className="text-lg">Your Progress</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <p className="text-3xl font-bold text-primary">{stats.completed}</p>
+                    <p className="text-xs text-muted-foreground">Tasks Done</p>
+                </div>
+                 <div>
+                    <p className="text-3xl font-bold text-primary">{stats.points.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">Points Earned</p>
+                </div>
+            </CardContent>
+        </Card>
+    );
+};
+
+const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
+    const tiles = plan === 'elite' ? eliteTiles : standardTiles;
+    
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-lg">Your Toolkit</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+                {tiles.map(tile => (
+                    <Link 
+                        href={tile.href} 
+                        key={tile.title}
+                        onClick={() => trackFeatureUsage(tile.feature)}
+                        className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors group"
+                    >
+                         <div className={cn(
+                            "p-2 rounded-md transition-colors",
+                            tile.isElite ? "bg-yellow-400/10 text-yellow-300 group-hover:bg-yellow-400/20" : "bg-primary/10 text-primary group-hover:bg-primary/20"
+                        )}>
+                            <tile.icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                             <p className="font-semibold text-sm">{tile.title}</p>
+                             {tile.isElite && <p className="text-xs text-yellow-400/80">Elite</p>}
+                        </div>
+                    </Link>
+                ))}
+            </CardContent>
+        </Card>
+    );
+};
 
 
 export default function DashboardPage() {
@@ -302,11 +382,15 @@ export default function DashboardPage() {
         const hasBeenWelcomed = localStorage.getItem('hasBeenWelcomed');
         if (!hasBeenWelcomed) {
             setShowWelcome(true);
-            localStorage.setItem('hasBeenWelcomed', 'true');
         }
 
         setLoading(false);
     }, [router]);
+    
+    const handleDismissWelcome = () => {
+        setShowWelcome(false);
+        localStorage.setItem('hasBeenWelcomed', 'true');
+    }
 
     if (loading || isAdmin) {
         return (
@@ -316,78 +400,24 @@ export default function DashboardPage() {
         );
     }
 
-    const dashboardTiles = userPlan === 'elite' ? eliteTiles : standardTiles;
-
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       <DashboardHeader />
-
-      <Dialog open={showWelcome} onOpenChange={setShowWelcome}>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle className="text-2xl">Welcome to Your Dashboard!</DialogTitle>
-                <DialogDescription className="pt-2">
-                    This is your command center for success. Here are two key places to start:
-                </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-                <div className="p-4 rounded-lg border bg-muted">
-                    <h3 className="font-semibold text-foreground">1. Your AI Strategic Briefing</h3>
-                    <p className="text-sm text-muted-foreground">This card shows your most important mission and the 'why' behind it. It's the best way to make strategic progress.</p>
-                </div>
-                 <div className="p-4 rounded-lg border bg-muted">
-                    <h3 className="font-semibold text-foreground">2. My Roadmap</h3>
-                    <p className="text-sm text-muted-foreground">Go here to see the full, long-term strategy the AI has built for you. You can see all your tasks and milestones.</p>
-                </div>
-            </div>
-            <DialogFooter>
-                <Button onClick={() => setShowWelcome(false)}>Got It!</Button>
-            </DialogFooter>
-        </DialogContent>
-      </Dialog>
       
-        <section>
-            <h2 className="text-2xl font-semibold tracking-tight">Your AI Strategic Briefing</h2>
-            <p className="text-muted-foreground mb-4">Your AI-powered guide to what matters most right now.</p>
-            <Suspense fallback={<Skeleton className="h-72 w-full" />}>
-                <SuggestionView />
-            </Suspense>
-        </section>
+      {showWelcome && <WelcomeAlert onDismiss={handleDismissWelcome} />}
 
-      <section>
-        <h2 className="text-2xl font-semibold tracking-tight">Your Toolkit</h2>
-        <p className="text-muted-foreground mb-4">Explore all the features available to you.</p>
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {dashboardTiles.map((tile) => (
-                <Link 
-                    href={tile.href} 
-                    key={tile.title} 
-                    onClick={() => trackFeatureUsage(tile.feature)}
-                    className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg group"
-                >
-                    <Card className={cn(
-                        "hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 h-full flex flex-col",
-                         tile.isElite && "border-yellow-400/30 bg-yellow-400/5 hover:border-yellow-400/50 hover:bg-yellow-400/10"
-                    )}>
-                        <CardHeader className="flex-row items-center gap-4 pb-2">
-                             <div className={cn(
-                                "p-3 rounded-lg group-hover:scale-110 transition-transform",
-                                tile.isElite ? "bg-yellow-400/10 text-yellow-300" : "bg-primary/10 text-primary"
-                            )}>
-                                <tile.icon className="w-6 h-6" />
-                            </div>
-                            <CardTitle className="text-lg">{tile.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="pt-0 flex-1">
-                             <CardDescription>{tile.description}</CardDescription>
-                        </CardContent>
-                    </Card>
-                </Link>
-            ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+             <div className="lg:col-span-2 space-y-6">
+                <Suspense fallback={<Skeleton className="h-96 w-full" />}>
+                    <SuggestionView />
+                </Suspense>
+             </div>
+             <div className="lg:col-span-1 space-y-6">
+                 <KeyStats />
+                 <QuickLinks plan={userPlan} />
+             </div>
         </div>
-      </section>
+
     </div>
   );
 }
-
-    
