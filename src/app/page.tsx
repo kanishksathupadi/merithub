@@ -492,7 +492,7 @@ export default function Home() {
                 <div className="AccordionFAQ w-full">
                     <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="item-1">
-                            <AccordionTrigger>Is PinnaclePath suitable for elementary school students?</AccordionTrigger>
+                            <AccordionTrigger>Is PinnaclePath suitable for my child's age?</AccordionTrigger>
                             <AccordionContent>
                             Yes! PinnaclePath is designed for students from elementary school through high school. For younger students, our AI focuses on exploration, skill-building, and discovering new interests. As students get older, the AI's recommendations become more focused on college preparation, leadership, and building a standout profile.
                             </AccordionContent>
