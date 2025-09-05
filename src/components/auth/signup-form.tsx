@@ -70,7 +70,8 @@ export function SignupForm({ plan }: SignupFormProps) {
       name: "",
       email: "",
       password: "",
-      grade: "" as any, // Fix: Use empty string instead of undefined
+      birthdate: "",
+      grade: "" as any, // Initialize with empty string to avoid uncontrolled component error.
       school: "",
       acceptTerms: false,
     },
