@@ -361,22 +361,22 @@ export default function Home() {
                         <p className="text-muted-foreground mt-4">Begin by telling us about yourself. Our comprehensive onboarding process captures your academic strengths, personal passions, extracurricular activities, and future aspirations. This detailed profile is the foundation of your entire personalized experience.</p>
                     </div>
                     <Image
-                        src="https://images.unsplash.com/photo-1622117515670-fcb02499491f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8c3R1ZGVudCUyMGZpbGxpbmclMjBvdXQlMjBmb3JtfGVufDB8fHx8MTc1NzAyODQxMnww&ixlib=rb-4.1.0&q=80&w=1080"
+                        src="https://images.unsplash.com/photo-1501250987900-211872d97eaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBjb21wbGV0aW5nJTIwb25saW5lJTIwZ29vZ2xlJTIwZm9ybXxlbnwwfHx8fDE3NTcwNDkwMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080"
                         alt="A student filling out a detailed form on a laptop."
                         width={800}
                         height={600}
                         className="rounded-xl shadow-xl ring-1 ring-border/10 object-cover"
-                        data-ai-hint="student form"
+                        data-ai-hint="person form"
                     />
                 </div>
                  <div className="grid md:grid-cols-2 gap-12 items-center">
                      <Image
-                        src="https://images.unsplash.com/photo-1516542076529-1ea3854896f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdHVkZW50JTIwdXNpbmclMjBjb21wdXRlcnxlbnwwfHx8fDE3MjM4MjQxMDJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                        src="https://images.unsplash.com/photo-1727434032792-c7ef921ae086?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxN3x8QUl8ZW58MHx8fHwxNzU3MDQ5MDU3fDA&ixlib=rb-4.1.0&q=80&w=1080"
                         alt="AI dashboard showing a strategic plan."
                         width={800}
                         height={600}
                         className="rounded-xl shadow-xl ring-1 ring-border/10 object-cover md:order-2"
-                        data-ai-hint="student computer"
+                        data-ai-hint="AI"
                     />
                     <div className="md:order-1">
                         <Badge variant="outline" className="mb-4">Step 2</Badge>
@@ -599,5 +599,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
