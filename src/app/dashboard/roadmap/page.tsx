@@ -6,8 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle } from "lucide-react";
+import { Calendar as CalendarIcon, PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,11 +14,21 @@ import * as z from "zod";
 import type { RoadmapTask } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+
+
+const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
 const taskSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
-  category: z.enum(['Academics', 'Extracurriculars', 'Skill Building']),
+  category: z.string().min(3, "Category must be at least 3 characters."),
+  dueDate: z.date().optional(),
+  recurringDays: z.array(z.string()).optional(),
 });
 
 const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
@@ -60,7 +69,8 @@ export default function RoadmapPage() {
     defaultValues: {
       title: "",
       description: "",
-      category: "Academics",
+      category: "",
+      recurringDays: [],
     },
   });
 
@@ -81,10 +91,12 @@ export default function RoadmapPage() {
       id: uuidv4(),
       title: values.title,
       description: values.description,
-      category: values.category as any,
+      category: values.category as any, // Cast to any to allow custom strings
       grade: "Custom",
       completed: false,
       relatedResources: [],
+      dueDate: values.dueDate?.toISOString(),
+      recurringDays: values.recurringDays,
     };
     
     const storedTasksStr = localStorage.getItem(`roadmapTasks-${userEmail}`);
@@ -155,28 +167,110 @@ export default function RoadmapPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
+                 <FormField
                   control={form.control}
                   name="category"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Academics">Academics</SelectItem>
-                          <SelectItem value="Extracurriculars">Extracurriculars</SelectItem>
-                          <SelectItem value="Skill Building">Skill Building</SelectItem>
-                        </SelectContent>
-                      </Select>
+                       <FormControl>
+                        <Input placeholder="e.g., Academics, Volunteering, Health" {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="dueDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Due Date (Optional)</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date < new Date(new Date().setHours(0,0,0,0)) // disable past dates
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="recurringDays"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Recurring Days (Optional)</FormLabel>
+                      </div>
+                      <div className="flex flex-wrap gap-4">
+                      {daysOfWeek.map((day) => (
+                        <FormField
+                          key={day}
+                          control={form.control}
+                          name="recurringDays"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={day}
+                                className="flex flex-row items-start space-x-2 space-y-0"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(day)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...(field.value || []), day])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) => value !== day
+                                            )
+                                          )
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal capitalize">
+                                  {day}
+                                </FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button type="button" variant="secondary">Cancel</Button>

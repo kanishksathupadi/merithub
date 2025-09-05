@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Link as LinkIcon, Star, BrainCircuit, Trophy } from "lucide-react";
+import { Calendar, Link as LinkIcon, Star, BrainCircuit, Trophy, Repeat } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { addNotification } from "@/lib/tracking";
@@ -50,12 +50,15 @@ function TaskCard({ task, onToggle }: { task: RoadmapTask, onToggle: (id: string
             <div className="flex-1 space-y-1">
                 <p className={`font-semibold ${task.completed ? 'line-through' : ''}`}>{task.title}</p>
                 <p className="text-sm text-muted-foreground">{task.description}</p>
-                 <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
+                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground pt-2">
                     {task.points && (
                         <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400"/> {task.points} pts</span>
                     )}
                     {task.dueDate && (
-                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3"/> Due {format(parseISO(task.dueDate), "MMM d")}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3"/> Due {format(parseISO(task.dueDate), "MMM d, yyyy")}</span>
+                    )}
+                     {task.recurringDays && task.recurringDays.length > 0 && (
+                        <span className="flex items-center gap-1"><Repeat className="w-3 h-3"/> {task.recurringDays.map(d => d.slice(0,1).toUpperCase() + d.slice(1,3)).join(', ')}</span>
                     )}
                 </div>
                  {task.relatedResources && task.relatedResources.length > 0 && (
@@ -71,6 +74,9 @@ function TaskCard({ task, onToggle }: { task: RoadmapTask, onToggle: (id: string
                      </div>
                 )}
             </div>
+            {!task.completed && (
+                <Badge variant="outline" className="h-fit">{task.category}</Badge>
+            )}
         </div>
     )
 }
@@ -95,7 +101,7 @@ export function RoadmapView() {
             parsedTasks = parsedTasks.map((task, index) => ({
                 ...task,
                 points: task.points || Math.floor(Math.random() * 20) + 10,
-                dueDate: task.dueDate || new Date(Date.now() + index * 3 * 24 * 60 * 60 * 1000).toISOString(),
+                dueDate: task.dueDate, // Keep dueDate as is or undefined
             }));
             setTasks(parsedTasks);
             }
@@ -114,7 +120,10 @@ export function RoadmapView() {
     return tasks.reduce((acc, task) => {
         const grade = task.grade || "Uncategorized";
         if (!acc[grade]) {
-            acc[grade] = { 'Academics': [], 'Extracurriculars': [], 'Skill Building': [] };
+            acc[grade] = {};
+        }
+        if (!acc[grade][task.category]) {
+            acc[grade][task.category] = [];
         }
         acc[grade][task.category].push(task);
         return acc;
@@ -125,8 +134,10 @@ export function RoadmapView() {
     const numericGrades = Object.keys(groupedTasks)
         .filter(g => g.match(/^\d/))
         .sort((a,b) => parseInt(a) - parseInt(b));
-    const customGrades = Object.keys(groupedTasks).filter(g => !g.match(/^\d/));
-    return [...numericGrades, ...customGrades];
+    const customGrades = Object.keys(groupedTasks).filter(g => g.toLowerCase() === "custom");
+    const otherGrades = Object.keys(groupedTasks).filter(g => !g.match(/^\d/) && g.toLowerCase() !== "custom");
+
+    return [...numericGrades, ...otherGrades, ...customGrades];
   }, [groupedTasks]);
 
 
@@ -186,7 +197,7 @@ export function RoadmapView() {
                         </AccordionTrigger>
                         <AccordionContent className="px-6 pb-6">
                             <div className="space-y-6">
-                                {categories.map(category => {
+                                {Object.keys(groupedTasks[grade]).map(category => {
                                     const categoryTasks = groupedTasks[grade][category];
                                     if (categoryTasks.length === 0) return null;
                                     return (

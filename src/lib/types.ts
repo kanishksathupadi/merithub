@@ -16,12 +16,13 @@ export type RoadmapTask = {
     id: string;
     title: string;
     description: string;
-    category: 'Academics' | 'Extracurriculars' | 'Skill Building';
+    category: 'Academics' | 'Extracurriculars' | 'Skill Building' | string; // Allow custom strings
     grade: string;
     completed: boolean;
     relatedResources?: { title: string; url: string }[];
     points?: number;
     dueDate?: string;
+    recurringDays?: string[];
 };
 
 export type ForumReply = {
