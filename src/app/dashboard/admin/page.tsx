@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Users, LineChart, Star, Crown, Settings, LogOut, MessageSquareWarning } from "lucide-react";
+import { Users, LineChart, Star, Crown, Settings, LogOut, MessageSquareWarning, Mail, Briefcase } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -125,6 +125,8 @@ export default function AdminPage() {
         eliteUsers: 0,
     });
     const [supportRequests, setSupportRequests] = useState(0);
+    const [contactMessages, setContactMessages] = useState(0);
+    const [jobApplications, setJobApplications] = useState(0);
     const [featureEngagementData, setFeatureEngagementData] = useState([]);
     const [recentSignups, setRecentSignups] = useState([]);
     const router = useRouter();
@@ -144,6 +146,14 @@ export default function AdminPage() {
         // --- Support Requests ---
         const requests = getFromLocalStorage('humanChatRequests', []);
         setSupportRequests(requests.filter((r: any) => r.status === 'pending').length);
+        
+        // --- Contact Messages ---
+        const messages = getFromLocalStorage('contactMessages', []);
+        setContactMessages(messages.filter((m: any) => m.status === 'New').length);
+
+        // --- Job Applications ---
+        const applications = getFromLocalStorage('jobApplications', []);
+        setJobApplications(applications.filter((a: any) => a.status === 'New').length);
 
         // --- Recent Signups ---
         const signupsWithAvatars = [...allUsers].reverse().slice(0, 4).map((user: any) => ({
@@ -172,7 +182,7 @@ export default function AdminPage() {
     <div className="space-y-8">
       <AdminHeader />
       
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -200,13 +210,22 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{supportRequests}</div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users?plan=elite')}>
+         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/contact-messages')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Elite Plans</CardTitle>
-            <Crown className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Contact Messages</CardTitle>
+            <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{userStats.eliteUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{contactMessages}</div>
+          </CardContent>
+        </Card>
+         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/applications')}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Job Applications</CardTitle>
+            <Briefcase className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{jobApplications}</div>
           </CardContent>
         </Card>
       </section>

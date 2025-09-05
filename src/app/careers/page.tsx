@@ -96,7 +96,9 @@ export default function CareersPage() {
                                         <p className="text-muted-foreground">{job.description}</p>
                                     </CardContent>
                                     <CardFooter>
-                                        <Button>Apply Now</Button>
+                                        <Button asChild>
+                                          <Link href={`/careers/${encodeURIComponent(job.title)}`}>Apply Now</Link>
+                                        </Button>
                                     </CardFooter>
                                 </Card>
                             ))}

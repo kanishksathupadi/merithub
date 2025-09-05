@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Toaster } from "@/components/ui/toaster";
+import { v4 as uuidv4 } from "uuid";
 
 
 const formSchema = z.object({
@@ -50,12 +51,31 @@ export default function ContactPage() {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Contact form submitted:", values);
-        toast({
-            title: "Message Sent!",
-            description: "Thanks for reaching out. We'll get back to you as soon as possible.",
-        });
-        form.reset();
+        const newMessage = {
+            id: uuidv4(),
+            ...values,
+            status: 'New',
+            submittedAt: new Date().toISOString(),
+        };
+
+        try {
+            const existingMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+            existingMessages.push(newMessage);
+            localStorage.setItem('contactMessages', JSON.stringify(existingMessages));
+            
+            toast({
+                title: "Message Sent!",
+                description: "Thanks for reaching out. We'll get back to you as soon as possible.",
+            });
+            form.reset();
+        } catch (error) {
+            console.error("Failed to save contact message", error);
+            toast({
+                variant: "destructive",
+                title: "Submission Failed",
+                description: "There was an error sending your message. Please try again.",
+            });
+        }
     }
 
     return (
