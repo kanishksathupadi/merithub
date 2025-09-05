@@ -28,6 +28,7 @@ export default function DashboardLayout({
   const router = useRouter();
   const [isVerified, setIsVerified] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMentor, setIsMentor] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   // Use useLayoutEffect to run verification synchronously before the browser paints.
@@ -43,6 +44,12 @@ export default function DashboardLayout({
     
     if (signupData.email === 'admin@dymera.com') {
       setIsAdmin(true);
+      setIsVerified(true);
+      return;
+    }
+    
+    if (signupData.email.endsWith('@pinnaclepath-mentor.com')) {
+      setIsMentor(true);
       setIsVerified(true);
       return;
     }
@@ -73,7 +80,7 @@ export default function DashboardLayout({
 
       if (storedAvatar) {
         setAvatarUrl(storedAvatar);
-      } else if (signupData.email !== 'admin@dymera.com' && firstLetter) {
+      } else if (!isAdmin && !isMentor && firstLetter) {
         generateAvatar({ letter: firstLetter })
           .then(result => {
               localStorage.setItem('userAvatar', result.imageUrl);
@@ -85,7 +92,7 @@ export default function DashboardLayout({
           });
       }
     }
-  }, [isVerified]);
+  }, [isVerified, isAdmin, isMentor]);
 
   // If the user is not yet verified, we return null.
   // Because this check runs in useLayoutEffect, this happens before the browser can paint,
@@ -93,14 +100,22 @@ export default function DashboardLayout({
   if (!isVerified) {
     return null;
   }
-
-  if (isAdmin) {
-    return (
-        <div className="p-6 sm:p-8 lg:p-12 flex-1">
-            {children}
-            <Toaster />
-        </div>
-    );
+  
+  if (isAdmin || isMentor) {
+     return (
+        <SidebarProvider>
+            <div className="flex min-h-screen">
+                <AppSidebar avatarUrl={avatarUrl} />
+                <SidebarInset>
+                    <ConditionalSidebarTrigger />
+                    <div className="p-6 sm:p-8 lg:p-12 flex-1">
+                        {children}
+                    </div>
+                    <Toaster />
+                </SidebarInset>
+            </div>
+        </SidebarProvider>
+     )
   }
 
   return (
@@ -119,5 +134,3 @@ export default function DashboardLayout({
     </SidebarProvider>
   );
 }
-
-    

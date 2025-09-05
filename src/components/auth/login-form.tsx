@@ -165,6 +165,21 @@ export function LoginForm() {
         router.push('/dashboard/admin');
         return;
     }
+    
+    // Check for mentor login
+    if (values.email.endsWith('@pinnaclepath-mentor.com') && values.password === 'mentor123') {
+        const mentorName = values.email.split('@')[0].replace('.', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const mentorData = {
+            name: mentorName,
+            email: values.email,
+            userId: `mentor-${mentorName.split(' ')[1].toLowerCase()}`
+        }
+         localStorage.setItem('signupData', JSON.stringify(mentorData));
+         localStorage.setItem('userName', mentorData.name);
+         router.push('/dashboard/mentor/admin');
+         return;
+    }
+
 
     try {
         const allSignupsStr = localStorage.getItem('allSignups');
