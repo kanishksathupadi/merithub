@@ -535,27 +535,39 @@ export default function Home() {
                 <div className="AccordionFAQ w-full">
                     <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="item-1">
-                            <AccordionTrigger>Is PinnaclePath suitable for my child's age?</AccordionTrigger>
+                            <AccordionTrigger>How does the AI personalization work?</AccordionTrigger>
                             <AccordionContent>
-                            Yes! PinnaclePath is designed for students from elementary school through high school. For younger students, our system focuses on exploration, skill-building, and discovering new interests. As students get older, the recommendations become more focused on college preparation, leadership, and building a standout profile.
+                            Our system uses the information you provide during onboarding—your strengths, interests, and goals—to power a large language model. This model is trained to think like an expert educational strategist. It doesn't just match keywords; it understands the underlying skills and potential in your profile to create a truly unique and expansive strategic plan, complete with validated resources for each step.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-2">
-                            <AccordionTrigger>How is this different from a traditional college counselor?</AccordionTrigger>
+                            <AccordionTrigger>Is PinnaclePath suitable for my child's age?</AccordionTrigger>
                             <AccordionContent>
-                            PinnaclePath acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking. Our Elite plan also includes a directory to connect with human mentors, offering the best of both worlds.
+                            Yes! PinnaclePath is designed for students from middle school through high school. For younger students, our system focuses on exploration, skill-building, and discovering new interests. As students get older, the recommendations become more focused on college preparation, leadership, and building a standout profile.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3">
+                            <AccordionTrigger>What's the main difference between the Standard and Elite plans?</AccordionTrigger>
+                            <AccordionContent>
+                            The Standard plan gives you all the core tools for strategic planning: the personalized roadmap, college finder, progress tracker, study buddy, and portfolio. The Elite plan adds powerful tools for execution and community, including the AI Essay Reviewer, Scholarship Finder, Mentor Match directory, and the student Q&A Forum. Elite is designed for students who want to maximize every advantage.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-4">
+                            <AccordionTrigger>How is this different from a traditional college counselor?</AccordionTrigger>
+                            <AccordionContent>
+                            PinnaclePath acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking that a human counselor typically cannot offer at scale. Our Elite plan also includes a directory to connect with human mentors, offering the best of both worlds.
+                            </AccordionContent>
+                        </AccordionItem>
+                         <AccordionItem value="item-5">
                             <AccordionTrigger>Can I cancel my subscription at any time?</AccordionTrigger>
                             <AccordionContent>
                             Absolutely. You can cancel your subscription at any time through your account settings. You will retain access to your plan's features until the end of your current billing period.
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem value="item-4">
+                        <AccordionItem value="item-6">
                             <AccordionTrigger>Is my personal and academic data secure?</AccordionTrigger>
                             <AccordionContent>
-                            Data privacy and security are our top priorities. We use industry-standard encryption and security protocols to protect your information. Your data is used solely to personalize your experience. We do not sell your data to third parties. Please see our Privacy Policy for full details.
+                            Data privacy and security are our top priorities. We use industry-standard encryption and security protocols to protect your information. Your data is used solely to personalize your experience and is never sold to third parties. Please see our Privacy Policy for full details.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
