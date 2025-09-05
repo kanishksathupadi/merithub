@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { StrategicBriefingOutput } from "@/ai/flows/get-strategic-briefing";
 import { Separator } from "../ui/separator";
 import { cn } from "@/lib/utils";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 
 
 type NextStepCardProps = {
@@ -51,9 +52,6 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
     const missionTask = tasks.find(t => t.id === priorityMission.id);
     const resource = missionTask?.relatedResources?.[0];
 
-    // Get the next 3 incomplete tasks that are NOT the priority mission
-    const upcomingTasks = tasks.filter(task => !task.completed && task.id !== priorityMission.id).slice(0, 3);
-
     const handleComplete = () => {
         if (!missionTask) return;
         setIsCompleting(true);
@@ -80,30 +78,43 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                 className="flex flex-col flex-1"
             >
                 <CardHeader>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                        <Lightbulb className="w-5 h-5 text-primary" />
-                        <h3 className="text-lg font-semibold">The Big Picture</h3>
-                    </div>
-                    <p className="text-foreground/90">{bigPicture}</p>
+                    <CardTitle className="text-xl flex items-center gap-2">
+                         <Target className="text-primary w-6 h-6" />
+                         Your Priority Mission
+                    </CardTitle>
+                     <CardDescription className="!mt-2">
+                        Here's the most important task to focus on right now to build your unique story.
+                    </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 flex-1 flex flex-col">
-                    <div className="flex-1">
+                    <div className="flex-1 space-y-4">
                         <div className="p-4 rounded-lg bg-background/50 border border-primary/30">
-                            <h3 className="font-bold text-lg text-primary flex items-center gap-2">
-                                <Target className="w-5 h-5"/>
-                                Your Priority Mission
-                            </h3>
-                            <p className="font-bold mt-2">{priorityMission.title}</p>
+                            <p className="font-bold mt-2 text-lg">{priorityMission.title}</p>
                             <p className="text-muted-foreground text-sm mt-1">{priorityMission.description}</p>
                         </div>
+                        
+                         <Accordion type="single" collapsible className="w-full">
+                            <AccordionItem value="item-1" className="border-none">
+                                <AccordionTrigger className="text-sm p-2 hover:no-underline hover:bg-muted rounded-md">Why is this important? View AI Insights</AccordionTrigger>
+                                <AccordionContent className="pt-2 space-y-3">
+                                     <div className="p-3 rounded-lg bg-muted">
+                                        <h4 className="font-semibold flex items-center gap-2 text-sm text-primary/90">
+                                            <Lightbulb className="w-4 h-4"/>
+                                            The Big Picture
+                                        </h4>
+                                        <p className="text-muted-foreground text-xs mt-1">{bigPicture}</p>
+                                    </div>
+                                    <div className="p-3 rounded-lg bg-muted">
+                                        <h4 className="font-semibold flex items-center gap-2 text-sm text-primary/90">
+                                            <BrainCircuit className="w-4 h-4"/>
+                                            Mentor's Insight
+                                        </h4>
+                                        <p className="text-muted-foreground text-xs mt-1 italic">"{mentorInsight}"</p>
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
 
-                         <div className="mt-4 p-4 rounded-lg bg-muted">
-                            <h4 className="font-semibold flex items-center gap-2 text-primary/90">
-                                <BrainCircuit className="w-5 h-5"/>
-                                Mentor's Insight
-                            </h4>
-                            <p className="text-muted-foreground text-sm mt-1 italic">"{mentorInsight}"</p>
-                        </div>
                     </div>
                      
                     <div className="space-y-2">
@@ -120,32 +131,10 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                         </Button>
                     </div>
 
-                    {upcomingTasks.length > 0 && (
-                        <>
-                            <Separator className="my-4"/>
-                            <div>
-                                <h3 className="font-semibold mb-2 flex items-center gap-2 text-muted-foreground">
-                                    <ListChecks className="w-5 h-5" />
-                                    Next On Deck
-                                </h3>
-                                <div className="space-y-2">
-                                    {upcomingTasks.map(task => (
-                                        <div key={task.id} className="text-sm p-2 bg-muted rounded-md flex items-center justify-between">
-                                            <span className={cn(task.completed && "line-through text-muted-foreground")}>{task.title}</span>
-                                            <Badge variant="secondary">{task.category}</Badge>
-                                        </div>
-                                    ))}
-                                </div>
-                                <Button variant="link" asChild className="p-0 h-auto mt-2 text-sm">
-                                    <Link href="/dashboard/roadmap">View full roadmap &rarr;</Link>
-                                </Button>
-                            </div>
-                        </>
-                    )}
-
                 </CardContent>
             </motion.div>
         </AnimatePresence>
         </Card>
     );
 }
+
