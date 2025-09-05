@@ -8,7 +8,7 @@ import { getStrategicBriefing, type StrategicBriefingOutput } from "@/ai/flows/g
 import { NextStepCard } from "@/components/dashboard/next-step-card";
 import { CheckInCard } from "@/components/dashboard/check-in-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Trophy, Award, CheckCircle, X, Info } from "lucide-react";
+import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Award, CheckCircle, X, Info } from "lucide-react";
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
