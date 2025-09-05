@@ -17,11 +17,8 @@ import '@/ai/flows/validate-school-name.ts';
 import '@/ai/flows/support-chat.ts';
 import '@/ai/flows/validate-contact-message.ts';
 import '@/ai/flows/validate-job-application.ts';
+import '@/ai/flows/send-welcome-email.ts';
 import '@/ai/tools/validate-academic-subject.ts';
 import '@/ai/tools/find-online-resource.ts';
 import '@/ai/tools/validate-avatar-image.ts';
 import '@/ai/tools/validate-resource-url.ts';
-
-
-
-

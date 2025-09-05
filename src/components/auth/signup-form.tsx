@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Checkbox } from "../ui/checkbox";
+import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 
 
 const formSchema = z.object({
@@ -82,7 +83,7 @@ export function SignupForm({ plan }: SignupFormProps) {
     });
   };
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (typeof window === 'undefined') return;
     
     try {
@@ -115,6 +116,15 @@ export function SignupForm({ plan }: SignupFormProps) {
         localStorage.setItem('signupData', JSON.stringify(newUser));
         localStorage.setItem('userName', newUser.name);
         localStorage.setItem('userPlan', newUser.plan);
+
+        // Asynchronously trigger the welcome email AI flow if it's a Gmail address
+        if (newUser.email.endsWith('@gmail.com')) {
+            sendWelcomeEmail({ name: newUser.name, email: newUser.email }).catch(err => {
+                // Log the error but don't block the user's flow
+                console.error("Failed to send welcome email:", err);
+            });
+        }
+
 
         router.push("/onboarding");
     } catch (error) {

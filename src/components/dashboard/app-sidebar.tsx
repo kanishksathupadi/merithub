@@ -154,24 +154,24 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                 <Link href="/dashboard"><LayoutDashboard/>Dashboard</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+             <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="My Portfolio">
+                <Link href="/dashboard/portfolio"><UserCircle/>My Portfolio</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="My Roadmap">
                 <Link href="/dashboard/roadmap"><ListChecks/>My Roadmap</Link>
               </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="College Finder">
-                <Link href="/dashboard/college-finder"><GraduationCap/>College Finder</Link>
-                </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Progress Tracker">
                 <Link href="/dashboard/progress"><TrendingUp/>Progress Tracker</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="My Portfolio">
-                <Link href="/dashboard/portfolio"><UserCircle/>My Portfolio</Link>
+             <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="College Finder">
+                <Link href="/dashboard/college-finder"><GraduationCap/>College Finder</Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>

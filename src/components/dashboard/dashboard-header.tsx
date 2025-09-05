@@ -9,6 +9,7 @@ import { Badge } from '../ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from '../ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import type { UserNotification } from '@/lib/types';
+import { ScrollArea } from '../ui/scroll-area';
 
 export function DashboardHeader() {
     const [userName, setUserName] = useState<string | null>(null);
@@ -84,17 +85,19 @@ export function DashboardHeader() {
                         <Badge className="bg-primary/20 text-primary border-primary/30 hover:bg-primary/30">
                             Admin Plan
                         </Badge>
-                    ) : userPlan === 'elite' && (
+                    ) : userPlan === 'elite' ? (
                         <Badge className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30 hover:bg-yellow-400/30">
                             <Star className="w-3 h-3 mr-1"/>
                             Elite Plan
                         </Badge>
+                    ) : (
+                         <Badge variant="secondary">{userPlan && userPlan.charAt(0).toUpperCase() + userPlan.slice(1)} Plan</Badge>
                     )}
                 </div>
                 <p className="text-muted-foreground mt-1">Here is your personalized dashboard.</p>
             </div>
             <div className="flex items-center gap-4">
-                <DropdownMenu>
+                <DropdownMenu onOpenChange={(open) => !open && loadNotifications()}>
                     <DropdownMenuTrigger asChild>
                          <Button variant="outline" size="icon" className="relative">
                             {hasUnread && <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary" />}
@@ -105,18 +108,24 @@ export function DashboardHeader() {
                     <DropdownMenuContent align="end" className="w-80">
                          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                          <DropdownMenuSeparator/>
+                        <ScrollArea className="max-h-80">
                          {notifications.length > 0 ? notifications.map(notification => (
-                            <DropdownMenuItem key={notification.id} className={cn("flex flex-col items-start gap-1", !notification.read && "font-bold")}>
+                            <DropdownMenuItem key={notification.id} className={cn("flex flex-col items-start gap-1 whitespace-normal", !notification.read && "font-bold")}>
                                 <p className="font-semibold">{notification.title}</p>
                                 <p className="text-xs text-muted-foreground">{notification.description}</p>
                             </DropdownMenuItem>
                         )) : (
-                            <DropdownMenuItem className="text-center text-muted-foreground">No notifications yet.</DropdownMenuItem>
+                            <div className="text-center text-sm text-muted-foreground py-4">No notifications yet.</div>
                         )}
-                         <DropdownMenuSeparator/>
-                         <DropdownMenuItem className="justify-center text-sm text-muted-foreground hover:bg-muted focus:bg-muted cursor-pointer" onClick={markAllAsRead} disabled={!hasUnread}>
-                            <Check className="w-4 h-4 mr-2" /> Mark all as read
-                         </DropdownMenuItem>
+                        </ScrollArea>
+                         {hasUnread && (
+                            <>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuItem className="justify-center text-sm text-muted-foreground hover:bg-muted focus:bg-muted cursor-pointer" onClick={markAllAsRead}>
+                                    <Check className="w-4 h-4 mr-2" /> Mark all as read
+                                </DropdownMenuItem>
+                            </>
+                         )}
                     </DropdownMenuContent>
                 </DropdownMenu>
 

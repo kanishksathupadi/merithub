@@ -15,11 +15,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
+import { useRouter } from "next/navigation";
+import { Badge } from "../ui/badge";
+import { Star } from "lucide-react";
+
 
 const settingsSchema = z.object({
   name: z.string().min(2, "Name is too short."),
@@ -50,6 +55,9 @@ const defaultValues: Partial<SettingsValues> = {
 export function SettingsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [userPlan, setUserPlan] = useState<'standard' | 'elite' | 'free' | null>(null);
+  const router = useRouter();
+
   const form = useForm<SettingsValues>({
     resolver: zodResolver(settingsSchema),
     defaultValues,
@@ -57,6 +65,8 @@ export function SettingsForm() {
 
   useEffect(() => {
     const userData = localStorage.getItem('signupData');
+    const plan = localStorage.getItem('userPlan');
+
     if (userData) {
       const parsedData = JSON.parse(userData);
       form.reset({
@@ -66,6 +76,7 @@ export function SettingsForm() {
         privacy: defaultValues.privacy,
       });
     }
+    setUserPlan(plan as any);
     setLoading(false);
   }, [form]);
 
@@ -91,6 +102,23 @@ export function SettingsForm() {
     });
   }
 
+  const handleCancelSubscription = () => {
+    const userDataStr = localStorage.getItem('signupData');
+    if (userDataStr) {
+      const userData = JSON.parse(userDataStr);
+      userData.plan = 'free'; // Downgrade plan
+      localStorage.setItem('signupData', JSON.stringify(userData));
+      localStorage.setItem('userPlan', 'free');
+      setUserPlan('free');
+      window.dispatchEvent(new Event('storage'));
+      toast({
+        title: "Subscription Cancelled",
+        description: "Your plan has been cancelled. You can resubscribe at any time.",
+      });
+    }
+  };
+
+
   if (loading) {
     return (
         <div className="space-y-8">
@@ -104,7 +132,6 @@ export function SettingsForm() {
              <Card>
                 <CardHeader><Skeleton className="h-8 w-1/3" /></CardHeader>
                 <CardContent className="space-y-4">
-                    <Skeleton className="h-20 w-full" />
                     <Skeleton className="h-20 w-full" />
                 </CardContent>
             </Card>
@@ -144,6 +171,55 @@ export function SettingsForm() {
               )}
             />
           </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Subscription & Billing</CardTitle>
+            <CardDescription>Manage your current plan and billing details.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between rounded-lg border p-4">
+              <div>
+                <p className="font-semibold">Your Current Plan</p>
+                 <p className="text-sm text-muted-foreground">
+                    {userPlan === 'free' ? 'You are on the free plan.' : `You are on the ${userPlan} plan.`}
+                </p>
+              </div>
+              {userPlan === 'elite' ? (
+                <Badge className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">
+                    <Star className="w-3 h-3 mr-1"/> Elite
+                </Badge>
+              ) : userPlan === 'standard' ? (
+                <Badge variant="secondary">Standard</Badge>
+              ) : (
+                <Badge variant="outline">Free</Badge>
+              )}
+            </div>
+          </CardContent>
+          <CardFooter className="border-t px-6 py-4">
+            {userPlan === 'free' ? (
+                 <Button onClick={() => router.push('/#pricing')}>Resubscribe</Button>
+            ) : (
+                 <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="destructive">Cancel Subscription</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action will cancel your subscription at the end of the current billing period. You will lose access to premium features.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Go Back</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleCancelSubscription}>Confirm Cancellation</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+          </CardFooter>
         </Card>
 
         <Card>
