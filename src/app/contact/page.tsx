@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Mail, Building, Phone } from "lucide-react";
+import { GraduationCap, Mail, Building, Phone, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/select"
 import { Toaster } from "@/components/ui/toaster";
 import { v4 as uuidv4 } from "uuid";
+import { validateContactMessage } from "@/ai/flows/validate-contact-message";
+import { useState } from "react";
 
 
 const formSchema = z.object({
@@ -40,6 +42,8 @@ const formSchema = z.object({
 
 export default function ContactPage() {
     const { toast } = useToast();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -50,31 +54,43 @@ export default function ContactPage() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        const newMessage = {
-            id: uuidv4(),
-            ...values,
-            status: 'New',
-            submittedAt: new Date().toISOString(),
-        };
-
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsSubmitting(true);
         try {
-            const existingMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-            existingMessages.push(newMessage);
-            localStorage.setItem('contactMessages', JSON.stringify(existingMessages));
-            
+            // AI Validation Step
+            const validationResult = await validateContactMessage(values);
+
+            if (validationResult.isGenuine) {
+                const newMessage = {
+                    id: uuidv4(),
+                    ...values,
+                    status: 'New',
+                    submittedAt: new Date().toISOString(),
+                };
+                const existingMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+                existingMessages.push(newMessage);
+                localStorage.setItem('contactMessages', JSON.stringify(existingMessages));
+            } else {
+                // If it's not genuine, we don't save it, but we don't tell the user.
+                console.log(`Spam message detected and blocked. Reason: ${validationResult.reasoning}`);
+            }
+
+            // Show success toast regardless of validation outcome to not alert spammers
             toast({
                 title: "Message Sent!",
                 description: "Thanks for reaching out. We'll get back to you as soon as possible.",
             });
             form.reset();
+
         } catch (error) {
-            console.error("Failed to save contact message", error);
+            console.error("Failed to send contact message", error);
             toast({
                 variant: "destructive",
                 title: "Submission Failed",
                 description: "There was an error sending your message. Please try again.",
             });
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -197,7 +213,9 @@ export default function ContactPage() {
                                                 </FormItem>
                                             )}
                                         />
-                                        <Button type="submit">Send Message</Button>
+                                        <Button type="submit" disabled={isSubmitting}>
+                                            {isSubmitting ? <Loader2 className="animate-spin" /> : "Send Message"}
+                                        </Button>
                                     </form>
                                     </Form>
                                 </CardContent>

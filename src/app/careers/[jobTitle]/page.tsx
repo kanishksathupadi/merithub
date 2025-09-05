@@ -16,13 +16,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, ArrowLeft } from "lucide-react";
+import { GraduationCap, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { useParams, useRouter } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { validateJobApplication } from "@/ai/flows/validate-job-application";
 
 
 const formSchema = z.object({
@@ -40,6 +41,7 @@ function ApplicationForm() {
     const router = useRouter();
     const params = useParams();
     const jobTitle = decodeURIComponent(params.jobTitle as string);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -55,34 +57,55 @@ function ApplicationForm() {
 
     const resumeRef = form.register("resume");
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        const newApplication = {
-            id: uuidv4(),
-            jobTitle,
-            ...values,
-            resume: values.resume[0]?.name || 'N/A', // Store filename for demo
-            status: 'New',
-            submittedAt: new Date().toISOString(),
-        };
-
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsSubmitting(true);
         try {
-            const existingApplications = JSON.parse(localStorage.getItem('jobApplications') || '[]');
-            existingApplications.push(newApplication);
-            localStorage.setItem('jobApplications', JSON.stringify(existingApplications));
+             // AI Validation Step
+            const validationResult = await validateJobApplication({
+                name: values.name,
+                email: values.email,
+                coverLetter: values.coverLetter,
+            });
+
+            if (validationResult.isGenuine) {
+                const newApplication = {
+                    id: uuidv4(),
+                    jobTitle,
+                    ...values,
+                    resume: values.resume[0]?.name || 'N/A', // Store filename for demo
+                    status: 'New',
+                    submittedAt: new Date().toISOString(),
+                };
+
+                const existingApplications = JSON.parse(localStorage.getItem('jobApplications') || '[]');
+                existingApplications.push(newApplication);
+                localStorage.setItem('jobApplications', JSON.stringify(existingApplications));
+            } else {
+                // If it's not genuine, we don't save it, but we don't tell the user.
+                console.log(`Spam application detected and blocked. Reason: ${validationResult.reasoning}`);
+            }
             
+            // Show success toast regardless of validation outcome to not alert spammers
             toast({
                 title: "Application Submitted!",
                 description: "Thank you for your interest. We will review your application and be in touch.",
             });
             form.reset();
-            router.push("/careers");
+            
+            // Redirect after a short delay to allow toast to be seen
+            setTimeout(() => {
+                router.push("/careers");
+            }, 2000);
+
         } catch (error) {
-            console.error("Failed to save application", error);
+            console.error("Failed to process application", error);
             toast({
                 variant: "destructive",
                 title: "Submission Failed",
                 description: "There was an error submitting your application. Please try again.",
             });
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -206,7 +229,9 @@ function ApplicationForm() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="w-full">Submit Application</Button>
+                            <Button type="submit" className="w-full" disabled={isSubmitting}>
+                                {isSubmitting ? <Loader2 className="animate-spin" /> : "Submit Application"}
+                            </Button>
                         </form>
                         </Form>
                     </CardContent>
