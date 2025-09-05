@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X } from "lucide-react";
+import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -102,7 +102,7 @@ function PricingModal({ children }: { children: React.ReactNode }) {
                             "AI College Finder",
                             "Detailed Progress Tracking",
                             "AI Study Buddy (Quizzes & Flashcards)",
-                            "AI Resource Finder"
+                            "Shareable Public Portfolio"
                         ]}
                         buttonVariant="secondary"
                         href="/signup?plan=standard"
@@ -254,13 +254,13 @@ export default function Home() {
                     <h3 className="text-4xl font-bold tracking-tight">Your Unfair Advantage</h3>
                     <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our platform is engineered to give you an unparalleled edge on your academic journey.</p>
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
                         <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
                             <BrainCircuit className="w-8 h-8"/>
                         </div>
                         <h4 className="text-xl font-semibold">Hyper-Personalized Roadmap</h4>
-                        <p className="text-muted-foreground mt-2">Our AI builds a dynamic, multi-year strategy based on deep analysis of your goals, strengths, and weaknesses.</p>
+                        <p className="text-muted-foreground mt-2">Our AI builds a dynamic, multi-year strategy based on deep analysis of your goals and passions.</p>
                     </div>
                      <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
                         <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
@@ -274,28 +274,42 @@ export default function Home() {
                             <BookOpen className="w-8 h-8"/>
                         </div>
                         <h4 className="text-xl font-semibold">AI Study Buddy</h4>
-                        <p className="text-muted-foreground mt-2">Instantly generate flashcards and quizzes, or find the web's best resource for a specific question.</p>
+                        <p className="text-muted-foreground mt-2">Instantly generate flashcards and quizzes, or find the web's best resource for any topic.</p>
                     </div>
                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
+                            <Share2 className="w-8 h-8"/>
+                        </div>
+                        <h4 className="text-xl font-semibold">Shareable Portfolio</h4>
+                        <p className="text-muted-foreground mt-2">Generate a professional, public portfolio page to showcase your achievements to colleges and counselors.</p>
+                    </div>
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <div className="p-3 rounded-lg bg-yellow-400/10 text-yellow-300 w-fit mb-4">
+                            <Award className="w-8 h-8"/>
+                        </div>
+                        <h4 className="text-xl font-semibold">AI Scholarship Finder <Badge variant="secondary" className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">Elite</Badge></h4>
+                        <p className="text-muted-foreground mt-2">Let our AI find financial aid opportunities tailored to your unique skills and background.</p>
+                    </div>
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <div className="p-3 rounded-lg bg-yellow-400/10 text-yellow-300 w-fit mb-4">
+                            <PenSquare className="w-8 h-8"/>
+                        </div>
+                        <h4 className="text-xl font-semibold">AI Essay Review <Badge variant="secondary" className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">Elite</Badge></h4>
+                        <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college essays to improve clarity, structure, and impact.</p>
+                    </div>
+                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
+                        <div className="p-3 rounded-lg bg-yellow-400/10 text-yellow-300 w-fit mb-4">
+                            <Users className="w-8 h-8"/>
+                        </div>
+                        <h4 className="text-xl font-semibold">Mentor Match <Badge variant="secondary" className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">Elite</Badge></h4>
+                        <p className="text-muted-foreground mt-2">Connect with experienced mentors and collaborate with peers in our exclusive Q&A community.</p>
+                    </div>
+                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
                         <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
                             <TrendingUp className="w-8 h-8"/>
                         </div>
                         <h4 className="text-xl font-semibold">Progress Tracker</h4>
                         <p className="text-muted-foreground mt-2">Visualize your journey, track completed tasks, and watch your long-term goals get closer every day.</p>
-                    </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
-                            <PenSquare className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">AI Essay Review (Elite)</h4>
-                        <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college and scholarship essays to improve clarity, structure, and impact.</p>
-                    </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
-                            <Users className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">Mentor Match & Forum (Elite)</h4>
-                        <p className="text-muted-foreground mt-2">Connect with experienced mentors and collaborate with peers in our exclusive Q&A community.</p>
                     </div>
                 </div>
             </div>
@@ -387,7 +401,7 @@ export default function Home() {
                     <div>
                         <Badge variant="outline" className="mb-4">Step 3</Badge>
                         <h4 className="text-3xl font-bold tracking-tight">Execute and Achieve</h4>
-                        <p className="text-muted-foreground mt-4">Your plan is set. Now, it's time to execute. Follow your roadmap, track your progress in real-time, and leverage our powerful suite of AI tools—from the Study Buddy to the Essay Reviewer—to overcome any academic challenge and reach your goals.</p>
+                        <p className="text-muted-foreground mt-4">Your plan is set. Now, it's time to execute. Follow your roadmap, track your progress, and leverage our powerful suite of AI tools—from the Study Buddy to your Shareable Portfolio—to overcome challenges and reach your goals.</p>
                     </div>
                      <Image
                         src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdHVkZW50cyUyMGluJTIwbGVjdHVyZSUyMGhsbCUyMGNlZWxlYnJhdGluZ3xlbnwwfHx8fDE3MjUwNDg5ODd8MA&ixlib=rb-4.1.0&q=80&w=1080"
@@ -460,7 +474,7 @@ export default function Home() {
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI College Finder</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Detailed Progress Tracking</li>
                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy (Quizzes &amp; Flashcards)</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Resource Finder</li>
+                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Shareable Public Portfolio</li>
                         </ul>
                         <Button asChild variant="secondary" className="w-full mt-8">
                            <Link href="/signup?plan=standard">Choose Standard</Link>
