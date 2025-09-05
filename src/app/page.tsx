@@ -160,6 +160,52 @@ const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = f
     </div>
 );
 
+const standardFeatures = [
+    { 
+        icon: BrainCircuit, 
+        title: "Hyper-Personalized Roadmap", 
+        description: "Our AI builds a dynamic, multi-year strategy based on deep analysis of your goals and passions."
+    },
+    { 
+        icon: GraduationCap, 
+        title: "AI College Finder", 
+        description: "Discover universities that perfectly match your academic profile, interests, and learning preferences."
+    },
+    { 
+        icon: BookOpen, 
+        title: "AI Study Buddy", 
+        description: "Instantly generate flashcards and quizzes, or find the web's best resource for any topic."
+    },
+    { 
+        icon: TrendingUp, 
+        title: "Progress Tracker", 
+        description: "Visualize your journey, track completed tasks, and watch your long-term goals get closer every day."
+    },
+     { 
+        icon: Share2, 
+        title: "Shareable Portfolio", 
+        description: "Generate a professional, public portfolio page to showcase your achievements to colleges and counselors."
+    },
+];
+
+const eliteFeatures = [
+    { 
+        icon: Award, 
+        title: "AI Scholarship Finder", 
+        description: "Let our AI find financial aid opportunities tailored to your unique skills and background."
+    },
+    { 
+        icon: PenSquare, 
+        title: "AI Essay Review", 
+        description: "Get instant, actionable feedback on your college essays to improve clarity, structure, and impact."
+    },
+    { 
+        icon: Users, 
+        title: "Mentor Match & Q&A Forum", 
+        description: "Connect with experienced mentors and collaborate with peers in our exclusive Q&A community."
+    },
+];
+
 
 export default function Home() {
   return (
@@ -252,66 +298,46 @@ export default function Home() {
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">Your Unfair Advantage</h3>
-                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our platform is engineered to give you an unparalleled edge on your academic journey.</p>
+                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our platform is engineered with a powerful suite of tools to give you an unparalleled edge.</p>
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
-                            <BrainCircuit className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">Hyper-Personalized Roadmap</h4>
-                        <p className="text-muted-foreground mt-2">Our AI builds a dynamic, multi-year strategy based on deep analysis of your goals and passions.</p>
+                
+                <Card className="p-8 md:p-12 border-border bg-card">
+                    <h4 className="text-2xl font-bold text-center mb-8">Core Features Included in All Plans</h4>
+                    <div className="grid md:grid-cols-2 gap-x-8 gap-y-10">
+                        {standardFeatures.map((feature, index) => (
+                            <div key={index} className="flex gap-4">
+                                <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit h-fit">
+                                    <feature.icon className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h5 className="font-semibold text-lg">{feature.title}</h5>
+                                    <p className="text-muted-foreground mt-1">{feature.description}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
-                            <GraduationCap className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">AI College Finder</h4>
-                        <p className="text-muted-foreground mt-2">Discover universities that perfectly match your academic profile, interests, and learning preferences.</p>
+                </Card>
+
+                <div className="mt-8 rounded-xl p-8 md:p-12 border-primary/30 bg-gradient-to-br from-primary/10 to-transparent">
+                     <div className="text-center mb-8">
+                        <h4 className="text-3xl font-bold">Unlock Your Full Potential with the <span className="text-primary">Elite Plan</span></h4>
+                        <p className="text-muted-foreground mt-2">Go beyond the basics with premium tools designed for maximum impact.</p>
                     </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
-                            <BookOpen className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">AI Study Buddy</h4>
-                        <p className="text-muted-foreground mt-2">Instantly generate flashcards and quizzes, or find the web's best resource for any topic.</p>
-                    </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
-                            <Share2 className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">Shareable Portfolio</h4>
-                        <p className="text-muted-foreground mt-2">Generate a professional, public portfolio page to showcase your achievements to colleges and counselors.</p>
-                    </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-yellow-400/10 text-yellow-300 w-fit mb-4">
-                            <Award className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">AI Scholarship Finder <Badge variant="secondary" className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">Elite</Badge></h4>
-                        <p className="text-muted-foreground mt-2">Let our AI find financial aid opportunities tailored to your unique skills and background.</p>
-                    </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-yellow-400/10 text-yellow-300 w-fit mb-4">
-                            <PenSquare className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">AI Essay Review <Badge variant="secondary" className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">Elite</Badge></h4>
-                        <p className="text-muted-foreground mt-2">Get instant, actionable feedback on your college essays to improve clarity, structure, and impact.</p>
-                    </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-yellow-400/10 text-yellow-300 w-fit mb-4">
-                            <Users className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">Mentor Match <Badge variant="secondary" className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">Elite</Badge></h4>
-                        <p className="text-muted-foreground mt-2">Connect with experienced mentors and collaborate with peers in our exclusive Q&A community.</p>
-                    </div>
-                     <div className="p-8 bg-card rounded-xl shadow-lg border border-border transition-all hover:border-primary/50 hover:scale-105">
-                        <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit mb-4">
-                            <TrendingUp className="w-8 h-8"/>
-                        </div>
-                        <h4 className="text-xl font-semibold">Progress Tracker</h4>
-                        <p className="text-muted-foreground mt-2">Visualize your journey, track completed tasks, and watch your long-term goals get closer every day.</p>
+                    <div className="grid md:grid-cols-2 gap-x-8 gap-y-10">
+                         {eliteFeatures.map((feature, index) => (
+                            <div key={index} className="flex gap-4">
+                                <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit h-fit">
+                                    <feature.icon className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h5 className="font-semibold text-lg">{feature.title}</h5>
+                                    <p className="text-muted-foreground mt-1">{feature.description}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
+
             </div>
         </section>
 
@@ -523,7 +549,7 @@ export default function Home() {
                         <AccordionItem value="item-3">
                             <AccordionTrigger>Can I cancel my subscription at any time?</AccordionTrigger>
                             <AccordionContent>
-                            Absolutely. You can cancel your subscription at any time through your account settings. You will retain access to your plan's features until the end of your current billing period.
+                            Absolutely. You can manage your subscription at any time through your account settings page.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4">
