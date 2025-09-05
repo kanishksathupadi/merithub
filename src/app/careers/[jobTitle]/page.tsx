@@ -28,9 +28,11 @@ import { v4 as uuidv4 } from "uuid";
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
+  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
   linkedin: z.string().url({ message: "Please enter a valid LinkedIn URL." }).optional().or(z.literal('')),
   portfolio: z.string().url({ message: "Please enter a valid portfolio URL." }).optional().or(z.literal('')),
-  comments: z.string().min(10, { message: "Comments must be at least 10 characters long." }),
+  resume: z.any().refine(files => files?.length == 1, "Resume is required."),
+  coverLetter: z.string().min(50, { message: "Cover letter must be at least 50 characters." }),
 });
 
 function ApplicationForm() {
@@ -44,17 +46,21 @@ function ApplicationForm() {
         defaultValues: {
             name: "",
             email: "",
+            phone: "",
             linkedin: "",
             portfolio: "",
-            comments: "",
+            coverLetter: "",
         },
     });
+
+    const resumeRef = form.register("resume");
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         const newApplication = {
             id: uuidv4(),
             jobTitle,
             ...values,
+            resume: values.resume[0]?.name || 'N/A', // Store filename for demo
             status: 'New',
             submittedAt: new Date().toISOString(),
         };
@@ -105,72 +111,102 @@ function ApplicationForm() {
                     <CardContent>
                         <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Full Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="John Doe" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="you@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="linkedin"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>LinkedIn Profile URL</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="https://linkedin.com/in/yourprofile" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Full Name</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="John Doe" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="you@example.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                              <FormField
                                 control={form.control}
-                                name="portfolio"
+                                name="phone"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Portfolio/Website URL</FormLabel>
+                                    <FormLabel>Phone Number</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="https://yourportfolio.com" {...field} />
+                                        <Input placeholder="(123) 456-7890" {...field} />
                                     </FormControl>
                                     <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                             <div className="grid md:grid-cols-2 gap-6">
+                                <FormField
+                                    control={form.control}
+                                    name="linkedin"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>LinkedIn Profile URL</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="https://linkedin.com/in/yourprofile" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="portfolio"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Portfolio/Website URL</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="https://yourportfolio.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                             <FormField
+                                control={form.control}
+                                name="resume"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Resume/CV</FormLabel>
+                                        <FormControl>
+                                            <Input type="file" {...resumeRef} />
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="comments"
+                                name="coverLetter"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Additional Comments</FormLabel>
+                                    <FormLabel>Cover Letter</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder="Tell us why you're a great fit for this role..." className="resize-none" rows={5} {...field} />
+                                        <Textarea placeholder="Tell us why you're a great fit for this role..." className="resize-y" rows={8} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit">Submit Application</Button>
+                            <Button type="submit" className="w-full">Submit Application</Button>
                         </form>
                         </Form>
                     </CardContent>
