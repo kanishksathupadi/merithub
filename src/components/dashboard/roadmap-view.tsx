@@ -1,14 +1,14 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { RoadmapTask } from "@/lib/types";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Link as LinkIcon, Star } from "lucide-react";
+import { Calendar, Link as LinkIcon, Star, BrainCircuit, Trophy } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { addNotification } from "@/lib/tracking";
@@ -34,10 +34,50 @@ const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
   }
 };
 
+const getCategoryIcon = (category: RoadmapTask['category']) => {
+    switch (category) {
+        case 'Academics': return <BrainCircuit className="w-5 h-5 text-blue-400" />;
+        case 'Extracurriculars': return <Trophy className="w-5 h-5 text-green-400" />;
+        case 'Skill Building': return <Star className="w-5 h-5 text-yellow-400" />;
+        default: return null;
+    }
+}
+
+function TaskCard({ task, onToggle }: { task: RoadmapTask, onToggle: (id: string) => void }) {
+    return (
+        <div className={`p-4 rounded-lg transition-all flex items-start gap-4 ${task.completed ? 'bg-muted/50 opacity-70' : 'bg-background/50'}`}>
+             <Checkbox id={`task-${task.id}`} checked={task.completed} onCheckedChange={() => onToggle(task.id)} className="mt-1" />
+            <div className="flex-1 space-y-1">
+                <p className={`font-semibold ${task.completed ? 'line-through' : ''}`}>{task.title}</p>
+                <p className="text-sm text-muted-foreground">{task.description}</p>
+                 <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
+                    {task.points && (
+                        <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400"/> {task.points} pts</span>
+                    )}
+                    {task.dueDate && (
+                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3"/> Due {format(parseISO(task.dueDate), "MMM d")}</span>
+                    )}
+                </div>
+                 {task.relatedResources && task.relatedResources.length > 0 && (
+                     <div className="pt-2">
+                        {task.relatedResources?.map(resource => (
+                            <Button key={resource.url} variant="link" size="sm" asChild className="p-0 h-auto">
+                                <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                                    <LinkIcon className="w-3 h-3 mr-1" />
+                                    {resource.title}
+                                </a>
+                            </Button>
+                        ))}
+                     </div>
+                )}
+            </div>
+        </div>
+    )
+}
+
 export function RoadmapView() {
   const [tasks, setTasks] = useState<RoadmapTask[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,6 +109,26 @@ export function RoadmapView() {
         setLoading(false);
     }
   }, [userEmail]);
+  
+  const groupedTasks = useMemo(() => {
+    return tasks.reduce((acc, task) => {
+        const grade = task.grade || "Uncategorized";
+        if (!acc[grade]) {
+            acc[grade] = { 'Academics': [], 'Extracurriculars': [], 'Skill Building': [] };
+        }
+        acc[grade][task.category].push(task);
+        return acc;
+    }, {} as Record<string, Record<RoadmapTask['category'], RoadmapTask[]>>);
+  }, [tasks]);
+
+  const gradeOrder = useMemo(() => {
+    const numericGrades = Object.keys(groupedTasks)
+        .filter(g => g.match(/^\d/))
+        .sort((a,b) => parseInt(a) - parseInt(b));
+    const customGrades = Object.keys(groupedTasks).filter(g => !g.match(/^\d/));
+    return [...numericGrades, ...customGrades];
+  }, [groupedTasks]);
+
 
   const toggleTask = (taskId: string) => {
     if (!userEmail) return;
@@ -94,103 +154,61 @@ export function RoadmapView() {
     window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
   };
 
-  const getCategoryColor = (category: RoadmapTask['category']) => {
-    switch(category) {
-        case 'Academics': return 'bg-blue-500';
-        case 'Extracurriculars': return 'bg-green-500';
-        case 'Skill Building': return 'bg-yellow-500';
-        default: return 'bg-gray-500';
-    }
-  }
 
   if (loading) {
     return (
         <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-48 w-full" />
         </div>
     );
   }
-
-  const filteredTasks = activeTab === 'all' ? tasks : tasks.filter(t => t.category === activeTab);
+  
+  if (tasks.length === 0) {
+      return (
+        <Card className="mt-4">
+            <CardContent className="p-6 text-center text-muted-foreground">
+                Your roadmap is currently empty. Go to the dashboard to generate your AI plan or add a custom task.
+            </CardContent>
+        </Card>
+      )
+  }
 
   return (
-    <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-        <TabsTrigger value="all">All</TabsTrigger>
-        {categories.map(cat => <TabsTrigger key={cat} value={cat}>{cat}</TabsTrigger>)}
-      </TabsList>
-
-      <div className="space-y-4 mt-4">
-        {filteredTasks.length > 0 ? (
-            filteredTasks.map(task => <TaskCard key={task.id} task={task} onToggle={onToggle} getCategoryColor={getCategoryColor} />)
-        ) : (
-            <Card className="mt-4">
-                <CardContent className="p-6 text-center text-muted-foreground">
-                    No tasks in this category yet.
-                </CardContent>
-            </Card>
-        )}
-      </div>
-    </Tabs>
+    <div className="w-full space-y-4">
+        <Accordion type="single" collapsible defaultValue={`${gradeOrder[0]}`} className="w-full space-y-4">
+           {gradeOrder.map(grade => (
+               <AccordionItem value={grade} key={grade} className="border-b-0">
+                    <Card>
+                        <AccordionTrigger className="p-6 hover:no-underline">
+                             <h2 className="text-2xl font-bold">{grade}</h2>
+                        </AccordionTrigger>
+                        <AccordionContent className="px-6 pb-6">
+                            <div className="space-y-6">
+                                {categories.map(category => {
+                                    const categoryTasks = groupedTasks[grade][category];
+                                    if (categoryTasks.length === 0) return null;
+                                    return (
+                                        <div key={category}>
+                                            <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                                                {getCategoryIcon(category)}
+                                                {category}
+                                            </h3>
+                                            <div className="space-y-3">
+                                                {categoryTasks.map(task => (
+                                                     <TaskCard key={task.id} task={task} onToggle={toggleTask} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </AccordionContent>
+                    </Card>
+               </AccordionItem>
+           ))}
+        </Accordion>
+    </div>
   );
-}
-
-function TaskCard({ task, onToggle, getCategoryColor }: { task: RoadmapTask, onToggle: (id: string) => void, getCategoryColor: (cat: RoadmapTask['category']) => string }) {
-    return (
-        <Card className={`transition-all ${task.completed ? 'bg-muted/70 opacity-60' : 'bg-card'}`}>
-            <CardHeader>
-                <div className="flex items-start gap-4">
-                    <Checkbox id={`task-${task.id}`} checked={task.completed} onCheckedChange={() => onToggle(task.id)} className="mt-1" />
-                    <div className="grid gap-1.5 flex-1">
-                        <CardTitle className={`text-xl ${task.completed ? 'line-through' : ''}`}>
-                            {task.title}
-                        </CardTitle>
-                        <CardDescription>{task.description}</CardDescription>
-                    </div>
-                     <div className="hidden sm:flex flex-col items-end gap-2">
-                        <Badge variant="outline" className="whitespace-nowrap">
-                            <span className={`w-2 h-2 mr-2 rounded-full ${getCategoryColor(task.category)}`}></span>
-                            {task.category}
-                        </Badge>
-                        {task.points && (
-                            <Badge variant="secondary" className="bg-yellow-400/10 text-yellow-300">
-                                <Star className="w-3 h-3 mr-1" /> {task.points} pts
-                            </Badge>
-                        )}
-                    </div>
-                </div>
-            </CardHeader>
-            <CardContent>
-                 <div className="text-sm text-muted-foreground flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4"/>
-                        <span>For {task.grade}</span>
-                    </div>
-                    {task.dueDate && (
-                        <div className="flex items-center gap-2">
-                            <span className="font-bold">Due:</span>
-                            <span>{format(parseISO(task.dueDate), "MMMM d, yyyy")}</span>
-                        </div>
-                    )}
-                 </div>
-            </CardContent>
-            {task.relatedResources && task.relatedResources.length > 0 && (
-                <CardFooter>
-                     <div className="flex gap-2">
-                        {task.relatedResources?.map(resource => (
-                            <Button key={resource.title} variant="outline" size="sm" asChild>
-                                <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                                    <LinkIcon className="w-4 h-4 mr-2" />
-                                    {resource.title}
-                                </a>
-                            </Button>
-                        ))}
-                     </div>
-                </CardFooter>
-            )}
-        </Card>
-    )
 }
