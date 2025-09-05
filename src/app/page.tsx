@@ -173,7 +173,6 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
             <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
-            <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
             <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
              <Link href="#faq" className="hover:text-primary transition-colors">FAQ</Link>
           </nav>
@@ -445,38 +444,8 @@ export default function Home() {
             </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section id="testimonials" className="py-24 bg-background">
-            <div className="container mx-auto px-4 max-w-4xl text-center">
-                <h3 className="text-4xl font-bold tracking-tight">Built for Ambitious Students</h3>
-                <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Our platform empowers students to take control of their future, build a compelling profile, and achieve their biggest goals.</p>
-                <div className="mt-12 grid md:grid-cols-2 gap-8 text-left">
-                    <Card className="p-6 bg-card">
-                        <p className="text-muted-foreground mb-4">"The AI roadmap helped me identify a 'spike' in computational biology I never would have found on my own. I went from just liking science to presenting my own research project at the state science fair."</p>
-                        <div className="flex items-center gap-3">
-                            <Avatar><AvatarFallback>S</AvatarFallback></Avatar>
-                            <div>
-                                <p className="font-semibold">Sarah L.</p>
-                                <p className="text-sm text-muted-foreground">11th Grade Student</p>
-                            </div>
-                        </div>
-                    </Card>
-                    <Card className="p-6 bg-card">
-                        <p className="text-muted-foreground mb-4">"As a parent, seeing my son's progress tracked visually gave me so much peace of mind. The AI essay reviewer was like having an expert writing coach available 24/7. It was a game-changer for his college applications."</p>
-                         <div className="flex items-center gap-3">
-                            <Avatar><AvatarFallback>M</AvatarFallback></Avatar>
-                            <div>
-                                <p className="font-semibold">Mark T.</p>
-                                <p className="text-sm text-muted-foreground">Parent of a 12th Grader</p>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            </div>
-        </section>
-        
         {/* Pricing Section */}
-        <section id="pricing" className="py-24 bg-muted/50">
+        <section id="pricing" className="py-24 bg-background">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">Invest in Your Future</h3>
@@ -517,7 +486,7 @@ export default function Home() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="py-24 bg-background">
+        <section id="faq" className="py-24 bg-muted/50">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
                     <h3 className="text-4xl font-bold tracking-tight">Frequently Asked Questions</h3>
