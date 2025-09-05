@@ -70,7 +70,7 @@ export function SignupForm({ plan }: SignupFormProps) {
       name: "",
       email: "",
       password: "",
-      grade: undefined,
+      grade: "" as any, // Fix: Use empty string instead of undefined
       school: "",
       acceptTerms: false,
     },
@@ -226,7 +226,7 @@ export function SignupForm({ plan }: SignupFormProps) {
                   <FormItem className="flex-1">
                     <FormLabel>Grade (K=0)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 11" {...field} value={field.value ?? ''} />
+                      <Input type="number" placeholder="e.g., 11" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
