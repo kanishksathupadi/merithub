@@ -102,19 +102,46 @@ export function SettingsForm() {
     });
   }
 
-  const handleCancelSubscription = () => {
+  const handleDeleteAccount = () => {
     const userDataStr = localStorage.getItem('signupData');
     if (userDataStr) {
       const userData = JSON.parse(userDataStr);
-      userData.plan = 'free'; // Downgrade plan
-      localStorage.setItem('signupData', JSON.stringify(userData));
-      localStorage.setItem('userPlan', 'free');
-      setUserPlan('free');
-      window.dispatchEvent(new Event('storage'));
+      const userEmail = userData.email;
+
+      // Remove all user-specific data
+      localStorage.removeItem(`onboarding-${userEmail}`);
+      localStorage.removeItem(`payment-${userEmail}`);
+      localStorage.removeItem(`roadmapTasks-${userEmail}`);
+      localStorage.removeItem(`aiSuggestion-${userEmail}`);
+      localStorage.removeItem(`lastCheckIn-${userEmail}`);
+      
+      // Remove generic session data
+      localStorage.removeItem('signupData');
+      localStorage.removeItem('onboardingData');
+      localStorage.removeItem('paymentComplete');
+      localStorage.removeItem('userAvatar');
+      localStorage.removeItem('welcomeEmailSent');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userPlan');
+      localStorage.removeItem('hasBeenWelcomed');
+      localStorage.removeItem('userNotifications');
+
+
+      // Remove user from the master list of all signups
+      const allSignupsStr = localStorage.getItem('allSignups');
+      if (allSignupsStr) {
+          let allSignups = JSON.parse(allSignupsStr);
+          allSignups = allSignups.filter((user: any) => user.email !== userEmail);
+          localStorage.setItem('allSignups', JSON.stringify(allSignups));
+      }
+
       toast({
-        title: "Subscription Cancelled",
-        description: "Your plan has been cancelled. You can resubscribe at any time.",
+        title: "Account Deleted",
+        description: "Your account and all associated data have been removed.",
       });
+
+      // Redirect to home page after deletion
+      router.push('/');
     }
   };
 
@@ -193,33 +220,10 @@ export function SettingsForm() {
               ) : userPlan === 'standard' ? (
                 <Badge variant="secondary">Standard</Badge>
               ) : (
-                <Badge variant="outline">Free</Badge>
+                <Button onClick={() => router.push('/#pricing')}>Resubscribe</Button>
               )}
             </div>
           </CardContent>
-          <CardFooter className="border-t px-6 py-4">
-            {userPlan === 'free' ? (
-                 <Button onClick={() => router.push('/#pricing')}>Resubscribe</Button>
-            ) : (
-                 <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant="destructive">Cancel Subscription</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This action will cancel your subscription at the end of the current billing period. You will lose access to premium features.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Go Back</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleCancelSubscription}>Confirm Cancellation</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            )}
-          </CardFooter>
         </Card>
 
         <Card>
@@ -296,6 +300,36 @@ export function SettingsForm() {
             <Button type="submit">Save Changes</Button>
         </div>
       </form>
+      
+      <Card className="border-destructive">
+          <CardHeader>
+            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            <CardDescription>This is a permanent action and cannot be undone.</CardDescription>
+          </CardHeader>
+          <CardFooter className="flex justify-between items-center">
+             <p className="text-sm text-muted-foreground">Delete your account and all of your data.</p>
+             <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive">Delete Account</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action is permanent and cannot be undone. This will permanently delete your account and remove all of your data from our servers.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                            Yes, delete my account
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+          </CardFooter>
+        </Card>
+
     </Form>
   );
 }
