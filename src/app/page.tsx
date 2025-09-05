@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -98,10 +99,10 @@ function PricingModal({ children }: { children: React.ReactNode }) {
                         plan="Standard"
                         price="$7"
                         features={[
-                            "AI-Personalized Roadmap",
-                            "AI College Finder",
+                            "Personalized Roadmap",
+                            "Intelligent College Finder",
                             "Detailed Progress Tracking",
-                            "AI Study Buddy (Quizzes & Flashcards)",
+                            "Smart Study Buddy",
                             "Shareable Public Portfolio"
                         ]}
                         buttonVariant="secondary"
@@ -112,8 +113,8 @@ function PricingModal({ children }: { children: React.ReactNode }) {
                         price="$12"
                         features={[
                             "Everything in Standard, plus:",
-                            "AI Essay Review Tool",
-                            "AI Scholarship Finder",
+                            "Instant Essay Review Tool",
+                            "Personalized Scholarship Finder",
                             "Mentor Match Directory",
                             "Community Q&A Forum",
                             "Priority Support"
@@ -164,16 +165,16 @@ const standardFeatures = [
     { 
         icon: BrainCircuit, 
         title: "Hyper-Personalized Roadmap", 
-        description: "Our AI builds a dynamic, multi-year strategy based on deep analysis of your goals and passions."
+        description: "Our system builds a dynamic, multi-year strategy based on deep analysis of your goals and passions."
     },
     { 
         icon: GraduationCap, 
-        title: "AI College Finder", 
+        title: "Intelligent College Finder", 
         description: "Discover universities that perfectly match your academic profile, interests, and learning preferences."
     },
     { 
         icon: BookOpen, 
-        title: "AI Study Buddy", 
+        title: "Smart Study Buddy", 
         description: "Instantly generate flashcards and quizzes, or find the web's best resource for any topic."
     },
     { 
@@ -191,12 +192,12 @@ const standardFeatures = [
 const eliteFeatures = [
     { 
         icon: Award, 
-        title: "AI Scholarship Finder", 
-        description: "Let our AI find financial aid opportunities tailored to your unique skills and background."
+        title: "Personalized Scholarship Finder", 
+        description: "Let our system find financial aid opportunities tailored to your unique skills and background."
     },
     { 
         icon: PenSquare, 
-        title: "AI Essay Review", 
+        title: "Instant Essay Review", 
         description: "Get instant, actionable feedback on your college essays to improve clarity, structure, and impact."
     },
     { 
@@ -240,13 +241,13 @@ export default function Home() {
           <div className="container relative mx-auto px-4">
             <div className="max-w-4xl mx-auto">
                <div className="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold mb-4 border border-primary/20 text-primary">
-                Your AI Co-Pilot for Academic & Career Victory
+                Your Co-Pilot for Academic & Career Victory
               </div>
               <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
-                AI-Powered Strategy for Your Academic Victory.
+                A Personalized Strategy for Your Academic Victory.
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                PinnaclePath is your AI co-pilot, building a unique strategy that sharpens your skills and crafts a standout profile to get you into your dream college.
+                PinnaclePath is your dedicated co-pilot, building a unique strategy that sharpens your skills and crafts a standout profile to get you into your dream college.
               </p>
               <div className="mt-8 space-x-4">
                  <PricingModal>
@@ -347,7 +348,7 @@ export default function Home() {
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
                         <Badge variant="outline" className="border-primary/50 text-primary">Feature Spotlight</Badge>
-                        <h3 className="text-4xl font-bold tracking-tight">Go Beyond Checklists with an AI-Powered Strategic Roadmap</h3>
+                        <h3 className="text-4xl font-bold tracking-tight">Go Beyond Checklists with a Dynamic Strategic Roadmap</h3>
                         <p className="text-muted-foreground text-lg">A simple to-do list isn't enough. Your PinnaclePath Roadmap is a living, intelligent plan that adapts to your growth and helps you build a compelling, unique narrative for college admissions.</p>
                         <ul className="space-y-4">
                             <li className="flex gap-3">
@@ -360,15 +361,15 @@ export default function Home() {
                              <li className="flex gap-3">
                                 <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0"/>
                                 <div>
-                                    <h4 className="font-semibold">AI-Sourced Resources</h4>
-                                    <p className="text-muted-foreground text-sm">Each academic and skill-building task comes with a validated, high-quality online resource, found by AI to help you learn effectively.</p>
+                                    <h4 className="font-semibold">Intelligently-Sourced Resources</h4>
+                                    <p className="text-muted-foreground text-sm">Each academic and skill-building task comes with a validated, high-quality online resource to help you learn effectively.</p>
                                 </div>
                             </li>
                              <li className="flex gap-3">
                                 <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0"/>
                                 <div>
                                     <h4 className="font-semibold">Adapts With You</h4>
-                                    <p className="text-muted-foreground text-sm">Tell the AI about new interests or challenges in a weekly check-in, and it will intelligently modify your plan, adding new tasks and refining your strategy.</p>
+                                    <p className="text-muted-foreground text-sm">Tell us about new interests or challenges in a weekly check-in, and your plan will be intelligently modified, adding new tasks and refining your strategy.</p>
                                 </div>
                             </li>
                         </ul>
@@ -419,15 +420,15 @@ export default function Home() {
                     />
                     <div className="md:order-1">
                         <Badge variant="outline" className="mb-4">Step 2</Badge>
-                        <h4 className="text-3xl font-bold tracking-tight">Receive Your AI Strategy</h4>
-                        <p className="text-muted-foreground mt-4">With your profile complete, our AI gets to work. It analyzes your unique data to generate a bespoke, long-term roadmap filled with hyper-specific, actionable milestones. This isn't a generic checklist; it's a strategic plan designed to maximize your potential.</p>
+                        <h4 className="text-3xl font-bold tracking-tight">Receive Your Personal Strategy</h4>
+                        <p className="text-muted-foreground mt-4">With your profile complete, our system gets to work. It analyzes your unique data to generate a bespoke, long-term roadmap filled with hyper-specific, actionable milestones. This isn't a generic checklist; it's a strategic plan designed to maximize your potential.</p>
                     </div>
                 </div>
                  <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <Badge variant="outline" className="mb-4">Step 3</Badge>
                         <h4 className="text-3xl font-bold tracking-tight">Execute and Achieve</h4>
-                        <p className="text-muted-foreground mt-4">Your plan is set. Now, it's time to execute. Follow your roadmap, track your progress, and leverage our powerful suite of AI tools—from the Study Buddy to your Shareable Portfolio—to overcome challenges and reach your goals.</p>
+                        <p className="text-muted-foreground mt-4">Your plan is set. Now, it's time to execute. Follow your roadmap, track your progress, and leverage our powerful suite of tools—from the Study Buddy to your Shareable Portfolio—to overcome challenges and reach your goals.</p>
                     </div>
                      <Image
                         src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdHVkZW50cyUyMGluJTIwbGVjdHVyZSUyMGhsbCUyMGNlZWxlYnJhdGluZ3xlbnwwfHx8fDE3MjUwNDg5ODd8MA&ixlib=rb-4.1.0&q=80&w=1080"
@@ -465,7 +466,7 @@ export default function Home() {
                             PinnaclePath
                         </CardTitle>
                         <ul className="space-y-3 text-left text-muted-foreground text-sm">
-                            <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>24/7 AI mentor, available anytime, anywhere.</li>
+                            <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>24/7 personal co-pilot, available anytime, anywhere.</li>
                             <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Hyper-personalized strategy based on your unique profile.</li>
                             <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Dynamic roadmap that evolves as you grow.</li>
                             <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Affordable monthly subscription.</li>
@@ -496,10 +497,10 @@ export default function Home() {
                         plan="Standard"
                         price="$7"
                         features={[
-                            "AI-Personalized Roadmap",
-                            "AI College Finder",
+                            "Personalized Roadmap",
+                            "Intelligent College Finder",
                             "Detailed Progress Tracking",
-                            "AI Study Buddy (Quizzes & Flashcards)",
+                            "Smart Study Buddy",
                             "Shareable Public Portfolio"
                         ]}
                         buttonVariant="secondary"
@@ -510,8 +511,8 @@ export default function Home() {
                         price="$12"
                         features={[
                             "Everything in Standard, plus:",
-                            "AI Essay Review Tool",
-                            "AI Scholarship Finder",
+                            "Instant Essay Review Tool",
+                            "Personalized Scholarship Finder",
                             "Mentor Match Directory",
                             "Community Q&A Forum",
                             "Priority Support"
@@ -536,13 +537,13 @@ export default function Home() {
                         <AccordionItem value="item-1">
                             <AccordionTrigger>Is PinnaclePath suitable for my child's age?</AccordionTrigger>
                             <AccordionContent>
-                            Yes! PinnaclePath is designed for students from elementary school through high school. For younger students, our AI focuses on exploration, skill-building, and discovering new interests. As students get older, the AI's recommendations become more focused on college preparation, leadership, and building a standout profile.
+                            Yes! PinnaclePath is designed for students from elementary school through high school. For younger students, our system focuses on exploration, skill-building, and discovering new interests. As students get older, the recommendations become more focused on college preparation, leadership, and building a standout profile.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-2">
                             <AccordionTrigger>How is this different from a traditional college counselor?</AccordionTrigger>
                             <AccordionContent>
-                            PinnaclePath acts as a 24/7 AI mentor that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking. Our Elite plan also includes a directory to connect with human mentors, offering the best of both worlds.
+                            PinnaclePath acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking. Our Elite plan also includes a directory to connect with human mentors, offering the best of both worlds.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3">
@@ -554,7 +555,7 @@ export default function Home() {
                         <AccordionItem value="item-4">
                             <AccordionTrigger>Is my personal and academic data secure?</AccordionTrigger>
                             <AccordionContent>
-                            Data privacy and security are our top priorities. We use industry-standard encryption and security protocols to protect your information. Your data is used solely to power the AI and personalize your experience. We do not sell your data to third parties. Please see our Privacy Policy for full details.
+                            Data privacy and security are our top priorities. We use industry-standard encryption and security protocols to protect your information. Your data is used solely to personalize your experience. We do not sell your data to third parties. Please see our Privacy Policy for full details.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
@@ -573,7 +574,7 @@ export default function Home() {
                         <GraduationCap className="w-8 h-8 text-primary" />
                         <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
                     </Link>
-                    <p className="text-muted-foreground text-sm">Your AI co-pilot for academic and career victory.</p>
+                    <p className="text-muted-foreground text-sm">Your co-pilot for academic and career victory.</p>
                  </div>
                  <div>
                     <h4 className="font-semibold mb-3">Platform</h4>
