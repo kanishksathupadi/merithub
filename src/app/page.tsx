@@ -118,7 +118,7 @@ function PricingModal({ children }: { children: React.ReactNode }) {
                             "Community Q&A Forum",
                             "Priority Support"
                         ]}
-                        buttonVariant="secondary"
+                        buttonVariant="default"
                         href="/signup?plan=elite"
                         isPopular
                     />
@@ -133,11 +133,11 @@ interface PricingCardProps {
     price: string;
     features: string[];
     href: string;
-    buttonVariant: "default" | "outline" | "secondary";
+    buttonVariant?: "default" | "outline" | "secondary";
     isPopular?: boolean;
 }
 
-const PricingCard = ({ plan, price, features, href, buttonVariant, isPopular = false }: PricingCardProps) => (
+const PricingCard = ({ plan, price, features, href, buttonVariant = "secondary", isPopular = false }: PricingCardProps) => (
     <div className={cn(
         "p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full bg-grid-primary/5",
         isPopular && "border-primary"
@@ -492,35 +492,34 @@ export default function Home() {
                     <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.</p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full bg-grid-primary/5">
-                        <h4 className="text-2xl font-semibold">Standard</h4>
-                        <p className="text-4xl font-bold my-4">$7<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
-                        <ul className="space-y-3 text-muted-foreground flex-1">
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI-Personalized Roadmap</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI College Finder</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Detailed Progress Tracking</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>AI Study Buddy (Quizzes &amp; Flashcards)</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Shareable Public Portfolio</li>
-                        </ul>
-                        <Button asChild variant="secondary" className="w-full mt-8">
-                           <Link href="/signup?plan=standard">Choose Standard</Link>
-                        </Button>
-                    </div>
-                    <div className="p-8 bg-card rounded-xl shadow-lg border border-primary flex flex-col h-full relative bg-grid-primary/5">
-                        <h4 className="text-2xl font-semibold text-primary">Elite</h4>
-                        <p className="text-4xl font-bold my-4">$12<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
-                        <ul className="space-y-3 text-muted-foreground flex-1">
-                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/><span className="text-foreground/90 font-semibold">Everything in Standard, plus:</span></li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Essay Review Tool</li>
-                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>AI Scholarship Finder</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Mentor Match Directory</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary font-semibold text-foreground/90"/>Community Q&amp;A Forum</li>
-                            <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary"/>Priority Support</li>
-                        </ul>
-                        <Button asChild variant="secondary" className="w-full mt-8">
-                            <Link href="/signup?plan=elite">Choose Elite</Link>
-                        </Button>
-                    </div>
+                   <PricingCard 
+                        plan="Standard"
+                        price="$7"
+                        features={[
+                            "AI-Personalized Roadmap",
+                            "AI College Finder",
+                            "Detailed Progress Tracking",
+                            "AI Study Buddy (Quizzes & Flashcards)",
+                            "Shareable Public Portfolio"
+                        ]}
+                        buttonVariant="secondary"
+                        href="/signup?plan=standard"
+                    />
+                    <PricingCard 
+                        plan="Elite"
+                        price="$12"
+                        features={[
+                            "Everything in Standard, plus:",
+                            "AI Essay Review Tool",
+                            "AI Scholarship Finder",
+                            "Mentor Match Directory",
+                            "Community Q&A Forum",
+                            "Priority Support"
+                        ]}
+                        buttonVariant="default"
+                        href="/signup?plan=elite"
+                        isPopular
+                    />
                 </div>
             </div>
         </section>
@@ -549,7 +548,7 @@ export default function Home() {
                         <AccordionItem value="item-3">
                             <AccordionTrigger>Can I cancel my subscription at any time?</AccordionTrigger>
                             <AccordionContent>
-                            Absolutely. You can manage your subscription at any time through your account settings page.
+                            Absolutely. You can cancel your subscription at any time through your account settings. You will retain access to your plan's features until the end of your current billing period.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4">
