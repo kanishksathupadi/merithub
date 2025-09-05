@@ -172,7 +172,7 @@ export function LoginForm() {
         const mentorData = {
             name: mentorName,
             email: values.email,
-            userId: `mentor-${mentorName.split(' ')[1].toLowerCase()}`
+            userId: `mentor-${mentorName.split(' ')[0].toLowerCase()}`
         }
          localStorage.setItem('signupData', JSON.stringify(mentorData));
          localStorage.setItem('userName', mentorData.name);

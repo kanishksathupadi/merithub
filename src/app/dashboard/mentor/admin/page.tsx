@@ -52,7 +52,7 @@ function MentorAdminDashboard() {
         }
         const signupData = JSON.parse(signupDataStr);
         // We'll use the user's ID as their mentor ID.
-        // E.g., mentor with email "reed@pinnaclepath-mentor.com" has userId "mentor-1"
+        // E.g., mentor with email "reed@pinnaclepath-mentor.com" has userId "mentor-reed"
         const currentMentorId = signupData.userId; 
         setMentorId(currentMentorId);
 
