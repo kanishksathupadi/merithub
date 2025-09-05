@@ -40,7 +40,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 // Automatically update grade based on school year cutoff (e.g., August 1st)
 const updateUserGrade = (user: any) => {
-    if (!user.birthdate || !user.lastLoginTimestamp) {
+    if (typeof user.grade !== 'number' || !user.lastLoginTimestamp) {
         return user;
     }
     
@@ -48,15 +48,20 @@ const updateUserGrade = (user: any) => {
     const today = new Date();
     
     // Define the school year cutoff (August 1st)
-    const currentYearCutoff = setYear(new Date(0, 7, 1), getYear(today)); // August 1st of current year
-    const lastLoginYearCutoff = setYear(new Date(0, 7, 1), getYear(lastLogin)); // August 1st of last login year
+    const lastLoginYear = getYear(lastLogin);
+    const currentYear = getYear(today);
 
-    // If last login was before this year's cutoff and today is after, they've passed a summer
-    if (isBefore(lastLogin, currentYearCutoff) && !isBefore(today, currentYearCutoff)) {
-        // Increment grade if not already at max
-        if (user.grade < 12) {
-            user.grade += 1;
-            console.log(`User grade updated to ${user.grade}`);
+    // If a new school year has started since the last login
+    if (currentYear > lastLoginYear) {
+        const yearsPassed = currentYear - lastLoginYear;
+        const newGrade = user.grade + yearsPassed;
+
+        if (newGrade <= 12) {
+            user.grade = newGrade;
+            console.log(`User grade automatically updated to ${user.grade}`);
+        } else if (user.grade < 12) {
+            user.grade = 12; // Cap at 12th grade
+            console.log(`User grade capped at 12.`);
         }
     }
 

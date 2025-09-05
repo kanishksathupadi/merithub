@@ -35,8 +35,8 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  birthdate: z.date({
-    required_error: "A date of birth is required.",
+  birthdate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "A valid date of birth is required.",
   }),
   grade: z.coerce.number().min(0, {message: "Please enter a valid grade (K=0)."}).max(12, {message: "Grade must be 12 or lower."}),
   school: z.string().min(3, { message: "Please select your school." }),
@@ -102,6 +102,7 @@ export function SignupForm({ plan }: SignupFormProps) {
 
         const newUser = { 
             ...values,
+            birthdate: new Date(values.birthdate).toISOString(), // Ensure birthdate is stored as ISO string
             plan,
             userId: uuidv4(),
             signupTimestamp: new Date().toISOString(),
@@ -206,45 +207,17 @@ export function SignupForm({ plan }: SignupFormProps) {
             />
             <div className="flex gap-4">
                 <FormField
-                control={form.control}
-                name="birthdate"
-                render={({ field }) => (
-                    <FormItem className="flex-1">
-                    <FormLabel>Date of birth</FormLabel>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                        <FormControl>
-                            <Button
-                            variant={"outline"}
-                            className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                            )}
-                            >
-                            {field.value ? (
-                                format(field.value, "PPP")
-                            ) : (
-                                <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                        </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                                date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                        />
-                        </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                    </FormItem>
-                )}
+                    control={form.control}
+                    name="birthdate"
+                    render={({ field }) => (
+                        <FormItem className="flex-1">
+                            <FormLabel>Date of birth</FormLabel>
+                            <FormControl>
+                                <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
               <FormField
                 control={form.control}
