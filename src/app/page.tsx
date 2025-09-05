@@ -243,10 +243,10 @@ export default function Home() {
                 Your AI Co-Pilot for Academic & Career Victory
               </div>
               <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
-                Smarter Prep, Brighter Future.
+                AI-Powered Strategy for Your Academic Victory.
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                PinnaclePath moves beyond simple planning. We use AI to build your unique strategy, sharpen your skills, and craft a standout profile that gets you noticed.
+                PinnaclePath is your AI co-pilot, building a unique strategy that sharpens your skills and crafts a standout profile to get you into your dream college.
               </p>
               <div className="mt-8 space-x-4">
                  <PricingModal>
