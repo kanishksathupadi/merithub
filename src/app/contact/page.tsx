@@ -104,8 +104,9 @@ export default function ContactPage() {
                 </Link>
                 <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
                     <Link href="/#features" className="hover:text-primary transition-colors">Features</Link>
-                    <Link href="/#pricing" className="hover:text-primary transition-colors">Pricing</Link>
-                    <Link href="/#faq" className="hover:text-primary transition-colors">FAQ</Link>
+                    <Link href="/about" className="hover:text-primary transition-colors">About</Link>
+                    <Link href="/careers" className="hover:text-primary transition-colors">Careers</Link>
+                    <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
                 </nav>
                 <div className="flex items-center gap-2 ml-auto">
                     <Button asChild variant="secondary">
