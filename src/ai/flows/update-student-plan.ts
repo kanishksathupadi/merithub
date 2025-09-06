@@ -16,7 +16,7 @@ const RoadmapTaskSchema = z.object({
     id: z.string(),
     title: z.string().describe("A concise, action-oriented title for the task (e.g., 'Master Quadratic Equations')."),
     description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important."),
-    category: z.enum(['Academics', 'Extracurriculars', 'Skill Building']),
+    category: z.string().describe("The task category (e.g., 'Academics', 'Extracurriculars', 'Skill Building', or a custom one)."),
     grade: z.string(),
     completed: z.boolean(),
     relatedResources: z.array(z.object({
