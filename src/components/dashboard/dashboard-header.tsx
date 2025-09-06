@@ -94,18 +94,18 @@ export function DashboardHeader() {
                          <Badge variant="secondary">{userPlan && userPlan.charAt(0).toUpperCase() + userPlan.slice(1)} Plan</Badge>
                     )}
                 </div>
-                <p className="text-muted-foreground mt-1">Here is your personalized dashboard.</p>
+                <p className="text-foreground/80 mt-1">Here is your personalized dashboard.</p>
             </div>
             <div className="flex items-center gap-4">
                 <DropdownMenu onOpenChange={(open) => !open && loadNotifications()}>
                     <DropdownMenuTrigger asChild>
-                         <Button variant="outline" size="icon" className="relative">
+                         <Button variant="outline" size="icon" className="relative glass-card">
                             {hasUnread && <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary" />}
                             <Bell className="h-5 w-5"/>
                             <span className="sr-only">Notifications</span>
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-80">
+                    <DropdownMenuContent align="end" className="w-80 glass-card">
                          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                          <DropdownMenuSeparator/>
                         <ScrollArea className="max-h-80">

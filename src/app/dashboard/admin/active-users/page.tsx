@@ -52,7 +52,7 @@ function ActiveUsersList() {
                     </Link>
                 </Button>
             </header>
-            <Card>
+            <Card className="glass-card">
                 <CardHeader>
                     <CardTitle>{pageTitle}</CardTitle>
                     <CardDescription>{pageDescription}</CardDescription>
@@ -60,7 +60,7 @@ function ActiveUsersList() {
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow>
+                            <TableRow className="border-white/10">
                                 <TableHead>Name</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Password</TableHead>
@@ -69,7 +69,7 @@ function ActiveUsersList() {
                         </TableHeader>
                         <TableBody>
                             {users.map((user, index) => (
-                                <TableRow key={`${user.email}-${index}`}>
+                                <TableRow key={`${user.email}-${index}`} className="border-white/10">
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{user.password}</TableCell>

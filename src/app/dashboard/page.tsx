@@ -234,8 +234,8 @@ function SuggestionView() {
     if (loading) {
         return (
              <div className="space-y-6">
-                <Skeleton className="h-72 w-full" />
-                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-72 w-full glass-card" />
+                <Skeleton className="h-48 w-full glass-card" />
             </div>
         )
     }
@@ -245,7 +245,7 @@ function SuggestionView() {
              {briefing ? (
                 <NextStepCard briefing={briefing} tasks={tasks} onTaskToggle={handleTaskToggle} />
              ) : (
-                <Card><CardContent className="pt-6"><p>Generating your strategic plan. If this takes more than a moment, please try refreshing the page.</p></CardContent></Card>
+                <Card className="glass-card"><CardContent className="pt-6"><p>Generating your strategic plan. If this takes more than a moment, please try refreshing the page.</p></CardContent></Card>
              )}
             {showCheckIn && <CheckInCard onCheckIn={handleCheckIn} isLoading={loading} />}
         </div>
@@ -269,7 +269,7 @@ const eliteTiles = [
 
 const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
     return (
-         <Alert className="relative bg-primary/5 border-primary/20">
+         <Alert className="relative glass-card border-primary/20">
             <Info className="h-4 w-4 text-primary" />
             <AlertTitle className="text-primary font-semibold">Welcome to Your Dashboard!</AlertTitle>
             <AlertDescription className="text-primary/80">
@@ -299,7 +299,7 @@ const KeyStats = () => {
     }, []);
     
     return (
-         <Card>
+         <Card className="glass-card">
             <CardHeader>
                 <CardTitle className="text-lg">Your Progress</CardTitle>
             </CardHeader>
@@ -321,7 +321,7 @@ const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
     const tiles = plan === 'elite' ? eliteTiles : standardTiles;
     
     return (
-        <Card>
+        <Card className="glass-card">
             <CardHeader>
                 <CardTitle className="text-lg">Your Toolkit</CardTitle>
             </CardHeader>
@@ -331,7 +331,7 @@ const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
                         href={tile.href} 
                         key={tile.title}
                         onClick={() => trackFeatureUsage(tile.feature)}
-                        className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors group"
+                        className="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors group"
                     >
                          <div className={cn(
                             "p-2 rounded-md transition-colors bg-opacity-10",
@@ -408,7 +408,7 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
              <div className="lg:col-span-2 space-y-6">
-                <Suspense fallback={<Skeleton className="h-96 w-full" />}>
+                <Suspense fallback={<Skeleton className="h-96 w-full glass-card" />}>
                     <SuggestionView />
                 </Suspense>
              </div>

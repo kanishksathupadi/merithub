@@ -74,7 +74,7 @@ function AdminHeader() {
         <header className="flex items-center justify-between mb-8">
             <div>
                 <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                <p className="text-muted-foreground">Site-wide analytics and user management.</p>
+                <p className="text-foreground/80">Site-wide analytics and user management.</p>
             </div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -88,7 +88,7 @@ function AdminHeader() {
                         </div>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 glass-card">
                      <DropdownMenuItem asChild>
                         <Link href="/dashboard/settings">
                             <Settings className="mr-2 h-4 w-4" />
@@ -183,7 +183,7 @@ export default function AdminPage() {
       <AdminHeader />
       
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/users')}>
+        <Card className="cursor-pointer hover:border-primary/50 transition-colors glass-card" onClick={() => handleCardClick('/dashboard/admin/users')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -192,7 +192,7 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{userStats.totalUsers.toLocaleString()}</div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/active-users')}>
+        <Card className="cursor-pointer hover:border-primary/50 transition-colors glass-card" onClick={() => handleCardClick('/dashboard/admin/active-users')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Daily Active Users</CardTitle>
             <LineChart className="h-4 w-4 text-muted-foreground" />
@@ -201,7 +201,7 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{userStats.dailyActive.toLocaleString()}</div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/support-requests')}>
+        <Card className="cursor-pointer hover:border-primary/50 transition-colors glass-card" onClick={() => handleCardClick('/dashboard/admin/support-requests')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Support Requests</CardTitle>
             <MessageSquareWarning className="h-4 w-4 text-muted-foreground" />
@@ -210,7 +210,7 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{supportRequests}</div>
           </CardContent>
         </Card>
-         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/contact-messages')}>
+         <Card className="cursor-pointer hover:border-primary/50 transition-colors glass-card" onClick={() => handleCardClick('/dashboard/admin/contact-messages')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Contact Messages</CardTitle>
             <Mail className="h-4 w-4 text-muted-foreground" />
@@ -219,7 +219,7 @@ export default function AdminPage() {
             <div className="text-2xl font-bold">{contactMessages}</div>
           </CardContent>
         </Card>
-         <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => handleCardClick('/dashboard/admin/applications')}>
+         <Card className="cursor-pointer hover:border-primary/50 transition-colors glass-card" onClick={() => handleCardClick('/dashboard/admin/applications')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Job Applications</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
@@ -231,21 +231,23 @@ export default function AdminPage() {
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="col-span-1 lg:col-span-1">
+        <Card className="col-span-1 lg:col-span-1 glass-card">
           <CardHeader>
             <CardTitle>Feature Engagement</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={featureEngagementData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip 
                     contentStyle={{
-                        backgroundColor: "hsl(var(--background))",
-                        border: "1px solid hsl(var(--border))"
+                        backgroundColor: "hsl(var(--background) / 0.5)",
+                        borderColor: "hsl(var(--border))",
+                        backdropFilter: "blur(4px)",
                     }}
+                    cursor={{fill: "hsl(var(--accent) / 0.3)"}}
                 />
                 <Legend iconSize={10} />
                 <Bar dataKey="usage" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
@@ -253,7 +255,7 @@ export default function AdminPage() {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="glass-card">
           <CardHeader>
             <CardTitle>Recent Signups</CardTitle>
           </CardHeader>
@@ -268,7 +270,7 @@ export default function AdminPage() {
               </TableHeader>
               <TableBody>
                 {recentSignups.map((user: any, index: number) => (
-                  <TableRow key={`${user.email}-${index}`}>
+                  <TableRow key={`${user.email}-${index}`} className="border-white/10">
                     <TableCell className="font-medium flex items-center gap-2">
                         <Avatar className="w-8 h-8">
                             <AvatarImage src={user.avatarUrl} data-ai-hint={user.hint}/>

@@ -55,7 +55,7 @@ function JobApplicationsList() {
                     </Link>
                 </Button>
             </header>
-            <Card>
+            <Card className="glass-card">
                 <CardHeader>
                     <CardTitle>{pageTitle}</CardTitle>
                     <CardDescription>{pageDescription}</CardDescription>
@@ -63,7 +63,7 @@ function JobApplicationsList() {
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow>
+                            <TableRow className="border-white/10">
                                 <TableHead>Applicant</TableHead>
                                 <TableHead>Position</TableHead>
                                 <TableHead>Submitted</TableHead>
@@ -80,7 +80,7 @@ function JobApplicationsList() {
                                 </TableRow>
                             )}
                             {applications.map((app) => (
-                                <TableRow key={app.id}>
+                                <TableRow key={app.id} className="border-white/10">
                                     <TableCell className="font-medium">{app.name}</TableCell>
                                     <TableCell>{app.jobTitle}</TableCell>
                                     <TableCell>{format(parseISO(app.submittedAt), "PPP")}</TableCell>
@@ -94,7 +94,7 @@ function JobApplicationsList() {
                                             <DialogTrigger asChild>
                                                 <Button variant="outline" size="sm">View</Button>
                                             </DialogTrigger>
-                                            <DialogContent className="max-w-xl">
+                                            <DialogContent className="max-w-xl glass-card">
                                                 <DialogHeader>
                                                     <DialogTitle>Application: {app.name}</DialogTitle>
                                                     <DialogDescription>For position: {app.jobTitle}</DialogDescription>
@@ -106,7 +106,7 @@ function JobApplicationsList() {
                                                     
                                                     <div className="pt-4">
                                                         <h4 className="font-semibold mb-2">Additional Comments</h4>
-                                                        <p className="text-sm text-muted-foreground p-4 bg-muted rounded-md">{app.comments}</p>
+                                                        <p className="text-sm text-foreground/80 p-4 bg-black/20 rounded-md">{app.comments}</p>
                                                     </div>
                                                 </div>
                                             </DialogContent>
@@ -129,4 +129,3 @@ export default function JobApplicationsPage() {
         </Suspense>
     )
 }
-

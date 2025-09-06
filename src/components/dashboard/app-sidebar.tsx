@@ -19,7 +19,7 @@ interface AppSidebarProps {
 
 function UpgradeCard() {
   return (
-    <Card className="bg-primary/10 border-primary/20 m-2">
+    <Card className="glass-card m-2">
       <CardContent className="p-4 text-center">
         <div className="mb-2 flex justify-center">
           <div className="w-10 h-10 bg-primary/20 text-primary rounded-full flex items-center justify-center">
@@ -112,7 +112,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
         // - `payment-${email}`
         // - `roadmapTasks-${email}`
         // - `aiSuggestion-${email}`
-        // - `allSignups`
         // This ensures that when the user logs back in, their progress is restored.
     }
     router.push('/');

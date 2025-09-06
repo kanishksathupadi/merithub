@@ -108,7 +108,7 @@ function SupportRequestsList() {
                     </Link>
                 </Button>
             </header>
-            <Card>
+            <Card className="glass-card">
                 <CardHeader>
                     <CardTitle>{pageTitle}</CardTitle>
                     <CardDescription>{pageDescription}</CardDescription>
@@ -116,7 +116,7 @@ function SupportRequestsList() {
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow>
+                            <TableRow className="border-white/10">
                                 <TableHead>Student Name</TableHead>
                                 <TableHead>Request Time</TableHead>
                                 <TableHead>Status</TableHead>
@@ -132,7 +132,7 @@ function SupportRequestsList() {
                                 </TableRow>
                             )}
                             {requests.map((req) => (
-                                <TableRow key={req.userId}>
+                                <TableRow key={req.userId} className="border-white/10">
                                     <TableCell className="font-medium">{req.userName}</TableCell>
                                     <TableCell>{format(parseISO(req.timestamp), "PPP p")}</TableCell>
                                     <TableCell>
@@ -145,12 +145,12 @@ function SupportRequestsList() {
                                             <DialogTrigger asChild>
                                                 <Button variant="outline" size="sm" onClick={() => setCurrentChatId(req.userId)}>View & Respond</Button>
                                             </DialogTrigger>
-                                            <DialogContent className="max-w-2xl h-[90vh] flex flex-col">
+                                            <DialogContent className="max-w-2xl h-[90vh] flex flex-col glass-card">
                                                 <DialogHeader>
                                                     <DialogTitle>Chat History with {req.userName}</DialogTitle>
                                                     <DialogDescription>Review and respond to the conversation.</DialogDescription>
                                                 </DialogHeader>
-                                                <ScrollArea className="flex-1 w-full rounded-md border p-4">
+                                                <ScrollArea className="flex-1 w-full rounded-md border p-4 border-white/10">
                                                     <div className="space-y-4">
                                                         {req.chatHistory.map((msg, index) => (
                                                             <div key={index} className={cn('flex items-end gap-2', {
@@ -176,7 +176,7 @@ function SupportRequestsList() {
                                                         ))}
                                                     </div>
                                                 </ScrollArea>
-                                                 <form onSubmit={(e) => handleAdminSendMessage(e, req.userId)} className="flex items-center gap-2 border-t pt-4">
+                                                 <form onSubmit={(e) => handleAdminSendMessage(e, req.userId)} className="flex items-center gap-2 border-t pt-4 border-white/10">
                                                     <Input 
                                                         placeholder="Type your response..."
                                                         value={adminMessage}

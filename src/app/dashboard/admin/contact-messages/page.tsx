@@ -53,7 +53,7 @@ function ContactMessagesList() {
                     </Link>
                 </Button>
             </header>
-            <Card>
+            <Card className="glass-card">
                 <CardHeader>
                     <CardTitle>{pageTitle}</CardTitle>
                     <CardDescription>{pageDescription}</CardDescription>
@@ -61,7 +61,7 @@ function ContactMessagesList() {
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow>
+                            <TableRow className="border-white/10">
                                 <TableHead>From</TableHead>
                                 <TableHead>Inquiry Type</TableHead>
                                 <TableHead>Submitted</TableHead>
@@ -78,7 +78,7 @@ function ContactMessagesList() {
                                 </TableRow>
                             )}
                             {messages.map((msg) => (
-                                <TableRow key={msg.id}>
+                                <TableRow key={msg.id} className="border-white/10">
                                     <TableCell className="font-medium">{msg.name}</TableCell>
                                     <TableCell>{msg.inquiryType}</TableCell>
                                     <TableCell>{format(parseISO(msg.submittedAt), "PPP")}</TableCell>
@@ -92,7 +92,7 @@ function ContactMessagesList() {
                                             <DialogTrigger asChild>
                                                 <Button variant="outline" size="sm">View Message</Button>
                                             </DialogTrigger>
-                                            <DialogContent className="max-w-xl">
+                                            <DialogContent className="max-w-xl glass-card">
                                                 <DialogHeader>
                                                     <DialogTitle>Message from {msg.name}</DialogTitle>
                                                     <DialogDescription>Type: {msg.inquiryType}</DialogDescription>
@@ -101,8 +101,8 @@ function ContactMessagesList() {
                                                     <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-muted-foreground"/> <a href={`mailto:${msg.email}`} className="text-primary hover:underline">{msg.email}</a></div>
                                                      <div className="pt-4">
                                                         <h4 className="font-semibold mb-2">Message</h4>
-                                                        <p className="text-sm text-muted-foreground p-4 bg-muted rounded-md">{msg.message}</p>
-                                                    </div>
+                                                        <p className="text-sm text-foreground/80 p-4 bg-black/20 rounded-md">{msg.message}</p>
+                                                     </div>
                                                 </div>
                                             </DialogContent>
                                         </Dialog>

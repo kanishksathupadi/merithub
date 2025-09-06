@@ -72,7 +72,7 @@ export function ProgressView() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="glass-card">
         <CardHeader>
           <CardTitle>Overall Progress</CardTitle>
           <CardDescription>You are making great strides towards your goals!</CardDescription>
@@ -84,21 +84,21 @@ export function ProgressView() {
       </Card>
 
       <div className="grid md:grid-cols-3 gap-4 text-center">
-        <Card>
+        <Card className="glass-card">
             <CardHeader><CardTitle className="flex items-center justify-center gap-2 text-xl"><CheckCircle className="text-green-500"/>Completed Tasks</CardTitle></CardHeader>
             <CardContent><p className="text-4xl font-bold">{completedTasks}</p></CardContent>
         </Card>
-        <Card>
+        <Card className="glass-card">
             <CardHeader><CardTitle className="flex items-center justify-center gap-2 text-xl"><ListChecks className="text-blue-500"/>Total Tasks</CardTitle></CardHeader>
             <CardContent><p className="text-4xl font-bold">{totalTasks}</p></CardContent>
         </Card>
-         <Card>
+         <Card className="glass-card">
             <CardHeader><CardTitle className="flex items-center justify-center gap-2 text-xl"><Star className="text-yellow-400"/>Points Earned</CardTitle></CardHeader>
             <CardContent><p className="text-4xl font-bold">{totalPoints.toLocaleString()}</p></CardContent>
         </Card>
       </div>
 
-       <Card>
+       <Card className="glass-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><BarChart2/>Task Completion Timeline</CardTitle>
             <CardDescription>Tasks completed over the last 7 days.</CardDescription>
@@ -106,17 +106,23 @@ export function ProgressView() {
           <CardContent className="pl-2">
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={timelineData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
-                    <Tooltip contentStyle={{ backgroundColor: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }} />
+                    <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <Tooltip contentStyle={{ 
+                        backgroundColor: "hsl(var(--background) / 0.5)",
+                        borderColor: "hsl(var(--border))",
+                        backdropFilter: "blur(4px)",
+                     }}
+                     cursor={{fill: "hsl(var(--accent) / 0.3)"}}
+                     />
                     <Bar dataKey="completed" name="Tasks Completed" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-      <Card>
+      <Card className="glass-card">
         <CardHeader>
             <CardTitle className="flex items-center gap-2"><Activity/>Category Breakdown</CardTitle>
             <CardDescription>A breakdown of your progress across different areas.</CardDescription>
