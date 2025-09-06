@@ -223,6 +223,8 @@ function SuggestionView() {
             task.id === taskId ? { ...task, completed: !task.completed } : task
         );
         saveTasks(newTasks);
+        // Manually dispatch a storage event so other components (like KeyStats) can update.
+        window.dispatchEvent(new StorageEvent('storage', { key: 'roadmapTasks' }));
     };
 
     const handleCheckIn = async (checkInText: string) => {
@@ -312,7 +314,8 @@ const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
 const KeyStats = () => {
     const [stats, setStats] = useState({ completed: 0, points: 0 });
 
-    useEffect(() => {
+    const calculateStats = useCallback(() => {
+        if (typeof window === 'undefined') return;
         const email = localStorage.getItem('signupData') ? JSON.parse(localStorage.getItem('signupData')!).email : null;
         if (email) {
             const tasksStr = localStorage.getItem(`roadmapTasks-${email}`);
@@ -324,6 +327,23 @@ const KeyStats = () => {
             }
         }
     }, []);
+
+    useEffect(() => {
+        calculateStats(); // Calculate on initial render
+
+        const handleStorageChange = (event: StorageEvent) => {
+             // Listen for changes from other tabs/components
+            if (event.key === 'roadmapTasks' || event.key === `roadmapTasks-${localStorage.getItem('signupData') ? JSON.parse(localStorage.getItem('signupData')!).email : null}`) {
+                calculateStats();
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, [calculateStats]);
     
     return (
          <Card>

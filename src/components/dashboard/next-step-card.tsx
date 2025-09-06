@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -27,7 +28,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
     
     if (!briefing || briefing.priorityMission.id === 'completed') {
         return (
-            <Card className="bg-gradient-to-br from-green-500/10 via-background to-background border-green-500/20">
+            <Card className="bg-gradient-to-br from-green-500/10 via-background to-background border-green-500/20 glass-card">
                 <CardHeader>
                     <CardTitle className="text-xl flex items-center gap-2">
                     <CheckCircle className="text-green-500 w-6 h-6" />
@@ -67,7 +68,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
     }
   
     return (
-        <Card className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20 overflow-hidden flex flex-col">
+        <Card className="glass-card bg-gradient-to-br from-primary/10 via-transparent to-transparent border-primary/20 overflow-hidden flex flex-col">
         <AnimatePresence mode="wait">
             <motion.div
                 key={priorityMission.id}
@@ -88,23 +89,23 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                 </CardHeader>
                 <CardContent className="space-y-6 flex-1 flex flex-col">
                     <div className="flex-1 space-y-4">
-                        <div className="p-4 rounded-lg bg-background/50 border border-primary/30">
-                            <p className="font-bold mt-2 text-lg">{priorityMission.title}</p>
+                        <div className="p-4 rounded-lg bg-black/20 border border-white/10">
+                            <p className="font-bold mt-2 text-lg text-foreground">{priorityMission.title}</p>
                             <p className="text-muted-foreground text-sm mt-1">{priorityMission.description}</p>
                         </div>
                         
                          <Accordion type="single" collapsible className="w-full">
                             <AccordionItem value="item-1" className="border-none">
-                                <AccordionTrigger className="text-sm p-2 hover:no-underline hover:bg-muted rounded-md">Why is this important? View AI Insights</AccordionTrigger>
+                                <AccordionTrigger className="text-sm p-2 hover:no-underline hover:bg-white/10 rounded-md">Why is this important? View AI Insights</AccordionTrigger>
                                 <AccordionContent className="pt-2 space-y-3">
-                                     <div className="p-3 rounded-lg bg-muted">
+                                     <div className="p-3 rounded-lg bg-black/20">
                                         <h4 className="font-semibold flex items-center gap-2 text-sm text-primary/90">
                                             <Lightbulb className="w-4 h-4"/>
                                             The Big Picture
                                         </h4>
                                         <p className="text-muted-foreground text-xs mt-1">{bigPicture}</p>
                                     </div>
-                                    <div className="p-3 rounded-lg bg-muted">
+                                    <div className="p-3 rounded-lg bg-black/20">
                                         <h4 className="font-semibold flex items-center gap-2 text-sm text-primary/90">
                                             <BrainCircuit className="w-4 h-4"/>
                                             Mentor's Insight
@@ -137,4 +138,3 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
         </Card>
     );
 }
-
