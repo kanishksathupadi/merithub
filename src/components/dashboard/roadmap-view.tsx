@@ -13,8 +13,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { addNotification } from "@/lib/tracking";
 
-const categories: RoadmapTask['category'][] = ['Academics', 'Extracurriculars', 'Skill Building'];
-
 const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
   if (typeof window === 'undefined') return;
   try {
@@ -39,7 +37,7 @@ const getCategoryIcon = (category: RoadmapTask['category']) => {
         case 'Academics': return <BrainCircuit className="w-5 h-5 text-blue-400" />;
         case 'Extracurriculars': return <Trophy className="w-5 h-5 text-green-400" />;
         case 'Skill Building': return <Star className="w-5 h-5 text-yellow-400" />;
-        default: return null;
+        default: return <Star className="w-5 h-5 text-gray-400" />;
     }
 }
 
@@ -101,7 +99,7 @@ export function RoadmapView() {
             parsedTasks = parsedTasks.map((task, index) => ({
                 ...task,
                 points: task.points || Math.floor(Math.random() * 20) + 10,
-                dueDate: task.dueDate, // Keep dueDate as is or undefined
+                dueDate: task.dueDate,
             }));
             setTasks(parsedTasks);
             }
@@ -189,36 +187,42 @@ export function RoadmapView() {
   return (
     <div className="w-full space-y-4">
         <Accordion type="single" collapsible defaultValue={`${gradeOrder[0]}`} className="w-full space-y-4">
-           {gradeOrder.map(grade => (
-               <AccordionItem value={grade} key={grade} className="border-b-0">
-                    <Card>
-                        <AccordionTrigger className="p-6 hover:no-underline">
-                             <h2 className="text-2xl font-bold">{grade}</h2>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-6 pb-6">
-                            <div className="space-y-6">
-                                {Object.keys(groupedTasks[grade]).map(category => {
-                                    const categoryTasks = groupedTasks[grade][category as keyof typeof groupedTasks[typeof grade]]
-                                    if (categoryTasks.length === 0) return null;
-                                    return (
-                                        <div key={category}>
-                                            <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                                                {getCategoryIcon(category as RoadmapTask['category'])}
-                                                {category}
-                                            </h3>
-                                            <div className="space-y-3">
-                                                {categoryTasks.map(task => (
-                                                     <TaskCard key={task.id} task={task} onToggle={toggleTask} />
-                                                ))}
+           {gradeOrder.map(grade => {
+                // Determine all categories present for this grade
+                const categoriesForGrade = Object.keys(groupedTasks[grade] || {});
+                if (categoriesForGrade.length === 0) return null;
+
+                return (
+                    <AccordionItem value={grade} key={grade} className="border-b-0">
+                        <Card>
+                            <AccordionTrigger className="p-6 hover:no-underline">
+                                <h2 className="text-2xl font-bold">{grade}</h2>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-6 pb-6">
+                                <div className="space-y-6">
+                                    {categoriesForGrade.map(category => {
+                                        const categoryTasks = groupedTasks[grade][category as keyof typeof groupedTasks[typeof grade]]
+                                        if (categoryTasks.length === 0) return null;
+                                        return (
+                                            <div key={category}>
+                                                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                                                    {getCategoryIcon(category as RoadmapTask['category'])}
+                                                    {category}
+                                                </h3>
+                                                <div className="space-y-3">
+                                                    {categoryTasks.map(task => (
+                                                        <TaskCard key={task.id} task={task} onToggle={toggleTask} />
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </AccordionContent>
-                    </Card>
-               </AccordionItem>
-           ))}
+                                        )
+                                    })}
+                                </div>
+                            </AccordionContent>
+                        </Card>
+                    </AccordionItem>
+                )
+           })}
         </Accordion>
     </div>
   );
