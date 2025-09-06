@@ -16,7 +16,7 @@ const StrategicBriefingInputSchema = z.object({
     id: z.string(),
     title: z.string(),
     description: z.string(),
-    category: z.enum(['Academics', 'Extracurriculars', 'Skill Building']),
+    category: z.string(),
     completed: z.boolean(),
   })).describe("The student's full list of roadmap tasks."),
 });
