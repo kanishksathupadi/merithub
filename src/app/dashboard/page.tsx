@@ -274,7 +274,7 @@ const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
             <Info className="h-4 w-4 text-primary" />
             <AlertTitle className="text-primary font-semibold">Welcome to Your Dashboard!</AlertTitle>
             <AlertDescription className="text-primary/80">
-                This is your command center. Start with your **AI Strategic Briefing** to see your most important next step, or explore your full plan in **My Roadmap**.
+                This is your command center. Start with your <span className="font-bold">AI Strategic Briefing</span> to see your most important next step, or explore your full plan in <span className="font-bold">My Roadmap</span>.
             </AlertDescription>
             <button onClick={onDismiss} className="absolute top-2 right-2 p-1">
                 <X className="h-4 w-4 text-primary/60 hover:text-primary"/>
