@@ -72,6 +72,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
         if (!missionTask) return;
         handleComplete(missionTask.id, completionProof);
         setShowProofDialog(false);
+        setCompletionProof("");
     }
 
     const handleComplete = (taskId: string, proof?: string) => {
@@ -154,7 +155,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                                 </a>
                             </Button>
                         )}
-                        <Button onClick={handleCompleteClick} disabled={isCompleting} size="lg" className="w-full">
+                        <Button onClick={handleCompleteClick} disabled={isCompleting || !missionTask} size="lg" className="w-full">
                             {isCompleting ? <Loader2 className="animate-spin"/> : <><CheckCircle className="mr-2 h-5 w-5" /> Complete Mission</>}
                         </Button>
                     </div>
