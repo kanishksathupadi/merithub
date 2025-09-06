@@ -168,8 +168,6 @@ export function LoginForm() {
         localStorage.setItem('signupData', JSON.stringify(adminData));
         localStorage.setItem('userName', 'Admin');
         localStorage.setItem('userPlan', 'elite');
-        localStorage.setItem('onboardingData', JSON.stringify({})); 
-        localStorage.setItem('paymentComplete', 'true');
         router.push('/dashboard/admin');
         return;
     }
