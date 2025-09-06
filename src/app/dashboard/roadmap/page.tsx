@@ -25,21 +25,18 @@ import { CalendarView } from "@/components/dashboard/calendar-view";
 const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
 const resourceSchema = z.object({
-  title: z.string(),
-  url: z.string().url({ message: "Please enter a valid URL." }),
-}).optional().refine(data => !data || (data.title && data.url) || (!data.title && !data.url), {
-    message: "Both resource title and URL must be filled out, or both must be empty.",
-    path: ['title'], // Point error to the title field
+  title: z.string().optional(),
+  url: z.string().optional(),
 });
 
 
 const taskSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters."),
-  description: z.string().min(10, "Description must be at least 10 characters."),
-  category: z.string().min(3, "Category must be at least 3 characters."),
+  title: z.string().min(1, "Title is required."),
+  description: z.string().min(1, "Description is required."),
+  category: z.string().min(1, "Category is required."),
   dueDate: z.date().optional(),
   recurringDays: z.array(z.string()).optional(),
-  resource: resourceSchema,
+  resource: resourceSchema.optional(),
 });
 
 const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
@@ -107,7 +104,7 @@ export default function RoadmapPage() {
       category: values.category as any, // Cast to any to allow custom strings
       grade: "Custom",
       completed: false,
-      relatedResources: (values.resource && values.resource.url) ? [values.resource] as { title: string, url: string }[] : [],
+      relatedResources: (values.resource && values.resource.url && values.resource.title) ? [{title: values.resource.title, url: values.resource.url}] as { title: string, url: string }[] : [],
       dueDate: values.dueDate?.toISOString(),
       recurringDays: values.recurringDays,
     };
@@ -121,10 +118,17 @@ export default function RoadmapPage() {
 
     window.dispatchEvent(new Event('storage'));
     
-    toast({
-        title: "Task Added!",
-        description: "Your custom task has been added to the roadmap.",
-    });
+    if (values.dueDate) {
+        toast({
+            title: "Task Added!",
+            description: "Your custom task has been added to your roadmap and calendar.",
+        });
+    } else {
+        toast({
+            title: "Task Added!",
+            description: "Note: Tasks without a due date will not appear on the calendar view.",
+        });
+    }
 
     form.reset();
     setDialogOpen(false);
