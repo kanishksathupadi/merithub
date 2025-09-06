@@ -66,30 +66,6 @@ export function CalendarView() {
         return () => window.removeEventListener('storage', loadTasks);
     }, [loadTasks]);
 
-    const toggleTask = (taskId: string) => {
-        if (!userEmail) return;
-
-        const newTasks = tasks.map(task => {
-        if (task.id === taskId) {
-            const wasCompleted = task.completed;
-            const isNowCompleted = !wasCompleted;
-            if (isNowCompleted) {
-                addNotification({
-                    title: "Task Completed!",
-                    description: `You earned ${task.points || 10} points for "${task.title}".`
-                });
-            }
-            return { ...task, completed: isNowCompleted };
-        }
-        return task;
-        });
-
-        setTasks(newTasks);
-        localStorage.setItem(`roadmapTasks-${userEmail}`, JSON.stringify(newTasks));
-        updateMasterUserList(userEmail, newTasks);
-        window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
-    };
-
     const tasksForMonth = useMemo(() => {
         const start = startOfMonth(month);
         const end = endOfMonth(month);
@@ -101,7 +77,6 @@ export function CalendarView() {
                 return isWithinInterval(dueDate, interval);
             }
             if (task.recurringDays && task.recurringDays.length > 0) {
-                // If it's recurring, it's potentially visible in any month
                 return true;
             }
             return false;
@@ -109,8 +84,8 @@ export function CalendarView() {
     }, [tasks, month]);
 
     const getTasksForDay = (day: Date): RoadmapTask[] => {
-        const dayOfWeek = getDay(day); // 0 for Sunday, 1 for Monday...
-        return tasks.filter(task => { // Filter all tasks, not just tasks for the month for recurring ones
+        const dayOfWeek = getDay(day);
+        return tasks.filter(task => { 
             if (task.dueDate && isSameDay(parseISO(task.dueDate), day)) {
                 return true;
             }
@@ -133,10 +108,10 @@ export function CalendarView() {
                     months: "flex flex-col sm:flex-row flex-1",
                     month: "h-full flex flex-col flex-1 space-y-2",
                     table: "w-full border-collapse flex flex-col flex-1",
-                    tbody: "flex flex-col flex-1",
-                    head_row: "flex",
-                    head_cell: "text-muted-foreground rounded-md w-full basis-0 flex-1 font-normal text-[0.8rem]",
-                    row: "flex w-full flex-1",
+                    tbody: "flex-1 grid grid-rows-5 gap-1",
+                    head_row: "flex w-full",
+                    head_cell: "text-muted-foreground rounded-md w-full basis-0 flex-1 font-normal text-[0.8rem] text-center",
+                    row: "flex w-full gap-1",
                     cell: "h-full w-full text-center text-sm p-0 relative basis-0 flex-1",
                     day: "h-full w-full p-1",
                     day_outside: "day-outside text-muted-foreground opacity-50",
@@ -145,16 +120,17 @@ export function CalendarView() {
                     Day: ({ date, displayMonth }) => {
                         const tasksForDay = getTasksForDay(date);
                         const isOutsideMonth = date.getMonth() !== displayMonth.getMonth();
+                        const firstTask = tasksForDay.length > 0 ? tasksForDay[0] : null;
 
                         return (
-                            <div className="w-full h-full p-1 text-left relative flex flex-col border-t border-border/50">
-                                <div className={`font-semibold ${isOutsideMonth ? 'text-muted-foreground/50': ''}`}>{format(date, "d")}</div>
-                                <div className="flex-1 overflow-y-auto space-y-1 mt-1 text-xs">
-                                     {tasksForDay.map(task => (
-                                        <Badge key={task.id} variant={task.completed ? "secondary" : "default"} className="block truncate w-full text-left">
-                                            {task.title}
+                            <div className="w-full h-full text-left relative flex flex-col border border-border/20 rounded-md p-1 items-center">
+                                <div className={`font-semibold text-xs ${isOutsideMonth ? 'text-muted-foreground/50': ''}`}>{format(date, "d")}</div>
+                                <div className="mt-1 w-full">
+                                    {firstTask && (
+                                        <Badge variant={firstTask.completed ? "secondary" : "default"} className="block truncate w-full text-center text-[10px] p-1 h-auto">
+                                            {firstTask.title}
                                         </Badge>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
                         );
