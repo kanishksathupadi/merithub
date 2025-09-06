@@ -31,15 +31,17 @@ const ResourceSchema = z.object({
     url: z.string().url().describe('The valid URL for the resource.'),
 });
 
-const AcademicsAndSkillsTaskSchema = z.object({
+const BaseTaskSchema = z.object({
     title: z.string().describe("A concise, action-oriented title for the task (e.g., 'Master Quadratic Equations')."),
     description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important for their long-term growth."),
+    requiresProof: z.boolean().describe("Set to true if this task requires the student to provide proof of completion (e.g., a URL to a project, a document upload). This should be used for tasks that result in a tangible outcome."),
+});
+
+const AcademicsAndSkillsTaskSchema = BaseTaskSchema.extend({
     resource: ResourceSchema.describe('An online resource to help with the task. This is REQUIRED for Academics and Skill Building tasks.'),
 });
 
-const ExtracurricularsTaskSchema = z.object({
-    title: z.string().describe("A concise, action-oriented title for the task (e.g., 'Run for Treasurer in Student Government')."),
-    description: z.string().describe("A brief, one-sentence description of what the task entails and why it's important for their long-term growth."),
+const ExtracurricularsTaskSchema = BaseTaskSchema.extend({
     resource: ResourceSchema.optional().describe('An optional online resource to help with the task. If provided, the URL must be valid.'),
 });
 
@@ -85,11 +87,12 @@ const prompt = ai.definePrompt({
   1.  **Age-Specific Advice**: Tailor the plan based on the student's grade. Younger students (grades K-8) should have plans focused on exploration and curiosity. Older students (grades 9-12) should have plans that become progressively more focused on college prep, leadership, and developing their "spike."
   2.  **No Vague Tasks:** Do NOT create vague tasks like "Improve your grades" or "Study for the SAT." Every task must be a concrete, measurable action.
   3.  **Action-Oriented Titles:** All task titles must start with an action verb (e.g., "Master," "Complete," "Build," "Publish," "Lead").
-  4.  **Mandatory and Validated Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course.
-  5.  **Optional but Validated Resources:** For 'extracurriculars' tasks, a resource is optional. However, IF YOU PROVIDE one, you MUST use the 'findOnlineResource' tool to ensure it is valid.
-  6.  **Target Weaknesses Constructively:** Frame academic tasks as skill-building opportunities, not just fixing deficits. If a weakness is 'Physics', create a task like "Master the Concept of Kinematics" and find a resource.
-  7.  **Validate Subjects:** You MUST validate that 'academicStrengths' and 'academicWeaknesses' are real subjects using the 'validateAcademicSubject' tool.
-  8.  **Year-by-Year Plan:** Provide a clear, year-by-year plan from the student's current grade level through 12th grade.
+  4.  **Proof of Completion**: For tasks that result in a tangible output (e.g., writing a paper, building a project, launching a website, completing a certification), you MUST set 'requiresProof' to true. For tasks that are about learning or participation (e.g., "Master a concept," "Join a club"), set 'requiresProof' to false.
+  5.  **Mandatory and Validated Resources:** For EVERY task in the 'academics' and 'skillBuilding' categories, you MUST use the 'findOnlineResource' tool to find a relevant, high-quality online article, video, or course.
+  6.  **Optional but Validated Resources:** For 'extracurriculars' tasks, a resource is optional. However, IF YOU PROVIDE one, you MUST use the 'findOnlineResource' tool to ensure it is valid.
+  7.  **Target Weaknesses Constructively:** Frame academic tasks as skill-building opportunities, not just fixing deficits. If a weakness is 'Physics', create a task like "Master the Concept of Kinematics" and find a resource.
+  8.  **Validate Subjects:** You MUST validate that 'academicStrengths' and 'academicWeaknesses' are real subjects using the 'validateAcademicSubject' tool.
+  9.  **Year-by-Year Plan:** Provide a clear, year-by-year plan from the student's current grade level through 12th grade.
 
   **Student Information:**
   - Current Grade: {{{grade}}}

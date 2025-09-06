@@ -8,10 +8,13 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Link as LinkIcon, Star, BrainCircuit, Trophy, Repeat } from "lucide-react";
+import { Calendar, Link as LinkIcon, Star, BrainCircuit, Trophy, Repeat, Lock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { addNotification } from "@/lib/tracking";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
   if (typeof window === 'undefined') return;
@@ -41,41 +44,97 @@ const getCategoryIcon = (category: RoadmapTask['category']) => {
     }
 }
 
-function TaskCard({ task, onToggle }: { task: RoadmapTask, onToggle: (id: string) => void }) {
+function TaskCompletionDialog({ task, onToggle, children }: { task: RoadmapTask, onToggle: (id: string, proof?: string) => void, children: React.ReactNode }) {
+    const [proof, setProof] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    const requiresProof = task.requiresProof && !task.completed;
+    const canComplete = !requiresProof || (requiresProof && proof.trim().length > 0);
+
+    const handleComplete = () => {
+        onToggle(task.id, proof);
+        setIsOpen(false);
+    };
+
     return (
-        <div className={`p-4 rounded-lg transition-all flex items-start gap-4 ${task.completed ? 'bg-muted/50 opacity-70' : 'bg-background/50'}`}>
-             <Checkbox id={`task-${task.id}`} checked={task.completed} onCheckedChange={() => onToggle(task.id)} className="mt-1" />
-            <div className="flex-1 space-y-1">
-                <p className={`font-semibold ${task.completed ? 'line-through' : ''}`}>{task.title}</p>
-                <p className="text-sm text-muted-foreground">{task.description}</p>
-                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground pt-2">
-                    {task.points && (
-                        <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400"/> {task.points} pts</span>
-                    )}
-                    {task.dueDate && (
-                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3"/> Due {format(parseISO(task.dueDate), "MMM d, yyyy")}</span>
-                    )}
-                     {task.recurringDays && task.recurringDays.length > 0 && (
-                        <span className="flex items-center gap-1"><Repeat className="w-3 h-3"/> {task.recurringDays.map(d => d.slice(0,1).toUpperCase() + d.slice(1,3)).join(', ')}</span>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{task.completed ? 'Task Details' : 'Complete Task'}</DialogTitle>
+                    <DialogDescription>
+                        <p className="font-bold text-lg text-foreground">{task.title}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    {requiresProof && (
+                        <div className="space-y-2">
+                             <label htmlFor="proof" className="text-sm font-medium">Proof of Completion</label>
+                             <Textarea 
+                                id="proof"
+                                value={proof}
+                                onChange={(e) => setProof(e.target.value)}
+                                placeholder="Provide a URL to your project, a brief description of the outcome, or a link to a document..."
+                             />
+                             <p className="text-xs text-muted-foreground">This is required to mark this task as complete.</p>
+                        </div>
                     )}
                 </div>
-                 {task.relatedResources && task.relatedResources.length > 0 && (
-                     <div className="pt-2">
-                        {task.relatedResources?.map(resource => (
-                            <Button key={resource.url} variant="link" size="sm" asChild className="p-0 h-auto">
-                                <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                                    <LinkIcon className="w-3 h-3 mr-1" />
-                                    {resource.title}
-                                </a>
-                            </Button>
-                        ))}
-                     </div>
+                <DialogFooter>
+                    {task.completed ? (
+                         <Button onClick={() => onToggle(task.id)} variant="outline">Mark as Incomplete</Button>
+                    ) : (
+                        <Button onClick={handleComplete} disabled={!canComplete}>
+                            Complete Task
+                        </Button>
+                    )}
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+
+function TaskCard({ task, onToggle }: { task: RoadmapTask, onToggle: (id: string, proof?: string) => void }) {
+    return (
+        <TaskCompletionDialog task={task} onToggle={onToggle}>
+            <div className={`p-4 rounded-lg transition-all flex items-start gap-4 cursor-pointer ${task.completed ? 'bg-muted/50 opacity-70' : 'bg-background/50 hover:bg-muted/80'}`}>
+                <Checkbox id={`task-${task.id}`} checked={task.completed} className="mt-1" />
+                <div className="flex-1 space-y-1">
+                    <p className={`font-semibold ${task.completed ? 'line-through' : ''}`}>{task.title}</p>
+                    <p className="text-sm text-muted-foreground">{task.description}</p>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground pt-2">
+                        {task.points && (
+                            <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-400"/> {task.points} pts</span>
+                        )}
+                        {task.dueDate && (
+                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3"/> Due {format(parseISO(task.dueDate), "MMM d, yyyy")}</span>
+                        )}
+                        {task.recurringDays && task.recurringDays.length > 0 && (
+                            <span className="flex items-center gap-1"><Repeat className="w-3 h-3"/> {task.recurringDays.map(d => d.slice(0,1).toUpperCase() + d.slice(1,3)).join(', ')}</span>
+                        )}
+                        {task.requiresProof && (
+                             <span className="flex items-center gap-1 font-semibold text-primary/80"><Lock className="w-3 h-3"/> Proof Required</span>
+                        )}
+                    </div>
+                    {task.relatedResources && task.relatedResources.length > 0 && (
+                        <div className="pt-2">
+                            {task.relatedResources?.map(resource => (
+                                <Button key={resource.url} variant="link" size="sm" asChild className="p-0 h-auto">
+                                    <a href={resource.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                                        <LinkIcon className="w-3 h-3 mr-1" />
+                                        {resource.title}
+                                    </a>
+                                </Button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                {!task.completed && (
+                    <Badge variant="outline" className="h-fit">{task.category}</Badge>
                 )}
             </div>
-            {!task.completed && (
-                <Badge variant="outline" className="h-fit">{task.category}</Badge>
-            )}
-        </div>
+        </TaskCompletionDialog>
     )
 }
 
@@ -139,7 +198,7 @@ export function RoadmapView() {
   }, [groupedTasks]);
 
 
-  const toggleTask = (taskId: string) => {
+  const toggleTask = (taskId: string, proof?: string) => {
     if (!userEmail) return;
 
     const newTasks = tasks.map(task => {
@@ -152,7 +211,11 @@ export function RoadmapView() {
             description: `You earned ${task.points || 10} points for "${task.title}".`
           });
         }
-        return { ...task, completed: isNowCompleted };
+        return { 
+            ...task, 
+            completed: isNowCompleted,
+            completionProof: isNowCompleted ? proof : undefined,
+        };
       }
       return task;
     });

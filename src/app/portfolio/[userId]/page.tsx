@@ -6,9 +6,10 @@ import { useParams } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { GraduationCap, CheckCircle, Trophy, BrainCircuit, Star, ListChecks } from "lucide-react";
+import { GraduationCap, CheckCircle, Trophy, BrainCircuit, Star, ListChecks, Link as LinkIcon } from "lucide-react";
 import type { RoadmapTask } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 interface UserData {
     userId: string;
@@ -186,10 +187,20 @@ export default function PortfolioPage() {
                                         <div className="flex-1">
                                             <p className="font-semibold">{task.title}</p>
                                             <p className="text-sm text-muted-foreground">{task.description}</p>
-                                             <Badge variant="outline" className="mt-2 flex items-center gap-2 w-fit">
-                                                {getCategoryIcon(task.category)}
-                                                {task.category}
-                                            </Badge>
+                                             <div className="flex items-center gap-4 mt-2">
+                                                 <Badge variant="outline" className="flex items-center gap-2 w-fit">
+                                                    {getCategoryIcon(task.category)}
+                                                    {task.category}
+                                                </Badge>
+                                                {task.completionProof && (
+                                                     <Button asChild variant="link" size="sm" className="p-0 h-auto text-xs">
+                                                        <a href={task.completionProof} target="_blank" rel="noopener noreferrer">
+                                                            <LinkIcon className="w-3 h-3 mr-1"/>
+                                                            View Proof
+                                                        </a>
+                                                    </Button>
+                                                )}
+                                             </div>
                                         </div>
                                     </li>
                                 ))}

@@ -23,6 +23,8 @@ export type RoadmapTask = {
     points?: number;
     dueDate?: string;
     recurringDays?: string[];
+    requiresProof?: boolean;
+    completionProof?: string;
 };
 
 export type ForumReply = {
