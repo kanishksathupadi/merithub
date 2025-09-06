@@ -253,18 +253,18 @@ function SuggestionView() {
 }
 
 const standardTiles = [
-    { title: "My Roadmap", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap" },
-    { title: "Progress Tracker", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker" },
-    { title: "AI Study Buddy", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy" },
-    { title: "College Finder", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder" },
+    { title: "My Roadmap", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap", color: "text-chart-1" },
+    { title: "Progress Tracker", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker", color: "text-chart-2" },
+    { title: "AI Study Buddy", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy", color: "text-chart-3" },
+    { title: "College Finder", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder", color: "text-chart-4" },
 ];
 
 const eliteTiles = [
     ...standardTiles,
-    { title: "Scholarship Finder", icon: Award, href: "/dashboard/scholarship-finder", isElite: true, feature: "scholarshipFinder" },
-    { title: "AI Essay Review", icon: PenSquare, href: "/dashboard/essay-review", isElite: true, feature: "essayReview" },
-    { title: "Mentor Match", icon: MessageSquare, href: "/dashboard/mentor-match", isElite: true, feature: "mentorMatch" },
-    { title: "Q&A Forum", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum" },
+    { title: "Scholarship Finder", icon: Award, href: "/dashboard/scholarship-finder", isElite: true, feature: "scholarshipFinder", color: "text-chart-5" },
+    { title: "AI Essay Review", icon: PenSquare, href: "/dashboard/essay-review", isElite: true, feature: "essayReview", color: "text-chart-1" },
+    { title: "Mentor Match", icon: MessageSquare, href: "/dashboard/mentor-match", isElite: true, feature: "mentorMatch", color: "text-chart-2" },
+    { title: "Q&A Forum", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum", color: "text-chart-3" },
 ]
 
 const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
@@ -305,11 +305,11 @@ const KeyStats = () => {
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4 text-center">
                 <div>
-                    <p className="text-3xl font-bold text-primary">{stats.completed}</p>
+                    <p className="text-4xl font-bold text-chart-1">{stats.completed}</p>
                     <p className="text-xs text-muted-foreground">Tasks Done</p>
                 </div>
                  <div>
-                    <p className="text-3xl font-bold text-primary">{stats.points.toLocaleString()}</p>
+                    <p className="text-4xl font-bold text-chart-2">{stats.points.toLocaleString()}</p>
                     <p className="text-xs text-muted-foreground">Points Earned</p>
                 </div>
             </CardContent>
@@ -334,10 +334,10 @@ const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
                         className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors group"
                     >
                          <div className={cn(
-                            "p-2 rounded-md transition-colors",
-                            tile.isElite ? "bg-yellow-400/10 text-yellow-300 group-hover:bg-yellow-400/20" : "bg-primary/10 text-primary group-hover:bg-primary/20"
+                            "p-2 rounded-md transition-colors bg-opacity-10",
+                             `bg-[${tile.color.replace('text-','hsl(var(--'))}] text-[${tile.color.replace('text-','hsl(var(--'))}]`
                         )}>
-                            <tile.icon className="w-5 h-5" />
+                            <tile.icon className={cn("w-5 h-5", tile.color)} />
                         </div>
                         <div>
                              <p className="font-semibold text-sm">{tile.title}</p>
@@ -421,4 +421,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
