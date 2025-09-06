@@ -7,7 +7,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { RoadmapTask } from '@/lib/types';
 import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, isWithinInterval, getDay } from 'date-fns';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Checkbox } from '../ui/checkbox';
 import { addNotification } from '@/lib/tracking';
 
@@ -111,7 +110,7 @@ export function CalendarView() {
 
     const getTasksForDay = (day: Date): RoadmapTask[] => {
         const dayOfWeek = getDay(day); // 0 for Sunday, 1 for Monday...
-        return tasksForMonth.filter(task => {
+        return tasks.filter(task => { // Filter all tasks, not just tasks for the month for recurring ones
             if (task.dueDate && isSameDay(parseISO(task.dueDate), day)) {
                 return true;
             }
@@ -123,22 +122,22 @@ export function CalendarView() {
     };
 
     return (
-        <Card className="p-2 h-full flex flex-col">
+        <Card className="p-2 h-full flex flex-col glass-card">
             <Calendar
                 mode="single"
                 selected={new Date()}
                 onMonthChange={setMonth}
-                className="p-0"
+                className="p-0 h-full flex flex-col"
                  classNames={{
                     root: "h-full flex flex-col",
                     months: "flex flex-col sm:flex-row flex-1",
-                    month: "h-full flex flex-col flex-1",
+                    month: "h-full flex flex-col flex-1 space-y-2",
                     table: "w-full border-collapse flex flex-col flex-1",
                     tbody: "flex flex-col flex-1",
                     head_row: "flex",
-                    head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
+                    head_cell: "text-muted-foreground rounded-md w-full basis-0 flex-1 font-normal text-[0.8rem]",
                     row: "flex w-full flex-1",
-                    cell: "h-full w-full text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
+                    cell: "h-full w-full text-center text-sm p-0 relative basis-0 flex-1",
                     day: "h-full w-full p-1",
                     day_outside: "day-outside text-muted-foreground opacity-50",
                 }}
@@ -147,45 +146,17 @@ export function CalendarView() {
                         const tasksForDay = getTasksForDay(date);
                         const isOutsideMonth = date.getMonth() !== displayMonth.getMonth();
 
-                        if (isOutsideMonth) {
-                             return (
-                                <div className="w-full h-full p-1 text-left relative text-muted-foreground/50">
-                                    <div className="font-bold">{format(date, "d")}</div>
-                                </div>
-                            );
-                        }
-
                         return (
-                            <Popover>
-                                <PopoverTrigger asChild disabled={tasksForDay.length === 0}>
-                                    <div className="w-full h-full p-1 text-left relative cursor-pointer hover:bg-muted rounded-md flex flex-col border border-transparent hover:border-border">
-                                        <div className="font-bold">{format(date, "d")}</div>
-                                        <div className="space-y-1 mt-1 overflow-y-auto flex-1">
-                                            {tasksForDay.slice(0, 3).map(task => (
-                                                <Badge key={task.id} variant={task.completed ? "secondary" : "default"} className="block truncate text-xs">
-                                                    {task.title}
-                                                </Badge>
-                                            ))}
-                                            {tasksForDay.length > 3 && (
-                                                <Badge variant="outline" className="block text-xs">
-                                                    + {tasksForDay.length - 3} more
-                                                </Badge>
-                                            )}
-                                        </div>
-                                    </div>
-                                </PopoverTrigger>
-                                <PopoverContent>
-                                    <h4 className="font-semibold mb-2">{format(date, "PPP")}</h4>
-                                    <div className="space-y-2">
-                                        {tasksForDay.map(task => (
-                                            <div key={task.id} className="flex items-center gap-2">
-                                                <Checkbox id={`cal-${task.id}`} checked={task.completed} onCheckedChange={() => toggleTask(task.id)}/>
-                                                <label htmlFor={`cal-${task.id}`} className="text-sm">{task.title}</label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
+                            <div className="w-full h-full p-1 text-left relative flex flex-col border-t border-border/50">
+                                <div className={`font-semibold ${isOutsideMonth ? 'text-muted-foreground/50': ''}`}>{format(date, "d")}</div>
+                                <div className="flex-1 overflow-y-auto space-y-1 mt-1 text-xs">
+                                     {tasksForDay.map(task => (
+                                        <Badge key={task.id} variant={task.completed ? "secondary" : "default"} className="block truncate w-full text-left">
+                                            {task.title}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
                         );
                     }
                 }}
