@@ -54,7 +54,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
     const resource = missionTask?.relatedResources?.[0];
 
     const handleComplete = () => {
-        if (!missionTask) return;
+        if (!missionTask || missionTask.completed) return; // Prevent toggling if already complete
         setIsCompleting(true);
         addNotification({
             title: "Task Completed!",
