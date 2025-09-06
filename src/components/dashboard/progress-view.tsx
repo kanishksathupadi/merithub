@@ -4,27 +4,21 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, ListChecks, Star, Trophy, Activity, BrainCircuit, Calendar, BarChart2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { RoadmapTask } from "@/lib/types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { subDays, format } from "date-fns";
+import { subDays, format, parseISO, isSameDay } from "date-fns";
 
-// Mock data for completion timeline
+
 const generateTimelineData = (tasks: RoadmapTask[]) => {
     const data: { [key: string]: number } = {};
+    const completedTasks = tasks.filter(t => t.completed && t.dueDate);
+
     for (let i = 6; i >= 0; i--) {
-        const date = format(subDays(new Date(), i), "MMM d");
-        data[date] = 0;
+        const date = subDays(new Date(), i);
+        const dateKey = format(date, "MMM d");
+        data[dateKey] = completedTasks.filter(task => isSameDay(parseISO(task.dueDate!), date)).length;
     }
-    // This is a mock; in a real app, you'd check task completion dates.
-    // For now, let's randomly assign some completions.
-    const completedTasks = tasks.filter(t => t.completed);
-    completedTasks.forEach((_, index) => {
-        const dateKey = Object.keys(data)[index % 7];
-        if (dateKey) {
-            data[dateKey]++;
-        }
-    })
 
     return Object.entries(data).map(([name, completed]) => ({ name, completed }));
 };
@@ -35,19 +29,38 @@ export function ProgressView() {
     const [timelineData, setTimelineData] = useState<any[]>([]);
     const [totalPoints, setTotalPoints] = useState(0);
 
-    useEffect(() => {
-        const storedTasks = localStorage.getItem('roadmapTasks');
-        if (storedTasks) {
-            const parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
-            setTasks(parsedTasks);
-            setTimelineData(generateTimelineData(parsedTasks));
+    const loadData = useCallback(() => {
+        if (typeof window === 'undefined') return;
+
+        const signupDataStr = localStorage.getItem('signupData');
+        if (!signupDataStr) return;
+
+        try {
+            const email = JSON.parse(signupDataStr).email;
+            const storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
             
-            const points = parsedTasks
-                .filter(t => t.completed && t.points)
-                .reduce((sum, task) => sum + (task.points || 0), 0);
-            setTotalPoints(points);
+            if (storedTasks) {
+                const parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
+                setTasks(parsedTasks);
+                setTimelineData(generateTimelineData(parsedTasks));
+                
+                const points = parsedTasks
+                    .filter(t => t.completed && t.points)
+                    .reduce((sum, task) => sum + (task.points || 0), 0);
+                setTotalPoints(points);
+            }
+        } catch (error) {
+            console.error("Failed to load progress data:", error);
         }
     }, []);
+
+    useEffect(() => {
+        loadData();
+        window.addEventListener('storage', loadData);
+        return () => {
+            window.removeEventListener('storage', loadData);
+        };
+    }, [loadData]);
 
     const completedTasks = tasks.filter(task => task.completed).length;
     const totalTasks = tasks.length;
