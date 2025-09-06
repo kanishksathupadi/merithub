@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar as CalendarIcon, PlusCircle, List, CalendarDays } from "lucide-react";
+import { Calendar as CalendarIcon, PlusCircle, List, CalendarDays, LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,12 +24,22 @@ import { CalendarView } from "@/components/dashboard/calendar-view";
 
 const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
+const resourceSchema = z.object({
+  title: z.string(),
+  url: z.string().url({ message: "Please enter a valid URL." }),
+}).optional().refine(data => !data || (data.title && data.url) || (!data.title && !data.url), {
+    message: "Both resource title and URL must be filled out, or both must be empty.",
+    path: ['title'], // Point error to the title field
+});
+
+
 const taskSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   category: z.string().min(3, "Category must be at least 3 characters."),
   dueDate: z.date().optional(),
   recurringDays: z.array(z.string()).optional(),
+  resource: resourceSchema,
 });
 
 const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
@@ -73,6 +83,7 @@ export default function RoadmapPage() {
       description: "",
       category: "",
       recurringDays: [],
+      resource: { title: "", url: "" },
     },
   });
 
@@ -96,7 +107,7 @@ export default function RoadmapPage() {
       category: values.category as any, // Cast to any to allow custom strings
       grade: "Custom",
       completed: false,
-      relatedResources: [],
+      relatedResources: (values.resource && values.resource.url) ? [values.resource] as { title: string, url: string }[] : [],
       dueDate: values.dueDate?.toISOString(),
       recurringDays: values.recurringDays,
     };
@@ -280,6 +291,36 @@ export default function RoadmapPage() {
                         </FormItem>
                     )}
                     />
+                    
+                     <div className="space-y-4 rounded-md border p-4">
+                        <h4 className="text-sm font-medium">Resource (Optional)</h4>
+                        <FormField
+                            control={form.control}
+                            name="resource.title"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Resource Title</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g., Khan Academy Calculus" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="resource.url"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Resource URL</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="https://..." {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
 
 
                     <DialogFooter>
