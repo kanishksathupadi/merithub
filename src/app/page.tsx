@@ -74,7 +74,7 @@ function LiveStats() {
     );
 
     return (
-        <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             <StatCard icon={<UserCheck className="w-8 h-8" />} value={stats.students} label="Students Guided" isLoading={loading} />
             <StatCard icon={<GraduationCap className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" isLoading={loading} />
             <StatCard icon={<Award className="w-8 h-8" />} value={stats.scholarships} label="Scholarships Found" isLoading={loading} />
@@ -263,7 +263,9 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <LiveStats />
+            <div className="max-w-6xl mx-auto">
+              <LiveStats />
+            </div>
           </div>
         </section>
         
