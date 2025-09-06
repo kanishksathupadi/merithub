@@ -148,7 +148,11 @@ export function CalendarView() {
                         const isOutsideMonth = date.getMonth() !== displayMonth.getMonth();
 
                         if (isOutsideMonth) {
-                             return <div className="p-1 text-muted-foreground/50 h-full w-full">{format(date, "d")}</div>;
+                             return (
+                                <div className="w-full h-full p-1 text-left relative text-muted-foreground/50">
+                                    <div className="font-bold">{format(date, "d")}</div>
+                                </div>
+                            );
                         }
 
                         return (
