@@ -50,6 +50,7 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
                     relatedResources: item.resource ? [item.resource] : [],
                     points: Math.floor(Math.random() * 20) + 10, // Assign 10-30 points
                     dueDate: new Date(Date.now() + (planIndex * 30 + itemIndex) * 24 * 60 * 60 * 1000).toISOString(), // Mock due dates
+                    requiresProof: item.requiresProof,
                 });
             });
         };
@@ -218,13 +219,16 @@ function SuggestionView() {
         getSuggestionAndTasks();
     }, [email, loadTasksAndBriefing, saveTasks]);
 
-    const handleTaskToggle = (taskId: string) => {
-        const newTasks = tasks.map(task => 
-            task.id === taskId ? { ...task, completed: !task.completed } : task
-        );
+    const handleTaskToggle = (taskId: string, proof?: string) => {
+        const newTasks = tasks.map(task => {
+            if (task.id === taskId) {
+                return { ...task, completed: !task.completed, completionProof: proof };
+            }
+            return task;
+        });
         saveTasks(newTasks);
         // Manually dispatch a storage event so other components (like KeyStats) can update.
-        window.dispatchEvent(new StorageEvent('storage', { key: 'roadmapTasks' }));
+        window.dispatchEvent(new StorageEvent('storage', { key: `roadmapTasks-${email}` }));
     };
 
     const handleCheckIn = async (checkInText: string) => {
@@ -316,15 +320,22 @@ const KeyStats = () => {
 
     const calculateStats = useCallback(() => {
         if (typeof window === 'undefined') return;
-        const email = localStorage.getItem('signupData') ? JSON.parse(localStorage.getItem('signupData')!).email : null;
-        if (email) {
-            const tasksStr = localStorage.getItem(`roadmapTasks-${email}`);
-            if (tasksStr) {
-                const tasks: RoadmapTask[] = JSON.parse(tasksStr);
-                const completedTasks = tasks.filter(t => t.completed);
-                const totalPoints = completedTasks.reduce((sum, task) => sum + (task.points || 0), 0);
-                setStats({ completed: completedTasks.length, points: totalPoints });
+        const signupDataStr = localStorage.getItem('signupData');
+        if (!signupDataStr) return;
+        
+        try {
+            const email = JSON.parse(signupDataStr).email;
+            if (email) {
+                const tasksStr = localStorage.getItem(`roadmapTasks-${email}`);
+                if (tasksStr) {
+                    const tasks: RoadmapTask[] = JSON.parse(tasksStr);
+                    const completedTasks = tasks.filter(t => t.completed);
+                    const totalPoints = completedTasks.reduce((sum, task) => sum + (task.points || 0), 0);
+                    setStats({ completed: completedTasks.length, points: totalPoints });
+                }
             }
+        } catch(error) {
+            console.error("Failed to calculate stats:", error);
         }
     }, []);
 
@@ -333,7 +344,10 @@ const KeyStats = () => {
 
         const handleStorageChange = (event: StorageEvent) => {
              // Listen for changes from other tabs/components
-            if (event.key === 'roadmapTasks' || event.key === `roadmapTasks-${localStorage.getItem('signupData') ? JSON.parse(localStorage.getItem('signupData')!).email : null}`) {
+            const signupDataStr = localStorage.getItem('signupData');
+            if (!signupDataStr) return;
+            const email = JSON.parse(signupDataStr).email;
+            if (event.key === `roadmapTasks-${email}`) {
                 calculateStats();
             }
         };

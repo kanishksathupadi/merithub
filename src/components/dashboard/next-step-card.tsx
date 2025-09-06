@@ -1,9 +1,8 @@
 
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Lightbulb, CheckCircle, ArrowRight, Link as LinkIcon, Sparkles, Loader2, Target, BrainCircuit, ListChecks } from "lucide-react";
+import { Lightbulb, CheckCircle, ArrowRight, Link as LinkIcon, Sparkles, Loader2, Target, BrainCircuit, ListChecks, Lock } from "lucide-react";
 import type { RoadmapTask } from "@/lib/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -15,16 +14,21 @@ import type { StrategicBriefingOutput } from "@/ai/flows/get-strategic-briefing"
 import { Separator } from "../ui/separator";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
 
 
 type NextStepCardProps = {
   briefing: StrategicBriefingOutput;
   tasks: RoadmapTask[];
-  onTaskToggle: (taskId: string) => void;
+  onTaskToggle: (taskId: string, proof?: string) => void;
 };
 
 export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProps) {
     const [isCompleting, setIsCompleting] = useState(false);
+    const [showProofDialog, setShowProofDialog] = useState(false);
+    const [completionProof, setCompletionProof] = useState("");
     
     if (!briefing || briefing.priorityMission.id === 'completed') {
         return (
@@ -52,9 +56,26 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
     const { bigPicture, priorityMission, mentorInsight } = briefing;
     const missionTask = tasks.find(t => t.id === priorityMission.id);
     const resource = missionTask?.relatedResources?.[0];
+    const requiresProof = missionTask?.requiresProof && !missionTask?.completed;
 
-    const handleComplete = () => {
-        if (!missionTask || missionTask.completed) return; // Prevent toggling if already complete
+    const handleCompleteClick = () => {
+        if (!missionTask || missionTask.completed) return;
+
+        if (requiresProof) {
+            setShowProofDialog(true);
+        } else {
+            handleComplete(missionTask.id);
+        }
+    }
+
+    const handleProofSubmit = () => {
+        if (!missionTask) return;
+        handleComplete(missionTask.id, completionProof);
+        setShowProofDialog(false);
+    }
+
+    const handleComplete = (taskId: string, proof?: string) => {
+        if (!missionTask || missionTask.completed) return; 
         setIsCompleting(true);
         addNotification({
             title: "Task Completed!",
@@ -62,12 +83,13 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
         });
         
         setTimeout(() => {
-            onTaskToggle(missionTask.id);
+            onTaskToggle(taskId, proof);
             setIsCompleting(false);
         }, 500); // Wait for animation
     }
   
     return (
+        <>
         <Card className="glass-card bg-gradient-to-br from-primary/10 via-transparent to-transparent border-primary/20 overflow-hidden flex flex-col">
         <AnimatePresence mode="wait">
             <motion.div
@@ -92,6 +114,11 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                         <div className="p-4 rounded-lg bg-black/20 border border-white/10">
                             <p className="font-bold mt-2 text-lg text-foreground">{priorityMission.title}</p>
                             <p className="text-muted-foreground text-sm mt-1">{priorityMission.description}</p>
+                             {requiresProof && (
+                                <Badge variant="outline" className="mt-2 flex items-center gap-2 w-fit border-primary/30 text-primary/80">
+                                    <Lock className="w-3 h-3"/> Proof Required to Complete
+                                </Badge>
+                            )}
                         </div>
                         
                          <Accordion type="single" collapsible className="w-full">
@@ -127,7 +154,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                                 </a>
                             </Button>
                         )}
-                        <Button onClick={handleComplete} disabled={isCompleting} size="lg" className="w-full">
+                        <Button onClick={handleCompleteClick} disabled={isCompleting} size="lg" className="w-full">
                             {isCompleting ? <Loader2 className="animate-spin"/> : <><CheckCircle className="mr-2 h-5 w-5" /> Complete Mission</>}
                         </Button>
                     </div>
@@ -136,5 +163,31 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
             </motion.div>
         </AnimatePresence>
         </Card>
+        
+         <Dialog open={showProofDialog} onOpenChange={setShowProofDialog}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Proof of Completion</DialogTitle>
+                    <DialogDescription>
+                        This task requires proof. Please provide a link to your work or a brief description of the outcome.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-4 space-y-2">
+                    <Label htmlFor="completion-proof">Proof</Label>
+                    <Textarea
+                        id="completion-proof"
+                        value={completionProof}
+                        onChange={(e) => setCompletionProof(e.target.value)}
+                        placeholder="e.g., https://github.com/my-project or 'I presented my project at the school science fair...'"
+                        rows={5}
+                    />
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowProofDialog(false)}>Cancel</Button>
+                    <Button onClick={handleProofSubmit} disabled={!completionProof.trim()}>Submit and Complete Task</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+        </>
     );
 }
