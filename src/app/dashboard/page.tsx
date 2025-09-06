@@ -61,6 +61,30 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
     return tasks;
 }
 
+const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[], updatedSuggestion?: SuggestNextStepOutput) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const allUsersStr = localStorage.getItem('allSignups');
+    if (allUsersStr) {
+      let allUsers = JSON.parse(allUsersStr);
+      allUsers = allUsers.map((user: any) => {
+        if (user.email === email) {
+          const updatedUser = { ...user, tasks: updatedTasks };
+          if (updatedSuggestion) {
+            updatedUser.suggestion = updatedSuggestion;
+          }
+          return updatedUser;
+        }
+        return user;
+      });
+      localStorage.setItem('allSignups', JSON.stringify(allUsers));
+    }
+  } catch(e) {
+    console.error("Failed to update master user list:", e);
+  }
+};
+
+
 function SuggestionView() {
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
     const [briefing, setBriefing] = useState<StrategicBriefingOutput | null>(null);
@@ -133,9 +157,13 @@ function SuggestionView() {
     }, [toast]);
 
 
-    const saveTasks = useCallback(async (tasksToSave: RoadmapTask[]) => {
+    const saveTasks = useCallback(async (tasksToSave: RoadmapTask[], suggestion?: SuggestNextStepOutput) => {
          if (!email) return;
          localStorage.setItem(`roadmapTasks-${email}`, JSON.stringify(tasksToSave));
+         if (suggestion) {
+            localStorage.setItem(`aiSuggestion-${email}`, JSON.stringify(suggestion));
+         }
+         updateMasterUserList(email, tasksToSave, suggestion);
          setTasks(tasksToSave);
          // Invalidate briefing cache on task change
          localStorage.removeItem(`strategicBriefing-${email}`);
@@ -150,10 +178,9 @@ function SuggestionView() {
                 return;
             };
 
-            const cachedSuggestion = localStorage.getItem(`aiSuggestion-${email}`);
             const currentTasks = await loadTasksAndBriefing(email);
             
-            if (cachedSuggestion && currentTasks.length > 0) {
+            if (currentTasks.length > 0) {
                  setLoading(false);
             } else {
                 const onboardingDataStr = localStorage.getItem('onboardingData');
@@ -165,9 +192,8 @@ function SuggestionView() {
                     const result = await fetchSuggestion({ ...onboardingData, grade: signupData.grade });
                     
                     if (result) {
-                        localStorage.setItem(`aiSuggestion-${email}`, JSON.stringify(result));
                         const newTasks = generateTasksFromSuggestion(result);
-                        await saveTasks(newTasks);
+                        await saveTasks(newTasks, result);
                     }
                 }
             }
@@ -235,8 +261,8 @@ function SuggestionView() {
     if (loading) {
         return (
              <div className="space-y-6">
-                <Skeleton className="h-72 w-full glass-card" />
-                <Skeleton className="h-48 w-full glass-card" />
+                <Skeleton className="h-72 w-full" />
+                <Skeleton className="h-48 w-full" />
             </div>
         )
     }
@@ -246,7 +272,7 @@ function SuggestionView() {
              {briefing ? (
                 <NextStepCard briefing={briefing} tasks={tasks} onTaskToggle={handleTaskToggle} />
              ) : (
-                <Card className="glass-card"><CardContent className="pt-6"><p>Generating your strategic plan. If this takes more than a moment, please try refreshing the page.</p></CardContent></Card>
+                <Card><CardContent className="pt-6"><p>Generating your strategic plan. If this takes more than a moment, please try refreshing the page.</p></CardContent></Card>
              )}
             {showCheckIn && <CheckInCard onCheckIn={handleCheckIn} isLoading={loading} />}
         </div>
@@ -270,11 +296,11 @@ const eliteTiles = [
 
 const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
     return (
-         <Alert className="relative glass-card border-primary/20">
+         <Alert className="relative border-primary/20">
             <Info className="h-4 w-4 text-primary" />
             <AlertTitle className="text-primary font-semibold">Welcome to Your Dashboard!</AlertTitle>
             <AlertDescription className="text-primary/80">
-                This is your command center. Start with your <span className="font-bold">AI Strategic Briefing</span> to see your most important next step, or explore your full plan in <span className="font-bold">My Roadmap</span>.
+                This is your command center. Start with your <strong>AI Strategic Briefing</strong> to see your most important next step, or explore your full plan in <strong>My Roadmap</strong>.
             </AlertDescription>
             <button onClick={onDismiss} className="absolute top-2 right-2 p-1">
                 <X className="h-4 w-4 text-primary/60 hover:text-primary"/>
@@ -300,7 +326,7 @@ const KeyStats = () => {
     }, []);
     
     return (
-         <Card className="glass-card">
+         <Card>
             <CardHeader>
                 <CardTitle className="text-lg">Your Progress</CardTitle>
             </CardHeader>
@@ -322,7 +348,7 @@ const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
     const tiles = plan === 'elite' ? eliteTiles : standardTiles;
     
     return (
-        <Card className="glass-card">
+        <Card>
             <CardHeader>
                 <CardTitle className="text-lg">Your Toolkit</CardTitle>
             </CardHeader>
@@ -332,7 +358,7 @@ const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
                         href={tile.href} 
                         key={tile.title}
                         onClick={() => trackFeatureUsage(tile.feature)}
-                        className="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors group"
+                        className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors group"
                     >
                          <div className={cn("p-2 rounded-md bg-muted")}>
                             <tile.icon className={cn("w-5 h-5", tile.color)} />
@@ -406,7 +432,7 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
              <div className="lg:col-span-2 space-y-6">
-                <Suspense fallback={<Skeleton className="h-96 w-full glass-card" />}>
+                <Suspense fallback={<Skeleton className="h-96 w-full" />}>
                     <SuggestionView />
                 </Suspense>
              </div>

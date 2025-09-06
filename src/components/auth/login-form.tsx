@@ -98,6 +98,14 @@ export function LoginForm() {
             localStorage.setItem('userName', user.name);
             localStorage.setItem('userPlan', user.plan);
             
+            // This is the key: load the master task list into the session
+            if (user.tasks) {
+                 localStorage.setItem(`roadmapTasks-${user.email}`, JSON.stringify(user.tasks));
+            }
+            if (user.suggestion) {
+                localStorage.setItem(`aiSuggestion-${user.email}`, JSON.stringify(user.suggestion));
+            }
+            
             const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
             const paymentComplete = localStorage.getItem(`payment-${user.email}`);
 
@@ -204,11 +212,23 @@ export function LoginForm() {
                 localStorage.setItem('userName', user.name);
                 localStorage.setItem('userPlan', user.plan);
 
+                // Clear previous session data
                 localStorage.removeItem('onboardingData');
                 localStorage.removeItem('paymentComplete');
+                localStorage.removeItem(`roadmapTasks-${user.email}`);
+                localStorage.removeItem(`aiSuggestion-${user.email}`);
 
+                // Restore persisted data for this user into the current session
                 const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
                 const paymentComplete = localStorage.getItem(`payment-${user.email}`);
+
+                // This is the key: load the master task list into the session
+                if (user.tasks) {
+                    localStorage.setItem(`roadmapTasks-${user.email}`, JSON.stringify(user.tasks));
+                }
+                if (user.suggestion) {
+                    localStorage.setItem(`aiSuggestion-${user.email}`, JSON.stringify(user.suggestion));
+                }
 
                  if (onboardingComplete) {
                     localStorage.setItem('onboardingData', onboardingComplete);

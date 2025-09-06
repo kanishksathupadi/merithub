@@ -198,12 +198,12 @@ export function RoadmapView() {
                         <AccordionContent className="px-6 pb-6">
                             <div className="space-y-6">
                                 {Object.keys(groupedTasks[grade]).map(category => {
-                                    const categoryTasks = groupedTasks[grade][category];
+                                    const categoryTasks = groupedTasks[grade][category as keyof typeof groupedTasks[typeof grade]]
                                     if (categoryTasks.length === 0) return null;
                                     return (
                                         <div key={category}>
                                             <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                                                {getCategoryIcon(category)}
+                                                {getCategoryIcon(category as RoadmapTask['category'])}
                                                 {category}
                                             </h3>
                                             <div className="space-y-3">
