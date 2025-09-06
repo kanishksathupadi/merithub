@@ -128,15 +128,15 @@ export function CalendarView() {
                 mode="single"
                 selected={new Date()}
                 onMonthChange={setMonth}
-                className="p-0 [&_td]:p-0 [&_tr]:h-full"
+                className="p-0"
                  classNames={{
                     root: "h-full flex flex-col",
                     months: "flex flex-col sm:flex-row flex-1",
                     month: "space-y-4 flex-1 flex flex-col",
-                    table: "w-full border-collapse space-y-1 flex-1",
+                    table: "w-full border-collapse flex flex-col flex-1",
                     head_row: "flex",
                     head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
-                    row: "flex w-full mt-2 h-full",
+                    row: "flex w-full mt-2 flex-1",
                     cell: "h-full w-full text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
                     day: "h-full w-full p-1",
                     day_outside: "day-outside text-muted-foreground opacity-50",
