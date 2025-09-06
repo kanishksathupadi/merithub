@@ -5,13 +5,14 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { RoadmapTask } from '@/lib/types';
-import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, isWithinInterval, getDay } from 'date-fns';
+import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, isWithinInterval, getDay, startOfWeek, endOfWeek, addDays } from 'date-fns';
 import { Checkbox } from '../ui/checkbox';
 import { addNotification } from '@/lib/tracking';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import { CheckCircle, LinkIcon } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
     if (typeof window === 'undefined') return;
@@ -34,67 +35,6 @@ const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
 
 const dayOfWeekMap: { [key: string]: number } = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
 const dayHeaders = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-function DayPopover({ date, tasks, onToggle }: { date: Date, tasks: RoadmapTask[], onToggle: (taskId: string) => void }) {
-    if (tasks.length === 0) {
-        return <div className="font-semibold text-xs">{format(date, "d")}</div>;
-    }
-
-    return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <button className="w-full h-full text-left p-1 focus:outline-none focus:ring-2 focus:ring-primary rounded-md">
-                     <div className="font-semibold text-xs">{format(date, "d")}</div>
-                      <div className="mt-1 w-full space-y-1">
-                        {tasks.slice(0, 3).map(task => (
-                            <Badge key={task.id} variant={task.completed ? "secondary" : "default"} className="block truncate w-full text-left p-1 h-auto text-[11px] font-normal">
-                                {task.title}
-                            </Badge>
-                        ))}
-                         {tasks.length > 3 && (
-                            <Badge variant="outline" className="block w-full text-center p-1 h-auto text-[10px] font-normal">
-                                + {tasks.length - 3} more
-                            </Badge>
-                        )}
-                    </div>
-                </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-                 <div className="space-y-4">
-                    <div className="font-bold text-lg">{format(date, "EEEE, MMMM d")}</div>
-                    <ScrollArea className="max-h-60 pr-4">
-                        <div className="space-y-3">
-                            {tasks.map(task => (
-                                <div key={task.id} className="flex items-start gap-3">
-                                    <Checkbox
-                                        id={`popover-task-${task.id}`}
-                                        checked={task.completed}
-                                        onCheckedChange={() => onToggle(task.id)}
-                                        className="mt-1"
-                                    />
-                                    <div className="flex-1">
-                                        <label htmlFor={`popover-task-${task.id}`} className={`font-medium text-sm ${task.completed ? 'line-through text-muted-foreground' : ''}`}>
-                                            {task.title}
-                                        </label>
-                                        <p className="text-xs text-muted-foreground">{task.description}</p>
-                                        {task.relatedResources && task.relatedResources.length > 0 && (
-                                            <Button variant="link" size="sm" asChild className="p-0 h-auto text-xs">
-                                                <a href={task.relatedResources[0].url} target="_blank" rel="noopener noreferrer">
-                                                    <LinkIcon className="w-3 h-3 mr-1" />
-                                                    View Resource
-                                                </a>
-                                            </Button>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </ScrollArea>
-                 </div>
-            </PopoverContent>
-        </Popover>
-    );
-}
 
 
 export function CalendarView() {
@@ -152,11 +92,6 @@ export function CalendarView() {
         return () => window.removeEventListener('storage', loadTasks);
     }, [loadTasks]);
 
-    const daysInMonth = useMemo(() => {
-        const start = startOfMonth(currentMonth);
-        const end = endOfMonth(currentMonth);
-        return eachDayOfInterval({ start, end });
-    }, [currentMonth]);
     
     const getTasksForDay = useCallback((day: Date): RoadmapTask[] => {
         const dayOfWeek = getDay(day);
@@ -172,43 +107,60 @@ export function CalendarView() {
     }, [tasks]);
 
     const calendarGrid = useMemo(() => {
-        const start = startOfMonth(currentMonth);
-        const end = endOfMonth(currentMonth);
-        const startDate = start.getDay() === 0 ? start : new Date(start.setDate(start.getDate() - start.getDay()));
-        const endDate = end.getDay() === 6 ? end : new Date(end.setDate(end.getDate() + (6 - end.getDay())));
+        const monthStart = startOfMonth(currentMonth);
+        const monthEnd = endOfMonth(currentMonth);
+        const startDate = startOfWeek(monthStart);
+        const endDate = endOfWeek(monthEnd);
         
         const grid = [];
         let day = startDate;
         while (day <= endDate) {
             grid.push(day);
-            day = new Date(day.setDate(day.getDate() + 1));
+            day = addDays(day, 1);
         }
         return grid;
     }, [currentMonth]);
 
     return (
         <Card className="p-4 h-full flex flex-col glass-card">
-             <div className="flex justify-between items-center mb-2 px-2">
+             <div className="flex justify-between items-center mb-4 px-2">
                 <Button variant="outline" onClick={() => setCurrentMonth(m => new Date(m.setMonth(m.getMonth() - 1)))}>
                     Previous
                 </Button>
-                <h2 className="text-xl font-bold">{format(currentMonth, "MMMM yyyy")}</h2>
+                <h2 className="text-xl font-bold text-center">{format(currentMonth, "MMMM yyyy")}</h2>
                 <Button variant="outline" onClick={() => setCurrentMonth(m => new Date(m.setMonth(m.getMonth() + 1)))}>
                     Next
                 </Button>
             </div>
-            <div className="grid grid-cols-7 gap-1 flex-1">
-                 {dayHeaders.map(day => (
-                    <div key={day} className="text-center font-bold text-muted-foreground text-sm">
-                        {day}
-                    </div>
+            <div className="grid grid-cols-7 text-center font-bold text-muted-foreground text-sm">
+                {dayHeaders.map(day => (
+                    <div key={day} className="py-2">{day}</div>
                 ))}
-                {calendarGrid.map(date => {
+            </div>
+            <div className="grid grid-cols-7 grid-rows-6 gap-1 flex-1">
+                {calendarGrid.map((date, index) => {
                     const tasksForDay = getTasksForDay(date);
                     const isOutsideMonth = date.getMonth() !== currentMonth.getMonth();
                     return (
-                        <div key={date.toString()} className={`border border-border/20 rounded-md p-1 ${isOutsideMonth ? 'bg-black/10 text-muted-foreground/50' : 'bg-background/10'}`}>
-                           <DayPopover date={date} tasks={tasksForDay} onToggle={handleTaskToggle} />
+                        <div 
+                            key={index} 
+                            className={cn(
+                                "border border-border/20 rounded-md p-2 flex flex-col",
+                                isOutsideMonth ? 'text-muted-foreground/50 bg-black/10' : 'bg-background/10'
+                            )}
+                        >
+                           <span className="font-semibold text-xs">{format(date, "d")}</span>
+                           <div className="flex-1 mt-1 space-y-1 overflow-hidden">
+                                {tasksForDay.map(task => (
+                                    <Badge 
+                                        key={task.id}
+                                        variant={task.completed ? "secondary" : "default"}
+                                        className="block w-full text-left p-1 h-auto font-normal truncate"
+                                    >
+                                        {task.title}
+                                    </Badge>
+                                ))}
+                           </div>
                         </div>
                     )
                 })}
