@@ -123,15 +123,23 @@ export function CalendarView() {
     };
 
     return (
-        <Card className="p-4">
+        <Card className="p-2 h-full flex flex-col">
             <Calendar
                 mode="single"
                 selected={new Date()}
                 onMonthChange={setMonth}
-                className="p-0"
-                classNames={{
-                    day_cell: "h-24 w-32 align-top p-1",
-                    day: "w-full h-full",
+                className="p-0 [&_td]:p-0 [&_tr]:h-full"
+                 classNames={{
+                    root: "h-full flex flex-col",
+                    months: "flex flex-col sm:flex-row flex-1",
+                    month: "space-y-4 flex-1 flex flex-col",
+                    table: "w-full border-collapse space-y-1 flex-1",
+                    head_row: "flex",
+                    head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
+                    row: "flex w-full mt-2 h-full",
+                    cell: "h-full w-full text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
+                    day: "h-full w-full p-1",
+                    day_outside: "day-outside text-muted-foreground opacity-50",
                 }}
                 components={{
                     Day: ({ date, displayMonth }) => {
@@ -139,23 +147,23 @@ export function CalendarView() {
                         const isOutsideMonth = date.getMonth() !== displayMonth.getMonth();
 
                         if (isOutsideMonth) {
-                            return <div className="p-1 text-muted-foreground/50">{format(date, "d")}</div>;
+                             return <div className="p-1 text-muted-foreground/50 h-full w-full">{format(date, "d")}</div>;
                         }
 
                         return (
                             <Popover>
                                 <PopoverTrigger asChild disabled={tasksForDay.length === 0}>
-                                    <div className="w-full h-full p-1 text-left relative cursor-pointer hover:bg-muted rounded-md">
+                                    <div className="w-full h-full p-1 text-left relative cursor-pointer hover:bg-muted rounded-md flex flex-col">
                                         <div className="font-bold">{format(date, "d")}</div>
-                                        <div className="space-y-1 mt-1 overflow-y-auto max-h-16">
-                                            {tasksForDay.slice(0, 2).map(task => (
+                                        <div className="space-y-1 mt-1 overflow-y-auto flex-1">
+                                            {tasksForDay.slice(0, 3).map(task => (
                                                 <Badge key={task.id} variant={task.completed ? "secondary" : "default"} className="block truncate text-xs">
                                                     {task.title}
                                                 </Badge>
                                             ))}
-                                            {tasksForDay.length > 2 && (
+                                            {tasksForDay.length > 3 && (
                                                 <Badge variant="outline" className="block text-xs">
-                                                    + {tasksForDay.length - 2} more
+                                                    + {tasksForDay.length - 3} more
                                                 </Badge>
                                             )}
                                         </div>

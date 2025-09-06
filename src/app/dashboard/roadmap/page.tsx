@@ -294,11 +294,13 @@ export default function RoadmapPage() {
             </Dialog>
         </div>
       </header>
-      {activeView === 'list' ? (
-        <RoadmapView key={`list-${update}`} />
-      ) : (
-        <CalendarView key={`calendar-${update}`} />
-      )}
+       <div className="flex-1">
+            {activeView === 'list' ? (
+                <RoadmapView key={`list-${update}`} />
+            ) : (
+                <CalendarView key={`calendar-${update}`} />
+            )}
+        </div>
     </div>
   );
 }
