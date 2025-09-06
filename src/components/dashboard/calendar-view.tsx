@@ -132,9 +132,9 @@ export function CalendarView() {
                  classNames={{
                     root: "h-full flex flex-col",
                     months: "flex flex-col sm:flex-row flex-1",
-                    month: "h-full flex flex-col",
-                    table: "w-full border-collapse h-full",
-                    tbody: "h-full flex flex-col",
+                    month: "h-full flex flex-col flex-1",
+                    table: "w-full border-collapse flex flex-col flex-1",
+                    tbody: "flex flex-col flex-1",
                     head_row: "flex",
                     head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
                     row: "flex w-full flex-1",
