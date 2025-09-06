@@ -132,11 +132,11 @@ export function CalendarView() {
                  classNames={{
                     root: "h-full flex flex-col",
                     months: "flex flex-col sm:flex-row flex-1",
-                    month: "space-y-4 flex-1 flex flex-col",
+                    month: "flex-1 flex flex-col",
                     table: "w-full border-collapse flex flex-col flex-1",
                     head_row: "flex",
                     head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
-                    row: "flex w-full mt-2 flex-1",
+                    row: "flex w-full flex-1",
                     cell: "h-full w-full text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
                     day: "h-full w-full p-1",
                     day_outside: "day-outside text-muted-foreground opacity-50",
@@ -153,7 +153,7 @@ export function CalendarView() {
                         return (
                             <Popover>
                                 <PopoverTrigger asChild disabled={tasksForDay.length === 0}>
-                                    <div className="w-full h-full p-1 text-left relative cursor-pointer hover:bg-muted rounded-md flex flex-col">
+                                    <div className="w-full h-full p-1 text-left relative cursor-pointer hover:bg-muted rounded-md flex flex-col border border-transparent hover:border-border">
                                         <div className="font-bold">{format(date, "d")}</div>
                                         <div className="space-y-1 mt-1 overflow-y-auto flex-1">
                                             {tasksForDay.slice(0, 3).map(task => (
