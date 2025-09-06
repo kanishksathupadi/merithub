@@ -242,6 +242,7 @@ export default function ContactPage() {
                                 <li><Link href="/#features" className="hover:text-primary">Features</Link></li>
                                 <li><Link href="/#pricing" className="hover:text-primary">Pricing</Link></li>
                                 <li><Link href="/login" className="hover:text-primary">Login</Link></li>
+                                <li><Link href="/signup" className="hover:text-primary">Get Started</Link></li>
                             </ul>
                         </div>
                         <div>
