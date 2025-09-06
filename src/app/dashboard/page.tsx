@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Suspense, useEffect, useState, useCallback, useMemo } from "react";
@@ -333,10 +334,7 @@ const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
                         onClick={() => trackFeatureUsage(tile.feature)}
                         className="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors group"
                     >
-                         <div className={cn(
-                            "p-2 rounded-md transition-colors bg-opacity-10",
-                             `bg-[${tile.color.replace('text-','hsl(var(--'))}] text-[${tile.color.replace('text-','hsl(var(--'))}]`
-                        )}>
+                         <div className={cn("p-2 rounded-md bg-muted")}>
                             <tile.icon className={cn("w-5 h-5", tile.color)} />
                         </div>
                         <div>
