@@ -61,9 +61,11 @@ function TaskCompletionDialog({ task, onToggle, children }: { task: RoadmapTask,
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{task.completed ? 'Task Details' : 'Complete Task'}</DialogTitle>
-                    <DialogDescription>
-                        <p className="font-bold text-lg text-foreground">{task.title}</p>
-                        <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
+                    <DialogDescription asChild>
+                        <div>
+                            <div className="font-bold text-lg text-foreground">{task.title}</div>
+                            <div className="text-sm text-muted-foreground mt-1">{task.description}</div>
+                        </div>
                     </DialogDescription>
                 </DialogHeader>
                 <div className="py-4 space-y-4">
