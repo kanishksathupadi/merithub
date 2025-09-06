@@ -110,8 +110,8 @@ export function CalendarView() {
                     table: "w-full border-collapse flex flex-col flex-1",
                     tbody: "flex-1 grid grid-rows-5 gap-1",
                     head_row: "flex w-full",
-                    head_cell: "text-muted-foreground rounded-md w-full basis-0 flex-1 font-normal text-[0.8rem] text-center",
-                    row: "flex w-full gap-1",
+                    head_cell: "text-muted-foreground rounded-md w-full basis-0 flex-1 font-normal text-center",
+                    row: "flex w-full gap-1 flex-1",
                     cell: "h-full w-full text-center text-sm p-0 relative basis-0 flex-1",
                     day: "h-full w-full p-1",
                     day_outside: "day-outside text-muted-foreground opacity-50",
@@ -123,11 +123,11 @@ export function CalendarView() {
                         const firstTask = tasksForDay.length > 0 ? tasksForDay[0] : null;
 
                         return (
-                            <div className="w-full h-full text-left relative flex flex-col border border-border/20 rounded-md p-1 items-center">
+                             <div className="w-full h-full text-center relative flex flex-col border border-border/20 rounded-md p-1 items-center justify-start">
                                 <div className={`font-semibold text-xs ${isOutsideMonth ? 'text-muted-foreground/50': ''}`}>{format(date, "d")}</div>
                                 <div className="mt-1 w-full">
                                     {firstTask && (
-                                        <Badge variant={firstTask.completed ? "secondary" : "default"} className="block truncate w-full text-center text-[10px] p-1 h-auto">
+                                        <Badge variant={firstTask.completed ? "secondary" : "default"} className="block truncate w-full text-center p-1 h-auto">
                                             {firstTask.title}
                                         </Badge>
                                     )}
