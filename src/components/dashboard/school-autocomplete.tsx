@@ -102,9 +102,13 @@ export function SchoolAutocomplete({ value, onValueChange }: SchoolAutocompleteP
               {results.map((school) => (
                 <CommandItem
                   key={school.place_id}
-                  value={`${school.name}::${school.place_id}`}
-                  onSelect={() => {
-                    onValueChange(school.name);
+                  value={`${school.name} - ${school.place_id}`}
+                  onSelect={(currentValue) => {
+                    // Find the full school object from results
+                    const selectedSchool = results.find(s => `${s.name} - ${s.place_id}` === currentValue);
+                    if (selectedSchool) {
+                         onValueChange(selectedSchool.name);
+                    }
                     setOpen(false);
                   }}
                 >
