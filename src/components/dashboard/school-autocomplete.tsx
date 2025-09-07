@@ -116,7 +116,7 @@ export function SchoolAutocomplete({ value, onValueChange }: SchoolAutocompleteP
                   />
                   <div>
                     <p>{school.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{school.display_name}</p>
+                    <p className="text-xs text-muted-foreground text-wrap">{school.display_name}</p>
                   </div>
                 </CommandItem>
               ))}
