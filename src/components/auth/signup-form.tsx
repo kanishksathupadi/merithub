@@ -46,7 +46,7 @@ const formSchema = z.object({
 });
 
 interface SignupFormProps {
-  plan: 'standard' | 'elite';
+  plan?: 'standard' | 'elite';
 }
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -60,7 +60,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     )
 }
 
-export function SignupForm({ plan }: SignupFormProps) {
+export function SignupForm({ plan = 'elite' }: SignupFormProps) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -104,7 +104,7 @@ export function SignupForm({ plan }: SignupFormProps) {
         const newUser = { 
             ...values,
             birthdate: new Date(values.birthdate).toISOString(), // Ensure birthdate is stored as ISO string
-            plan,
+            plan: 'elite',
             userId: uuidv4(),
             signupTimestamp: new Date().toISOString(),
             lastLoginTimestamp: new Date().toISOString(),
@@ -146,7 +146,7 @@ export function SignupForm({ plan }: SignupFormProps) {
           <Rocket className="w-8 h-8" />
         </div>
         <CardTitle className="text-3xl">Create Your Account</CardTitle>
-        <CardDescription>You've selected the <span className="font-bold text-primary">{plan}</span> plan. Start your path to success today.</CardDescription>
+        <CardDescription>Start your path to success today.</CardDescription>
       </CardHeader>
       <CardContent>
         <Button variant="outline" className="w-full" onClick={handleGoogleSignup}>

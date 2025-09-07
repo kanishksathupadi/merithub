@@ -4,14 +4,10 @@
 import { SignupForm } from "@/components/auth/signup-form";
 import { GraduationCap } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from 'next/navigation';
 import { Suspense } from "react";
 
 function SignupContent() {
-  const searchParams = useSearchParams();
-  const plan = searchParams.get('plan') || 'standard'; // Default to standard if no plan is specified
-
-  return <SignupForm plan={plan as 'standard' | 'elite'} />;
+  return <SignupForm />;
 }
 
 export default function SignupPage() {
@@ -29,5 +25,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
-    

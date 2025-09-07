@@ -55,7 +55,6 @@ const defaultValues: Partial<SettingsValues> = {
 export function SettingsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [userPlan, setUserPlan] = useState<'standard' | 'elite' | 'free' | null>(null);
   const router = useRouter();
 
   const form = useForm<SettingsValues>({
@@ -65,7 +64,6 @@ export function SettingsForm() {
 
   useEffect(() => {
     const userData = localStorage.getItem('signupData');
-    const plan = localStorage.getItem('userPlan');
 
     if (userData) {
       const parsedData = JSON.parse(userData);
@@ -76,7 +74,6 @@ export function SettingsForm() {
         privacy: defaultValues.privacy,
       });
     }
-    setUserPlan(plan as any);
     setLoading(false);
   }, [form]);
 
@@ -208,20 +205,12 @@ export function SettingsForm() {
           <CardContent>
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div>
-                <p className="font-semibold">Your Current Plan</p>
+                <p className="font-semibold">PinnaclePath Plan</p>
                  <p className="text-sm text-muted-foreground">
-                    {userPlan === 'free' ? 'You are on the free plan.' : `You are on the ${userPlan} plan.`}
+                    You have access to all features.
                 </p>
               </div>
-              {userPlan === 'elite' ? (
-                <Badge className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">
-                    <Star className="w-3 h-3 mr-1"/> Elite
-                </Badge>
-              ) : userPlan === 'standard' ? (
-                <Badge variant="secondary">Standard</Badge>
-              ) : (
-                <Button onClick={() => router.push('/#pricing')}>Resubscribe</Button>
-              )}
+              <Button type="button" variant="outline" disabled>Manage Billing</Button>
             </div>
           </CardContent>
         </Card>

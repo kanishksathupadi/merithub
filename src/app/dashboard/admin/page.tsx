@@ -121,8 +121,6 @@ export default function AdminPage() {
     const [userStats, setUserStats] = useState({
         totalUsers: 0,
         dailyActive: 0,
-        standardUsers: 0,
-        eliteUsers: 0,
     });
     const [supportRequests, setSupportRequests] = useState(0);
     const [contactMessages, setContactMessages] = useState(0);
@@ -134,13 +132,9 @@ export default function AdminPage() {
     useEffect(() => {
         // --- User Stats ---
         const allUsers = getAllUsers();
-        const standardUsers = allUsers.filter(u => u.plan === 'standard').length;
-        const eliteUsers = allUsers.filter(u => u.plan === 'elite').length;
         setUserStats({
             totalUsers: allUsers.length,
             dailyActive: allUsers.length > 0 ? allUsers.length : 0, // Simplified: count all users in localstorage as active
-            standardUsers,
-            eliteUsers
         });
 
         // --- Support Requests ---
@@ -265,7 +259,6 @@ export default function AdminPage() {
                 <TableRow>
                   <TableHead>User</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Plan</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -279,13 +272,6 @@ export default function AdminPage() {
                         {user.name}
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                        <Badge variant={user.plan === 'elite' ? 'default' : 'secondary'}
-                           className={user.plan === 'elite' ? 'bg-yellow-400/20 text-yellow-300 border-yellow-400/30' : ''}
-                        >
-                            {user.plan}
-                        </Badge>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

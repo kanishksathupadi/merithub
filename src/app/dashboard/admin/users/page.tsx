@@ -46,13 +46,9 @@ function UsersList() {
         setUsers(filteredUsers);
     }, [planFilter]);
 
-    const pageTitle = planFilter 
-        ? `${planFilter.charAt(0).toUpperCase() + planFilter.slice(1)} Plan Users`
-        : "All Users";
+    const pageTitle = "All Users";
     
-    const pageDescription = planFilter
-        ? `A list of all users subscribed to the ${planFilter} plan.`
-        : "A comprehensive list of all users who have signed up.";
+    const pageDescription = "A comprehensive list of all users who have signed up.";
 
 
     return (
@@ -76,7 +72,6 @@ function UsersList() {
                                 <TableHead>Name</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Password</TableHead>
-                                <TableHead>Plan</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -85,14 +80,6 @@ function UsersList() {
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{user.password}</TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            variant={user.plan === 'elite' ? 'default' : 'secondary'}
-                                            className={user.plan === 'elite' ? 'bg-yellow-400/20 text-yellow-300 border-yellow-400/30' : ''}
-                                        >
-                                            {user.plan}
-                                        </Badge>
-                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

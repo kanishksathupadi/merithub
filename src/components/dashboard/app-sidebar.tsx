@@ -17,40 +17,10 @@ interface AppSidebarProps {
   avatarUrl: string | null;
 }
 
-function UpgradeCard() {
-  return (
-    <Card className="glass-card m-2">
-      <CardContent className="p-4 text-center">
-        <div className="mb-2 flex justify-center">
-          <div className="w-10 h-10 bg-primary/20 text-primary rounded-full flex items-center justify-center">
-            <Rocket className="w-6 h-6"/>
-          </div>
-        </div>
-        <h4 className="font-semibold text-sm">Upgrade to Elite</h4>
-        <p className="text-xs text-muted-foreground mt-1 mb-3">Unlock all features and get exclusive mentor access.</p>
-        <Button size="sm" className="w-full">Upgrade</Button>
-      </CardContent>
-    </Card>
-  )
-}
-
-function EliteCard() {
-   return (
-    <div className="m-2 p-3 rounded-lg bg-yellow-400/10 border border-yellow-400/20 text-center">
-      <div className="flex items-center justify-center gap-2">
-         <Star className="w-4 h-4 text-yellow-300" />
-        <span className="text-sm font-semibold text-yellow-300">Elite Plan Active</span>
-      </div>
-    </div>
-  )
-}
-
-
 export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const [userName, setUserName] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(propAvatarUrl);
   const { open } = useSidebar();
   const router = useRouter();
@@ -60,7 +30,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   useEffect(() => {
     const updateUserState = () => {
       const name = localStorage.getItem('userName');
-      const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
       const signupDataStr = localStorage.getItem('signupData');
       const storedAvatar = localStorage.getItem('userAvatar');
       
@@ -75,9 +44,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       }
       if (name) {
           setUserName(name);
-      }
-      if (plan) {
-        setUserPlan(plan);
       }
       if (storedAvatar) {
         setAvatarUrl(storedAvatar);
@@ -229,42 +195,34 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                 </SidebarMenuButton>
             </SidebarMenuItem>
             
-            {userPlan === 'elite' && (
-                <SidebarGroup>
-                    <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Elite Resources</h3>
-                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="Scholarship Finder">
-                        <Link href="/dashboard/scholarship-finder"><Award/>Scholarship Finder</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="Mentor Match">
-                        <Link href="/dashboard/mentor-match"><Users/>Mentor Match</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="Q&A Forum">
-                        <Link href="/dashboard/q-and-a-forum"><MessageSquare/>Q&A Forum</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="AI Essay Review">
-                        <Link href="/dashboard/essay-review"><PenSquare/>AI Essay Review</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarGroup>
-            )}
+            <SidebarGroup>
+                <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Premium Tools</h3>
+                 <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Scholarship Finder">
+                    <Link href="/dashboard/scholarship-finder"><Award/>Scholarship Finder</Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Mentor Match">
+                    <Link href="/dashboard/mentor-match"><Users/>Mentor Match</Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Q&A Forum">
+                    <Link href="/dashboard/q-and-a-forum"><MessageSquare/>Q&A Forum</Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="AI Essay Review">
+                    <Link href="/dashboard/essay-review"><PenSquare/>AI Essay Review</Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarGroup>
           </>
         )}
 
       </SidebarMenu>
       
-        <div className={cn("px-2", !open && "hidden")}>
-          {!isMentor && userPlan === 'standard' && <UpgradeCard />}
-          {!isMentor && userPlan === 'elite' && <EliteCard />}
-        </div>
-
-
       <SidebarSeparator />
 
       <SidebarFooter className="p-2">

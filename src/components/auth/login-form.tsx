@@ -126,7 +126,7 @@ export function LoginForm() {
                 userId: uuidv4(),
                 name: googleUser.name,
                 email: googleUser.email,
-                plan: 'elite', // Default new Google signups to the elite plan
+                plan: 'elite', // All users get all features now
                 password: 'google_user_password', // Mock password for the prototype
                 birthdate: new Date('2007-05-15').toISOString(),
                 grade: 11,

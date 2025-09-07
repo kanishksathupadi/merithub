@@ -22,12 +22,6 @@ function PayPalIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export default function PaymentPage() {
     const router = useRouter();
-    const [plan, setPlan] = useState<'standard' | 'elite' | null>(null);
-
-    useEffect(() => {
-        const userPlan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
-        setPlan(userPlan);
-    }, []);
 
     const handleBypass = () => {
         if (typeof window !== 'undefined') {
@@ -44,8 +38,7 @@ export default function PaymentPage() {
     };
 
     const planDetails = {
-        standard: { name: "Standard Plan", price: "$7.00/mo" },
-        elite: { name: "Elite Plan", price: "$12.00/mo" }
+        name: "PinnaclePath Plan", price: "$12.00/mo"
     }
 
     return (
@@ -62,15 +55,13 @@ export default function PaymentPage() {
                     <CardDescription>Secure your access to PinnaclePath.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {plan && (
-                        <div className="rounded-lg border bg-muted p-4 flex justify-between items-center">
-                            <div>
-                                <p className="font-bold">{planDetails[plan].name}</p>
-                                <p className="text-sm text-muted-foreground">Billed monthly</p>
-                            </div>
-                            <p className="text-xl font-bold">{planDetails[plan].price}</p>
+                    <div className="rounded-lg border bg-muted p-4 flex justify-between items-center">
+                        <div>
+                            <p className="font-bold">{planDetails.name}</p>
+                            <p className="text-sm text-muted-foreground">Billed monthly</p>
                         </div>
-                    )}
+                        <p className="text-xl font-bold">{planDetails.price}</p>
+                    </div>
                     <Tabs defaultValue="card" className="w-full">
                         <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="card"><CreditCard className="mr-2"/>Card</TabsTrigger>
@@ -92,7 +83,7 @@ export default function PaymentPage() {
                                         <Input id="cvc" placeholder="123" disabled/>
                                     </div>
                                 </div>
-                                <Button className="w-full" disabled>Pay {plan && planDetails[plan].price}</Button>
+                                <Button className="w-full" disabled>Pay {planDetails.price}</Button>
                             </div>
                         </TabsContent>
                         <TabsContent value="paypal" className="pt-4">
@@ -119,7 +110,3 @@ export default function PaymentPage() {
         </div>
     );
 }
-
-    
-
-    

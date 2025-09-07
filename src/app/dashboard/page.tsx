@@ -6,7 +6,7 @@ import { Suspense, useEffect, useState, useCallback, useMemo } from "react";
 import { suggestNextStep, type SuggestNextStepInput, type SuggestNextStepOutput } from "@/ai/flows/suggest-next-step";
 import { updateStudentPlan } from "@/ai/flows/update-student-plan";
 import { getStrategicBriefing, type StrategicBriefingOutput } from "@/ai/flows/get-strategic-briefing";
-import { NextStepCard } from "@/components/dashboard/next-step-card";
+import { NextStepCard } from "@/app/dashboard/next-step-card";
 import { CheckInCard } from "@/components/dashboard/check-in-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BookOpen, ListChecks, MessageSquare, TrendingUp, Users, Star, GraduationCap, PenSquare, Award, CheckCircle, X, Info } from "lucide-react";
@@ -285,20 +285,16 @@ function SuggestionView() {
     )
 }
 
-const standardTiles = [
+const allTiles = [
     { title: "My Roadmap", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap", color: "text-chart-1" },
     { title: "Progress Tracker", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker", color: "text-chart-2" },
     { title: "AI Study Buddy", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy", color: "text-chart-3" },
     { title: "College Finder", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder", color: "text-chart-4" },
+    { title: "Scholarship Finder", icon: Award, href: "/dashboard/scholarship-finder", feature: "scholarshipFinder", color: "text-chart-5" },
+    { title: "AI Essay Review", icon: PenSquare, href: "/dashboard/essay-review", feature: "essayReview", color: "text-chart-1" },
+    { title: "Mentor Match", icon: MessageSquare, href: "/dashboard/mentor-match", feature: "mentorMatch", color: "text-chart-2" },
+    { title: "Q&A Forum", icon: Users, href: "/dashboard/q-and-a-forum", feature: "qaForum", color: "text-chart-3" },
 ];
-
-const eliteTiles = [
-    ...standardTiles,
-    { title: "Scholarship Finder", icon: Award, href: "/dashboard/scholarship-finder", isElite: true, feature: "scholarshipFinder", color: "text-chart-5" },
-    { title: "AI Essay Review", icon: PenSquare, href: "/dashboard/essay-review", isElite: true, feature: "essayReview", color: "text-chart-1" },
-    { title: "Mentor Match", icon: MessageSquare, href: "/dashboard/mentor-match", isElite: true, feature: "mentorMatch", color: "text-chart-2" },
-    { title: "Q&A Forum", icon: Users, href: "/dashboard/q-and-a-forum", isElite: true, feature: "qaForum", color: "text-chart-3" },
-]
 
 const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
     return (
@@ -378,8 +374,8 @@ const KeyStats = () => {
     );
 };
 
-const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
-    const tiles = plan === 'elite' ? eliteTiles : standardTiles;
+const QuickLinks = () => {
+    const tiles = allTiles;
     
     return (
         <Card>
@@ -399,7 +395,6 @@ const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
                         </div>
                         <div>
                              <p className="font-semibold text-sm">{tile.title}</p>
-                             {tile.isElite && <p className="text-xs text-yellow-400/80">Elite</p>}
                         </div>
                     </Link>
                 ))}
@@ -410,7 +405,6 @@ const QuickLinks = ({ plan }: { plan: 'standard' | 'elite' }) => {
 
 
 export default function DashboardPage() {
-    const [userPlan, setUserPlan] = useState<'standard' | 'elite'>('standard');
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
     const [showWelcome, setShowWelcome] = useState(false);
@@ -418,11 +412,6 @@ export default function DashboardPage() {
 
 
     useEffect(() => {
-        const plan = localStorage.getItem('userPlan') as 'standard' | 'elite' | null;
-        if (plan) {
-            setUserPlan(plan);
-        }
-        
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
             try {
@@ -472,7 +461,7 @@ export default function DashboardPage() {
              </div>
              <div className="xl:col-span-1 space-y-6">
                  <KeyStats />
-                 <QuickLinks plan={userPlan} />
+                 <QuickLinks />
              </div>
         </div>
 

@@ -64,7 +64,6 @@ function ActiveUsersList() {
                                 <TableHead>Name</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Password</TableHead>
-                                <TableHead>Plan</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -73,14 +72,6 @@ function ActiveUsersList() {
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{user.password}</TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            variant={user.plan === 'elite' ? 'default' : 'secondary'}
-                                            className={user.plan === 'elite' ? 'bg-yellow-400/20 text-yellow-300 border-yellow-400/30' : ''}
-                                        >
-                                            {user.plan}
-                                        </Badge>
-                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

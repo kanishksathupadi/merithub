@@ -83,85 +83,7 @@ function LiveStats() {
     );
 }
 
-function PricingModal({ children }: { children: React.ReactNode }) {
-    return (
-        <Dialog>
-            <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="max-w-4xl p-8">
-                <DialogHeader>
-                    <DialogTitle className="text-4xl font-bold tracking-tight text-center">Invest in Your Future</DialogTitle>
-                    <DialogDescription className="text-muted-foreground mt-2 text-center max-w-2xl mx-auto">
-                        Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="grid md:grid-cols-2 gap-8 items-start">
-                    <PricingCard 
-                        plan="Standard"
-                        price="$7"
-                        features={[
-                            "Personalized Roadmap",
-                            "Intelligent College Finder",
-                            "Detailed Progress Tracking",
-                            "Smart Study Buddy",
-                            "Shareable Public Portfolio"
-                        ]}
-                        buttonVariant="secondary"
-                        href="/signup?plan=standard"
-                    />
-                    <PricingCard 
-                        plan="Elite"
-                        price="$12"
-                        features={[
-                            "Everything in Standard, plus:",
-                            "Instant Essay Review Tool",
-                            "Personalized Scholarship Finder",
-                            "Mentor Match Directory",
-                            "Community Q&A Forum",
-                            "Priority Support"
-                        ]}
-                        buttonVariant="default"
-                        href="/signup?plan=elite"
-                        isPopular
-                    />
-                </div>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
-interface PricingCardProps {
-    plan: string;
-    price: string;
-    features: string[];
-    href: string;
-    buttonVariant?: "default" | "outline" | "secondary";
-    isPopular?: boolean;
-}
-
-const PricingCard = ({ plan, price, features, href, buttonVariant = "secondary", isPopular = false }: PricingCardProps) => (
-    <div className={cn(
-        "p-8 bg-card rounded-xl shadow-lg border border-border flex flex-col h-full bg-grid-primary/5",
-        isPopular && "border-primary"
-    )}>
-        <h4 className={cn("text-2xl font-semibold", isPopular && "text-primary")}>{plan}</h4>
-        <p className="text-4xl font-bold my-4">{price}<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
-        <ul className="space-y-3 text-muted-foreground flex-1">
-            {features.map((feature, index) => (
-                <li key={index} className="flex items-center gap-2">
-                    <Check className="w-5 h-5 text-primary flex-shrink-0"/>
-                    <span className={cn(feature.includes("Everything in Standard, plus:") && "text-foreground/90 font-semibold")}>
-                        {feature}
-                    </span>
-                </li>
-            ))}
-        </ul>
-        <Button asChild variant={buttonVariant} className="w-full mt-8">
-           <Link href={href}>Choose {plan}</Link>
-        </Button>
-    </div>
-);
-
-const standardFeatures = [
+const allFeatures = [
     { 
         icon: BrainCircuit, 
         title: "Hyper-Personalized Roadmap", 
@@ -182,14 +104,11 @@ const standardFeatures = [
         title: "Progress Tracker", 
         description: "Visualize your journey, track completed tasks, and watch your long-term goals get closer every day."
     },
-     { 
+    { 
         icon: Share2, 
         title: "Shareable Portfolio", 
         description: "Generate a professional, public portfolio page to showcase your achievements to colleges and counselors."
     },
-];
-
-const eliteFeatures = [
     { 
         icon: Award, 
         title: "Personalized Scholarship Finder", 
@@ -220,16 +139,15 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
             <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
-            <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
-             <Link href="#faq" className="hover:text-primary transition-colors">FAQ</Link>
+            <Link href="#faq" className="hover:text-primary transition-colors">FAQ</Link>
           </nav>
           <div className="flex items-center gap-2 ml-auto">
              <Button asChild variant="secondary">
                 <Link href="/login">Member Login</Link>
             </Button>
-             <PricingModal>
-                <Button>Get Started</Button>
-            </PricingModal>
+            <Button asChild>
+                <Link href="/signup">Get Started</Link>
+            </Button>
           </div>
         </div>
       </header>
@@ -250,12 +168,12 @@ export default function Home() {
                 PinnaclePath is your dedicated co-pilot, building a unique strategy that sharpens your skills and crafts a standout profile to get you into your dream college.
               </p>
               <div className="mt-8 space-x-4">
-                 <PricingModal>
-                    <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
+                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
+                    <Link href="/signup">
                         <Rocket className="mr-2 h-5 w-5" />
                         Start Your Journey
-                    </Button>
-                </PricingModal>
+                    </Link>
+                </Button>
                 <Button variant="outline" size="lg" asChild className="border-border hover:bg-primary/10">
                   <Link href="#features">
                     Learn More
@@ -305,9 +223,9 @@ export default function Home() {
                 </div>
                 
                 <Card className="p-8 md:p-12 border-border bg-card">
-                    <h4 className="text-2xl font-bold text-center mb-8">Core Features Included in All Plans</h4>
+                     <h4 className="text-3xl font-bold text-center mb-8">All Features Included</h4>
                     <div className="grid md:grid-cols-2 gap-x-8 gap-y-10">
-                        {standardFeatures.map((feature, index) => (
+                        {allFeatures.map((feature, index) => (
                             <div key={index} className="flex gap-4">
                                 <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit h-fit">
                                     <feature.icon className="w-6 h-6" />
@@ -320,26 +238,6 @@ export default function Home() {
                         ))}
                     </div>
                 </Card>
-
-                <div className="mt-8 rounded-xl p-8 md:p-12 border-primary/30 bg-gradient-to-br from-primary/10 to-transparent">
-                     <div className="text-center mb-8">
-                        <h4 className="text-3xl font-bold">Unlock Your Full Potential with the <span className="text-primary">Elite Plan</span></h4>
-                        <p className="text-muted-foreground mt-2">Go beyond the basics with premium tools designed for maximum impact.</p>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-x-8 gap-y-10">
-                         {eliteFeatures.map((feature, index) => (
-                            <div key={index} className="flex gap-4">
-                                <div className="p-3 rounded-lg bg-primary/10 text-primary w-fit h-fit">
-                                    <feature.icon className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h5 className="font-semibold text-lg">{feature.title}</h5>
-                                    <p className="text-muted-foreground mt-1">{feature.description}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
             </div>
         </section>
@@ -491,42 +389,29 @@ export default function Home() {
         <section id="pricing" className="py-24 bg-background">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                    <h3 className="text-4xl font-bold tracking-tight">Invest in Your Future</h3>
-                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Choose the plan that aligns with your ambition. A small investment today for a future of limitless opportunities.</p>
+                    <h3 className="text-4xl font-bold tracking-tight">Simple, All-Inclusive Pricing</h3>
+                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Get full access to every feature we offer with one simple plan. No tiers, no confusion—just everything you need to succeed.</p>
                 </div>
-                <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                   <PricingCard 
-                        plan="Standard"
-                        price="$7"
-                        features={[
-                            "Personalized Roadmap",
-                            "Intelligent College Finder",
-                            "Detailed Progress Tracking",
-                            "Smart Study Buddy",
-                            "Shareable Public Portfolio"
-                        ]}
-                        buttonVariant="secondary"
-                        href="/signup?plan=standard"
-                    />
-                    <PricingCard 
-                        plan="Elite"
-                        price="$12"
-                        features={[
-                            "Everything in Standard, plus:",
-                            "Instant Essay Review Tool",
-                            "Personalized Scholarship Finder",
-                            "Mentor Match Directory",
-                            "Community Q&A Forum",
-                            "Priority Support"
-                        ]}
-                        buttonVariant="default"
-                        href="/signup?plan=elite"
-                        isPopular
-                    />
+                <div className="flex justify-center">
+                    <Card className="p-8 bg-card rounded-xl shadow-lg border border-primary flex flex-col h-full bg-grid-primary/5 max-w-md">
+                        <h4 className="text-2xl font-semibold text-primary">PinnaclePath Access</h4>
+                        <p className="text-4xl font-bold my-4">$12<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
+                        <p className="text-muted-foreground mb-6">Billed monthly. Cancel anytime.</p>
+                        <ul className="space-y-3 text-muted-foreground flex-1">
+                             <li className="flex items-center gap-2 font-semibold text-foreground/90"><Check className="w-5 h-5 text-primary flex-shrink-0"/> Full access to ALL features</li>
+                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary flex-shrink-0"/> Personalized AI Roadmap</li>
+                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary flex-shrink-0"/> College & Scholarship Finders</li>
+                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary flex-shrink-0"/> AI Essay Review & Study Buddy</li>
+                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary flex-shrink-0"/> Mentor Match & Community Forum</li>
+                        </ul>
+                        <Button asChild variant="default" className="w-full mt-8">
+                           <Link href="/signup">Get Started Now</Link>
+                        </Button>
+                    </Card>
                 </div>
             </div>
         </section>
-
+        
         {/* FAQ Section */}
         <section id="faq" className="py-24 bg-muted/50">
             <div className="container mx-auto px-4 max-w-3xl">
@@ -549,15 +434,15 @@ export default function Home() {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3">
-                            <AccordionTrigger>What's the main difference between the Standard and Elite plans?</AccordionTrigger>
+                            <AccordionTrigger>What features are included in the plan?</AccordionTrigger>
                             <AccordionContent>
-                            The Standard plan gives you all the core tools for strategic planning: the personalized roadmap, college finder, progress tracker, study buddy, and portfolio. The Elite plan adds powerful tools for execution and community, including the AI Essay Reviewer, Scholarship Finder, Mentor Match directory, and the student Q&A Forum. Elite is designed for students who want to maximize every advantage.
+                            Our single plan includes everything PinnaclePath has to offer: the personalized roadmap, college finder, progress tracker, study buddy, shareable portfolio, AI Essay Reviewer, Scholarship Finder, Mentor Match directory, and the student Q&A Forum. We believe in providing all our tools to every user.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4">
                             <AccordionTrigger>How is this different from a traditional college counselor?</AccordionTrigger>
                             <AccordionContent>
-                            PinnaclePath acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking that a human counselor typically cannot offer at scale. Our Elite plan also includes a directory to connect with human mentors, offering the best of both worlds.
+                            PinnaclePath acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking that a human counselor typically cannot offer at scale. Our Mentor Match directory also helps you connect with human mentors, offering the best of both worlds.
                             </AccordionContent>
                         </AccordionItem>
                          <AccordionItem value="item-5">
@@ -594,7 +479,6 @@ export default function Home() {
                     <h4 className="font-semibold mb-3">Platform</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                         <li><Link href="/#features" className="hover:text-primary">Features</Link></li>
-                        <li><Link href="/#pricing" className="hover:text-primary">Pricing</Link></li>
                         <li><Link href="/login" className="hover:text-primary">Login</Link></li>
                         <li><Link href="/signup" className="hover:text-primary">Get Started</Link></li>
                     </ul>
