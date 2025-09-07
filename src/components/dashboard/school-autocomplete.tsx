@@ -38,7 +38,7 @@ export function SchoolAutocomplete({ value, onValueChange }: SchoolAutocompleteP
   const [results, setResults] = React.useState<SchoolResult[]>([]);
   const [loading, setLoading] = React.useState(false);
   
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
   React.useEffect(() => {
     if (debouncedSearchTerm.length < 3) {
@@ -86,7 +86,7 @@ export function SchoolAutocomplete({ value, onValueChange }: SchoolAutocompleteP
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" side="bottom" align="start">
         <Command>
           <CommandInput 
             placeholder="Search for a school..."
