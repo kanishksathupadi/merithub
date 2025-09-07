@@ -103,8 +103,8 @@ export function SchoolAutocomplete({ value, onValueChange }: SchoolAutocompleteP
                 <CommandItem
                   key={school.place_id}
                   value={school.name}
-                  onSelect={(currentValue) => {
-                    onValueChange(currentValue === value.toLowerCase() ? "" : school.name);
+                  onSelect={() => {
+                    onValueChange(school.name);
                     setOpen(false);
                   }}
                 >
