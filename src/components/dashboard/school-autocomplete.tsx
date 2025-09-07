@@ -103,12 +103,10 @@ export function SchoolAutocomplete({ value, onValueChange }: SchoolAutocompleteP
                 <CommandItem
                   key={school.place_id}
                   value={`${school.name} - ${school.place_id}`} // Use a truly unique value here
-                  onSelect={(currentValue) => {
-                    // Find the full school object from results using the unique value
-                    const selectedSchool = results.find(s => `${s.name} - ${s.place_id}` === currentValue);
-                    if (selectedSchool) {
-                         onValueChange(selectedSchool.name); // Set only the name
-                    }
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onValueChange(school.name);
                     setOpen(false);
                   }}
                 >
