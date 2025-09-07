@@ -102,7 +102,7 @@ export function SchoolAutocomplete({ value, onValueChange }: SchoolAutocompleteP
               {results.map((school) => (
                 <CommandItem
                   key={school.place_id}
-                  value={school.name}
+                  value={`${school.name}::${school.place_id}`}
                   onSelect={() => {
                     onValueChange(school.name);
                     setOpen(false);
@@ -111,7 +111,7 @@ export function SchoolAutocomplete({ value, onValueChange }: SchoolAutocompleteP
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.toLowerCase() === school.name.toLowerCase() ? "opacity-100" : "opacity-0"
+                      value === school.name ? "opacity-100" : "opacity-0"
                     )}
                   />
                   <div>
