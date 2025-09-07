@@ -63,19 +63,21 @@ export function OnboardingForm() {
   });
 
   const onSubmit = (data: OnboardingValues) => {
-    console.log("Onboarding complete, redirecting to payment:", data);
+    console.log("Onboarding complete, redirecting to dashboard:", data);
     if (typeof window !== 'undefined') {
         // Set the data for the current session
         localStorage.setItem('onboardingData', JSON.stringify(data));
-        
         // Persist the data for future logins against the user's email
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
             const signupData = JSON.parse(signupDataStr);
             localStorage.setItem(`onboarding-${signupData.email}`, JSON.stringify(data));
+            // Mark payment as complete since the app is free
+            localStorage.setItem(`payment-${signupData.email}`, 'true');
+            localStorage.setItem('paymentComplete', 'true');
         }
     }
-    router.push("/payment");
+    router.push("/dashboard");
   };
 
   const nextStep = async () => {

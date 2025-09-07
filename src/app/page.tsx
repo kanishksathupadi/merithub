@@ -369,7 +369,7 @@ export default function Home() {
                             <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>24/7 personal co-pilot, available anytime, anywhere.</li>
                             <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Hyper-personalized strategy based on your unique profile.</li>
                             <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Dynamic roadmap that evolves as you grow.</li>
-                            <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Affordable monthly subscription.</li>
+                            <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>Completely free to use.</li>
                         </ul>
                     </Card>
                      <Card className="p-8">
@@ -384,36 +384,9 @@ export default function Home() {
                 </div>
             </div>
         </section>
-
-        {/* Pricing Section */}
-        <section id="pricing" className="py-24 bg-background">
-            <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
-                    <h3 className="text-4xl font-bold tracking-tight">Simple, All-Inclusive Pricing</h3>
-                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Get full access to every feature we offer with one simple plan. No tiers, no confusion—just everything you need to succeed.</p>
-                </div>
-                <div className="flex justify-center">
-                    <Card className="p-8 bg-card rounded-xl shadow-lg border border-primary flex flex-col h-full bg-grid-primary/5 max-w-md">
-                        <h4 className="text-2xl font-semibold text-primary">PinnaclePath Access</h4>
-                        <p className="text-4xl font-bold my-4">$12<span className="text-lg font-medium text-muted-foreground">/mo</span></p>
-                        <p className="text-muted-foreground mb-6">Billed monthly. Cancel anytime.</p>
-                        <ul className="space-y-3 text-muted-foreground flex-1">
-                             <li className="flex items-center gap-2 font-semibold text-foreground/90"><Check className="w-5 h-5 text-primary flex-shrink-0"/> Full access to ALL features</li>
-                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary flex-shrink-0"/> Personalized AI Roadmap</li>
-                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary flex-shrink-0"/> College & Scholarship Finders</li>
-                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary flex-shrink-0"/> AI Essay Review & Study Buddy</li>
-                             <li className="flex items-center gap-2"><Check className="w-5 h-5 text-primary flex-shrink-0"/> Mentor Match & Community Forum</li>
-                        </ul>
-                        <Button asChild variant="default" className="w-full mt-8">
-                           <Link href="/signup">Get Started Now</Link>
-                        </Button>
-                    </Card>
-                </div>
-            </div>
-        </section>
         
         {/* FAQ Section */}
-        <section id="faq" className="py-24 bg-muted/50">
+        <section id="faq" className="py-24 bg-background">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
                     <h3 className="text-4xl font-bold tracking-tight">Frequently Asked Questions</h3>
@@ -434,9 +407,9 @@ export default function Home() {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3">
-                            <AccordionTrigger>What features are included in the plan?</AccordionTrigger>
+                            <AccordionTrigger>What features are included?</AccordionTrigger>
                             <AccordionContent>
-                            Our single plan includes everything PinnaclePath has to offer: the personalized roadmap, college finder, progress tracker, study buddy, shareable portfolio, AI Essay Reviewer, Scholarship Finder, Mentor Match directory, and the student Q&A Forum. We believe in providing all our tools to every user.
+                            PinnaclePath is completely free and includes everything we have to offer: the personalized roadmap, college finder, progress tracker, study buddy, shareable portfolio, AI Essay Reviewer, Scholarship Finder, Mentor Match directory, and the student Q&A Forum. We believe in providing all our tools to every user.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4">
@@ -446,9 +419,9 @@ export default function Home() {
                             </AccordionContent>
                         </AccordionItem>
                          <AccordionItem value="item-5">
-                            <AccordionTrigger>Can I cancel my subscription at any time?</AccordionTrigger>
+                            <AccordionTrigger>Is there any cost to use PinnaclePath?</AccordionTrigger>
                             <AccordionContent>
-                            Absolutely. You can cancel your subscription at any time through your account settings. You will retain access to your plan's features until the end of your current billing period.
+                            No, PinnaclePath is completely free to use. All features are available to all users without any charge.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-6">

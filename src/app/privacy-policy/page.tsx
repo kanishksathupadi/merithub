@@ -105,7 +105,6 @@ export default function PrivacyPolicyPage() {
                             <h4 className="font-semibold mb-3">Platform</h4>
                             <ul className="space-y-2 text-sm text-muted-foreground">
                                 <li><Link href="/#features" className="hover:text-primary">Features</Link></li>
-                                <li><Link href="/#pricing" className="hover:text-primary">Pricing</Link></li>
                                 <li><Link href="/login" className="hover:text-primary">Login</Link></li>
                                 <li><Link href="/signup" className="hover:text-primary">Get Started</Link></li>
                             </ul>

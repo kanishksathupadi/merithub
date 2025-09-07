@@ -56,16 +56,12 @@ export default function DashboardLayout({
 
     // This data is set upon completion of each step
     const onboardingComplete = localStorage.getItem(`onboarding-${signupData.email}`);
-    const paymentComplete = localStorage.getItem(`payment-${signupData.email}`);
-
+    
     // Restore session data for this check
     if (onboardingComplete) localStorage.setItem('onboardingData', onboardingComplete);
-    if (paymentComplete) localStorage.setItem('paymentComplete', 'true');
-
+    
     if (!onboardingComplete) {
       router.replace('/onboarding');
-    } else if (!paymentComplete) {
-      router.replace('/payment');
     } else {
       setIsVerified(true); // User is fully verified, allow rendering.
     }
