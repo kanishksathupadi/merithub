@@ -291,5 +291,3 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
     </Card>
   );
 }
-
-    
