@@ -3,15 +3,6 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
@@ -22,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
+import { Label } from "@/components/ui/label";
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -79,6 +71,18 @@ export function SignupForm() {
             description: "You must accept the Terms of Service to continue.",
         });
         return;
+    }
+    
+    // Simple check for non-empty fields
+    for (const [key, value] of Object.entries(formValues)) {
+        if (key !== 'acceptTerms' && !value) {
+            toast({
+                variant: "destructive",
+                title: "Missing Information",
+                description: `Please fill out the ${key} field.`,
+            });
+            return;
+        }
     }
     
     try {
@@ -224,4 +228,3 @@ export function SignupForm() {
     </Card>
   );
 }
-
