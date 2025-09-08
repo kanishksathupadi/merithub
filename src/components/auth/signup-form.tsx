@@ -1,8 +1,7 @@
 
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -24,22 +23,6 @@ import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 
-// Define a simple type for the form values, without Zod validation
-type SignupFormValues = {
-  name: string;
-  email: string;
-  password: string;
-  birthdate: string;
-  grade: string;
-  school: string;
-  acceptTerms: boolean;
-};
-
-
-interface SignupFormProps {
-  plan?: 'standard' | 'elite';
-}
-
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -51,13 +34,11 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     )
 }
 
-export function SignupForm({ plan = 'elite' }: SignupFormProps) {
+export function SignupForm() {
   const router = useRouter();
   const { toast } = useToast();
-
-  // We are no longer using Zod for validation here.
-  const form = useForm<SignupFormValues>({
-    defaultValues: {
+  
+  const [formValues, setFormValues] = useState({
       name: "",
       email: "",
       password: "",
@@ -65,8 +46,20 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
       grade: "",
       school: "",
       acceptTerms: false,
-    },
   });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormValues(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormValues(prev => ({...prev, acceptTerms: checked }));
+  }
+
+  const handleSchoolChange = (value: string) => {
+    setFormValues(prev => ({...prev, school: value}));
+  }
 
   const handleGoogleSignup = async () => {
     toast({
@@ -75,11 +68,11 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
     });
   };
 
-  // This is the function that runs when the button is clicked.
-  const onSubmit = async (values: SignupFormValues) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (typeof window === 'undefined') return;
 
-    if (!values.acceptTerms) {
+    if (!formValues.acceptTerms) {
         toast({
             variant: "destructive",
             title: "Terms and Conditions",
@@ -92,7 +85,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
         const allSignupsStr = localStorage.getItem('allSignups');
         const allSignups = allSignupsStr ? JSON.parse(allSignupsStr) : [];
         
-        const userExists = allSignups.some((u: any) => u.email === values.email);
+        const userExists = allSignups.some((u: any) => u.email === formValues.email);
         if (userExists) {
             toast({
                 variant: "destructive",
@@ -103,9 +96,9 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
         }
 
         const newUser = { 
-            ...values,
-            grade: Number(values.grade) || 0, // Convert to number, default to 0 if invalid
-            birthdate: new Date(values.birthdate).toISOString(),
+            ...formValues,
+            grade: Number(formValues.grade) || 0,
+            birthdate: new Date(formValues.birthdate).toISOString(),
             plan: 'elite',
             userId: uuidv4(),
             signupTimestamp: new Date().toISOString(),
@@ -127,7 +120,6 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
             });
         }
 
-        // The navigation will happen now.
         router.push("/onboarding");
     } catch (error) {
          console.error("Signup Error:", error);
@@ -165,126 +157,63 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
           </div>
         </div>
 
-        {/* The form now calls the simplified onSubmit function directly */}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} required />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="you@example.com" type="email" {...field} required />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} required />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex gap-4">
-                <FormField
-                    control={form.control}
-                    name="birthdate"
-                    render={({ field }) => (
-                        <FormItem className="flex-1">
-                            <FormLabel>Date of birth</FormLabel>
-                            <FormControl>
-                                <Input type="date" {...field} required />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-              <FormField
-                control={form.control}
-                name="grade"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Grade</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="e.g., 9" {...field} required />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input id="name" name="name" placeholder="John Doe" value={formValues.name} onChange={handleInputChange} required />
             </div>
-             <FormField
-                control={form.control}
-                name="school"
-                render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                        <FormLabel>School</FormLabel>
-                        <FormControl>
-                           <SchoolAutocomplete 
-                             value={field.value}
-                             onValueChange={field.onChange}
-                           />
-                        </FormControl>
-                         {/* We can rely on the component itself or add a simple required check if needed */}
-                    </FormItem>
-                )}
-            />
+            <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" name="email" type="email" placeholder="you@example.com" value={formValues.email} onChange={handleInputChange} required />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" name="password" type="password" placeholder="••••••••" value={formValues.password} onChange={handleInputChange} required />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="acceptTerms"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm !mt-6">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      required
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Accept terms and conditions
-                    </FormLabel>
-                    <FormDescription>
-                      By creating an account, you agree to our{' '}
-                       <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
-                            Terms of Service
-                       </a>
-                      .
-                    </FormDescription>
-                     <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-4">
+                <div className="space-y-2 flex-1">
+                    <Label htmlFor="birthdate">Date of birth</Label>
+                    <Input id="birthdate" name="birthdate" type="date" value={formValues.birthdate} onChange={handleInputChange} required />
+                </div>
+                <div className="space-y-2 flex-1">
+                    <Label htmlFor="grade">Grade</Label>
+                    <Input id="grade" name="grade" type="number" placeholder="e.g., 9" value={formValues.grade} onChange={handleInputChange} required />
+                </div>
+            </div>
 
+             <div className="space-y-2">
+                <Label htmlFor="school">School</Label>
+                <SchoolAutocomplete 
+                    value={formValues.school}
+                    onValueChange={handleSchoolChange}
+                />
+            </div>
+            
+            <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm !mt-6">
+                <Checkbox
+                    id="acceptTerms"
+                    checked={formValues.acceptTerms}
+                    onCheckedChange={handleCheckboxChange}
+                    required
+                />
+                <div className="space-y-1 leading-none">
+                    <label htmlFor="acceptTerms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Accept terms and conditions
+                    </label>
+                    <p className="text-sm text-muted-foreground">
+                    By creating an account, you agree to our{' '}
+                    <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
+                        Terms of Service
+                    </a>
+                    .
+                    </p>
+                </div>
+            </div>
 
             <Button type="submit" className="w-full !mt-6 bg-primary text-primary-foreground hover:bg-primary/90">Create Account</Button>
           </form>
-        </Form>
+       
         <p className="text-center text-sm text-muted-foreground mt-6">
           Already have an account?{" "}
           <Link href="/login" className="text-primary hover:underline font-medium">
@@ -295,3 +224,4 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
     </Card>
   );
 }
+
