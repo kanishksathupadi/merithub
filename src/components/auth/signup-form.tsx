@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
+import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 
 
 const formSchema = z.object({
@@ -240,7 +241,10 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                     <FormItem className="flex flex-col">
                         <FormLabel>School</FormLabel>
                         <FormControl>
-                           <Input placeholder="e.g., Northwood High School" {...field} />
+                           <SchoolAutocomplete 
+                             value={field.value}
+                             onValueChange={field.onChange}
+                           />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
