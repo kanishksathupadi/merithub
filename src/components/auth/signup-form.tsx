@@ -70,7 +70,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
       email: "",
       password: "",
       birthdate: "",
-      grade: undefined, // Initialize as undefined to avoid uncontrolled to controlled error
+      grade: '' as any, // Fix: Initialize as empty string to be a controlled component
       school: "",
       acceptTerms: false,
     },
