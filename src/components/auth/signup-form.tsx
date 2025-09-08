@@ -37,7 +37,10 @@ const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   birthdate: z.string().min(1, { message: "Date of birth is required." }),
-  grade: z.coerce.number().min(1, {message: "Please enter a valid grade."}).max(12, {message: "Grade must be 12 or lower."}),
+  grade: z.preprocess(
+      (val) => (val === "" ? 0 : Number(val)),
+      z.number().min(1, {message: "Please enter a valid grade."}).max(12, {message: "Grade must be 12 or lower."})
+  ),
   school: z.string().min(3, { message: "Please enter your school name." }),
   acceptTerms: z.boolean().refine((val) => val === true, {
     message: "You must accept the Terms of Service to continue.",
@@ -70,7 +73,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
       email: "",
       password: "",
       birthdate: "",
-      grade: '' as any, // Fix: Initialize as empty string to be a controlled component
+      grade: '' as any,
       school: "",
       acceptTerms: false,
     },
@@ -102,7 +105,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
 
         const newUser = { 
             ...values,
-            birthdate: new Date(values.birthdate).toISOString(), // Ensure birthdate is stored as ISO string
+            birthdate: new Date(values.birthdate).toISOString(),
             plan: 'elite',
             userId: uuidv4(),
             signupTimestamp: new Date().toISOString(),
@@ -118,10 +121,8 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
         localStorage.setItem('userName', newUser.name);
         localStorage.setItem('userPlan', newUser.plan);
 
-        // Asynchronously trigger the welcome email AI flow if it's a Gmail address
         if (newUser.email.endsWith('@gmail.com')) {
             sendWelcomeEmail({ name: newUser.name, email: newUser.email }).catch(err => {
-                // Log the error but don't block the user's flow
                 console.error("Failed to send welcome email:", err);
             });
         }
