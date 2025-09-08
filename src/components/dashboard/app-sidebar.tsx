@@ -194,30 +194,26 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                 <Link href="/dashboard/study-resources"><BookOpen/>AI Study Buddy</Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
-            
-            <SidebarGroup>
-                <h3 className="text-sm font-semibold text-muted-foreground px-2 py-1">Premium Tools</h3>
-                 <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Scholarship Finder">
-                    <Link href="/dashboard/scholarship-finder"><Award/>Scholarship Finder</Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Mentor Match">
-                    <Link href="/dashboard/mentor-match"><Users/>Mentor Match</Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Q&A Forum">
-                    <Link href="/dashboard/q-and-a-forum"><MessageSquare/>Q&A Forum</Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="AI Essay Review">
-                    <Link href="/dashboard/essay-review"><PenSquare/>AI Essay Review</Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarGroup>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Scholarship Finder">
+                <Link href="/dashboard/scholarship-finder"><Award/>Scholarship Finder</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Mentor Match">
+                <Link href="/dashboard/mentor-match"><Users/>Mentor Match</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Q&A Forum">
+                <Link href="/dashboard/q-and-a-forum"><MessageSquare/>Q&A Forum</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="AI Essay Review">
+                <Link href="/dashboard/essay-review"><PenSquare/>AI Essay Review</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
           </>
         )}
 
