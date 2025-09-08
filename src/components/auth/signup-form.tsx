@@ -3,8 +3,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,30 +17,24 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CalendarIcon, Rocket } from "lucide-react";
+import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Calendar } from "../ui/calendar";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
-import { validateSchoolName } from "@/ai/flows/validate-school-name";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 
+// Define a simple type for the form values, without Zod validation
+type SignupFormValues = {
+  name: string;
+  email: string;
+  password: string;
+  birthdate: string;
+  grade: string;
+  school: string;
+  acceptTerms: boolean;
+};
 
-const formSchema = z.object({
-  name: z.string().min(1, { message: "Name is required." }),
-  email: z.string().min(1, { message: "Email is required." }),
-  password: z.string().min(1, { message: "Password is required." }),
-  birthdate: z.string().min(1, { message: "Date of birth is required." }),
-  grade: z.string().min(1, { message: "Grade is required." }),
-  school: z.string().min(1, { message: "School is required." }),
-  acceptTerms: z.boolean().refine((val) => val === true, {
-    message: "You must accept the Terms of Service to continue.",
-  }),
-});
 
 interface SignupFormProps {
   plan?: 'standard' | 'elite';
@@ -63,8 +55,8 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  // We are no longer using Zod for validation here.
+  const form = useForm<SignupFormValues>({
     defaultValues: {
       name: "",
       email: "",
@@ -83,8 +75,18 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
     });
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  // This is the function that runs when the button is clicked.
+  const onSubmit = async (values: SignupFormValues) => {
     if (typeof window === 'undefined') return;
+
+    if (!values.acceptTerms) {
+        toast({
+            variant: "destructive",
+            title: "Terms and Conditions",
+            description: "You must accept the Terms of Service to continue.",
+        });
+        return;
+    }
     
     try {
         const allSignupsStr = localStorage.getItem('allSignups');
@@ -102,7 +104,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
 
         const newUser = { 
             ...values,
-            grade: Number(values.grade),
+            grade: Number(values.grade) || 0, // Convert to number, default to 0 if invalid
             birthdate: new Date(values.birthdate).toISOString(),
             plan: 'elite',
             userId: uuidv4(),
@@ -125,7 +127,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
             });
         }
 
-
+        // The navigation will happen now.
         router.push("/onboarding");
     } catch (error) {
          console.error("Signup Error:", error);
@@ -163,6 +165,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
           </div>
         </div>
 
+        {/* The form now calls the simplified onSubmit function directly */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -172,7 +175,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder="John Doe" {...field} required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -185,7 +188,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} />
+                    <Input placeholder="you@example.com" type="email" {...field} required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -198,7 +201,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} required />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -212,7 +215,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                         <FormItem className="flex-1">
                             <FormLabel>Date of birth</FormLabel>
                             <FormControl>
-                                <Input type="date" {...field} />
+                                <Input type="date" {...field} required />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -225,7 +228,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                   <FormItem className="flex-1">
                     <FormLabel>Grade</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 9" {...field} />
+                      <Input type="number" placeholder="e.g., 9" {...field} required />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -244,7 +247,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                              onValueChange={field.onChange}
                            />
                         </FormControl>
-                        <FormMessage />
+                         {/* We can rely on the component itself or add a simple required check if needed */}
                     </FormItem>
                 )}
             />
@@ -258,6 +261,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      required
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
