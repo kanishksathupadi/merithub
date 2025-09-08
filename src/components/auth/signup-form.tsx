@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
+import { validateSchoolName } from "@/ai/flows/validate-school-name";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 
 
@@ -35,7 +36,7 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  birthdate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+  birthdate: z.string().refine((date) => new Date(date).toString() !== 'Invalid Date', {
     message: "A valid date of birth is required.",
   }),
   grade: z.coerce.number().min(1, {message: "Please enter a valid grade."}).max(12, {message: "Grade must be 12 or lower."}),
