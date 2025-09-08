@@ -33,15 +33,12 @@ import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+  name: z.string().min(1, { message: "Name is required." }),
+  email: z.string().min(1, { message: "Email is required." }),
+  password: z.string().min(1, { message: "Password is required." }),
   birthdate: z.string().min(1, { message: "Date of birth is required." }),
-  grade: z.preprocess(
-      (val) => (val === "" ? 0 : Number(val)),
-      z.number().min(1, {message: "Please enter a valid grade."}).max(12, {message: "Grade must be 12 or lower."})
-  ),
-  school: z.string().min(3, { message: "Please enter your school name." }),
+  grade: z.string().min(1, { message: "Grade is required." }),
+  school: z.string().min(1, { message: "School is required." }),
   acceptTerms: z.boolean().refine((val) => val === true, {
     message: "You must accept the Terms of Service to continue.",
   }),
@@ -73,7 +70,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
       email: "",
       password: "",
       birthdate: "",
-      grade: '' as any,
+      grade: "",
       school: "",
       acceptTerms: false,
     },
@@ -105,6 +102,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
 
         const newUser = { 
             ...values,
+            grade: Number(values.grade),
             birthdate: new Date(values.birthdate).toISOString(),
             plan: 'elite',
             userId: uuidv4(),
