@@ -40,13 +40,17 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 // Automatically update grade based on school year cutoff (e.g., August 1st)
 const updateUserGrade = (user: any) => {
+    console.log("Checking for grade update for user:", user.email);
     if (typeof user.grade !== 'number' || !user.lastLoginTimestamp) {
+        console.log("No grade or last login timestamp, skipping update.");
         return user;
     }
     
     const lastLogin = new Date(user.lastLoginTimestamp);
     const today = new Date();
     
+    console.log(`Last login: ${lastLogin.toDateString()}, Current grade: ${user.grade}`);
+
     // Define the school year cutoff (August 1st)
     const lastLoginYear = getYear(lastLogin);
     const currentYear = getYear(today);
@@ -55,14 +59,19 @@ const updateUserGrade = (user: any) => {
     if (currentYear > lastLoginYear) {
         const yearsPassed = currentYear - lastLoginYear;
         const newGrade = user.grade + yearsPassed;
+        console.log(`New school year detected. ${yearsPassed} year(s) have passed.`);
 
         if (newGrade <= 12) {
             user.grade = newGrade;
-            console.log(`User grade automatically updated to ${user.grade}`);
+            console.log(`GRADE PROMOTED! New grade is ${user.grade}`);
         } else if (user.grade < 12) {
             user.grade = 12; // Cap at 12th grade
-            console.log(`User grade capped at 12.`);
+            console.log(`GRADE CAPPED! New grade is 12.`);
+        } else {
+             console.log(`User is already grade 12 or higher. No grade change.`);
         }
+    } else {
+        console.log("Not a new school year. Grade remains the same.");
     }
 
     user.lastLoginTimestamp = today.toISOString();
@@ -339,5 +348,3 @@ export function LoginForm() {
     </Card>
   );
 }
-
-    
