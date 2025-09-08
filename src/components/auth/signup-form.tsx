@@ -26,7 +26,6 @@ import { Calendar } from "../ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
-import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 
@@ -39,7 +38,7 @@ const formSchema = z.object({
     message: "A valid date of birth is required.",
   }),
   grade: z.coerce.number().min(1, {message: "Please enter a valid grade."}).max(12, {message: "Grade must be 12 or lower."}),
-  school: z.string().min(3, { message: "Please select your school." }),
+  school: z.string().min(3, { message: "Please enter your school name." }),
   acceptTerms: z.boolean().refine((val) => val === true, {
     message: "You must accept the Terms of Service to continue.",
   }),
@@ -241,10 +240,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
                     <FormItem className="flex flex-col">
                         <FormLabel>School</FormLabel>
                         <FormControl>
-                           <SchoolAutocomplete
-                                value={field.value}
-                                onValueChange={field.onChange}
-                            />
+                           <Input placeholder="e.g., Northwood High School" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
