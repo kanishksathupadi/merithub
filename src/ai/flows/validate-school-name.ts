@@ -8,7 +8,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 const SchoolValidationInputSchema = z.object({
   query: z.string().describe('The name of the school to search for.'),
@@ -29,7 +29,7 @@ export type SchoolValidationOutput = z.infer<typeof SchoolValidationOutputSchema
 export async function validateSchoolName(input: SchoolValidationInput): Promise<SchoolValidationOutput> {
   // Using OpenStreetMap Nominatim API - requires a descriptive User-Agent
   // See: https://nominatim.org/release-docs/latest/api/Search/#other
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(input.query)}&format=json&extratags=1&namedetails=1&limit=10&amenity=school,university,college`;
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(input.query)}&format=json&featuretype=school&limit=10`;
   
   try {
     const response = await fetch(url, {
@@ -43,8 +43,13 @@ export async function validateSchoolName(input: SchoolValidationInput): Promise<
     }
 
     const data = await response.json();
+    
+    // Filter results to only include schools, universities, and colleges as a secondary check
+    const filteredData = data.filter((item: any) => 
+        item.type === 'school' || item.type === 'university' || item.type === 'college'
+    );
 
-    const schools = data.map((item: any) => ({
+    const schools = filteredData.map((item: any) => ({
       place_id: item.place_id,
       display_name: item.display_name,
     }));
