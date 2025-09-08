@@ -36,12 +36,7 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  birthdate: z.string().min(1, { message: "Date of birth is required." }).refine((date) => {
-    // Check if the date string is not empty before trying to create a Date object
-    return date ? new Date(date).toString() !== 'Invalid Date' : false;
-  }, {
-    message: "A valid date of birth is required.",
-  }),
+  birthdate: z.string().min(1, { message: "Date of birth is required." }),
   grade: z.coerce.number().min(1, {message: "Please enter a valid grade."}).max(12, {message: "Grade must be 12 or lower."}),
   school: z.string().min(3, { message: "Please enter your school name." }),
   acceptTerms: z.boolean().refine((val) => val === true, {
@@ -75,7 +70,7 @@ export function SignupForm({ plan = 'elite' }: SignupFormProps) {
       email: "",
       password: "",
       birthdate: "",
-      grade: "" as any, // Initialize with empty string to avoid uncontrolled component error.
+      grade: undefined, // Initialize as undefined to avoid uncontrolled to controlled error
       school: "",
       acceptTerms: false,
     },
