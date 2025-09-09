@@ -175,8 +175,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Strategic Plan">
-                <Link href="/dashboard/roadmap"><ListChecks/>Strategic Plan</Link>
+              <SidebarMenuButton asChild tooltip="Action Plan">
+                <Link href="/dashboard/roadmap"><ListChecks/>Action Plan</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>

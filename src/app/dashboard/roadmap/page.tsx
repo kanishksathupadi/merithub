@@ -121,7 +121,7 @@ export default function RoadmapPage() {
     if (values.dueDate) {
         toast({
             title: "Task Added!",
-            description: "Your custom task has been added to your roadmap and calendar.",
+            description: "Your custom task has been added to your action plan and calendar.",
         });
     } else {
         toast({
@@ -139,7 +139,7 @@ export default function RoadmapPage() {
     <div className="space-y-8 h-full flex flex-col">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">My Roadmap</h1>
+          <h1 className="text-3xl font-bold">My Action Plan</h1>
           <p className="text-muted-foreground">Your personalized list of tasks and milestones.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -162,7 +162,7 @@ export default function RoadmapPage() {
                 <DialogHeader>
                 <DialogTitle>Add a Custom Task</DialogTitle>
                 <DialogDescription>
-                    Add a new task to your personalized roadmap.
+                    Add a new task to your personalized action plan.
                 </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

@@ -286,7 +286,7 @@ function SuggestionView() {
 }
 
 const allTiles = [
-    { title: "My Roadmap", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap", color: "text-chart-1" },
+    { title: "Action Plan", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap", color: "text-chart-1" },
     { title: "Progress Tracker", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker", color: "text-chart-2" },
     { title: "AI Study Buddy", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy", color: "text-chart-3" },
     { title: "College Finder", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder", color: "text-chart-4" },
@@ -301,7 +301,7 @@ const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
             <Info className="h-4 w-4 text-primary" />
             <AlertTitle className="text-primary font-semibold">Welcome to Your Dashboard!</AlertTitle>
             <AlertDescription className="text-primary/80">
-                This is your command center. Start with your <strong>AI Strategic Briefing</strong> to see your most important next step, or explore your full plan in <strong>My Roadmap</strong>.
+                This is your command center. Start with your <strong>AI Strategic Briefing</strong> to see your most important next step, or explore your full plan in <strong>Action Plan</strong>.
             </AlertDescription>
             <button onClick={onDismiss} className="absolute top-2 right-2 p-1">
                 <X className="h-4 w-4 text-primary/60 hover:text-primary"/>
