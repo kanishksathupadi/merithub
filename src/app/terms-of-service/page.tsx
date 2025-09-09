@@ -72,7 +72,8 @@ export default function TermsOfServicePage() {
                     
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">11. Governing Law & Dispute Resolution</h3>
-                        <p>These Terms shall be governed by the laws of [Your Company's Jurisdiction], without regard to its conflict of law provisions. At our sole discretion, we may require you to submit any disputes arising from these Terms or the Service to final and binding arbitration under the rules of an established alternative dispute resolution provider.</p>
+                        <p>All matters relating to the Service and these Terms and any dispute or claim arising therefrom or related thereto shall be governed by and construed in accordance with the internal laws of the State of California without giving effect to any choice or conflict of law provision or rule. Any legal suit, action, or proceeding arising out of, or related to, these Terms or the Service shall be instituted exclusively in the federal courts of the United States or the courts of the State of California.</p>
+                        <p>At our sole discretion, we may require you to submit any disputes arising from the use of these Terms or the Service, including disputes arising from or concerning their interpretation, violation, invalidity, non-performance, or termination, to final and binding arbitration under the Rules of Arbitration of the American Arbitration Association applying California law.</p>
                     </section>
 
                     <section className="space-y-2">
