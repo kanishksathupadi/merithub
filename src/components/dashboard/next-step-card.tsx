@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -45,7 +46,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                 <CardContent>
                     <Button asChild>
                         <Link href="/dashboard/roadmap">
-                            Review Your Roadmap <ArrowRight className="ml-2 h-4 w-4" />
+                            Review Your Action Plan <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
                     </Button>
                 </CardContent>
@@ -115,7 +116,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                         <div className="p-4 rounded-lg bg-black/20 border border-white/10">
                             <p className="font-bold mt-2 text-lg text-foreground">{priorityMission.title}</p>
                             <p className="text-muted-foreground text-sm mt-1">{priorityMission.description}</p>
-                             {requiresProof && (
+                             {missionTask?.requiresProof && (
                                 <Badge variant="outline" className="mt-2 flex items-center gap-2 w-fit border-primary/30 text-primary/80">
                                     <Lock className="w-3 h-3"/> Proof Required to Complete
                                 </Badge>
@@ -171,6 +172,7 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                     <DialogTitle>Proof of Completion</DialogTitle>
                     <DialogDescription>
                         This task requires proof. Please provide a link to your work or a brief description of the outcome.
+                        <strong className="block mt-2">Note: This information will be visible on your public portfolio.</strong>
                     </DialogDescription>
                 </DialogHeader>
                 <div className="py-4 space-y-2">

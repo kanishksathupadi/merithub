@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -101,6 +102,16 @@ export default function PortfolioPage() {
 
     }, [userId]);
 
+    const isUrl = (text: string) => {
+        try {
+            new URL(text);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+
     if (loading) {
         return (
             <div className="max-w-4xl mx-auto p-4 sm:p-8 space-y-8">
@@ -193,12 +204,18 @@ export default function PortfolioPage() {
                                                     {task.category}
                                                 </Badge>
                                                 {task.completionProof && (
-                                                     <Button asChild variant="link" size="sm" className="p-0 h-auto text-xs">
-                                                        <a href={task.completionProof} target="_blank" rel="noopener noreferrer">
-                                                            <LinkIcon className="w-3 h-3 mr-1"/>
-                                                            View Proof
-                                                        </a>
-                                                    </Button>
+                                                    isUrl(task.completionProof) ? (
+                                                        <Button asChild variant="link" size="sm" className="p-0 h-auto text-xs">
+                                                            <a href={task.completionProof} target="_blank" rel="noopener noreferrer">
+                                                                <LinkIcon className="w-3 h-3 mr-1"/>
+                                                                View Proof
+                                                            </a>
+                                                        </Button>
+                                                    ) : (
+                                                         <p className="text-xs text-muted-foreground italic border-l-2 pl-2">
+                                                            Proof: {task.completionProof}
+                                                         </p>
+                                                    )
                                                 )}
                                              </div>
                                         </div>
