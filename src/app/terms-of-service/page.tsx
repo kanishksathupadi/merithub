@@ -46,13 +46,13 @@ export default function TermsOfServicePage() {
                     </section>
 
                      <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">2. Privacy Policy</h3>
-                        <p>Your privacy is important to us. Our Privacy Policy explains how we collect, use, and protect your personal data. By using our Services, you agree to the collection and use of information in accordance with our <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>, which is incorporated into these Terms by reference. As our Services may be used by individuals under the age of 18, we handle data with strict adherence to privacy laws concerning minors.</p>
+                        <h3 className="text-xl font-semibold text-foreground">2. Age Restrictions & Parental Consent</h3>
+                         <p>Our Services are intended for users who are at least 13 years old. If you are under the age of 18, you must have your parent or legal guardian’s permission to use the Services, and they must agree to these Terms on your behalf. By using the Services, you represent and warrant that you meet these age and consent requirements.</p>
                     </section>
 
                     <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">3. Use of Our Services & Age Restrictions</h3>
-                         <p>You must have the consent of a parent or legal guardian who agrees to be bound by these Terms on your behalf if you are considered a minor in your jurisdiction. By using the Services, you represent and warrant that you have obtained such consent. You agree to use our Services only for lawful purposes and in accordance with these Terms. You are responsible for all activity that occurs under your account.</p>
+                        <h3 className="text-xl font-semibold text-foreground">3. Privacy and Data Protection</h3>
+                        <p>Your privacy is critically important to us. Our <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link> explains how we collect, use, and protect your personal information, including data from minor users, in compliance with applicable laws. The Privacy Policy is incorporated by reference into these Terms. Please review it carefully.</p>
                     </section>
                     
                     <section className="space-y-2">
@@ -61,50 +61,44 @@ export default function TermsOfServicePage() {
                     </section>
                     
                     <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">5. Payments and Refunds</h3>
-                         <p>Our core Services are currently provided free of charge. We reserve the right to introduce fees for certain features or services in the future. We will notify you before any services you are using begin to carry a fee, and you will have the opportunity to accept the new terms or discontinue use of the service. All transactions for any paid services will be processed through a secure third-party payment processor.</p>
+                        <h3 className="text-xl font-semibold text-foreground">5. Payments, Subscriptions, and Refunds</h3>
+                         <p>Our core Services are currently provided free of charge. We reserve the right to introduce fees for certain features in the future. We will notify you before any services you use begin to carry a fee, and you will have the opportunity to accept the new terms or discontinue use. Any transactions will be processed through a secure third-party payment processor.</p>
                     </section>
 
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">6. Intellectual Property Rights</h3>
-                        <p>The Services and their entire contents, features, and functionality are owned by PinnaclePath, its licensors, or other providers of such material and are protected by international copyright, trademark, and other intellectual property laws. You are granted a limited license to access and use the Services for your personal, non-commercial use only.</p>
-                    </section>
-
-                    <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">7. User Contributions</h3>
-                        <p>The Services may contain interactive features that allow users to post content. Any content you post is your responsibility. By posting content, you grant us a license to use, display, and distribute it in connection with the Services. You agree not to post content that is illegal, obscene, defamatory, or infringes on the rights of others.</p>
+                        <p>The Services and all of their original content, features, and functionality are owned by PinnaclePath and are protected by international copyright, trademark, and other intellectual property laws. You are granted a limited license to use the Services for personal, non-commercial purposes only.</p>
                     </section>
                      
                     <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">8. Termination and Suspension</h3>
-                        <p>We may terminate or suspend your account and access to the Services at our sole discretion, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. Upon termination, your right to use the Services will immediately cease. You may terminate your account at any time through your account settings or by contacting us.</p>
+                        <h3 className="text-xl font-semibold text-foreground">7. Termination and Suspension</h3>
+                        <p>We may terminate or suspend your account and access to the Services at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties, or for any other reason. You may terminate your account at any time.</p>
                     </section>
                     
                     <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">9. Disclaimer of Warranties</h3>
-                        <p>THE SERVICES ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. PINNACLEPATH EXPRESSLY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT WARRANT THAT THE SERVICES WILL BE UNINTERRUPTED, SECURE, OR ERROR-FREE.</p>
+                        <h3 className="text-xl font-semibold text-foreground">8. Disclaimer of Warranties</h3>
+                        <p>The Services are provided on an "AS IS" and "AS AVAILABLE" basis. We disclaim all warranties of any kind, whether express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
                     </section>
 
                     <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">10. Limitation on Liability</h3>
-                        <p>IN NO EVENT WILL PINNACLEPATH, ITS AFFILIATES, OR THEIR LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS, OR DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE, OR INABILITY TO USE, THE SERVICES.</p>
+                        <h3 className="text-xl font-semibold text-foreground">9. Limitation on Liability</h3>
+                        <p>In no event shall PinnaclePath, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages arising out of your use of the Services.</p>
+                    </section>
+                    
+                     <section className="space-y-2">
+                        <h3 className="text-xl font-semibold text-foreground">10. Indemnification</h3>
+                        <p>You agree to defend, indemnify, and hold harmless PinnaclePath and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of your use and access of the Service, or a breach of these Terms.</p>
                     </section>
                     
                     <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">11. Indemnification</h3>
-                        <p>You agree to indemnify, defend, and hold harmless PinnaclePath and its officers, directors, employees, agents, and affiliates from any and all claims, liabilities, damages, costs, and expenses, including reasonable attorneys' fees, in any way arising from, related to, or in connection with your use of the Services, your violation of these Terms, or your violation of any rights of another.</p>
-                    </section>
-                    
-                    <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">12. Governing Law and Dispute Resolution</h3>
-                        <p>These Terms shall be governed by the laws of the State of Delaware, without regard to its conflict of law provisions. You agree that any legal action or proceeding between you and PinnaclePath will be brought exclusively in the federal or state courts located in Delaware. We may, at our sole discretion, require you to submit any disputes arising from these Terms to final and binding arbitration.</p>
+                        <h3 className="text-xl font-semibold text-foreground">11. Governing Law & Dispute Resolution</h3>
+                        <p>These Terms shall be governed by the laws of [Your Company's Jurisdiction], without regard to its conflict of law provisions. At our sole discretion, we may require you to submit any disputes arising from these Terms or the Service to final and binding arbitration under the rules of an established alternative dispute resolution provider.</p>
                     </section>
 
                     <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">13. Miscellaneous</h3>
-                        <p><strong>Severability:</strong> If any provision of these Terms is held to be invalid or unenforceable, the remaining provisions of these Terms will remain in full force and effect.</p>
-                        <p><strong>Entire Agreement:</strong> These Terms and our Privacy Policy constitute the entire agreement between you and PinnaclePath regarding your use of the Services and supersede all prior and contemporaneous understandings, agreements, representations, and warranties, both written and oral.</p>
-                        <p><strong>Changes to Terms:</strong> We may revise and update these Terms from time to time. All changes are effective immediately when we post them. Your continued use of the Services following the posting of revised Terms means that you accept and agree to the changes.</p>
+                        <h3 className="text-xl font-semibold text-foreground">12. Miscellaneous</h3>
+                        <p><strong>Severability:</strong> If any provision of these Terms is held to be unenforceable or invalid, such provision will be changed and interpreted to accomplish the objectives of such provision to the greatest extent possible under applicable law and the remaining provisions will continue in full force and effect.</p>
+                        <p><strong>Entire Agreement:</strong> These Terms, together with the Privacy Policy, constitute the entire agreement between you and us regarding our Service, and supersede and replace any prior agreements we might have had between us regarding the Service.</p>
                     </section>
                 </div>
             </div>
