@@ -30,6 +30,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { v4 as uuidv4 } from "uuid";
 import { validateContactMessage } from "@/ai/flows/validate-contact-message";
 import { useState } from "react";
+import { MarketingHeader } from "@/components/layout/marketing-header";
 
 
 const formSchema = z.object({
@@ -54,7 +55,7 @@ export default function ContactPage() {
         },
     });
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>>) {
         setIsSubmitting(true);
         try {
             // AI Validation Step
@@ -96,28 +97,7 @@ export default function ContactPage() {
 
     return (
         <div className="bg-background text-foreground">
-             <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/80 backdrop-blur-sm">
-                <div className="container mx-auto flex h-16 items-center">
-                <Link href="/" className="flex items-center gap-2 mr-6">
-                    <GraduationCap className="w-8 h-8 text-primary" />
-                    <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
-                </Link>
-                <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                    <Link href="/#features" className="hover:text-primary transition-colors">Features</Link>
-                    <Link href="/about" className="hover:text-primary transition-colors">About</Link>
-                    <Link href="/careers" className="hover:text-primary transition-colors">Careers</Link>
-                    <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
-                </nav>
-                <div className="flex items-center gap-2 ml-auto">
-                    <Button asChild variant="secondary">
-                        <Link href="/login">Member Login</Link>
-                    </Button>
-                    <Button asChild>
-                        <Link href="/signup">Get Started</Link>
-                    </Button>
-                </div>
-                </div>
-            </header>
+            <MarketingHeader />
             
             <main>
                 <section className="relative py-20 md:py-32 text-center bg-muted/50">

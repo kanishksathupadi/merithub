@@ -5,34 +5,14 @@ import { Button } from "@/components/ui/button";
 import { GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { MarketingHeader } from "@/components/layout/marketing-header";
 
 export default function TermsOfServicePage() {
     const router = useRouter();
 
     return (
         <div className="bg-muted min-h-screen">
-            <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/80 backdrop-blur-sm">
-                <div className="container mx-auto flex h-16 items-center">
-                    <Link href="/" className="flex items-center gap-2 mr-6">
-                        <GraduationCap className="w-8 h-8 text-primary" />
-                        <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
-                    </Link>
-                    <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                        <Link href="/#features" className="hover:text-primary transition-colors">Features</Link>
-                        <Link href="/about" className="hover:text-primary transition-colors">About</Link>
-                        <Link href="/careers" className="hover:text-primary transition-colors">Careers</Link>
-                        <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
-                    </nav>
-                    <div className="flex items-center gap-2 ml-auto">
-                        <Button asChild variant="secondary">
-                            <Link href="/login">Member Login</Link>
-                        </Button>
-                        <Button asChild>
-                            <Link href="/signup">Get Started</Link>
-                        </Button>
-                    </div>
-                </div>
-            </header>
+            <MarketingHeader />
             <div className="container mx-auto py-12 px-4 max-w-4xl bg-background mt-8 rounded-lg border">
                  <header className="mb-8 text-center border-b pb-8">
                     <h2 className="text-4xl font-bold tracking-tight">Terms of Service</h2>
@@ -87,7 +67,7 @@ export default function TermsOfServicePage() {
                     
                      <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">10. Indemnification</h3>
-                        <p>You agree to defend, indemnify, and hold harmless PinnaclePath and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of your use and access of the Service, or a breach of these Terms.</p>
+                        <p>You agree to defend, indemnify, and hold harmless PinnaclePath and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not to attorney's fees), resulting from or arising out of your use and access of the Service, or a breach of these Terms.</p>
                     </section>
                     
                     <section className="space-y-2">
