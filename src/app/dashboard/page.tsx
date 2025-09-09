@@ -382,20 +382,16 @@ const QuickLinks = () => {
             <CardHeader>
                 <CardTitle className="text-lg">Your Toolkit</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-1">
                 {tiles.map(tile => (
-                    <Link 
-                        href={tile.href} 
+                    <Link
+                        href={tile.href}
                         key={tile.title}
                         onClick={() => trackFeatureUsage(tile.feature)}
-                        className="flex items-center gap-3 p-2 rounded-md hover:bg-muted transition-colors group"
+                        className="flex items-center gap-3 p-2.5 rounded-md hover:bg-muted transition-colors group"
                     >
-                         <div className={cn("p-2 rounded-md bg-muted")}>
-                            <tile.icon className={cn("w-5 h-5", tile.color)} />
-                        </div>
-                        <div>
-                             <p className="font-semibold text-sm">{tile.title}</p>
-                        </div>
+                        <tile.icon className={cn("w-5 h-5", tile.color)} />
+                        <p className="font-medium text-sm">{tile.title}</p>
                     </Link>
                 ))}
             </CardContent>
@@ -453,13 +449,13 @@ export default function DashboardPage() {
       
       {showWelcome && <WelcomeAlert onDismiss={handleDismissWelcome} />}
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
-             <div className="xl:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+             <div className="space-y-6">
                 <Suspense fallback={<Skeleton className="h-96 w-full" />}>
                     <SuggestionView />
                 </Suspense>
              </div>
-             <div className="xl:col-span-1 space-y-6">
+             <div className="space-y-6">
                  <KeyStats />
                  <QuickLinks />
              </div>
