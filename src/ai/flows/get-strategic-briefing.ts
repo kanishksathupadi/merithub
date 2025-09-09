@@ -26,10 +26,10 @@ export type StrategicBriefingInput = z.infer<typeof StrategicBriefingInputSchema
 const StrategicBriefingOutputSchema = z.object({
     bigPicture: z.string().describe("A short, encouraging paragraph (2-3 sentences) explaining the current high-level strategic focus based on the incomplete tasks. For example, 'This month, our focus is on building your leadership skills...'"),
     priorityMission: z.object({
-        id: z.string().describe("The ID of the most important, high-impact task from the plan."),
-        title: z.string().describe("The title of that priority task."),
-        description: z.string().describe("The description of that priority task."),
-    }).describe("The single most important, narrative-building task from the list that the student should focus on next."),
+        id: z.string().describe("The ID of the most important, high-impact task from the plan that this mission is linked to."),
+        title: z.string().describe("A new, high-level, inspirational title for the overarching mission (e.g., 'Become a Published Author', 'Launch a Community Initiative'). This should be a bigger concept than a single task."),
+        description: z.string().describe("A new, one-sentence description that explains what this strategic mission involves."),
+    }).describe("A synthesized, high-level 'mission' that represents the student's most important focus. This mission should be linked to the single most critical task from the plan but should be described as a larger goal."),
     mentorInsight: z.string().describe("A brief, powerful piece of 'insider' advice (2-3 sentences) that explains *why* the priority mission is so important. This should connect the task to a core college admission concept like developing a 'spike' or a 'hook'."),
 });
 export type StrategicBriefingOutput = z.infer<typeof StrategicBriefingOutputSchema>;
@@ -47,10 +47,13 @@ const prompt = ai.definePrompt({
   model: 'googleai/gemini-1.5-flash-latest',
   prompt: `You are an expert educational strategist and mentor. Your task is to analyze a student's current roadmap and provide a "Strategic Briefing" to guide their focus. Do not just list tasks. Provide insight and context.
 
-  **Instructions:**
+  **Core Instructions:**
   1.  **Analyze the Plan:** Review the student's entire list of incomplete tasks to understand the current priorities.
   2.  **Determine the "Big Picture":** Synthesize the main theme from the upcoming tasks. Is the focus on building a new skill, demonstrating leadership, or deepening academic knowledge? Write a short, encouraging paragraph that explains this strategic theme.
-  3.  **Identify the "Priority Mission":** From the list of incomplete tasks, select the SINGLE most important, impactful, and strategic task. This should be a task that helps build their unique story or "spike," not just a routine assignment. This is their priority. Return its ID, title, and description.
+  3.  **Synthesize the "Priority Mission":** 
+      a. First, identify the SINGLE most important, impactful, and strategic task from the list of incomplete tasks. This should be a task that helps build their unique story or "spike," not just a routine assignment.
+      b. Second, create a new, high-level, inspirational 'title' and 'description' for a "mission" that this task represents. The mission should be a bigger concept than the task itself. For example, if the task is "Write a short story for the school literary magazine," the mission title could be "Become a Published Author."
+      c. Return the ID of the original underlying task, but with the new mission title and description you created.
   4.  **Provide "Mentor's Insight":** Write a brief, powerful piece of advice that explains *why* this Priority Mission is critical. Connect it to an advanced college prep concept. For example, explain how organizing an event demonstrates leadership far better than just attending, or how a research project serves as a "hook" for their application.
 
   **Student's Current Plan:**
