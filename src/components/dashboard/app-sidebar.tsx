@@ -200,11 +200,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Mentor Match">
-                <Link href="/dashboard/mentor-match"><Users/>Mentor Match</Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Q&A Forum">
                 <Link href="/dashboard/q-and-a-forum"><MessageSquare/>Q&A Forum</Link>
                 </SidebarMenuButton>

@@ -121,7 +121,7 @@ const allFeatures = [
     },
     { 
         icon: Users, 
-        title: "Mentor Match & Q&A Forum", 
+        title: "Q&A Forum", 
         description: "Connect with experienced mentors and collaborate with peers in our exclusive Q&A community."
     },
 ];
@@ -409,13 +409,13 @@ export default function Home() {
                         <AccordionItem value="item-3">
                             <AccordionTrigger>What features are included?</AccordionTrigger>
                             <AccordionContent>
-                            PinnaclePath is completely free and includes everything we have to offer: the personalized roadmap, college finder, progress tracker, study buddy, shareable portfolio, AI Essay Reviewer, Scholarship Finder, Mentor Match directory, and the student Q&A Forum. We believe in providing all our tools to every user.
+                            PinnaclePath is completely free and includes everything we have to offer: the personalized roadmap, college finder, progress tracker, study buddy, shareable portfolio, AI Essay Reviewer, Scholarship Finder, and the student Q&A Forum. We believe in providing all our tools to every user.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4">
                             <AccordionTrigger>How is this different from a traditional college counselor?</AccordionTrigger>
                             <AccordionContent>
-                            PinnaclePath acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking that a human counselor typically cannot offer at scale. Our Mentor Match directory also helps you connect with human mentors, offering the best of both worlds.
+                            PinnaclePath acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking that a human counselor typically cannot offer at scale. 
                             </AccordionContent>
                         </AccordionItem>
                          <AccordionItem value="item-5">

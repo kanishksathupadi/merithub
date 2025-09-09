@@ -292,7 +292,6 @@ const allTiles = [
     { title: "College Finder", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder", color: "text-chart-4" },
     { title: "Scholarship Finder", icon: Award, href: "/dashboard/scholarship-finder", feature: "scholarshipFinder", color: "text-chart-5" },
     { title: "AI Essay Review", icon: PenSquare, href: "/dashboard/essay-review", feature: "essayReview", color: "text-chart-1" },
-    { title: "Mentor Match", icon: MessageSquare, href: "/dashboard/mentor-match", feature: "mentorMatch", color: "text-chart-2" },
     { title: "Q&A Forum", icon: Users, href: "/dashboard/q-and-a-forum", feature: "qaForum", color: "text-chart-3" },
 ];
 

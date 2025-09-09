@@ -31,11 +31,7 @@ const settingsSchema = z.object({
   email: z.string().email(),
   notifications: z.object({
     newOpportunities: z.boolean(),
-    mentorMessages: z.boolean(),
     deadlineReminders: z.boolean(),
-  }),
-  privacy: z.object({
-    showProfileInMentorSearch: z.boolean(),
   }),
 });
 
@@ -44,11 +40,7 @@ type SettingsValues = z.infer<typeof settingsSchema>;
 const defaultValues: Partial<SettingsValues> = {
   notifications: {
     newOpportunities: true,
-    mentorMessages: true,
     deadlineReminders: false,
-  },
-  privacy: {
-    showProfileInMentorSearch: true,
   },
 };
 
@@ -71,7 +63,6 @@ export function SettingsForm() {
         name: parsedData.name,
         email: parsedData.email,
         notifications: defaultValues.notifications,
-        privacy: defaultValues.privacy,
       });
     }
     setLoading(false);
@@ -236,47 +227,12 @@ export function SettingsForm() {
             />
              <FormField
               control={form.control}
-              name="notifications.mentorMessages"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel>Mentor Messages</FormLabel>
-                    <FormDescription>Get notified when a mentor sends you a message.</FormDescription>
-                  </div>
-                  <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
               name="notifications.deadlineReminders"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel>Deadline Reminders</FormLabel>
                     <FormDescription>Get reminders for upcoming task and application deadlines.</FormDescription>
-                  </div>
-                  <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-         <Card>
-          <CardHeader>
-            <CardTitle>Privacy & Safety</CardTitle>
-            <CardDescription>Manage your profile's visibility.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="privacy.showProfileInMentorSearch"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel>Visible in Mentor Search</FormLabel>
-                    <FormDescription>Allow mentors to find your profile when searching for students to guide.</FormDescription>
                   </div>
                   <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
                 </FormItem>
