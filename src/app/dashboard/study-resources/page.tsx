@@ -135,7 +135,7 @@ export default function StudyResourcesPage() {
                           <Input placeholder="e.g., 'Best SAT prep video'" className="pl-10" {...field} />
                         </div>
                       </FormControl>
-                      <FormMessage className="absolute" />
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
