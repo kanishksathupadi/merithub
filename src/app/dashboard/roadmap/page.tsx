@@ -107,6 +107,7 @@ export default function RoadmapPage() {
       relatedResources: (values.resource && values.resource.url && values.resource.title) ? [{title: values.resource.title, url: values.resource.url}] as { title: string, url: string }[] : [],
       dueDate: values.dueDate?.toISOString(),
       recurringDays: values.recurringDays,
+      points: 0, // Custom tasks are worth 0 points
     };
     
     const storedTasksStr = localStorage.getItem(`roadmapTasks-${userEmail}`);
