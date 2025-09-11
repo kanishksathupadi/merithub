@@ -16,13 +16,13 @@ export default function PrivacyPolicyPage() {
             <div className="container mx-auto py-12 px-4 max-w-4xl bg-background mt-8 rounded-lg border">
                  <header className="mb-8 text-center border-b pb-8">
                     <h2 className="text-4xl font-bold tracking-tight">Privacy Policy</h2>
-                    <p className="text-muted-foreground mt-2">Last Updated: 09/03/2025</p>
+                    <p className="text-muted-foreground mt-2">Last Updated: {new Date().toLocaleDateString()}</p>
                 </header>
 
                 <div className="prose prose-invert prose-lg mx-auto text-foreground/80 text-sm space-y-6">
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">1. Introduction</h3>
-                        <p>AI School Mentor Inc. ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services (collectively, the "Services"). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the services.</p>
+                        <p>AI School Mentor ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services (collectively, the "Services"). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the services.</p>
                     </section>
 
                     <section className="space-y-2">
@@ -65,8 +65,7 @@ export default function PrivacyPolicyPage() {
 
                      <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">7. Contact Us</h3>
-                        <p>If you have questions or comments about this Privacy Policy, please contact us at:</p>
-                        <p>AI School Mentor Inc.<br/>123 Innovation Drive<br/>Tech City, USA<br/>Email: privacy@aischoolmentor.com</p>
+                        <p>If you have questions or comments about this Privacy Policy, please contact us at: privacy@aischoolmentor.com</p>
                     </section>
 
                 </div>

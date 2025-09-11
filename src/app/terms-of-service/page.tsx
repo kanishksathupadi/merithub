@@ -16,13 +16,13 @@ export default function TermsOfServicePage() {
             <div className="container mx-auto py-12 px-4 max-w-4xl bg-background mt-8 rounded-lg border">
                  <header className="mb-8 text-center border-b pb-8">
                     <h2 className="text-4xl font-bold tracking-tight">Terms of Service</h2>
-                    <p className="text-muted-foreground mt-2">Last Updated: 09/03/2025</p>
+                    <p className="text-muted-foreground mt-2">Last Updated: {new Date().toLocaleDateString()}</p>
                 </header>
 
                 <div className="prose prose-invert prose-lg mx-auto text-foreground/80 text-sm space-y-6">
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">1. Agreement to Terms</h3>
-                        <p>Welcome to AI School Mentor. These Terms of Service ("Terms") govern your use of the AI School Mentor website, applications, and services (collectively, the "Services"), provided by AI School Mentor Inc. ("AI School Mentor", "we", "us", or "our"). By accessing or using our Services, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, do not use our Services.</p>
+                        <p>Welcome to AI School Mentor. These Terms of Service ("Terms") govern your use of the AI School Mentor website, applications, and services (collectively, the "Services"), provided by AI School Mentor ("AI School Mentor", "we", "us", or "our"). By accessing or using our Services, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, do not use our Services.</p>
                     </section>
 
                      <section className="space-y-2">
