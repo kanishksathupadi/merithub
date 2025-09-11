@@ -114,6 +114,9 @@ export default function DashboardLayout({
         <AppSidebar avatarUrl={avatarUrl} />
         <SidebarInset>
             <div className="p-6 sm:p-8 lg:p-12 flex-1">
+                 <div className="md:hidden mb-4">
+                    <SidebarTrigger />
+                 </div>
                 {children}
             </div>
             <Toaster />
