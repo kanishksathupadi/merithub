@@ -185,11 +185,6 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Leaderboard">
-                <Link href="/dashboard/leaderboard"><Trophy/>Leaderboard</Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="College Finder">
                 <Link href="/dashboard/college-finder"><GraduationCap/>College Finder</Link>
                 </SidebarMenuButton>
@@ -212,6 +207,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="AI Essay Review">
                 <Link href="/dashboard/essay-review"><PenSquare/>AI Essay Review</Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Leaderboard">
+                <Link href="/dashboard/leaderboard"><Trophy/>Leaderboard</Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
           </>
@@ -250,3 +250,5 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     </Sidebar>
   );
 }
+
+    
