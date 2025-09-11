@@ -193,23 +193,23 @@ export default function Home() {
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">Built For Every Stage of the Journey</h3>
-                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Whether you're just starting high school or you're a parent supporting your child, AI School Mentor is your strategic partner.</p>
+                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">From elementary school exploration to high school strategy, AI School Mentor is the perfect partner.</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8">
                     <Card className="p-8 text-center">
-                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback className="text-2xl">9th</AvatarFallback></Avatar>
-                        <h4 className="text-xl font-semibold">The Ambitious 9th Grader</h4>
-                        <p className="text-muted-foreground mt-2">Lay the perfect foundation. We'll help you explore your interests, build foundational skills, and choose extracurriculars that will grow with you, setting you up for long-term success.</p>
+                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback className="text-2xl">4th</AvatarFallback></Avatar>
+                        <h4 className="text-xl font-semibold">The Young Explorer</h4>
+                        <p className="text-muted-foreground mt-2">For elementary students, we spark curiosity. Our platform helps discover new passions and build foundational skills in a fun, engaging way, setting the stage for future success.</p>
                     </Card>
                     <Card className="p-8 text-center border-primary ring-2 ring-primary">
-                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback className="text-2xl">11th</AvatarFallback></Avatar>
-                        <h4 className="text-xl font-semibold">The Stressed-Out 11th Grader</h4>
-                        <p className="text-muted-foreground mt-2">Turn stress into strategy. It's crunch time. We'll help you sharpen your "spike," prepare for standardized tests, and start crafting a compelling narrative for your college applications.</p>
+                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback className="text-2xl">8th</AvatarFallback></Avatar>
+                        <h4 className="text-xl font-semibold">The Middle School Planner</h4>
+                        <p className="text-muted-foreground mt-2">For middle schoolers, we turn interests into action. We help connect passions to extracurriculars and build a solid academic base for the transition to high school.</p>
                     </Card>
                     <Card className="p-8 text-center">
-                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback><Users/></AvatarFallback></Avatar>
-                        <h4 className="text-xl font-semibold">The Supportive Parent</h4>
-                        <p className="text-muted-foreground mt-2">Be their best advocate. Get clarity on your child's progress with our visual trackers and provide them with the best tools to succeed, from essay reviews to on-demand study help.</p>
+                        <Avatar className="w-20 h-20 mx-auto mb-4"><AvatarFallback className="text-2xl">11th</AvatarFallback></Avatar>
+                        <h4 className="text-xl font-semibold">The High School Strategist</h4>
+                        <p className="text-muted-foreground mt-2">For high school students, we sharpen your focus. We help you build a standout "spike," prepare for tests, and craft a compelling narrative for college applications.</p>
                     </Card>
                 </div>
             </div>
@@ -250,7 +250,7 @@ export default function Home() {
                     <div className="space-y-6">
                         <Badge variant="outline" className="border-primary/50 text-primary">Feature Spotlight</Badge>
                         <h3 className="text-4xl font-bold tracking-tight">Go Beyond Checklists with a Dynamic Strategic Roadmap</h3>
-                        <p className="text-muted-foreground text-lg">A simple to-do list isn't enough. Your AI School Mentor Roadmap is a living, intelligent plan that adapts to your growth and helps you build a compelling, unique narrative for college admissions.</p>
+                        <p className="text-muted-foreground text-lg">A simple to-do list is not enough. Your AI School Mentor Roadmap is a living, intelligent plan that adapts to your growth and helps you build a compelling, unique narrative for college admissions.</p>
                         <ul className="space-y-4">
                             <li className="flex gap-3">
                                 <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0"/>
@@ -322,14 +322,14 @@ export default function Home() {
                     <div className="md:order-1">
                         <Badge variant="outline" className="mb-4">Step 2</Badge>
                         <h4 className="text-3xl font-bold tracking-tight">Receive Your Personal Strategy</h4>
-                        <p className="text-muted-foreground mt-4">With your profile complete, our system gets to work. It analyzes your unique data to generate a bespoke, long-term roadmap filled with hyper-specific, actionable milestones. This is not a generic checklist; it's a strategic plan designed to maximize your potential.</p>
+                        <p className="text-muted-foreground mt-4">With your profile complete, our system gets to work. It analyzes your unique data to generate a bespoke, long-term roadmap filled with hyper-specific, actionable milestones. This is not a generic checklist; it is a strategic plan designed to maximize your potential.</p>
                     </div>
                 </div>
                  <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <Badge variant="outline" className="mb-4">Step 3</Badge>
                         <h4 className="text-3xl font-bold tracking-tight">Execute and Achieve</h4>
-                        <p className="text-muted-foreground mt-4">Your plan is set. Now, it's time to execute. Follow your roadmap, track your progress, and leverage our powerful suite of tools, from the Study Buddy to your Shareable Portfolio, to overcome challenges and reach your goals.</p>
+                        <p className="text-muted-foreground mt-4">Your plan is set. Now, it is time to execute. Follow your roadmap, track your progress, and leverage our powerful suite of tools, from the Study Buddy to your Shareable Portfolio, to overcome challenges and reach your goals.</p>
                     </div>
                      <Image
                         src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdHVkZW50cyUyMGluJTIwbGVjdHVyZSUyMGhsbCUyMGNlZWxlYnJhdGluZ3xlbnwwfHx8fDE3MjUwNDg5ODd8MA&ixlib=rb-4.1.0&q=80&w=1080"
@@ -349,7 +349,7 @@ export default function Home() {
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">Why AI School Mentor?</h3>
-                    <p className="text-muted-foreground mt-3 max-w-3xl mx-auto">While traditional methods offer generic advice, AI School Mentor provides a hyper-personalized, data-driven engine for your success. Here’s how we compare:</p>
+                    <p className="text-muted-foreground mt-3 max-w-3xl mx-auto">While traditional methods offer generic advice, AI School Mentor provides a hyper-personalized, data-driven engine for your success. Here is how we compare:</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 text-center">
                     <Card className="p-8">
@@ -404,7 +404,7 @@ export default function Home() {
                         <AccordionItem value="item-2">
                             <AccordionTrigger>Is AI School Mentor suitable for my child's age?</AccordionTrigger>
                             <AccordionContent>
-                            Yes! AI School Mentor is designed for students from middle school through high school. For younger students, our system focuses on exploration, skill-building, and discovering new interests. As students get older, the recommendations become more focused on college preparation, leadership, and building a standout profile.
+                            Yes! AI School Mentor is designed for students from elementary school through high school. For younger students, our system focuses on exploration, skill-building, and discovering new interests. As students get older, the recommendations become more focused on college preparation, leadership, and building a standout profile.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3">

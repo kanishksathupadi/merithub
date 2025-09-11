@@ -27,7 +27,7 @@ export default function TermsOfServicePage() {
 
                      <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">2. Age Restrictions & Parental Consent</h3>
-                         <p>Our Services are intended for users who are at least 13 years old. If you are under the age of 18, you must have your parent or legal guardian’s permission to use the Services, and they must agree to these Terms on your behalf. By using the Services, you represent and warrant that you meet these age and consent requirements.</p>
+                         <p>Our Services are intended for users of all ages (Kindergarten through 12th Grade). If you are under the age of 18, you must have your parent or legal guardian’s permission to use the Services, and they must agree to these Terms on your behalf. By creating an account, you represent that you have this permission. For users under the age of 13, verifiable parental consent is required, in compliance with the Children's Online Privacy Protection Act (COPPA).</p>
                     </section>
 
                     <section className="space-y-2">
@@ -37,12 +37,12 @@ export default function TermsOfServicePage() {
                     
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">4. User Accounts</h3>
-                         <p>To access most features of the Service, you must register for an account. You agree that the information you provide is accurate and that you will keep it up-to-date. You are responsible for maintaining the confidentiality of your account password and for all activities that occur under your account.</p>
+                         <p>To access most features of the Service, you must register for an account. You agree that the information you provide is accurate and that you will keep it up to date. You are responsible for maintaining the confidentiality of your account password and for all activities that occur under your account.</p>
                     </section>
                     
                     <section className="space-y-2">
-                        <h3 className="text-xl font-semibold text-foreground">5. Payments, Subscriptions, and Refunds</h3>
-                         <p>Our core Services are currently provided free of charge. We reserve the right to introduce fees for certain features in the future. We will notify you before any services you use begin to carry a fee, and you will have the opportunity to accept the new terms or discontinue use. Any transactions will be processed through a secure third-party payment processor.</p>
+                        <h3 className="text-xl font-semibold text-foreground">5. Payments and Subscriptions</h3>
+                         <p>Our Services are currently provided free of charge. We reserve the right to introduce fees for certain features or subscription plans in the future. We will notify you before any services you currently use begin to carry a fee, and you will have the opportunity to accept the new terms or discontinue use.</p>
                     </section>
 
                     <section className="space-y-2">
@@ -52,12 +52,12 @@ export default function TermsOfServicePage() {
                      
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">7. Termination and Suspension</h3>
-                        <p>We may terminate or suspend your account and access to the Services at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties, or for any other reason. You may terminate your account at any time.</p>
+                        <p>We may terminate or suspend your account and access to the Services at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties, or for any other reason. You may terminate your account at any time through the settings page.</p>
                     </section>
                     
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">8. Disclaimer of Warranties</h3>
-                        <p>The Services are provided on an "AS IS" and "AS AVAILABLE" basis. We disclaim all warranties of any kind, whether express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+                        <p>The Services are provided on an "AS IS" and "AS AVAILABLE" basis. We disclaim all warranties of any kind, whether express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement. The advice and information provided by our AI are for informational purposes only and should not be considered a substitute for professional academic or financial advice.</p>
                     </section>
 
                     <section className="space-y-2">
