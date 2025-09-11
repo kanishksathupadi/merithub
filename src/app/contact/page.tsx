@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BrainCircuit, Mail, Building, Phone, Loader2 } from "lucide-react";
+import { Mail, Building, Phone, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -31,6 +31,7 @@ import { v4 as uuidv4 } from "uuid";
 import { validateContactMessage } from "@/ai/flows/validate-contact-message";
 import { useState } from "react";
 import { MarketingHeader } from "@/components/layout/marketing-header";
+import { AppLogo } from "@/components/logo";
 
 
 const formSchema = z.object({
@@ -211,7 +212,7 @@ export default function ContactPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="col-span-2 md:col-span-1">
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <BrainCircuit className="w-8 h-8 text-primary" />
+                                <AppLogo className="w-8 h-8 text-primary" />
                                 <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                             </Link>
                             <p className="text-muted-foreground text-sm">Your AI co-pilot for academic and career victory.</p>

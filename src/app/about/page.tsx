@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MarketingHeader } from "@/components/layout/marketing-header";
+import { AppLogo } from "@/components/logo";
 
 export default function AboutUsPage() {
     const router = useRouter();
@@ -88,7 +89,7 @@ export default function AboutUsPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="col-span-2 md:col-span-1">
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <BrainCircuit className="w-8 h-8 text-primary" />
+                                <AppLogo className="w-8 h-8 text-primary" />
                                 <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                             </Link>
                             <p className="text-muted-foreground text-sm">Your AI co-pilot for academic and career victory.</p>

@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { AppLogo } from "@/components/logo";
 
 
 function LiveStats() {
@@ -133,7 +134,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center">
           <Link href="/" className="flex items-center gap-2 mr-6">
-            <BrainCircuit className="w-8 h-8 text-primary" />
+            <AppLogo className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
@@ -443,7 +444,7 @@ export default function Home() {
              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                  <div className="col-span-2 md:col-span-1">
                      <Link href="/" className="flex items-center gap-2 mb-4">
-                        <BrainCircuit className="w-8 h-8 text-primary" />
+                        <AppLogo className="w-8 h-8 text-primary" />
                         <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                     </Link>
                     <p className="text-muted-foreground text-sm">Your co-pilot for academic and career victory.</p>

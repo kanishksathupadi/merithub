@@ -5,6 +5,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'AI School Mentor',
   description: 'Your AI co-pilot for academic and career victory.',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

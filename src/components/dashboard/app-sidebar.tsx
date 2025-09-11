@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "../ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { AppLogo } from "../logo";
 
 interface AppSidebarProps {
   avatarUrl: string | null;
@@ -94,7 +95,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             <SidebarHeader className={cn("flex flex-row items-center", open ? "justify-between" : "justify-center")}>
                 <div className={cn("flex items-center gap-2", !open && "hidden")}>
                 <Link href="/dashboard/mentor/admin" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
-                    <BrainCircuit className="w-8 h-8 text-primary" />
+                    <AppLogo className="w-8 h-8 text-primary" />
                     <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                 </Link>
                 </div>
@@ -137,7 +138,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       <SidebarHeader className={cn("flex flex-row items-center", open ? "justify-between" : "justify-center")}>
         <div className={cn("flex items-center gap-2", !open && "hidden")}>
           <Link href={isAdmin ? "/dashboard/admin" : "/dashboard"} className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
-            <BrainCircuit className="w-8 h-8 text-primary" />
+            <AppLogo className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
           </Link>
         </div>

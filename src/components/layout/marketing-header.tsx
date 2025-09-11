@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { BrainCircuit } from "lucide-react";
+import { AppLogo } from "@/components/logo";
 import Link from "next/link";
 
 export function MarketingHeader() {
@@ -10,7 +10,7 @@ export function MarketingHeader() {
         <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/80 backdrop-blur-sm">
             <div className="container mx-auto flex h-16 items-center">
                 <Link href="/" className="flex items-center gap-2 mr-6">
-                    <BrainCircuit className="w-8 h-8" />
+                    <AppLogo className="w-8 h-8 text-primary" />
                     <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                 </Link>
                 <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
