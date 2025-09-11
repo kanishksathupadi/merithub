@@ -24,13 +24,21 @@ const calculateUserPoints = (tasks: RoadmapTask[]): number => {
 const getLeaderboardData = (): LeaderboardUser[] => {
     if (typeof window === 'undefined') return [];
 
-    const allUsersStr = localStorage.getItem('allSignups');
-    if (!allUsersStr) return [];
-
     try {
-        const allUsers = JSON.parse(allUsersStr);
+        const allUsersStr = localStorage.getItem('allSignups');
+        if (!allUsersStr) return [];
         
-        const usersWithPoints = allUsers.map((user: any) => {
+        const allUsers = JSON.parse(allUsersStr);
+
+        // Deduplicate users by email before calculating points
+        const uniqueUsers = allUsers.reduce((acc: any[], current: any) => {
+            if (!acc.find(item => item.email === current.email)) {
+                acc.push(current);
+            }
+            return acc;
+        }, []);
+        
+        const usersWithPoints = uniqueUsers.map((user: any) => {
             const tasks: RoadmapTask[] = user.tasks || [];
             const points = calculateUserPoints(tasks);
             const avatarFallback = user.name ? user.name.charAt(0).toUpperCase() : 'U';
