@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,33 +15,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import { Badge } from "../ui/badge";
-import { Star } from "lucide-react";
 
 
 const settingsSchema = z.object({
   name: z.string().min(2, "Name is too short."),
   email: z.string().email(),
-  notifications: z.object({
-    newOpportunities: z.boolean(),
-    deadlineReminders: z.boolean(),
-  }),
 });
 
 type SettingsValues = z.infer<typeof settingsSchema>;
 
-const defaultValues: Partial<SettingsValues> = {
-  notifications: {
-    newOpportunities: true,
-    deadlineReminders: false,
-  },
-};
+const defaultValues: Partial<SettingsValues> = {};
 
 export function SettingsForm() {
   const { toast } = useToast();
@@ -62,7 +49,6 @@ export function SettingsForm() {
       form.reset({
         name: parsedData.name,
         email: parsedData.email,
-        notifications: defaultValues.notifications,
       });
     }
     setLoading(false);
@@ -182,59 +168,6 @@ export function SettingsForm() {
                   <FormLabel>Email Address</FormLabel>
                   <FormControl><Input type="email" {...field} /></FormControl>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Subscription & Billing</CardTitle>
-            <CardDescription>Manage your current plan and billing details.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div>
-                <p className="font-semibold">PinnaclePath Plan</p>
-                 <p className="text-sm text-muted-foreground">
-                    You have access to all features.
-                </p>
-              </div>
-              <Button type="button" variant="outline" disabled>Manage Billing</Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Notification Preferences</CardTitle>
-            <CardDescription>Choose how you want to be notified.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="notifications.newOpportunities"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel>New Opportunities</FormLabel>
-                    <FormDescription>Receive alerts for new competitions, events, and programs.</FormDescription>
-                  </div>
-                  <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="notifications.deadlineReminders"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel>Deadline Reminders</FormLabel>
-                    <FormDescription>Get reminders for upcoming task and application deadlines.</FormDescription>
-                  </div>
-                  <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
                 </FormItem>
               )}
             />
