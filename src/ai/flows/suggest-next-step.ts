@@ -49,9 +49,9 @@ const ExtracurricularsTaskSchema = BaseTaskSchema.extend({
 const PlanSchema = z.object({
     grade: z.string().describe('The grade level for this part of the plan (e.g., "9th Grade", "10th Grade").'),
     focus: z.string().describe('The main theme or focus for that grade level (e.g., "Building Foundational Skills," "Exploring Leadership Opportunities").'),
-    academics: z.array(AcademicsAndSkillsTaskSchema).describe('A list of specific, actionable academic goals. DO NOT create vague tasks like "Improve Math Grades." Focus on mastering specific concepts derived from their weaknesses.'),
-    extracurriculars: z.array(ExtracurricularsTaskSchema).describe("A list of specific, actionable extracurricular activities. Instead of just listing an activity, suggest a concrete action within it (e.g., 'Launch a coding club blog')."),
-    skillBuilding: z.array(AcademicsAndSkillsTaskSchema).describe("A list of specific, actionable skills to develop that connect their interests to future opportunities (e.g., 'Complete a Python for Beginners course to explore your interest in robotics')."),
+    academics: z.array(AcademicsAndSkillsTaskSchema).describe("A list of 2-3 specific, actionable academic goals. DO NOT create vague tasks like 'Improve Math Grades.' Focus on mastering specific concepts derived from their weaknesses."),
+    extracurriculars: z.array(ExtracurricularsTaskSchema).describe("A list of 2-3 specific, actionable extracurricular activities. Instead of just listing an activity, suggest a concrete action within it (e.g., 'Launch a coding club blog')."),
+    skillBuilding: z.array(AcademicsAndSkillsTaskSchema).describe("A list of 1-2 specific, actionable skills to develop that connect their interests to future opportunities (e.g., 'Complete a Python for Beginners course to explore your interest in robotics')."),
 });
 
 
@@ -93,6 +93,10 @@ const prompt = ai.definePrompt({
   7.  **Target Weaknesses Constructively:** Frame academic tasks as skill-building opportunities, not just fixing deficits. If a weakness is 'Physics', create a task like "Master the Concept of Kinematics" and find a resource.
   8.  **Validate Subjects:** You MUST validate that 'academicStrengths' and 'academicWeaknesses' are real subjects using the 'validateAcademicSubject' tool.
   9.  **Year-by-Year Plan:** Provide a clear, year-by-year plan from the student's current grade level through 12th grade.
+  10. **Reasonable Task Volume**: For each grade level, generate a focused number of high-impact tasks. Adhere to these quantities:
+      - **Academics**: 2-3 tasks.
+      - **Extracurriculars**: 2-3 tasks.
+      - **Skill Building**: 1-2 tasks.
 
   **Student Information:**
   - Current Grade: {{{grade}}}
