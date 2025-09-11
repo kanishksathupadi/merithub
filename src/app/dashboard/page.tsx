@@ -288,12 +288,12 @@ function SuggestionView() {
 const allTiles = [
     { title: "Action Plan", icon: ListChecks, href: "/dashboard/roadmap", feature: "myRoadmap", color: "text-chart-1" },
     { title: "Progress Tracker", icon: TrendingUp, href: "/dashboard/progress", feature: "progressTracker", color: "text-chart-2" },
-    { title: "Leaderboard", icon: Trophy, href: "/dashboard/leaderboard", feature: "leaderboard", color: "text-chart-5" },
     { title: "AI Study Buddy", icon: BookOpen, href: "/dashboard/study-resources", feature: "aiStudyBuddy", color: "text-chart-3" },
     { title: "College Finder", icon: GraduationCap, href: "/dashboard/college-finder", feature: "collegeFinder", color: "text-chart-4" },
     { title: "Scholarship Finder", icon: Award, href: "/dashboard/scholarship-finder", feature: "scholarshipFinder", color: "text-chart-5" },
     { title: "AI Essay Review", icon: PenSquare, href: "/dashboard/essay-review", feature: "essayReview", color: "text-chart-1" },
     { title: "Q&A Forum", icon: Users, href: "/dashboard/q-and-a-forum", feature: "qaForum", color: "text-chart-3" },
+    { title: "Leaderboard", icon: Trophy, href: "/dashboard/leaderboard", feature: "leaderboard", color: "text-chart-5" },
 ];
 
 const WelcomeAlert = ({onDismiss}: {onDismiss: () => void}) => {
