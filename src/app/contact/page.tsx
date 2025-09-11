@@ -119,7 +119,7 @@ export default function ContactPage() {
                         <div className="grid md:grid-cols-2 gap-16">
                             <div className="space-y-8">
                                 <h3 className="text-3xl font-bold">Contact Information</h3>
-                                <p className="text-muted-foreground">Fill out the form and our team will get back to you within 24 hours. You can also reach us via the details below.</p>
+                                <p className="text-muted-foreground">Fill out the form and we will get back to you within 24 hours. You can also reach us via email.</p>
                                 <ul className="space-y-4 text-muted-foreground">
                                     <li className="flex items-center gap-3"><Mail className="w-5 h-5 text-primary"/> kanishk.sathupadi@gmail.com</li>
                                 </ul>
@@ -155,7 +155,7 @@ export default function ContactPage() {
                                                 </FormControl>
                                                 <FormMessage />
                                                 </FormItem>
-                                            )}
+             -                               )}
                                         />
                                          <FormField
                                             control={form.control}
