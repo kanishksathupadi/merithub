@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, BrainCircuit, Shield, PenSquare, Award, Star, Share2, UserCircle, MessageSquareWarning, Briefcase, Trophy } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, BrainCircuit, Shield, PenSquare, Award, Star, Share2, UserCircle, MessageSquareWarning, Briefcase, Trophy, Menu } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -132,7 +132,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="p-2 pt-4">
         <Link href={isAdmin ? "/dashboard/admin" : "/dashboard"} className={cn("flex items-center gap-2 overflow-hidden", !open && "hidden")}>
             <AppLogo className="w-8 h-8 text-primary flex-shrink-0" />
             <h1 className="text-xl font-bold tracking-tight truncate">AI School Mentor</h1>
