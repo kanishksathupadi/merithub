@@ -37,11 +37,11 @@ export default function AboutUsPage() {
                             <div className="space-y-6">
                                 <h3 className="text-4xl font-bold tracking-tight">The Story of AI School Mentor</h3>
                                 <p className="text-muted-foreground">AI School Mentor started not in a boardroom, but from a simple observation: educational guidance was often generic, disconnected, and overwhelming. The founder, having seen students struggle with one-size-fits-all advice, believed there had to be a better way.</p>
-                                <p className="text-muted-foreground">The vision was clear: create a single platform that could act as a true co-pilot for students—an intelligent, proactive mentor that understands their unique profile and crafts a hyper-personalized strategy for success. Using the power of generative AI, AI School Mentor was built to do just that.</p>
+                                <p className="text-muted-foreground">The vision was clear: create a single platform that could act as a true co-pilot for students, one that serves as an intelligent, proactive mentor that understands their unique profile and crafts a hyper-personalized strategy for success. Using the power of generative AI, AI School Mentor was built to do just that.</p>
                             </div>
                             <Image
                                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkaXZlcnNlJTIwdGVhbSUyMG9mJTIwZWR1Y2F0b3JzfGVufDB8fHx8MTc2MjE4ODg4OHww&ixlib=rb-4.1.0&q=80&w=1080"
-                                alt="A diverse team of professionals collaborating."
+                                alt="A diverse group of educators and professionals collaborating in a bright, modern office."
                                 width={800}
                                 height={600}
                                 className="rounded-xl shadow-xl ring-1 ring-border/10 object-cover"
