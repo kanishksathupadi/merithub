@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const AppLogo = (props: React.SVGProps<SVGSVGElement>) => (
@@ -13,8 +12,6 @@ export const AppLogo = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
   >
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    <path d="M12 11.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5" />
-    <path d="M12 11.5v4" />
-    <path d="M10 13.5h4" />
+    <path d="m9 12 2 2 4-4" />
   </svg>
 );
