@@ -2,42 +2,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Briefcase } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { MarketingHeader } from "@/components/layout/marketing-header";
 import { AppLogo } from "@/components/logo";
 
-const jobOpenings = [
-    {
-        title: "Senior AI Engineer (Prompt Engineering)",
-        location: "Remote",
-        department: "Engineering",
-        description: "Lead the development of our core AI mentor systems. You will be responsible for designing, testing, and refining the prompts that power our strategic planning and content generation features."
-    },
-    {
-        title: "Full-Stack Developer (Next.js & Genkit)",
-        location: "Remote",
-        department: "Engineering",
-        description: "Join our core product team to build and maintain the AI School Mentor platform. You'll work across the stack, from our Next.js frontend to our Genkit-powered AI backend services."
-    },
-    {
-        title: "Product Marketing Manager",
-        location: "Remote",
-        department: "Marketing",
-        description: "Own the go-to-market strategy for new AI School Mentor features. You will be responsible for user research, positioning, messaging, and campaign execution to drive user growth and engagement."
-    },
-    {
-        title: "Lead UX/UI Designer",
-        location: "Remote",
-        department: "Design",
-        description: "Define the user experience and visual design of the AI School Mentor platform. You will lead the design process from concept to execution, creating an intuitive and beautiful experience for students."
-    }
-]
-
 export default function CareersPage() {
-    const router = useRouter();
 
     return (
         <div className="bg-background text-foreground">
@@ -52,7 +22,7 @@ export default function CareersPage() {
                             Join Our Mission
                         </h2>
                         <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                            We're building the future of personalized education, and we need passionate, innovative people to help us achieve our goal.
+                            We're building the future of personalized education, and we're always looking for passionate, innovative people to help us achieve our goal.
                         </p>
                         </div>
                     </div>
@@ -60,30 +30,20 @@ export default function CareersPage() {
 
                 <section className="py-24">
                     <div className="container mx-auto px-4 max-w-4xl">
-                         <div className="text-center mb-16">
+                         <div className="text-center">
                             <h3 className="text-4xl font-bold tracking-tight">Current Openings</h3>
-                            <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Find your place at AI School Mentor. We're looking for talented individuals to join our fully remote team.</p>
-                        </div>
-                        <div className="space-y-6">
-                            {jobOpenings.map((job, index) => (
-                                <Card key={index} className="hover:border-primary/50 transition-colors">
+                            <div className="flex flex-col items-center mt-8 text-center">
+                                <Card className="w-full max-w-lg">
                                     <CardHeader>
-                                        <CardTitle>{job.title}</CardTitle>
-                                        <CardDescription className="flex items-center gap-4 pt-2">
-                                            <span className="flex items-center gap-1.5"><Briefcase/> {job.department}</span>
-                                            <span className="flex items-center gap-1.5"><MapPin/> {job.location}</span>
-                                        </CardDescription>
+                                        <CardTitle>Thank You for Your Interest</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <p className="text-muted-foreground">{job.description}</p>
+                                        <p className="text-muted-foreground">
+                                            While we don't have any open positions at the moment, we're always on the lookout for exceptional talent to join our mission. We encourage you to check back in the future.
+                                        </p>
                                     </CardContent>
-                                    <CardFooter>
-                                        <Button asChild>
-                                          <Link href={`/careers/${encodeURIComponent(job.title)}`}>Apply Now</Link>
-                                        </Button>
-                                    </CardFooter>
                                 </Card>
-                            ))}
+                            </div>
                         </div>
                     </div>
                 </section>
