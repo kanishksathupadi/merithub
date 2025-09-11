@@ -72,16 +72,6 @@ export function SignupForm() {
         const allSignupsStr = localStorage.getItem('allSignups');
         const allSignups = allSignupsStr ? JSON.parse(allSignupsStr) : [];
         
-        const userExists = allSignups.some((u: any) => u.email === formValues.email);
-        if (userExists) {
-            toast({
-                variant: "destructive",
-                title: "Email Already Registered",
-                description: "This email is already in use. Please log in.",
-            });
-            return;
-        }
-
         const newUser = { 
             ...formValues,
             grade: Number(formValues.grade) || 0,

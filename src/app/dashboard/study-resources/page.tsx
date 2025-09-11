@@ -42,12 +42,7 @@ export default function StudyResourcesPage() {
 
 
   const handleSearch = (values: z.infer<typeof searchSchema>) => {
-    const topic = values.topic.toLowerCase();
-    if (topic.includes('sat') || topic.includes('act')) {
-        router.push(`/dashboard/study-resources/practice-quiz?topic=${encodeURIComponent(values.topic)}`);
-    } else {
-        router.push(`/dashboard/study-resources/options?topic=${encodeURIComponent(values.topic)}`);
-    }
+    router.push(`/dashboard/study-resources/options?topic=${encodeURIComponent(values.topic)}`);
   };
   
   const handleFindResource = async (values: z.infer<typeof resourceFinderSchema>) => {

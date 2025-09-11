@@ -12,12 +12,19 @@ import { subDays, format, parseISO, isSameDay } from "date-fns";
 
 const generateTimelineData = (tasks: RoadmapTask[]) => {
     const data: { [key: string]: number } = {};
-    const completedTasks = tasks.filter(t => t.completed && t.dueDate);
+    const completedTasks = tasks.filter(t => t.completed);
 
     for (let i = 6; i >= 0; i--) {
         const date = subDays(new Date(), i);
         const dateKey = format(date, "MMM d");
-        data[dateKey] = completedTasks.filter(task => isSameDay(parseISO(task.dueDate!), date)).length;
+        data[dateKey] = completedTasks.filter(task => {
+            if (!task.dueDate) return false;
+            try {
+                return isSameDay(parseISO(task.dueDate), date);
+            } catch (error) {
+                return false;
+            }
+        }).length;
     }
 
     return Object.entries(data).map(([name, completed]) => ({ name, completed }));

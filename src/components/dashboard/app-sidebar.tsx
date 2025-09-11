@@ -92,13 +92,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   if (isMentor) {
       return (
         <Sidebar>
-            <SidebarHeader className={cn("flex flex-row items-center", open ? "justify-between" : "justify-center")}>
-                <div className={cn("flex items-center gap-2", !open && "hidden")}>
-                <Link href="/dashboard/mentor/admin" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
+            <SidebarHeader className="flex items-center justify-between p-2">
+                <Link href="/dashboard/mentor/admin" className={cn("flex items-center gap-2", !open && "hidden")}>
                     <AppLogo className="w-8 h-8 text-primary" />
-                    <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
+                    <h1 className="text-xl font-bold tracking-tight">AI School Mentor</h1>
                 </Link>
-                </div>
                 <SidebarTrigger />
             </SidebarHeader>
             <SidebarMenu className="flex-1 px-2 pt-4">
@@ -135,13 +133,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
   return (
     <Sidebar>
-      <SidebarHeader className={cn("flex flex-row items-center", open ? "justify-between" : "justify-center")}>
-        <div className={cn("flex items-center gap-2", !open && "hidden")}>
-          <Link href={isAdmin ? "/dashboard/admin" : "/dashboard"} className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
+      <SidebarHeader className="flex items-center justify-between p-2">
+        <Link href={isAdmin ? "/dashboard/admin" : "/dashboard"} className={cn("flex items-center gap-2", !open && "hidden")}>
             <AppLogo className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
-          </Link>
-        </div>
+            <h1 className="text-xl font-bold tracking-tight">AI School Mentor</h1>
+        </Link>
         <SidebarTrigger />
       </SidebarHeader>
       <SidebarMenu className="flex-1 px-2 pt-4">
