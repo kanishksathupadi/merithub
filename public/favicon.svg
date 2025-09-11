@@ -1,12 +1,60 @@
-<svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" fill="none">
-    <defs>
-      <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#0B98A1" />
-        <stop offset="100%" stopColor="#A3D978" />
-      </linearGradient>
-    </defs>
-    <path d="M25 15 L50 25 L25 35 L0 25 Z" fill="hsl(197 71% 53%)" />
-    <path d="M5 26 L25 35 L25 22 Z" fill="hsl(197 71% 43%)" />
-    <path d="M50 25 L 50 32 C 50 34, 55 34, 55 32 L 55 28" stroke="url(#grad2)" stroke-width="2.5" stroke-linecap="round" />
+<svg
+  viewBox="0 0 100 100"
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+>
+  <style>
+    :root {
+      --primary: 197 71% 53%;
+      --foreground: 224 71% 4%;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary: 197 71% 53%;
+        --foreground: 210 40% 98%;
+      }
+    }
+  </style>
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="hsl(var(--primary))" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="hsl(var(--primary))" stop-opacity="1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B98A1" />
+      <stop offset="100%" stop-color="#A3D978" />
+    </linearGradient>
+  </defs>
+  
+  <path
+    d="M20 85 V 65 H 40 V 75 H 50 V 55 H 30 V 45 H 60 V 35 H 50"
+    stroke="url(#grad1)"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  
+  <path d="M40 70 V 60" stroke="url(#grad1)" stroke-width="3" stroke-linecap="round" />
+  <path d="M30 50 H 20" stroke="url(#grad1)" stroke-width="3" stroke-linecap="round" />
+  <path d="M60 40 V 30" stroke="url(#grad1)" stroke-width="3" stroke-linecap="round" />
+  <path d="M55 55 H 75 V 65" stroke="url(#grad1)" stroke-width="3" stroke-linecap="round" />
+  <path d="M75 60 H 85" stroke="url(#grad1)" stroke-width="3" stroke-linecap="round" />
+
+  <g transform="translate(40, 10) scale(0.9)">
+    <path 
+      d="M25 15 L50 25 L25 35 L0 25 Z" 
+      fill="hsl(var(--foreground))"
+    />
+    <path 
+      d="M5 26 L25 35 L25 22 Z"
+      fill="hsl(var(--foreground) / 0.7)"
+    />
+    <path 
+      d="M50 25 L 50 32 C 50 34, 55 34, 55 32 L 55 28"
+      stroke="url(#grad2)"
+      stroke-width="2.5"
+      stroke-linecap="round"
+    />
     <circle cx="50" cy="25" r="2" fill="url(#grad2)" />
+  </g>
 </svg>
