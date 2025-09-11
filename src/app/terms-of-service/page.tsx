@@ -67,7 +67,7 @@ export default function TermsOfServicePage() {
                     
                      <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">10. Indemnification</h3>
-                        <p>You agree to defend, indemnify, and hold harmless AI School Mentor and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not to attorney's fees), resulting from or arising out of your use and access of the Service, or a breach of these Terms.</p>
+                        <p>You agree to defend, indemnify, and hold harmless AI School Mentor and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of your use and access of the Service, or a breach of these Terms.</p>
                     </section>
                     
                     <section className="space-y-2">

@@ -8,7 +8,7 @@ export default function TermsOfServiceContent() {
         <div className="space-y-6 text-foreground/80 text-sm">
             <section className="space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">1. Introduction & Agreement to Terms</h3>
-                <p>These Terms of Service ("Terms") constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and PinnaclePath Inc. (“we,” “us,” or “our”), concerning your access to and use of the PinnaclePath website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the “Service”).</p>
+                <p>These Terms of Service ("Terms") constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and AI School Mentor (“we,” “us,” or “our”), concerning your access to and use of the AI School Mentor website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the “Service”).</p>
                 <p>By accessing the Service, you acknowledge that you have read, understood, and agree to be bound by all of these Terms. If you do not agree with all of these Terms, then you are expressly prohibited from using the Service and you must discontinue use immediately. We reserve the right, in our sole discretion, to make changes or modifications to these Terms at any time and for any reason. We will alert you about any changes by updating the “Last Updated” date of these Terms, and you waive any right to receive specific notice of each such change.</p>
             </section>
 
@@ -25,7 +25,7 @@ export default function TermsOfServiceContent() {
 
             <section className="space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">4. Intellectual Property Rights</h3>
-                <p>The Service and its entire contents, features, and functionality (including but not limited to all information, software, text, displays, images, video, and audio, and the design, selection, and arrangement thereof) are owned by PinnaclePath, its licensors, or other providers of such material and are protected by United States and international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws. These Terms permit you to use the Service for your personal, non-commercial use only. You must not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any of the material on our Service, except as it is created and owned by you (such as your own data).</p>
+                <p>The Service and its entire contents, features, and functionality (including but not limited to all information, software, text, displays, images, video, and audio, and the design, selection, and arrangement thereof) are owned by AI School Mentor, its licensors, or other providers of such material and are protected by United States and international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws. These Terms permit you to use the Service for your personal, non-commercial use only. You must not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any of the material on our Service, except as it is created and owned by you (such as your own data).</p>
             </section>
 
             <section className="space-y-2">
@@ -62,17 +62,17 @@ export default function TermsOfServiceContent() {
 
             <section className="space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">9. Disclaimer of Warranties</h3>
-                <p>YOUR USE OF THE SERVICE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICE IS AT YOUR OWN RISK. THE SERVICE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICE ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER PINNACLEPATH NOR ANY PERSON ASSOCIATED WITH PINNACLEPATH MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE SERVICE.</p>
+                <p>YOUR USE OF THE SERVICE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICE IS AT YOUR OWN RISK. THE SERVICE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICE ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER AI School Mentor NOR ANY PERSON ASSOCIATED WITH AI School Mentor MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE SERVICE.</p>
             </section>
 
             <section className="space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">10. Limitation on Liability</h3>
-                <p>TO THE FULLEST EXTENT PROVIDED BY LAW, IN NO EVENT WILL PINNACLEPATH, ITS AFFILIATES, OR THEIR LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS, OR DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE, OR INABILITY TO USE, THE SERVICE, ANY WEBSITES LINKED TO IT, ANY CONTENT ON THE SERVICE OR SUCH OTHER WEBSITES, INCLUDING ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES.</p>
+                <p>TO THE FULLEST EXTENT PROVIDED BY LAW, IN NO EVENT WILL AI School Mentor, ITS AFFILIATES, OR THEIR LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS, OR DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE, OR INABILITY TO USE, THE SERVICE, ANY WEBSITES LINKED TO IT, ANY CONTENT ON THE SERVICE OR SUCH OTHER WEBSITES, INCLUDING ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES.</p>
             </section>
 
              <section className="space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">11. Indemnification</h3>
-                <p>You agree to defend, indemnify, and hold harmless PinnaclePath, its affiliates, licensors, and service providers, and its and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the Service, including, but not limited to, your User Contributions, any use of the Service's content, services, and products other than as expressly authorized in these Terms.</p>
+                <p>You agree to defend, indemnify, and hold harmless AI School Mentor, its affiliates, licensors, and service providers, and its and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the Service, including, but not limited to, your User Contributions, any use of the Service's content, services, and products other than as expressly authorized in these Terms.</p>
             </section>
 
             <section className="space-y-2">

@@ -322,14 +322,14 @@ export default function Home() {
                     <div className="md:order-1">
                         <Badge variant="outline" className="mb-4">Step 2</Badge>
                         <h4 className="text-3xl font-bold tracking-tight">Receive Your Personal Strategy</h4>
-                        <p className="text-muted-foreground mt-4">With your profile complete, our system gets to work. It analyzes your unique data to generate a bespoke, long-term roadmap filled with hyper-specific, actionable milestones. This isn't a generic checklist; it's a strategic plan designed to maximize your potential.</p>
+                        <p className="text-muted-foreground mt-4">With your profile complete, our system gets to work. It analyzes your unique data to generate a bespoke, long-term roadmap filled with hyper-specific, actionable milestones. This is not a generic checklist; it's a strategic plan designed to maximize your potential.</p>
                     </div>
                 </div>
                  <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <Badge variant="outline" className="mb-4">Step 3</Badge>
                         <h4 className="text-3xl font-bold tracking-tight">Execute and Achieve</h4>
-                        <p className="text-muted-foreground mt-4">Your plan is set. Now, it's time to execute. Follow your roadmap, track your progress, and leverage our powerful suite of tools—from the Study Buddy to your Shareable Portfolio—to overcome challenges and reach your goals.</p>
+                        <p className="text-muted-foreground mt-4">Your plan is set. Now, it's time to execute. Follow your roadmap, track your progress, and leverage our powerful suite of tools, from the Study Buddy to your Shareable Portfolio, to overcome challenges and reach your goals.</p>
                     </div>
                      <Image
                         src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdHVkZW50cyUyMGluJTIwbGVjdHVyZSUyMGhsbCUyMGNlZWxlYnJhdGluZ3xlbnwwfHx8fDE3MjUwNDg5ODd8MA&ixlib=rb-4.1.0&q=80&w=1080"
@@ -398,7 +398,7 @@ export default function Home() {
                         <AccordionItem value="item-1">
                             <AccordionTrigger>How does the AI personalization work?</AccordionTrigger>
                             <AccordionContent>
-                            Our system uses the information you provide during onboarding—your strengths, interests, and goals—to power a large language model. This model is trained to think like an expert educational strategist. It doesn't just match keywords; it understands the underlying skills and potential in your profile to create a truly unique and expansive strategic plan, complete with validated resources for each step.
+                            Our system uses the information you provide during onboarding (your strengths, interests, and goals) to power a large language model. This model is trained to think like an expert educational strategist. It does not just match keywords; it understands the underlying skills and potential in your profile to create a truly unique and expansive strategic plan, complete with validated resources for each step.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-2">
