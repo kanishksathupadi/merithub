@@ -9,16 +9,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useLayoutEffect } from "react";
 
-function ConditionalSidebarTrigger() {
-    const { open, isMobile } = useSidebar();
-    if (open || isMobile) return null;
-    return (
-        <div className="fixed top-4 left-4 z-50">
-            <SidebarTrigger />
-        </div>
-    );
-}
-
 
 export default function DashboardLayout({
   children,
@@ -97,13 +87,17 @@ export default function DashboardLayout({
     return null;
   }
   
+  // Use defaultOpen={true} and collapsible="none" for admin/mentor to keep it always open
+  const sidebarProps = {
+    collapsible: "icon" as const
+  };
+
   if (isAdmin || isMentor) {
      return (
-        <SidebarProvider>
+        <SidebarProvider {...sidebarProps} defaultOpen={true}>
             <div className="flex min-h-screen">
                 <AppSidebar avatarUrl={avatarUrl} />
                 <SidebarInset>
-                    <ConditionalSidebarTrigger />
                     <div className="p-6 sm:p-8 lg:p-12 flex-1">
                         {children}
                     </div>
@@ -115,11 +109,10 @@ export default function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider {...sidebarProps}>
       <div className="flex min-h-screen">
         <AppSidebar avatarUrl={avatarUrl} />
         <SidebarInset>
-            <ConditionalSidebarTrigger />
             <div className="p-6 sm:p-8 lg:p-12 flex-1">
                 {children}
             </div>

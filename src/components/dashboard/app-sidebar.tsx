@@ -92,12 +92,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   if (isMentor) {
       return (
         <Sidebar>
-            <SidebarHeader className="flex items-center justify-between p-2">
+            <SidebarHeader>
                 <Link href="/dashboard/mentor/admin" className={cn("flex items-center gap-2", !open && "hidden")}>
                     <AppLogo className="w-8 h-8 text-primary" />
                     <h1 className="text-xl font-bold tracking-tight">AI School Mentor</h1>
                 </Link>
-                <SidebarTrigger />
             </SidebarHeader>
             <SidebarMenu className="flex-1 px-2 pt-4">
                  <SidebarMenuItem>
@@ -133,12 +132,11 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
   return (
     <Sidebar>
-      <SidebarHeader className="flex items-center justify-between p-2">
+      <SidebarHeader>
         <Link href={isAdmin ? "/dashboard/admin" : "/dashboard"} className={cn("flex items-center gap-2 overflow-hidden", !open && "hidden")}>
             <AppLogo className="w-8 h-8 text-primary flex-shrink-0" />
             <h1 className="text-xl font-bold tracking-tight truncate">AI School Mentor</h1>
         </Link>
-        <SidebarTrigger className={cn(!open && "flex-1 justify-center")} />
       </SidebarHeader>
       <SidebarMenu className="flex-1 px-2 pt-4">
         {isAdmin ? (
