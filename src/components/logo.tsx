@@ -4,35 +4,57 @@ import React from 'react';
 export const AppLogo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     {...props}
-    xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 100 100"
+    xmlns="http://www.w3.org/2000/svg"
     fill="none"
   >
     <defs>
-      <linearGradient id="a" x1="50" x2="50" y1="95" y2="15" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#003B73" />
-        <stop offset="1" stopColor="#0B98A1" />
+      <linearGradient id="grad1" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
+        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="1" />
       </linearGradient>
-      <linearGradient id="b" x1="50" x2="50" y1="80" y2="30" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#63B233" />
-        <stop offset="1" stopColor="#A3D978" />
+       <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#0B98A1" />
+        <stop offset="100%" stopColor="#A3D978" />
       </linearGradient>
     </defs>
+    
+    {/* Main circuit path */}
     <path
-      fill="url(#a)"
-      d="M43.75 95 12.5 15h11.75l20.5 59h.25l20.5-59h11.75L43.75 95Z"
+      d="M20 85 V 65 H 40 V 75 H 50 V 55 H 30 V 45 H 60 V 35 H 50"
+      stroke="url(#grad1)"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
-    <path
-      fill="url(#b)"
-      d="M31.25 80h10v-7.5h-10V80Zm12.5-12.5h10v-7.5h-10v7.5Zm12.5-12.5h10v-7.5h-10v7.5Zm12.5-12.5h10v-7.5h-10v7.5Z"
-    />
-    <path
-      fill="#A3D978"
-      d="M87.5 32.5 83.75 35l-1.5-4-3.75-1.25 2.5-3.5-1-4L83.75 20l3.75 2.5Z"
-    />
-    <path
-      fill="#0B98A1"
-      d="M80 25h12.5l-6.25-5L80 25Z"
-    />
+    
+    {/* Branching circuit paths */}
+    <path d="M40 70 V 60" stroke="url(#grad1)" strokeWidth="3" strokeLinecap="round" />
+    <path d="M30 50 H 20" stroke="url(#grad1)" strokeWidth="3" strokeLinecap="round" />
+    <path d="M60 40 V 30" stroke="url(#grad1)" strokeWidth="3" strokeLinecap="round" />
+    <path d="M55 55 H 75 V 65" stroke="url(#grad1)" strokeWidth="3" strokeLinecap="round" />
+    <path d="M75 60 H 85" stroke="url(#grad1)" strokeWidth="3" strokeLinecap="round" />
+
+    {/* Graduation Cap */}
+    <g transform="translate(40, 10) scale(0.9)">
+      {/* Mortarboard */}
+      <path 
+        d="M25 15 L50 25 L25 35 L0 25 Z" 
+        fill="hsl(var(--foreground))"
+      />
+      {/* Cap body */}
+      <path 
+        d="M5 26 L25 35 L25 22 Z"
+        fill="hsl(var(--foreground) / 0.7)"
+      />
+      {/* Tassel */}
+      <path 
+        d="M50 25 L 50 32 C 50 34, 55 34, 55 32 L 55 28"
+        stroke="url(#grad2)"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <circle cx="50" cy="25" r="2" fill="url(#grad2)" />
+    </g>
   </svg>
 );
