@@ -44,7 +44,7 @@ function JobApplicationsList() {
 
 
     const pageTitle = "Job Applications";
-    const pageDescription = "Applications submitted for open roles at PinnaclePath.";
+    const pageDescription = "Applications submitted for open roles at AI School Mentor.";
 
     return (
         <div className="space-y-8">

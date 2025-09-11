@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, ArrowLeft, Loader2 } from "lucide-react";
+import { BrainCircuit, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -114,8 +114,8 @@ function ApplicationForm() {
              <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/80 backdrop-blur-sm">
                 <div className="container mx-auto flex h-16 items-center">
                 <Link href="/" className="flex items-center gap-2 mr-6">
-                    <GraduationCap className="w-8 h-8 text-primary" />
-                    <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                    <BrainCircuit className="w-8 h-8 text-primary" />
+                    <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                 </Link>
                 </div>
             </header>

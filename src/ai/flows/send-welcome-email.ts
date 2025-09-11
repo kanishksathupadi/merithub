@@ -38,7 +38,7 @@ export async function sendWelcomeEmail(input: WelcomeEmailInput): Promise<Welcom
 
   // Define the prompt for the AI to generate the email body.
   const prompt = `
-    You are an AI in charge of sending a welcome email for PinnaclePath, an AI-powered academic planner.
+    You are an AI in charge of sending a welcome email for AI School Mentor, an AI-powered academic planner.
     Generate the plain text body for a welcome email to a new user.
 
     The user's name is: ${input.name}
@@ -46,9 +46,9 @@ export async function sendWelcomeEmail(input: WelcomeEmailInput): Promise<Welcom
     The email should be:
     - Friendly, encouraging, and professional.
     - Start with a personalized greeting.
-    - Briefly explain what PinnaclePath is (an AI co-pilot for academic success).
+    - Briefly explain what AI School Mentor is (an AI co-pilot for academic success).
     - Suggest the first step for the user, which is to complete their onboarding profile to get their personalized AI roadmap.
-    - End with a warm closing from "The PinnaclePath Team".
+    - End with a warm closing from "The AI School Mentor Team".
   `;
   
   // Use the AI to generate the email content.
@@ -62,7 +62,7 @@ export async function sendWelcomeEmail(input: WelcomeEmailInput): Promise<Welcom
   // Log the simulated email to the console. This represents "sending" it.
   console.log('--- SIMULATING WELCOME EMAIL ---');
   console.log(`To: ${input.email}`);
-  console.log(`Subject: Welcome to PinnaclePath, ${input.name}!`);
+  console.log(`Subject: Welcome to AI School Mentor, ${input.name}!`);
   console.log('---');
   console.log(emailBody);
   console.log('-----------------------------');

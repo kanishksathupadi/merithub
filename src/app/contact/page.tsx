@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Mail, Building, Phone, Loader2 } from "lucide-react";
+import { BrainCircuit, Mail, Building, Phone, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -55,7 +55,7 @@ export default function ContactPage() {
         },
     });
 
-    async function onSubmit(values: z.infer<typeof formSchema>>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
         try {
             // AI Validation Step
@@ -120,7 +120,7 @@ export default function ContactPage() {
                                 <h3 className="text-3xl font-bold">Contact Information</h3>
                                 <p className="text-muted-foreground">Fill out the form and our team will get back to you within 24 hours. You can also reach us via the details below.</p>
                                 <ul className="space-y-4 text-muted-foreground">
-                                    <li className="flex items-center gap-3"><Mail className="w-5 h-5 text-primary"/> support@pinnaclepath.com</li>
+                                    <li className="flex items-center gap-3"><Mail className="w-5 h-5 text-primary"/> support@aischoolmentor.com</li>
                                     <li className="flex items-center gap-3"><Phone className="w-5 h-5 text-primary"/> +1 (555) 123-4567</li>
                                     <li className="flex items-center gap-3"><Building className="w-5 h-5 text-primary"/> 123 Innovation Drive, Tech City, USA</li>
                                 </ul>
@@ -211,8 +211,8 @@ export default function ContactPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="col-span-2 md:col-span-1">
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <GraduationCap className="w-8 h-8 text-primary" />
-                                <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                                <BrainCircuit className="w-8 h-8 text-primary" />
+                                <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                             </Link>
                             <p className="text-muted-foreground text-sm">Your AI co-pilot for academic and career victory.</p>
                         </div>
@@ -241,7 +241,7 @@ export default function ContactPage() {
                         </div>
                     </div>
                     <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved.
+                        © {new Date().getFullYear()} AI School Mentor. All Rights Reserved.
                     </div>
                 </div>
             </footer>

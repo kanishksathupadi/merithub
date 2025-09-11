@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Users, Lightbulb, Target } from "lucide-react";
+import { BrainCircuit, Users, Lightbulb, Target } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -34,9 +34,9 @@ export default function AboutUsPage() {
                     <div className="container mx-auto px-4">
                          <div className="grid md:grid-cols-2 gap-16 items-center">
                             <div className="space-y-6">
-                                <h3 className="text-4xl font-bold tracking-tight">The Story of PinnaclePath</h3>
-                                <p className="text-muted-foreground">PinnaclePath was founded by a team of educators, technologists, and former admissions officers who saw a fundamental problem in educational guidance. The advice was often generic, the tools were disconnected, and the process was overwhelming for students and parents alike.</p>
-                                <p className="text-muted-foreground">We knew there had to be a better way. We envisioned a single platform that could act as a true co-pilot for students—an intelligent, proactive mentor that understands their unique profile and crafts a hyper-personalized strategy for success. Using the power of generative AI, we built PinnaclePath to do just that.</p>
+                                <h3 className="text-4xl font-bold tracking-tight">The Story of AI School Mentor</h3>
+                                <p className="text-muted-foreground">AI School Mentor was founded by a team of educators, technologists, and former admissions officers who saw a fundamental problem in educational guidance. The advice was often generic, the tools were disconnected, and the process was overwhelming for students and parents alike.</p>
+                                <p className="text-muted-foreground">We knew there had to be a better way. We envisioned a single platform that could act as a true co-pilot for students—an intelligent, proactive mentor that understands their unique profile and crafts a hyper-personalized strategy for success. Using the power of generative AI, we built AI School Mentor to do just that.</p>
                             </div>
                             <Image
                                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkaXZlcnNlJTIwdGVhbSUyMG9mJTIwZWR1Y2F0b3JzfGVufDB8fHx8MTc2MjE4ODg4OHww&ixlib=rb-4.1.0&q=80&w=1080"
@@ -88,8 +88,8 @@ export default function AboutUsPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="col-span-2 md:col-span-1">
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <GraduationCap className="w-8 h-8 text-primary" />
-                                <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                                <BrainCircuit className="w-8 h-8 text-primary" />
+                                <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                             </Link>
                             <p className="text-muted-foreground text-sm">Your AI co-pilot for academic and career victory.</p>
                         </div>
@@ -118,7 +118,7 @@ export default function AboutUsPage() {
                         </div>
                     </div>
                     <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved.
+                        © {new Date().getFullYear()} AI School Mentor. All Rights Reserved.
                     </div>
                 </div>
             </footer>

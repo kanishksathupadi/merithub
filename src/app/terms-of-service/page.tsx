@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { GraduationCap } from "lucide-react";
+import { BrainCircuit } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MarketingHeader } from "@/components/layout/marketing-header";
@@ -22,7 +22,7 @@ export default function TermsOfServicePage() {
                 <div className="prose prose-invert prose-lg mx-auto text-foreground/80 text-sm space-y-6">
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">1. Agreement to Terms</h3>
-                        <p>Welcome to PinnaclePath. These Terms of Service ("Terms") govern your use of the PinnaclePath website, applications, and services (collectively, the "Services"), provided by PinnaclePath Inc. ("PinnaclePath", "we", "us", or "our"). By accessing or using our Services, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, do not use our Services.</p>
+                        <p>Welcome to AI School Mentor. These Terms of Service ("Terms") govern your use of the AI School Mentor website, applications, and services (collectively, the "Services"), provided by AI School Mentor Inc. ("AI School Mentor", "we", "us", or "our"). By accessing or using our Services, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, do not use our Services.</p>
                     </section>
 
                      <section className="space-y-2">
@@ -47,7 +47,7 @@ export default function TermsOfServicePage() {
 
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">6. Intellectual Property Rights</h3>
-                        <p>The Services and all of their original content, features, and functionality are owned by PinnaclePath and are protected by international copyright, trademark, and other intellectual property laws. You are granted a limited license to use the Services for personal, non-commercial purposes only.</p>
+                        <p>The Services and all of their original content, features, and functionality are owned by AI School Mentor and are protected by international copyright, trademark, and other intellectual property laws. You are granted a limited license to use the Services for personal, non-commercial purposes only.</p>
                     </section>
                      
                     <section className="space-y-2">
@@ -62,12 +62,12 @@ export default function TermsOfServicePage() {
 
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">9. Limitation on Liability</h3>
-                        <p>In no event shall PinnaclePath, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages arising out of your use of the Services.</p>
+                        <p>In no event shall AI School Mentor, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages arising out of your use of the Services.</p>
                     </section>
                     
                      <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">10. Indemnification</h3>
-                        <p>You agree to defend, indemnify, and hold harmless PinnaclePath and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not to attorney's fees), resulting from or arising out of your use and access of the Service, or a breach of these Terms.</p>
+                        <p>You agree to defend, indemnify, and hold harmless AI School Mentor and its licensee and licensors, and their employees, contractors, agents, officers, and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not to attorney's fees), resulting from or arising out of your use and access of the Service, or a breach of these Terms.</p>
                     </section>
                     
                     <section className="space-y-2">
@@ -88,8 +88,8 @@ export default function TermsOfServicePage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="col-span-2 md:col-span-1">
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <GraduationCap className="w-8 h-8 text-primary" />
-                                <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                                <BrainCircuit className="w-8 h-8 text-primary" />
+                                <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                             </Link>
                             <p className="text-muted-foreground text-sm">Your AI co-pilot for academic and career victory.</p>
                         </div>
@@ -118,7 +118,7 @@ export default function TermsOfServicePage() {
                         </div>
                     </div>
                     <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved.
+                        © {new Date().getFullYear()} AI School Mentor. All Rights Reserved.
                     </div>
                 </div>
             </footer>

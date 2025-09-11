@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, MapPin, Briefcase, BrainCircuit } from "lucide-react";
+import { BrainCircuit, MapPin, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MarketingHeader } from "@/components/layout/marketing-header";
@@ -19,19 +19,19 @@ const jobOpenings = [
         title: "Full-Stack Developer (Next.js & Genkit)",
         location: "Remote",
         department: "Engineering",
-        description: "Join our core product team to build and maintain the PinnaclePath platform. You'll work across the stack, from our Next.js frontend to our Genkit-powered AI backend services."
+        description: "Join our core product team to build and maintain the AI School Mentor platform. You'll work across the stack, from our Next.js frontend to our Genkit-powered AI backend services."
     },
     {
         title: "Product Marketing Manager",
         location: "Remote",
         department: "Marketing",
-        description: "Own the go-to-market strategy for new PinnaclePath features. You will be responsible for user research, positioning, messaging, and campaign execution to drive user growth and engagement."
+        description: "Own the go-to-market strategy for new AI School Mentor features. You will be responsible for user research, positioning, messaging, and campaign execution to drive user growth and engagement."
     },
     {
         title: "Lead UX/UI Designer",
         location: "Remote",
         department: "Design",
-        description: "Define the user experience and visual design of the PinnaclePath platform. You will lead the design process from concept to execution, creating an intuitive and beautiful experience for students."
+        description: "Define the user experience and visual design of the AI School Mentor platform. You will lead the design process from concept to execution, creating an intuitive and beautiful experience for students."
     }
 ]
 
@@ -61,7 +61,7 @@ export default function CareersPage() {
                     <div className="container mx-auto px-4 max-w-4xl">
                          <div className="text-center mb-16">
                             <h3 className="text-4xl font-bold tracking-tight">Current Openings</h3>
-                            <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Find your place at PinnaclePath. We're looking for talented individuals to join our fully remote team.</p>
+                            <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Find your place at AI School Mentor. We're looking for talented individuals to join our fully remote team.</p>
                         </div>
                         <div className="space-y-6">
                             {jobOpenings.map((job, index) => (
@@ -93,8 +93,8 @@ export default function CareersPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="col-span-2 md:col-span-1">
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <GraduationCap className="w-8 h-8 text-primary" />
-                                <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                                <BrainCircuit className="w-8 h-8 text-primary" />
+                                <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                             </Link>
                             <p className="text-muted-foreground text-sm">Your AI co-pilot for academic and career victory.</p>
                         </div>
@@ -123,7 +123,7 @@ export default function CareersPage() {
                         </div>
                     </div>
                     <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved.
+                        © {new Date().getFullYear()} AI School Mentor. All Rights Reserved.
                     </div>
                 </div>
             </footer>

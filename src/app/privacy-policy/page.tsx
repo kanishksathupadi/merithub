@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { GraduationCap } from "lucide-react";
+import { BrainCircuit } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MarketingHeader } from "@/components/layout/marketing-header";
@@ -22,7 +22,7 @@ export default function PrivacyPolicyPage() {
                 <div className="prose prose-invert prose-lg mx-auto text-foreground/80 text-sm space-y-6">
                     <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">1. Introduction</h3>
-                        <p>PinnaclePath Inc. ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services (collectively, the "Services"). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the services.</p>
+                        <p>AI School Mentor Inc. ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services (collectively, the "Services"). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the services.</p>
                     </section>
 
                     <section className="space-y-2">
@@ -66,7 +66,7 @@ export default function PrivacyPolicyPage() {
                      <section className="space-y-2">
                         <h3 className="text-xl font-semibold text-foreground">7. Contact Us</h3>
                         <p>If you have questions or comments about this Privacy Policy, please contact us at:</p>
-                        <p>PinnaclePath Inc.<br/>123 Innovation Drive<br/>Tech City, USA<br/>Email: privacy@pinnaclepath.com</p>
+                        <p>AI School Mentor Inc.<br/>123 Innovation Drive<br/>Tech City, USA<br/>Email: privacy@aischoolmentor.com</p>
                     </section>
 
                 </div>
@@ -76,8 +76,8 @@ export default function PrivacyPolicyPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="col-span-2 md:col-span-1">
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <GraduationCap className="w-8 h-8 text-primary" />
-                                <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                                <BrainCircuit className="w-8 h-8 text-primary" />
+                                <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                             </Link>
                             <p className="text-muted-foreground text-sm">Your AI co-pilot for academic and career victory.</p>
                         </div>
@@ -106,7 +106,7 @@ export default function PrivacyPolicyPage() {
                         </div>
                     </div>
                     <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} PinnaclePath. All Rights Reserved.
+                        © {new Date().getFullYear()} AI School Mentor. All Rights Reserved.
                     </div>
                 </div>
             </footer>

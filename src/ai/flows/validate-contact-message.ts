@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
 
   A message IS GENUINE if it:
   - Is a coherent question or statement, even if it's brief.
-  - Relates to the services of the company (PinnaclePath, an education platform).
+  - Relates to the services of the company (AI School Mentor, an education platform).
   - Is a standard business inquiry (e.g., partnership, technical support).
 
   Analyze the following submission details:

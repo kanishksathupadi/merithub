@@ -2,7 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarFooter, SidebarSeparator, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, GraduationCap, Shield, PenSquare, Award, Star, Share2, UserCircle, MessageSquareWarning, Briefcase, Trophy } from "lucide-react";
+import { Rocket, LayoutDashboard, ListChecks, TrendingUp, Settings, MessageSquare, BookOpen, LogOut, Users, ChevronUp, BrainCircuit, Shield, PenSquare, Award, Star, Share2, UserCircle, MessageSquareWarning, Briefcase, Trophy } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -86,7 +86,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const displayName = userName || "User";
   const avatarFallback = displayName ? displayName.charAt(0).toUpperCase() : "U";
   const isAdmin = userEmail === 'admin@dymera.com';
-  const isMentor = userEmail?.endsWith('@pinnaclepath-mentor.com');
+  const isMentor = userEmail?.endsWith('@aischoolmentor.com');
 
   if (isMentor) {
       return (
@@ -94,8 +94,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             <SidebarHeader className={cn("flex flex-row items-center", open ? "justify-between" : "justify-center")}>
                 <div className={cn("flex items-center gap-2", !open && "hidden")}>
                 <Link href="/dashboard/mentor/admin" className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
-                    <GraduationCap className="w-8 h-8 text-primary" />
-                    <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                    <BrainCircuit className="w-8 h-8 text-primary" />
+                    <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                 </Link>
                 </div>
                 <SidebarTrigger />
@@ -137,8 +137,8 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
       <SidebarHeader className={cn("flex flex-row items-center", open ? "justify-between" : "justify-center")}>
         <div className={cn("flex items-center gap-2", !open && "hidden")}>
           <Link href={isAdmin ? "/dashboard/admin" : "/dashboard"} className="flex items-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent">
-            <GraduationCap className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+            <BrainCircuit className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
           </Link>
         </div>
         <SidebarTrigger />
@@ -186,7 +186,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
             </SidebarMenuItem>
              <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="College Finder">
-                <Link href="/dashboard/college-finder"><GraduationCap/>College Finder</Link>
+                <Link href="/dashboard/college-finder"><BrainCircuit/>College Finder</Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
@@ -250,5 +250,3 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
     </Sidebar>
   );
 }
-
-    

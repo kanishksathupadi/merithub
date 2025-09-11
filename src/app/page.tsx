@@ -3,7 +3,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, GraduationCap, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
+import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -76,7 +76,7 @@ function LiveStats() {
     return (
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             <StatCard icon={<UserCheck className="w-8 h-8" />} value={stats.students} label="Students Guided" isLoading={loading} />
-            <StatCard icon={<GraduationCap className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" isLoading={loading} />
+            <StatCard icon={<BrainCircuit className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" isLoading={loading} />
             <StatCard icon={<Award className="w-8 h-8" />} value={stats.scholarships} label="Scholarships Found" isLoading={loading} />
             <StatCard icon={<FileText className="w-8 h-8" />} value={stats.essays} label="Essays Reviewed" isLoading={loading} />
         </div>
@@ -90,7 +90,7 @@ const allFeatures = [
         description: "Our system builds a dynamic, multi-year strategy based on deep analysis of your goals and passions."
     },
     { 
-        icon: GraduationCap, 
+        icon: BrainCircuit, 
         title: "Intelligent College Finder", 
         description: "Discover universities that perfectly match your academic profile, interests, and learning preferences."
     },
@@ -133,8 +133,8 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center">
           <Link href="/" className="flex items-center gap-2 mr-6">
-            <GraduationCap className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+            <BrainCircuit className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
@@ -165,7 +165,7 @@ export default function Home() {
                 Your Path to Academic Victory
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-                PinnaclePath is your dedicated co-pilot, building a unique strategy that sharpens your skills and crafts a standout profile to get you into your dream college.
+                AI School Mentor is your dedicated co-pilot, building a unique strategy that sharpens your skills and crafts a standout profile to get you into your dream college.
               </p>
               <div className="mt-8 space-x-4">
                 <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
@@ -192,7 +192,7 @@ export default function Home() {
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h3 className="text-4xl font-bold tracking-tight">Built For Every Stage of the Journey</h3>
-                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Whether you're just starting high school or you're a parent supporting your child, PinnaclePath is your strategic partner.</p>
+                    <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Whether you're just starting high school or you're a parent supporting your child, AI School Mentor is your strategic partner.</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8">
                     <Card className="p-8 text-center">
@@ -249,7 +249,7 @@ export default function Home() {
                     <div className="space-y-6">
                         <Badge variant="outline" className="border-primary/50 text-primary">Feature Spotlight</Badge>
                         <h3 className="text-4xl font-bold tracking-tight">Go Beyond Checklists with a Dynamic Strategic Roadmap</h3>
-                        <p className="text-muted-foreground text-lg">A simple to-do list isn't enough. Your PinnaclePath Roadmap is a living, intelligent plan that adapts to your growth and helps you build a compelling, unique narrative for college admissions.</p>
+                        <p className="text-muted-foreground text-lg">A simple to-do list isn't enough. Your AI School Mentor Roadmap is a living, intelligent plan that adapts to your growth and helps you build a compelling, unique narrative for college admissions.</p>
                         <ul className="space-y-4">
                             <li className="flex gap-3">
                                 <Check className="w-5 h-5 text-primary mt-1 flex-shrink-0"/>
@@ -276,7 +276,7 @@ export default function Home() {
                     </div>
                      <Image
                         src="https://images.unsplash.com/photo-1542744095-291d1f67b221?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdHVkZW50JTIwcGxhbm5pbmclMjBvbiUyMGNvbXB1dGVyfGVufDB8fHx8MTc0NTM5MjM5OHww&ixlib=rb-4.1.0&q=80&w=1080"
-                        alt="A screenshot of the PinnaclePath dashboard showing the personalized roadmap."
+                        alt="A screenshot of the AI School Mentor dashboard showing the personalized roadmap."
                         width={800}
                         height={600}
                         className="rounded-xl shadow-2xl ring-1 ring-border/10 object-cover"
@@ -347,8 +347,8 @@ export default function Home() {
         <section className="py-24 bg-muted/50">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                    <h3 className="text-4xl font-bold tracking-tight">Why PinnaclePath?</h3>
-                    <p className="text-muted-foreground mt-3 max-w-3xl mx-auto">While traditional methods offer generic advice, PinnaclePath provides a hyper-personalized, data-driven engine for your success. Here’s how we compare:</p>
+                    <h3 className="text-4xl font-bold tracking-tight">Why AI School Mentor?</h3>
+                    <p className="text-muted-foreground mt-3 max-w-3xl mx-auto">While traditional methods offer generic advice, AI School Mentor provides a hyper-personalized, data-driven engine for your success. Here’s how we compare:</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 text-center">
                     <Card className="p-8">
@@ -363,7 +363,7 @@ export default function Home() {
                      <Card className="p-8 border-primary ring-2 ring-primary">
                         <CardTitle className="mb-4 text-xl flex items-center justify-center gap-2 text-primary">
                             <Star className="w-5 h-5"/>
-                            PinnaclePath
+                            AI School Mentor
                         </CardTitle>
                         <ul className="space-y-3 text-left text-muted-foreground text-sm">
                             <li className="flex items-start gap-2"><Check className="w-4 h-4 text-primary mt-1 shrink-0"/>24/7 personal co-pilot, available anytime, anywhere.</li>
@@ -401,27 +401,27 @@ export default function Home() {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-2">
-                            <AccordionTrigger>Is PinnaclePath suitable for my child's age?</AccordionTrigger>
+                            <AccordionTrigger>Is AI School Mentor suitable for my child's age?</AccordionTrigger>
                             <AccordionContent>
-                            Yes! PinnaclePath is designed for students from middle school through high school. For younger students, our system focuses on exploration, skill-building, and discovering new interests. As students get older, the recommendations become more focused on college preparation, leadership, and building a standout profile.
+                            Yes! AI School Mentor is designed for students from middle school through high school. For younger students, our system focuses on exploration, skill-building, and discovering new interests. As students get older, the recommendations become more focused on college preparation, leadership, and building a standout profile.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3">
                             <AccordionTrigger>What features are included?</AccordionTrigger>
                             <AccordionContent>
-                            PinnaclePath is completely free and includes everything we have to offer: the personalized roadmap, college finder, progress tracker, study buddy, shareable portfolio, AI Essay Reviewer, Scholarship Finder, and the student Q&A Forum. We believe in providing all our tools to every user.
+                            AI School Mentor is completely free and includes everything we have to offer: the personalized roadmap, college finder, progress tracker, study buddy, shareable portfolio, AI Essay Reviewer, Scholarship Finder, and the student Q&A Forum. We believe in providing all our tools to every user.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4">
                             <AccordionTrigger>How is this different from a traditional college counselor?</AccordionTrigger>
                             <AccordionContent>
-                            PinnaclePath acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking that a human counselor typically cannot offer at scale. 
+                            AI School Mentor acts as a 24/7 personal co-pilot that complements the work of human counselors. We provide instant, data-driven strategic planning, on-demand study tools, and continuous progress tracking that a human counselor typically cannot offer at scale. 
                             </AccordionContent>
                         </AccordionItem>
                          <AccordionItem value="item-5">
-                            <AccordionTrigger>Is there any cost to use PinnaclePath?</AccordionTrigger>
+                            <AccordionTrigger>Is there any cost to use AI School Mentor?</AccordionTrigger>
                             <AccordionContent>
-                            No, PinnaclePath is completely free to use. All features are available to all users without any charge.
+                            No, AI School Mentor is completely free to use. All features are available to all users without any charge.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-6">
@@ -443,8 +443,8 @@ export default function Home() {
              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                  <div className="col-span-2 md:col-span-1">
                      <Link href="/" className="flex items-center gap-2 mb-4">
-                        <GraduationCap className="w-8 h-8 text-primary" />
-                        <h1 className="text-2xl font-bold tracking-tight">PinnaclePath</h1>
+                        <BrainCircuit className="w-8 h-8 text-primary" />
+                        <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
                     </Link>
                     <p className="text-muted-foreground text-sm">Your co-pilot for academic and career victory.</p>
                  </div>
@@ -473,7 +473,7 @@ export default function Home() {
                  </div>
              </div>
              <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-                 © {new Date().getFullYear()} PinnaclePath. All Rights Reserved.
+                 © {new Date().getFullYear()} AI School Mentor. All Rights Reserved.
              </div>
         </div>
       </footer>
