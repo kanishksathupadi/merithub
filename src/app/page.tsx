@@ -1,4 +1,6 @@
 
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Rocket, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
 import Image from "next/image";
@@ -8,24 +10,24 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { AppLogo } from "@/components/logo";
-import { getGlobalStats } from "@/ai/flows/get-global-stats";
 import { StatCard } from "@/components/home/stat-card";
+import { useEffect, useState } from "react";
+import { getGlobalStatsRT } from "@/lib/data";
 
 
-async function LiveStats() {
-    let stats;
-    try {
-        stats = await getGlobalStats();
-    } catch(error) {
-        console.error("Error fetching global stats:", error);
-        // Provide default stats on error to prevent crash
-        stats = {
-            students: 0,
-            colleges: 0,
-            scholarships: 0,
-            essays: 0,
-        };
-    }
+function LiveStats() {
+    const [stats, setStats] = useState({
+        students: 0,
+        colleges: 0,
+        scholarships: 0,
+        essays: 0,
+    });
+
+    useEffect(() => {
+        // getGlobalStatsRT is now designed to work on the client
+        const unsub = getGlobalStatsRT(setStats);
+        return () => unsub(); // Cleanup listener on unmount
+    }, []);
 
     return (
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
