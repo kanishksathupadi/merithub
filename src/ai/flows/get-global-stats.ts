@@ -11,27 +11,24 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import * as admin from 'firebase-admin';
 
-// Initialize Firebase Admin SDK if it hasn't been already.
+// Check if the app is already initialized to prevent re-initialization
 if (!admin.apps.length) {
-  // IMPORTANT: The `serviceAccount` details must be stored securely, e.g., in environment variables.
-  // In a real production environment, you would load this from your hosting provider's secret manager.
-  // For this prototype, we'll assume they are available in process.env.
   const serviceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
     privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
   };
-  
-  if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
-     console.warn("Firebase Admin credentials not found in environment variables. Stats will be 0.");
-  } else {
-     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
+
+  // Only initialize if all credentials are provided
+  if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
     });
+  } else {
+    console.warn("Firebase Admin credentials not found in environment variables. Stats feature will be disabled.");
   }
 }
 
-const db = admin.firestore();
 
 const GlobalStatsOutputSchema = z.object({
     students: z.number().describe("The total number of registered students."),
@@ -51,10 +48,13 @@ const getGlobalStatsFlow = ai.defineFlow(
     outputSchema: GlobalStatsOutputSchema,
   },
   async () => {
-    // Return zeros if the admin SDK is not initialized (e.g., missing credentials)
+    // If the admin SDK was not initialized (due to missing credentials), return zeros.
     if (!admin.apps.length) {
+        console.log("Firebase Admin SDK not initialized. Returning zero stats.");
         return { students: 0, colleges: 0, scholarships: 0, essays: 0 };
     }
+
+    const db = admin.firestore();
 
     try {
         // Fetch stats from the 'stats/global' document
