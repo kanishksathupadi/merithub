@@ -1,19 +1,15 @@
 
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Rocket, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { AppLogo } from "@/components/logo";
 import { getGlobalStats } from "@/ai/flows/get-global-stats";
+import { StatCard } from "@/components/home/stat-card";
 
 
 async function LiveStats() {
@@ -31,29 +27,12 @@ async function LiveStats() {
         };
     }
 
-    const StatCard = ({ icon: Icon, value, label }: { icon: React.ElementType, value: number, label: string }) => (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col items-center justify-center p-6 bg-card rounded-xl shadow-lg border border-border"
-        >
-            <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mb-4">
-                <Icon className="w-8 h-8" />
-            </div>
-            <p className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-foreground/80">
-                 {value.toLocaleString()}
-            </p>
-            <p className="text-muted-foreground mt-2 text-sm text-center h-10 flex items-center">{label}</p>
-        </motion.div>
-    );
-
     return (
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCard icon={UserCheck} value={stats.students} label="Students Guided" />
-            <StatCard icon={BrainCircuit} value={stats.colleges} label="College Matches Found" />
-            <StatCard icon={Award} value={stats.scholarships} label="Scholarships Found" />
-            <StatCard icon={FileText} value={stats.essays} label="Essays Reviewed" />
+            <StatCard icon="UserCheck" value={stats.students} label="Students Guided" />
+            <StatCard icon="BrainCircuit" value={stats.colleges} label="College Matches Found" />
+            <StatCard icon="Award" value={stats.scholarships} label="Scholarships Found" />
+            <StatCard icon="FileText" value={stats.essays} label="Essays Reviewed" />
         </div>
     );
 }
