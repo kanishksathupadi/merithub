@@ -39,13 +39,13 @@ const taskSchema = z.object({
   resource: resourceSchema.optional(),
 });
 
-const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
+const updateMasterUserList = (userId: string, updatedTasks: RoadmapTask[]) => {
   try {
     const allUsersStr = localStorage.getItem('allSignups');
     if (allUsersStr) {
       let allUsers = JSON.parse(allUsersStr);
       allUsers = allUsers.map((user: any) => {
-        if (user.email === email) {
+        if (user.userId === userId) {
           return { ...user, tasks: updatedTasks };
         }
         return user;
@@ -85,14 +85,14 @@ export default function RoadmapPage() {
   });
 
   const onSubmit = (values: z.infer<typeof taskSchema>) => {
-    let userEmail: string | null = null;
+    let currentUserId: string | null = null;
     const signupDataStr = localStorage.getItem('signupData');
     if (signupDataStr) {
         const signupData = JSON.parse(signupDataStr);
-        userEmail = signupData.email;
+        currentUserId = signupData.userId;
     }
 
-    if (!userEmail) {
+    if (!currentUserId) {
       toast({ variant: "destructive", title: "Error", description: "Could not identify user." });
       return;
     }
@@ -110,12 +110,26 @@ export default function RoadmapPage() {
       points: 0, // Custom tasks are worth 0 points
     };
     
-    const storedTasksStr = localStorage.getItem(`roadmapTasks-${userEmail}`);
-    const tasks = storedTasksStr ? JSON.parse(storedTasksStr) : [];
-    const updatedTasks = [...tasks, newTask];
+    const allUsersStr = localStorage.getItem('allSignups');
+    const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+    let userTasks: RoadmapTask[] = [];
 
-    localStorage.setItem(`roadmapTasks-${userEmail}`, JSON.stringify(updatedTasks));
-    updateMasterUserList(userEmail, updatedTasks);
+    const userIndex = allUsers.findIndex((u: any) => u.userId === currentUserId);
+    if (userIndex !== -1) {
+        userTasks = allUsers[userIndex].tasks || [];
+    }
+
+    const updatedTasks = [...userTasks, newTask];
+    
+    if (userIndex !== -1) {
+        allUsers[userIndex].tasks = updatedTasks;
+    }
+
+    localStorage.setItem('allSignups', JSON.stringify(allUsers));
+
+    // Also update the session-specific tasks for immediate view update
+    localStorage.setItem(`roadmapTasks-${allUsers[userIndex].email}`, JSON.stringify(updatedTasks));
+
 
     window.dispatchEvent(new Event('storage'));
     

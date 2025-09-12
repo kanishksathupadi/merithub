@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React, { useState } from "react";
@@ -66,23 +65,25 @@ export function OnboardingForm() {
   const onSubmit = async (data: OnboardingValues) => {
     console.log("Onboarding complete, redirecting to dashboard:", data);
     if (typeof window !== 'undefined') {
-        // Set the data for the current session
+        // Set the data for the current session for the dashboard to use
         localStorage.setItem('onboardingData', JSON.stringify(data));
         
+        // Find the current user in the master list and attach their onboarding data
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
             const signupData = JSON.parse(signupDataStr);
             const allUsersStr = localStorage.getItem('allSignups');
             let allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+            
             allUsers = allUsers.map((user: any) => {
                 if (user.userId === signupData.userId) {
                     return { ...user, onboardingData: data };
                 }
                 return user;
             });
+
+            // Save the updated master list back to localStorage
             localStorage.setItem('allSignups', JSON.stringify(allUsers));
-            // This is a flag for the dashboard layout to know this user is now fully onboarded
-            localStorage.setItem(`onboarding-${signupData.email}`, JSON.stringify(data));
         }
     }
     router.push("/dashboard");
@@ -103,7 +104,7 @@ export function OnboardingForm() {
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(step => step + 1);
+      setCurrentStep(step => step - 1);
     }
   };
 

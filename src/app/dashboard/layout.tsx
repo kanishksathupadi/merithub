@@ -38,22 +38,22 @@ export default function DashboardLayout({
       return;
     }
     
-    if (signupData.email.endsWith('@pinnaclepath-mentor.com')) {
+    if (signupData.email.endsWith('@aischoolmentor.com')) {
       setIsMentor(true);
       setIsVerified(true);
       return;
     }
 
-    // This data is set upon completion of each step
-    const onboardingComplete = localStorage.getItem(`onboarding-${signupData.email}`);
-    
-    // Restore session data for this check
-    if (onboardingComplete) localStorage.setItem('onboardingData', onboardingComplete);
-    
-    if (!onboardingComplete) {
-      router.replace('/onboarding');
+    // Find the full user object from the master list
+    const allUsersStr = localStorage.getItem('allSignups');
+    const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+    const currentUser = allUsers.find((u: any) => u.userId === signupData.userId);
+
+    // If the user has onboarding data in the master list, they are verified
+    if (currentUser && currentUser.onboardingData) {
+        setIsVerified(true);
     } else {
-      setIsVerified(true); // User is fully verified, allow rendering.
+        router.replace('/onboarding');
     }
   }, [router]);
 

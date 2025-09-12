@@ -1,7 +1,7 @@
 
 
 import { v4 as uuidv4 } from 'uuid';
-import { isFirebaseConfigValid, db } from '@/lib/firebase';
+// No longer importing from Firebase as we are using localStorage for the prototype.
 
 // --- USER MANAGEMENT ---
 
@@ -20,7 +20,7 @@ export const getAllUsers = async () => {
 // --- STATS TRACKING ---
 
 // This function now uses localStorage for the prototype.
-export const incrementStat = (statName: 'totalUsers' | 'collegesFound' | 'essaysReviewed' | 'scholarshipsFound', value: number = 1) => {
+export const incrementStat = (statName: 'collegesFound' | 'essaysReviewed' | 'scholarshipsFound', value: number = 1) => {
     if (typeof window === 'undefined') return;
     try {
         const statsStr = localStorage.getItem('globalStats');
@@ -32,7 +32,7 @@ export const incrementStat = (statName: 'totalUsers' | 'collegesFound' | 'essays
         stats[statName] = (stats[statName] || 0) + value;
         localStorage.setItem('globalStats', JSON.stringify(stats));
 
-        // Dispatch a storage event to notify other components (like the admin dashboard) that stats have changed.
+        // Dispatch a storage event to notify other components that stats have changed.
         window.dispatchEvent(new StorageEvent('storage', { key: 'globalStats' }));
 
     } catch(e) {
@@ -85,38 +85,77 @@ export const getGlobalStatsRT = (callback: (stats: any) => void) => {
 // --- OTHER DATA OPERATIONS ---
 
 // The following functions are for prototype purposes and use localStorage.
-// In a real app, these would be robust, secure, server-side operations.
 
 export const getRecentSignupsRT = (callback: (users: any[]) => void) => {
-    if (typeof window === 'undefined') return callback([]);
+    if (typeof window === 'undefined') {
+        callback([]);
+        return () => {};
+    }
     
-    const allUsersStr = localStorage.getItem('allSignups');
-    const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-    const recent = allUsers.sort((a: any, b: any) => new Date(b.signupTimestamp).getTime() - new Date(a.signupTimestamp).getTime()).slice(0, 4);
-    callback(recent);
-    return () => {}; // No real-time listener for localStorage
+    const updateSignups = () => {
+        const allUsersStr = localStorage.getItem('allSignups');
+        const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+        const recent = allUsers.sort((a: any, b: any) => new Date(b.signupTimestamp).getTime() - new Date(a.signupTimestamp).getTime()).slice(0, 4);
+        callback(recent);
+    };
+
+    updateSignups();
+
+    const storageListener = (e: StorageEvent) => {
+        if (e.key === 'allSignups') {
+            updateSignups();
+        }
+    };
+
+    window.addEventListener('storage', storageListener);
+    return () => window.removeEventListener('storage', storageListener);
 };
 
 export const getContactMessagesRT = (callback: (messages: any[]) => void) => {
-    if (typeof window === 'undefined') return callback([]);
-    const messagesStr = localStorage.getItem('contactMessages');
-    const messages = messagesStr ? JSON.parse(messagesStr) : [];
-    callback(messages);
-    return () => {};
+    if (typeof window === 'undefined') {
+        callback([]);
+        return () => {};
+    }
+    const updateMessages = () => {
+        const messagesStr = localStorage.getItem('contactMessages');
+        const messages = messagesStr ? JSON.parse(messagesStr) : [];
+        callback(messages);
+    };
+
+    updateMessages();
+    const storageListener = (e: StorageEvent) => { if (e.key === 'contactMessages') updateMessages() };
+    window.addEventListener('storage', storageListener);
+    return () => window.removeEventListener('storage', storageListener);
 };
 
 export const getJobApplicationsRT = (callback: (apps: any[]) => void) => {
-    if (typeof window === 'undefined') return callback([]);
-    const appsStr = localStorage.getItem('jobApplications');
-    const apps = appsStr ? JSON.parse(appsStr) : [];
-    callback(apps);
-    return () => {};
+    if (typeof window === 'undefined') {
+        callback([]);
+        return () => {};
+    }
+    const updateApps = () => {
+        const appsStr = localStorage.getItem('jobApplications');
+        const apps = appsStr ? JSON.parse(appsStr) : [];
+        callback(apps);
+    }
+    updateApps();
+    const storageListener = (e: StorageEvent) => { if (e.key === 'jobApplications') updateApps() };
+    window.addEventListener('storage', storageListener);
+    return () => window.removeEventListener('storage', storageListener);
 };
 
 export const getSupportRequestsRT = (callback: (reqs: any[]) => void) => {
-    if (typeof window === 'undefined') return callback([]);
-    const reqsStr = localStorage.getItem('humanChatRequests');
-    const reqs = reqsStr ? JSON.parse(reqsStr) : [];
-    callback(reqs);
-    return () => {};
+    if (typeof window === 'undefined') {
+        callback([]);
+        return () => {};
+    }
+    const updateReqs = () => {
+        const reqsStr = localStorage.getItem('humanChatRequests');
+        const reqs = reqsStr ? JSON.parse(reqsStr) : [];
+        callback(reqs);
+    }
+    updateReqs();
+    const storageListener = (e: StorageEvent) => { if (e.key === 'humanChatRequests') updateReqs() };
+    window.addEventListener('storage', storageListener);
+    return () => window.removeEventListener('storage', storageListener);
 };

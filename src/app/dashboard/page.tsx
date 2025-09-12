@@ -61,19 +61,15 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
     return tasks;
 }
 
-const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[], updatedSuggestion?: SuggestNextStepOutput) => {
+const updateMasterUserList = (userId: string, updatedData: { tasks?: RoadmapTask[], suggestion?: SuggestNextStepOutput }) => {
   if (typeof window === 'undefined') return;
   try {
     const allUsersStr = localStorage.getItem('allSignups');
     if (allUsersStr) {
       let allUsers = JSON.parse(allUsersStr);
       allUsers = allUsers.map((user: any) => {
-        if (user.email === email) {
-          const updatedUser = { ...user, tasks: updatedTasks };
-          if (updatedSuggestion) {
-            updatedUser.suggestion = updatedSuggestion;
-          }
-          return updatedUser;
+        if (user.userId === userId) {
+          return { ...user, ...updatedData };
         }
         return user;
       });
@@ -92,56 +88,30 @@ function SuggestionView() {
     const [showCheckIn, setShowCheckIn] = useState(false);
     const { toast } = useToast();
 
-    const email = useMemo(() => {
+    const currentUser = useMemo(() => {
         if (typeof window === 'undefined') return null;
         const signupDataStr = localStorage.getItem('signupData');
-        if (!signupDataStr) return null;
         try {
-            return JSON.parse(signupDataStr).email;
+            return signupDataStr ? JSON.parse(signupDataStr) : null;
         } catch {
             return null;
         }
     }, []);
 
-    const loadTasksAndBriefing = useCallback(async (email: string | null) => {
-        if (!email) return [];
+    const loadTasksAndBriefing = useCallback(async () => {
+        if (!currentUser) return;
         
-        const storedTasksStr = localStorage.getItem(`roadmapTasks-${email}`);
-        let currentTasks: RoadmapTask[] = [];
-        if (storedTasksStr) {
-            try {
-                currentTasks = JSON.parse(storedTasksStr);
-                setTasks(currentTasks);
-            } catch (error) {
-                console.error("Failed to parse tasks from localStorage", error);
-            }
-        }
+        const allUsersStr = localStorage.getItem('allSignups');
+        const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+        const userData = allUsers.find((u: any) => u.userId === currentUser.userId);
+        
+        const currentTasks: RoadmapTask[] = userData?.tasks || [];
+        setTasks(currentTasks);
         
         if (currentTasks.length > 0) {
-            const cachedBriefingStr = localStorage.getItem(`strategicBriefing-${email}`);
-            if (cachedBriefingStr) {
-                try {
-                    const cachedBriefing = JSON.parse(cachedBriefingStr);
-                    // Basic validation to ensure the cached briefing matches the plan's state
-                    const incompleteCount = currentTasks.filter(t => !t.completed).length;
-                    if (incompleteCount === 0 && cachedBriefing.priorityMission.id === 'completed') {
-                         setBriefing(cachedBriefing);
-                         return currentTasks;
-                    }
-                    if (incompleteCount > 0 && currentTasks.some(t => t.id === cachedBriefing.priorityMission.id && !t.completed)) {
-                        setBriefing(cachedBriefing);
-                        return currentTasks;
-                    }
-                } catch (e) {
-                    console.error("Failed to parse cached briefing", e);
-                }
-            }
-
-            // If no valid cache, generate a new briefing
             try {
                 const briefingResult = await getStrategicBriefing({ plan: currentTasks });
                 setBriefing(briefingResult);
-                localStorage.setItem(`strategicBriefing-${email}`, JSON.stringify(briefingResult));
             } catch (error) {
                 console.error("Failed to get strategic briefing:", error);
                 toast({
@@ -152,44 +122,36 @@ function SuggestionView() {
                 setBriefing(null);
             }
         }
-
-        return currentTasks;
-    }, [toast]);
+    }, [currentUser, toast]);
 
 
     const saveTasks = useCallback(async (tasksToSave: RoadmapTask[], suggestion?: SuggestNextStepOutput) => {
-         if (!email) return;
-         localStorage.setItem(`roadmapTasks-${email}`, JSON.stringify(tasksToSave));
-         if (suggestion) {
-            localStorage.setItem(`aiSuggestion-${email}`, JSON.stringify(suggestion));
-         }
-         updateMasterUserList(email, tasksToSave, suggestion);
+         if (!currentUser) return;
+         updateMasterUserList(currentUser.userId, { tasks: tasksToSave, suggestion });
          setTasks(tasksToSave);
-         // Invalidate briefing cache on task change
-         localStorage.removeItem(`strategicBriefing-${email}`);
-         await loadTasksAndBriefing(email);
-    }, [email, loadTasksAndBriefing]);
+         // Also update the session-specific tasks for other components to read
+         localStorage.setItem(`roadmapTasks-${currentUser.email}`, JSON.stringify(tasksToSave));
+         await loadTasksAndBriefing();
+    }, [currentUser, loadTasksAndBriefing]);
 
     useEffect(() => {
         const getSuggestionAndTasks = async () => {
             setLoading(true);
-            if (!email) {
+            if (!currentUser) {
                 setLoading(false);
                 return;
             };
 
-            const currentTasks = await loadTasksAndBriefing(email);
-            
-            if (currentTasks.length > 0) {
-                 setLoading(false);
-            } else {
-                const onboardingDataStr = localStorage.getItem('onboardingData');
-                const signupDataStr = localStorage.getItem('signupData');
+            const allUsersStr = localStorage.getItem('allSignups');
+            const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+            const userData = allUsers.find((u: any) => u.userId === currentUser.userId);
 
-                if (onboardingDataStr && signupDataStr) {
-                    const onboardingData = JSON.parse(onboardingDataStr);
-                    const signupData = JSON.parse(signupDataStr);
-                    const result = await fetchSuggestion({ ...onboardingData, grade: signupData.grade });
+            if (userData && userData.tasks && userData.tasks.length > 0) {
+                 await loadTasksAndBriefing();
+            } else {
+                const onboardingData = userData?.onboardingData;
+                if (onboardingData) {
+                    const result = await fetchSuggestion({ ...onboardingData, grade: currentUser.grade });
                     
                     if (result) {
                         const newTasks = generateTasksFromSuggestion(result);
@@ -198,8 +160,8 @@ function SuggestionView() {
                 }
             }
 
-            // Check-in card visibility logic
-            const lastCheckInStr = localStorage.getItem(`lastCheckIn-${email}`);
+            // Check-in card visibility logic remains the same
+            const lastCheckInStr = localStorage.getItem(`lastCheckIn-${currentUser.email}`);
             if (lastCheckInStr) {
                 const lastCheckInTime = new Date(lastCheckInStr).getTime();
                 const twentyFourHours = 24 * 60 * 60 * 1000;
@@ -216,7 +178,7 @@ function SuggestionView() {
         };
 
         getSuggestionAndTasks();
-    }, [email, loadTasksAndBriefing, saveTasks]);
+    }, [currentUser, loadTasksAndBriefing, saveTasks]);
 
     const handleTaskToggle = (taskId: string, proof?: string) => {
         const newTasks = tasks.map(task => {
@@ -227,12 +189,12 @@ function SuggestionView() {
         });
         saveTasks(newTasks);
         // Manually dispatch a storage event so other components (like KeyStats) can update.
-        window.dispatchEvent(new StorageEvent('storage', { key: `roadmapTasks-${email}` }));
+        window.dispatchEvent(new StorageEvent('storage', { key: `allSignups` }));
     };
 
     const handleCheckIn = async (checkInText: string) => {
         setLoading(true);
-        if (!email) {
+        if (!currentUser) {
              toast({ variant: "destructive", title: "Error", description: "Could not find user profile." });
              setLoading(false);
              return;
@@ -244,7 +206,7 @@ function SuggestionView() {
 
             if (updatedPlan) {
                 await saveTasks(updatedPlan);
-                localStorage.setItem(`lastCheckIn-${email}`, new Date().toISOString());
+                localStorage.setItem(`lastCheckIn-${currentUser.email}`, new Date().toISOString());
                 setShowCheckIn(false);
                 toast({
                     title: "Plan Updated!",
@@ -319,15 +281,16 @@ const KeyStats = () => {
         if (!signupDataStr) return;
         
         try {
-            const email = JSON.parse(signupDataStr).email;
-            if (email) {
-                const tasksStr = localStorage.getItem(`roadmapTasks-${email}`);
-                if (tasksStr) {
-                    const tasks: RoadmapTask[] = JSON.parse(tasksStr);
-                    const completedTasks = tasks.filter(t => t.completed);
-                    const totalPoints = completedTasks.reduce((sum, task) => sum + (task.points || 0), 0);
-                    setStats({ completed: completedTasks.length, points: totalPoints });
-                }
+            const userId = JSON.parse(signupDataStr).userId;
+            const allUsersStr = localStorage.getItem('allSignups');
+            const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+            const currentUser = allUsers.find((u: any) => u.userId === userId);
+
+            if (currentUser && currentUser.tasks) {
+                const tasks: RoadmapTask[] = currentUser.tasks;
+                const completedTasks = tasks.filter(t => t.completed);
+                const totalPoints = completedTasks.reduce((sum, task) => sum + (task.points || 0), 0);
+                setStats({ completed: completedTasks.length, points: totalPoints });
             }
         } catch(error) {
             console.error("Failed to calculate stats:", error);
@@ -338,11 +301,7 @@ const KeyStats = () => {
         calculateStats(); // Calculate on initial render
 
         const handleStorageChange = (event: StorageEvent) => {
-             // Listen for changes from other tabs/components
-            const signupDataStr = localStorage.getItem('signupData');
-            if (!signupDataStr) return;
-            const email = JSON.parse(signupDataStr).email;
-            if (event.key === `roadmapTasks-${email}`) {
+            if (event.key === `allSignups`) {
                 calculateStats();
             }
         };

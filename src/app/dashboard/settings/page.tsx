@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { SettingsForm } from "@/components/dashboard/settings-form";
@@ -8,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { doc, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Card, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -42,18 +39,24 @@ export default function SettingsPage() {
       const userId = userData.userId;
 
       try {
-        await deleteDoc(doc(db, "users", userId));
+        // Remove user from the master list in localStorage
+        const allUsersStr = localStorage.getItem('allSignups');
+        if (allUsersStr) {
+            let allUsers = JSON.parse(allUsersStr);
+            allUsers = allUsers.filter((u: any) => u.userId !== userId);
+            localStorage.setItem('allSignups', JSON.stringify(allUsers));
+        }
         
-        // Clear local session data
+        // Clear session data
         Object.keys(localStorage).forEach(key => {
-            if(key.includes(userData.email) || ['signupData', 'onboardingData', 'paymentComplete', 'userAvatar', 'userName', 'userPlan', 'hasBeenWelcomed', 'userNotifications'].includes(key)) {
+            if(['signupData', 'onboardingData', 'userAvatar', 'userName', 'userPlan', 'hasBeenWelcomed'].includes(key)) {
                 localStorage.removeItem(key);
             }
         });
 
         toast({
           title: "Account Deleted",
-          description: "Your account and all associated data have been removed.",
+          description: "Your account and all associated data have been removed from this browser.",
         });
 
         router.push('/');
@@ -103,7 +106,7 @@ export default function SettingsPage() {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action is permanent and cannot be undone. This will permanently delete your account and remove all of your data from our servers.
+                            This action is permanent and cannot be undone. This will permanently delete your account and remove all of your data from this browser.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -19,8 +18,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 
 const settingsSchema = z.object({
@@ -65,13 +62,20 @@ export function SettingsForm() {
     const userId = parsedData.userId;
 
     try {
-        const userDocRef = doc(db, 'users', userId);
-        await updateDoc(userDocRef, {
-            name: data.name,
-            email: data.email,
-        });
+        // Update local storage master list
+        const allUsersStr = localStorage.getItem('allSignups');
+        if (allUsersStr) {
+            let allUsers = JSON.parse(allUsersStr);
+            allUsers = allUsers.map((user: any) => {
+                if (user.userId === userId) {
+                    return { ...user, name: data.name, email: data.email };
+                }
+                return user;
+            });
+            localStorage.setItem('allSignups', JSON.stringify(allUsers));
+        }
 
-        // Update local storage
+        // Update session storage
         const updatedData = { ...parsedData, name: data.name, email: data.email };
         localStorage.setItem('signupData', JSON.stringify(updatedData));
         localStorage.setItem('userName', data.name);

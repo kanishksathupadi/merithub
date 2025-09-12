@@ -43,11 +43,13 @@ export function ProgressView() {
         if (!signupDataStr) return;
 
         try {
-            const email = JSON.parse(signupDataStr).email;
-            const storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
-            
-            if (storedTasks) {
-                const parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
+            const userId = JSON.parse(signupDataStr).userId;
+            const allUsersStr = localStorage.getItem('allSignups');
+            const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+            const currentUser = allUsers.find((u: any) => u.userId === userId);
+
+            if (currentUser && currentUser.tasks) {
+                const parsedTasks: RoadmapTask[] = currentUser.tasks;
                 setTasks(parsedTasks);
                 setTimelineData(generateTimelineData(parsedTasks));
                 

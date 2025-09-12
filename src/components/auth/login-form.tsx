@@ -124,15 +124,15 @@ export function LoginForm() {
             localStorage.setItem('userName', user.name);
             localStorage.setItem('userPlan', user.plan);
             
+            // Clear old session-specific data before navigating
             localStorage.removeItem('onboardingData');
             
-            if(user.onboardingData) {
-              localStorage.setItem('onboardingData', JSON.stringify(user.onboardingData));
-            }
-            
+            // We only care if the user has ONBOARDING DATA saved inside their user object in the `allSignups` list.
             if (!user.onboardingData) {
                 router.push('/onboarding');
             } else {
+                // If they have onboarding data, we also put it into the session-specific key for the dashboard to use.
+                localStorage.setItem('onboardingData', JSON.stringify(user.onboardingData));
                 router.push('/dashboard');
             }
         } else {

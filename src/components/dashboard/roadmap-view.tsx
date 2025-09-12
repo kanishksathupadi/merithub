@@ -16,14 +16,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
+const updateMasterUserList = (userId: string, updatedTasks: RoadmapTask[]) => {
   if (typeof window === 'undefined') return;
   try {
     const allUsersStr = localStorage.getItem('allSignups');
     if (allUsersStr) {
       let allUsers = JSON.parse(allUsersStr);
       allUsers = allUsers.map((user: any) => {
-        if (user.email === email) {
+        if (user.userId === userId) {
           return { ...user, tasks: updatedTasks };
         }
         return user;
@@ -143,7 +143,7 @@ function TaskCard({ task, onToggle }: { task: RoadmapTask, onToggle: (id: string
 export function RoadmapView() {
   const [tasks, setTasks] = useState<RoadmapTask[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -151,29 +151,28 @@ export function RoadmapView() {
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
           const signupData = JSON.parse(signupDataStr);
-          const email = signupData.email;
-          setUserEmail(email);
+          setCurrentUserId(signupData.userId);
 
-            let storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
-            if (storedTasks) {
-            let parsedTasks: RoadmapTask[] = JSON.parse(storedTasks);
+          const allUsersStr = localStorage.getItem('allSignups');
+          const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+          const currentUser = allUsers.find((u: any) => u.userId === signupData.userId);
+          
+          if (currentUser && currentUser.tasks) {
+            let parsedTasks: RoadmapTask[] = currentUser.tasks;
             parsedTasks = parsedTasks.map((task, index) => ({
                 ...task,
                 points: task.points || Math.floor(Math.random() * 20) + 10,
                 dueDate: task.dueDate,
             }));
             setTasks(parsedTasks);
-            }
+          }
         }
     } catch(error) {
         console.error("Failed to parse roadmap tasks from localStorage", error);
-        if (userEmail) {
-            localStorage.removeItem(`roadmapTasks-${userEmail}`);
-        }
     } finally {
         setLoading(false);
     }
-  }, [userEmail]);
+  }, []);
   
   const groupedTasks = useMemo(() => {
     return tasks.reduce((acc, task) => {
@@ -201,7 +200,7 @@ export function RoadmapView() {
 
 
   const toggleTask = (taskId: string, proof?: string) => {
-    if (!userEmail) return;
+    if (!currentUserId) return;
 
     const newTasks = tasks.map(task => {
       if (task.id === taskId) {
@@ -223,8 +222,8 @@ export function RoadmapView() {
     });
 
     setTasks(newTasks);
-    localStorage.setItem(`roadmapTasks-${userEmail}`, JSON.stringify(newTasks));
-    updateMasterUserList(userEmail, newTasks);
+    updateMasterUserList(currentUserId, newTasks);
+    // Dispatch a storage event to notify other components (like calendar)
     window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
   };
 

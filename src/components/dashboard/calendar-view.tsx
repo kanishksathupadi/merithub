@@ -13,14 +13,14 @@ import { CheckCircle, Link as LinkIcon, Star, Trophy, BrainCircuit, Repeat, Cale
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
-const updateMasterUserList = (email: string, updatedTasks: RoadmapTask[]) => {
+const updateMasterUserList = (userId: string, updatedTasks: RoadmapTask[]) => {
     if (typeof window === 'undefined') return;
     try {
         const allUsersStr = localStorage.getItem('allSignups');
         if (allUsersStr) {
         let allUsers = JSON.parse(allUsersStr);
         allUsers = allUsers.map((user: any) => {
-            if (user.email === email) {
+            if (user.userId === userId) {
             return { ...user, tasks: updatedTasks };
             }
             return user;
@@ -104,7 +104,7 @@ function TaskDialog({ task, onToggle, children }: { task: RoadmapTask; onToggle:
 
 export function CalendarView() {
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
-    const [userEmail, setUserEmail] = useState<string | null>(null);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     
     const loadTasks = useCallback(() => {
@@ -113,12 +113,17 @@ export function CalendarView() {
             const signupDataStr = localStorage.getItem('signupData');
             if (signupDataStr) {
                 const signupData = JSON.parse(signupDataStr);
-                const email = signupData.email;
-                setUserEmail(email);
+                const userId = signupData.userId;
+                setCurrentUserId(userId);
 
-                const storedTasks = localStorage.getItem(`roadmapTasks-${email}`);
-                if (storedTasks) {
-                    setTasks(JSON.parse(storedTasks));
+                const allUsersStr = localStorage.getItem('allSignups');
+                const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+                const currentUser = allUsers.find((u: any) => u.userId === userId);
+
+                if (currentUser && currentUser.tasks) {
+                    setTasks(currentUser.tasks);
+                } else {
+                    setTasks([]);
                 }
             }
         } catch (error) {
@@ -127,7 +132,7 @@ export function CalendarView() {
     }, []);
 
     const handleTaskToggle = (taskId: string) => {
-        if (!userEmail) return;
+        if (!currentUserId) return;
 
         const newTasks = tasks.map(task => {
             if (task.id === taskId) {
@@ -145,8 +150,7 @@ export function CalendarView() {
         });
 
         setTasks(newTasks);
-        localStorage.setItem(`roadmapTasks-${userEmail}`, JSON.stringify(newTasks));
-        updateMasterUserList(userEmail, newTasks);
+        updateMasterUserList(currentUserId, newTasks);
         window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
     };
 

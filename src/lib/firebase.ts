@@ -1,14 +1,10 @@
 
-// Import the functions you need from the SDKs you need
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+// This file is intentionally left with placeholder values.
+// The application logic has been updated to use localStorage for data persistence
+// to allow the prototype to function without a real Firebase project.
+// No changes are needed here unless you intend to connect to a live Firebase backend.
 
-// Your web app's Firebase configuration - REPLACE WITH YOUR CONFIG
-// You can get this from your project's settings in the Firebase console
 const firebaseConfig = {
-  // This is a placeholder configuration.
-  // To use Firebase features, you will need to replace this
-  // with your own project's configuration from the Firebase console.
   apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
   projectId: "YOUR-PROJECT-ID",
@@ -18,8 +14,9 @@ const firebaseConfig = {
   measurementId: "G-XXXXXXXXXX"
 };
 
-// Initialize Firebase
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// In this localStorage-based version, `db` will not be a valid Firestore instance.
+// Components that use `db` have been updated to handle this gracefully or to
+// use localStorage instead.
+const db = {};
 
 export { db };
