@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { AppLogo } from "@/components/logo";
 import { StatCard } from "@/components/home/stat-card";
 import { useEffect, useState } from "react";
-import { getGlobalStatsRT } from "@/lib/data";
+import { getGlobalStats as getGlobalStatsClient } from "@/lib/data-client-admin";
 
 
 function LiveStats() {
@@ -24,9 +24,24 @@ function LiveStats() {
     });
 
     useEffect(() => {
-        // getGlobalStatsRT is now designed to work on the client
-        const unsub = getGlobalStatsRT(setStats);
-        return () => unsub(); // Cleanup listener on unmount
+        const fetchStats = async () => {
+            // Using the client-side data fetching function
+            const currentStats = await getGlobalStatsClient();
+            setStats(currentStats);
+        };
+        
+        fetchStats();
+
+        // Poll for updates as a simple way to keep stats fresh without full real-time setup
+        const interval = setInterval(fetchStats, 5000); // Check every 5 seconds
+        
+        // Also listen to storage events as a faster way to update
+        window.addEventListener('storage', fetchStats);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('storage', fetchStats);
+        };
     }, []);
 
     return (

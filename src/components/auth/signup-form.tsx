@@ -14,6 +14,7 @@ import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Label } from "@/components/ui/label";
+import { addUser, findUserByEmail } from "@/lib/data-client";
 
 export function SignupForm() {
   const router = useRouter();
@@ -68,6 +69,16 @@ export function SignupForm() {
     }
     
     try {
+        const existingUser = await findUserByEmail(formValues.email);
+        if (existingUser) {
+            toast({
+                variant: "destructive",
+                title: "Account Exists",
+                description: "An account with this email already exists. Please log in.",
+            });
+            return;
+        }
+        
         const newUser = { 
             ...formValues,
             grade: Number(formValues.grade) || 0,
@@ -81,12 +92,7 @@ export function SignupForm() {
             onboardingData: null,
         };
 
-        // --- LocalStorage Logic ---
-        const allUsersStr = localStorage.getItem('allSignups');
-        const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-        allUsers.push(newUser);
-        localStorage.setItem('allSignups', JSON.stringify(allUsers));
-        // --- End LocalStorage Logic ---
+        await addUser(newUser);
 
         localStorage.setItem('signupData', JSON.stringify(newUser));
         localStorage.setItem('userName', newUser.name);

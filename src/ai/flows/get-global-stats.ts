@@ -11,16 +11,9 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import * as admin from 'firebase-admin';
 
-// Correctly initialize Firebase Admin SDK only if it hasn't been initialized yet.
-if (!admin.apps.length) {
-  try {
-    // This requires the GOOGLE_APPLICATION_CREDENTIALS environment variable to be set.
-    admin.initializeApp();
-  } catch (error) {
-    console.error("Firebase admin initialization error in get-global-stats:", error);
-    // If initialization fails, we'll gracefully handle it in the flow.
-  }
-}
+// This flow is now deprecated in favor of client-side data fetching from localStorage/local file DB
+// but is kept to avoid breaking imports. It will return zero-values.
+// The admin dashboard now uses functions from `lib/data-client-admin.ts`.
 
 const GlobalStatsOutputSchema = z.object({
     students: z.number().describe("The total number of registered students."),
@@ -40,49 +33,12 @@ const getGlobalStatsFlow = ai.defineFlow(
     outputSchema: GlobalStatsOutputSchema,
   },
   async () => {
-    // Check if the admin app was initialized successfully.
-    if (admin.apps.length === 0) {
-      console.warn("Firebase Admin SDK not configured. Returning zero stats.");
-      return {
-        students: 0,
-        colleges: 0,
-        scholarships: 0,
-        essays: 0,
-      };
-    }
-
-    try {
-      const db = admin.firestore();
-
-      // Fetch the count of all users.
-      const usersSnapshot = await db.collection('users').get();
-      
-      // For the other stats, we will fetch the single stats document.
-      const statsDocRef = db.doc('stats/global');
-      const statsDoc = await statsDocRef.get();
-      
-      const statsData = statsDoc.exists ? statsDoc.data() : {
-          collegesFound: 0,
-          scholarshipsFound: 0,
-          essaysReviewed: 0,
-      };
-
-      return {
-        students: usersSnapshot.size,
-        colleges: statsData?.collegesFound || 0,
-        scholarships: statsData?.scholarshipsFound || 0,
-        essays: statsData?.essaysReviewed || 0,
-      };
-
-    } catch (error) {
-      console.error("Error fetching global stats from Firestore:", error);
-      // Return zero stats on any fetching error.
-      return {
-        students: 0,
-        colleges: 0,
-        scholarships: 0,
-        essays: 0,
-      };
-    }
+    console.warn("getGlobalStats flow is deprecated. Admin dashboard now uses client-side data fetching. Returning zero stats.");
+    return {
+      students: 0,
+      colleges: 0,
+      scholarships: 0,
+      essays: 0,
+    };
   }
 );

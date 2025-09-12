@@ -20,29 +20,12 @@ import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getYear } from "date-fns";
+import { findUserByEmail, updateUser } from "@/lib/data-client";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(1, { message: "Password is required." }),
 });
-
-const findUserByEmail = (email: string): any | null => {
-    if (typeof window === 'undefined') return null;
-    const allUsersStr = localStorage.getItem('allSignups');
-    if (!allUsersStr) return null;
-    const allUsers = JSON.parse(allUsersStr);
-    return allUsers.find((user: any) => user.email === email) || null;
-}
-
-const updateUserInLocalStorage = (updatedUser: any) => {
-    if (typeof window === 'undefined') return;
-    const allUsersStr = localStorage.getItem('allSignups');
-    if (!allUsersStr) return;
-    let allUsers = JSON.parse(allUsersStr);
-    allUsers = allUsers.map((user: any) => user.userId === updatedUser.userId ? updatedUser : user);
-    localStorage.setItem('allSignups', JSON.stringify(allUsers));
-};
-
 
 // Automatically update grade based on school year cutoff
 const updateUserGrade = (user: any) => {
@@ -83,7 +66,7 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (typeof window === 'undefined') return;
 
     if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
@@ -114,25 +97,20 @@ export function LoginForm() {
     }
 
     try {
-        let user = findUserByEmail(values.email);
+        let user = await findUserByEmail(values.email);
 
         if (user && user.password === values.password) {
             user = updateUserGrade(user);
-            updateUserInLocalStorage(user);
+            await updateUser(user);
 
             localStorage.setItem('signupData', JSON.stringify(user));
             localStorage.setItem('userName', user.name);
             localStorage.setItem('userPlan', user.plan);
             
-            // Clear old session-specific data before navigating
-            localStorage.removeItem('onboardingData');
-            
-            // We only care if the user has ONBOARDING DATA saved inside their user object in the `allSignups` list.
+            // We only care if the user has ONBOARDING DATA saved inside their user object.
             if (!user.onboardingData) {
                 router.push('/onboarding');
             } else {
-                // If they have onboarding data, we also put it into the session-specific key for the dashboard to use.
-                localStorage.setItem('onboardingData', JSON.stringify(user.onboardingData));
                 router.push('/dashboard');
             }
         } else {

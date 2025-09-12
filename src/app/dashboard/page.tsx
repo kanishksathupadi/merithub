@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { updateUser } from "@/lib/data-client";
 
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
@@ -127,11 +128,10 @@ function SuggestionView() {
 
     const saveTasks = useCallback(async (tasksToSave: RoadmapTask[], suggestion?: SuggestNextStepOutput) => {
          if (!currentUser) return;
-         updateMasterUserList(currentUser.userId, { tasks: tasksToSave, suggestion });
-         setTasks(tasksToSave);
-         // Also update the session-specific tasks for other components to read
-         localStorage.setItem(`roadmapTasks-${currentUser.email}`, JSON.stringify(tasksToSave));
-         await loadTasksAndBriefing();
+        const updatedUser = { ...currentUser, tasks: tasksToSave, suggestion };
+        await updateUser(updatedUser);
+        setTasks(tasksToSave);
+        await loadTasksAndBriefing();
     }, [currentUser, loadTasksAndBriefing]);
 
     useEffect(() => {

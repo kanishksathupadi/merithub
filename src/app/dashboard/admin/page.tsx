@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { getContactMessagesRT, getJobApplicationsRT, getRecentSignupsRT, getSupportRequestsRT, getGlobalStatsRT } from "@/lib/data";
+import { getGlobalStats, getRecentSignups, getContactMessages, getJobApplications, getSupportRequests } from "@/lib/data-client-admin";
 
 function AdminHeader() {
     const router = useRouter();
@@ -92,57 +91,47 @@ export default function AdminPage() {
     const [recentSignups, setRecentSignups] = useState([]);
     const router = useRouter();
 
-    useEffect(() => {
-        // --- Real-time Stats ---
-        const unsubStats = getGlobalStatsRT(stats => {
-            setUserStats(prev => ({
-                ...prev,
-                totalUsers: stats.students ?? prev.totalUsers,
-                dailyActive: stats.students ?? prev.dailyActive, // Simplified logic
-            }));
+    const updateAllStats = async () => {
+        const globalStats = await getGlobalStats();
+        setUserStats({
+            totalUsers: globalStats.students,
+            dailyActive: globalStats.students, // Simplified for prototype
         });
 
-        // --- Real-time Support Requests ---
-        const unsubSupport = getSupportRequestsRT(requests => {
-            setSupportRequests(requests.filter((r: any) => r.status === 'pending').length);
-        });
+        const supportReqs = await getSupportRequests();
+        setSupportRequests(supportReqs.filter((r: any) => r.status === 'pending').length);
         
-        // --- Real-time Contact Messages ---
-        const unsubMessages = getContactMessagesRT(messages => {
-            setContactMessages(messages.filter((m: any) => m.status === 'New').length);
-        });
+        const contactMsgs = await getContactMessages();
+        setContactMessages(contactMsgs.filter((m: any) => m.status === 'New').length);
+        
+        const jobApps = await getJobApplications();
+        setJobApplications(jobApps.filter((a: any) => a.status === 'New').length);
 
-        // --- Real-time Job Applications ---
-        const unsubApps = getJobApplicationsRT(applications => {
-            setJobApplications(applications.filter((a: any) => a.status === 'New').length);
-        });
+        const recent = await getRecentSignups();
+        const signupsWithAvatars = recent.map((user: any) => ({
+            ...user,
+            avatar: user.name.charAt(0).toUpperCase(),
+            hint: "student face",
+        }));
+        setRecentSignups(signupsWithAvatars as any);
 
-        // --- Real-time Recent Signups ---
-        const unsubSignups = getRecentSignupsRT(users => {
-            const signupsWithAvatars = users.map((user: any) => ({
-                ...user,
-                avatar: user.name.charAt(0).toUpperCase(),
-                hint: "student face",
-            }));
-            setRecentSignups(signupsWithAvatars as any);
-        });
-
-        // --- Feature Engagement (from localStorage, as it's client-specific) ---
         const engagementData = JSON.parse(localStorage.getItem('featureEngagement') || '{}');
         const chartData = Object.entries(engagementData).map(([name, usage]) => ({
             name: formatFeatureName(name),
             usage: usage as number,
         }));
         setFeatureEngagementData(chartData as any);
+    };
 
-        return () => {
-            unsubStats();
-            unsubSupport();
-            unsubMessages();
-            unsubApps();
-            unsubSignups();
-        };
+    useEffect(() => {
+        updateAllStats(); // Initial fetch
         
+        // Listen for storage changes to re-fetch data
+        const handleStorageChange = () => {
+            updateAllStats();
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
     const handleCardClick = (path: string) => {

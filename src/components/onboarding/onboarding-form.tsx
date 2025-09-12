@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
+import { updateUser } from "@/lib/data-client";
 
 const formSchema = z.object({
   academicStrengths: z.string().min(3, { message: "Please list at least one strength." }),
@@ -65,25 +66,16 @@ export function OnboardingForm() {
   const onSubmit = async (data: OnboardingValues) => {
     console.log("Onboarding complete, redirecting to dashboard:", data);
     if (typeof window !== 'undefined') {
-        // Set the data for the current session for the dashboard to use
-        localStorage.setItem('onboardingData', JSON.stringify(data));
-        
-        // Find the current user in the master list and attach their onboarding data
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
             const signupData = JSON.parse(signupDataStr);
-            const allUsersStr = localStorage.getItem('allSignups');
-            let allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+            const updatedUser = { ...signupData, onboardingData: data };
             
-            allUsers = allUsers.map((user: any) => {
-                if (user.userId === signupData.userId) {
-                    return { ...user, onboardingData: data };
-                }
-                return user;
-            });
-
-            // Save the updated master list back to localStorage
-            localStorage.setItem('allSignups', JSON.stringify(allUsers));
+            // Save to the central "DB"
+            await updateUser(updatedUser);
+            
+            // Update the session data
+            localStorage.setItem('signupData', JSON.stringify(updatedUser));
         }
     }
     router.push("/dashboard");
