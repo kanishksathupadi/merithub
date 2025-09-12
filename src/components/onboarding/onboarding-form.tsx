@@ -27,7 +27,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
-import { saveOnboardingData } from "@/lib/data";
 
 const formSchema = z.object({
   academicStrengths: z.string().min(3, { message: "Please list at least one strength." }),
@@ -73,8 +72,17 @@ export function OnboardingForm() {
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
             const signupData = JSON.parse(signupDataStr);
-            // Persist data to Firestore
-            await saveOnboardingData(signupData.userId, data);
+            const allUsersStr = localStorage.getItem('allSignups');
+            let allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+            allUsers = allUsers.map((user: any) => {
+                if (user.userId === signupData.userId) {
+                    return { ...user, onboardingData: data };
+                }
+                return user;
+            });
+            localStorage.setItem('allSignups', JSON.stringify(allUsers));
+            // This is a flag for the dashboard layout to know this user is now fully onboarded
+            localStorage.setItem(`onboarding-${signupData.email}`, JSON.stringify(data));
         }
     }
     router.push("/dashboard");
@@ -95,7 +103,7 @@ export function OnboardingForm() {
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(step => step - 1);
+      setCurrentStep(step => step + 1);
     }
   };
 
