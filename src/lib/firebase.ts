@@ -1,7 +1,7 @@
 
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
+import { getFirestore, type Firestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration - REPLACE WITH YOUR CONFIG
 // You can get this from your project's settings in the Firebase console
@@ -19,17 +19,20 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let app;
-if (firebaseConfig.projectId !== "YOUR-PROJECT-ID" && getApps().length === 0) {
-  try {
-    app = initializeApp(firebaseConfig);
-  } catch (error) {
-    console.error("Firebase initialization failed:", error);
-  }
-} else if (getApps().length > 0) {
-  app = getApps()[0];
+let app: FirebaseApp;
+let db: Firestore | null = null;
+
+if (firebaseConfig.projectId !== "YOUR-PROJECT-ID") {
+    try {
+        app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+        db = getFirestore(app);
+    } catch (error) {
+        console.error("Firebase initialization failed:", error);
+        db = null;
+    }
+} else {
+    console.warn("Firebase configuration is using placeholder values. Firestore will not be available.");
 }
 
-const db = app ? getFirestore(app) : {};
 
 export { db };

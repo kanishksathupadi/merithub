@@ -38,8 +38,8 @@ export function SignupForm() {
     setFormValues(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormValues(prev => ({...prev, acceptTerms: checked }));
+  const handleCheckboxChange = (checked: boolean | "indeterminate") => {
+    setFormValues(prev => ({...prev, acceptTerms: !!checked }));
   }
 
   const handleSchoolChange = (value: string) => {
@@ -49,6 +49,16 @@ export function SignupForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (typeof window === 'undefined') return;
+
+     if (!db) {
+        toast({
+            variant: "destructive",
+            title: "Database Not Configured",
+            description: "Firebase is not configured. Please add your project configuration in src/lib/firebase.ts to enable account creation.",
+            duration: 8000,
+        });
+        return;
+    }
 
     if (!formValues.acceptTerms) {
         toast({
