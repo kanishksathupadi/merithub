@@ -19,20 +19,20 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let app: FirebaseApp;
-let db: Firestore | null = null;
-
-if (firebaseConfig.projectId !== "YOUR-PROJECT-ID") {
-    try {
-        app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-        db = getFirestore(app);
-    } catch (error) {
-        console.error("Firebase initialization failed:", error);
-        db = null;
+function initializeFirebase() {
+    if (firebaseConfig.projectId !== "YOUR-PROJECT-ID") {
+        try {
+            const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+            return getFirestore(app);
+        } catch (error) {
+            console.error("Firebase initialization failed:", error);
+            return null;
+        }
     }
-} else {
     console.warn("Firebase configuration is using placeholder values. Firestore will not be available.");
+    return null;
 }
 
+const db: Firestore | null = initializeFirebase();
 
 export { db };
