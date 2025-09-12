@@ -1,10 +1,7 @@
 
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration - REPLACE WITH YOUR CONFIG
 // You can get this from your project's settings in the Firebase console
@@ -23,24 +20,16 @@ const firebaseConfig = {
 
 // Initialize Firebase
 let app;
-let db: any = {}; // Use a dummy object when not initialized
-
-try {
-    if (!getApps().length) {
-        // Avoid initialization if config is just a placeholder
-        if (firebaseConfig.projectId !== "YOUR-PROJECT-ID") {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-        } else {
-            console.warn("Firebase config is not set. Database features will be disabled.");
-        }
-    } else {
-        app = getApps()[0];
-        db = getFirestore(app);
-    }
-} catch (error) {
+if (firebaseConfig.projectId !== "YOUR-PROJECT-ID" && getApps().length === 0) {
+  try {
+    app = initializeApp(firebaseConfig);
+  } catch (error) {
     console.error("Firebase initialization failed:", error);
+  }
+} else if (getApps().length > 0) {
+  app = getApps()[0];
 }
 
+const db = app ? getFirestore(app) : {};
 
 export { db };
