@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState } from "react";
@@ -26,6 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
+import { saveOnboardingData } from "@/lib/data";
 
 const formSchema = z.object({
   academicStrengths: z.string().min(3, { message: "Please list at least one strength." }),
@@ -62,19 +64,17 @@ export function OnboardingForm() {
     },
   });
 
-  const onSubmit = (data: OnboardingValues) => {
+  const onSubmit = async (data: OnboardingValues) => {
     console.log("Onboarding complete, redirecting to dashboard:", data);
     if (typeof window !== 'undefined') {
         // Set the data for the current session
         localStorage.setItem('onboardingData', JSON.stringify(data));
-        // Persist the data for future logins against the user's email
+        
         const signupDataStr = localStorage.getItem('signupData');
         if (signupDataStr) {
             const signupData = JSON.parse(signupDataStr);
-            localStorage.setItem(`onboarding-${signupData.email}`, JSON.stringify(data));
-            // Mark payment as complete since the app is free
-            localStorage.setItem(`payment-${signupData.email}`, 'true');
-            localStorage.setItem('paymentComplete', 'true');
+            // Persist data to Firestore
+            await saveOnboardingData(signupData.userId, data);
         }
     }
     router.push("/dashboard");

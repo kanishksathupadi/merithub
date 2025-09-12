@@ -1,13 +1,10 @@
 
 
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -15,49 +12,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { AppLogo } from "@/components/logo";
+import { getGlobalStats } from "@/lib/data";
 
 
-function LiveStats() {
-    const [stats, setStats] = useState({ students: 0, colleges: 0, essays: 0, scholarships: 0 });
-    const [loading, setLoading] = useState(true);
+async function LiveStats() {
+    const stats = await getGlobalStats();
 
-    const getRealStats = useCallback(() => {
-        if (typeof window === 'undefined') {
-            return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
-        }
-        try {
-            const allUsers = JSON.parse(localStorage.getItem('allSignups') || '[]');
-            const collegeStats = JSON.parse(localStorage.getItem('collegeFinderStats') || '{"count": 0}');
-            const essayStats = JSON.parse(localStorage.getItem('essayReviewStats') || '{"count": 0}');
-            const scholarshipStats = JSON.parse(localStorage.getItem('scholarshipFinderStats') || '{"count": 0}');
-            
-            return {
-                students: allUsers.length,
-                colleges: collegeStats.count,
-                essays: essayStats.count,
-                scholarships: scholarshipStats.count,
-            };
-        } catch (error) {
-            console.error("Error reading stats from localStorage:", error);
-            return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
-        }
-    }, []);
-
-    useEffect(() => {
-        setStats(getRealStats());
-        setLoading(false);
-
-        const handleStorageChange = (event: StorageEvent) => {
-            if (['allSignups', 'collegeFinderStats', 'essayReviewStats', 'scholarshipFinderStats'].includes(event.key!)) {
-                setStats(getRealStats());
-            }
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, [getRealStats]);
-
-    const StatCard = ({ icon, value, label, isLoading }: { icon: React.ReactNode, value: number, label: string, isLoading: boolean }) => (
+    const StatCard = ({ icon, value, label }: { icon: React.ReactNode, value: number, label: string }) => (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -68,7 +29,7 @@ function LiveStats() {
                 {icon}
             </div>
             <p className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-foreground/80">
-                 {isLoading ? "..." : value.toLocaleString()}
+                 {value.toLocaleString()}
             </p>
             <p className="text-muted-foreground mt-2 text-sm text-center h-10 flex items-center">{label}</p>
         </motion.div>
@@ -76,10 +37,10 @@ function LiveStats() {
 
     return (
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCard icon={<UserCheck className="w-8 h-8" />} value={stats.students} label="Students Guided" isLoading={loading} />
-            <StatCard icon={<BrainCircuit className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" isLoading={loading} />
-            <StatCard icon={<Award className="w-8 h-8" />} value={stats.scholarships} label="Scholarships Found" isLoading={loading} />
-            <StatCard icon={<FileText className="w-8 h-8" />} value={stats.essays} label="Essays Reviewed" isLoading={loading} />
+            <StatCard icon={<UserCheck className="w-8 h-8" />} value={stats.students} label="Students Guided" />
+            <StatCard icon={<BrainCircuit className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" />
+            <StatCard icon={<Award className="w-8 h-8" />} value={stats.scholarships} label="Scholarships Found" />
+            <StatCard icon={<FileText className="w-8 h-8" />} value={stats.essays} label="Essays Reviewed" />
         </div>
     );
 }

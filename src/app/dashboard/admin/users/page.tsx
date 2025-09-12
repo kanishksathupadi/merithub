@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState, Suspense } from 'react';
@@ -9,28 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-
-const getFromLocalStorage = (key: string, defaultValue: any) => {
-    if (typeof window === 'undefined') return defaultValue;
-    try {
-        const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-        console.error(`Error parsing localStorage key "${key}":`, error);
-        return defaultValue;
-    }
-};
-
-const getUniqueUsers = () => {
-    const allUsers = getFromLocalStorage('allSignups', []);
-    const uniqueUsers = allUsers.reduce((acc: any[], current: any) => {
-        if (!acc.find(item => item.email === current.email)) {
-            acc.push(current);
-        }
-        return acc;
-    }, []);
-    return uniqueUsers;
-};
+import { getAllUsers } from '@/lib/data';
 
 
 function UsersList() {
@@ -39,11 +19,12 @@ function UsersList() {
     const [users, setUsers] = useState<any[]>([]);
 
     useEffect(() => {
-        const allUsers = getUniqueUsers();
-        const filteredUsers = planFilter 
-            ? allUsers.filter((user: any) => user.plan === planFilter)
-            : allUsers;
-        setUsers(filteredUsers);
+        getAllUsers().then(allUsers => {
+            const filteredUsers = planFilter 
+                ? allUsers.filter((user: any) => user.plan === planFilter)
+                : allUsers;
+            setUsers(filteredUsers);
+        });
     }, [planFilter]);
 
     const pageTitle = "All Users";

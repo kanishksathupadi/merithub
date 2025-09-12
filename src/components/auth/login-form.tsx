@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -21,6 +22,7 @@ import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 import { getYear, setYear, isBefore } from "date-fns";
+import { findUserByEmail } from "@/lib/data";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -79,7 +81,7 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (typeof window === 'undefined') return;
 
     if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
@@ -112,72 +114,36 @@ export function LoginForm() {
 
 
     try {
-        const allSignupsStr = localStorage.getItem('allSignups');
-        if (allSignupsStr) {
-            let allSignups = JSON.parse(allSignupsStr);
-            let user = allSignups.find((u: any) => u.email === values.email && u.password === values.password);
+        let user = await findUserByEmail(values.email);
 
-            if (user) {
-                // Ensure the user has a userId, assign one if missing (for backwards compatibility with older stored users)
-                if (!user.userId) {
-                    user.userId = uuidv4();
-                }
+        if (user && user.password === values.password) {
+            user = updateUserGrade(user);
 
-                user = updateUserGrade(user);
+            // Update user in Firestore if grade changed
+            // await createUser(user); // `createUser` does a setDoc, which is fine here.
 
-                // Save updated user data back to the master list
-                allSignups = allSignups.map((u: any) => u.email === user.email ? user : u);
-                localStorage.setItem('allSignups', JSON.stringify(allSignups));
+            localStorage.setItem('signupData', JSON.stringify(user));
+            localStorage.setItem('userName', user.name);
+            localStorage.setItem('userPlan', user.plan);
 
-
-                localStorage.setItem('signupData', JSON.stringify(user));
-                localStorage.setItem('userName', user.name);
-                localStorage.setItem('userPlan', user.plan);
-
-                // Clear previous session data
-                localStorage.removeItem('onboardingData');
-                localStorage.removeItem('paymentComplete');
-                localStorage.removeItem(`roadmapTasks-${user.email}`);
-                localStorage.removeItem(`aiSuggestion-${user.email}`);
-
-                // Restore persisted data for this user into the current session
-                const onboardingComplete = localStorage.getItem(`onboarding-${user.email}`);
-                const paymentComplete = localStorage.getItem(`payment-${user.email}`);
-
-                // This is the key: load the master task list into the session
-                if (user.tasks) {
-                    localStorage.setItem(`roadmapTasks-${user.email}`, JSON.stringify(user.tasks));
-                }
-                if (user.suggestion) {
-                    localStorage.setItem(`aiSuggestion-${user.email}`, JSON.stringify(user.suggestion));
-                }
-
-                 if (onboardingComplete) {
-                    localStorage.setItem('onboardingData', onboardingComplete);
-                 }
-                 if (paymentComplete) {
-                    localStorage.setItem('paymentComplete', 'true');
-                 }
-
-                if (!onboardingComplete) {
-                    router.push('/onboarding');
-                } else if (!paymentComplete) {
-                    router.push('/payment');
-                } else {
-                    router.push('/dashboard');
-                }
+            // Clear previous session data just in case
+            localStorage.removeItem('onboardingData');
+            
+            // Restore persisted data for this user into the current session
+            if(user.onboardingData) {
+              localStorage.setItem('onboardingData', JSON.stringify(user.onboardingData));
+            }
+            
+            if (!user.onboardingData) {
+                router.push('/onboarding');
             } else {
-                 toast({
-                    variant: "destructive",
-                    title: "Login Failed",
-                    description: "Invalid email or password. Please try again.",
-                });
+                router.push('/dashboard');
             }
         } else {
-             toast({
+              toast({
                 variant: "destructive",
                 title: "Login Failed",
-                description: "No users found. Please sign up first.",
+                description: "Invalid email or password. Please try again.",
             });
         }
     } catch (error) {

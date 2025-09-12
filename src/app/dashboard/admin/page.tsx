@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,33 +13,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-
-// Helper to safely parse JSON from localStorage
-const getFromLocalStorage = (key: string, defaultValue: any) => {
-    if (typeof window === 'undefined') return defaultValue;
-    try {
-        const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-        console.error(`Error parsing localStorage key "${key}":`, error);
-        return defaultValue;
-    }
-};
-
-const getAllUsers = () => {
-    if (typeof window === 'undefined') return [];
-    const allUsers = getFromLocalStorage('allSignups', []);
-    
-    // Deduplicate users based on email to ensure a unique list
-    const uniqueUsers = allUsers.reduce((acc: any[], current: any) => {
-        if (!acc.find(item => item.email === current.email)) {
-            acc.push(current);
-        }
-        return acc;
-    }, []);
-
-    return uniqueUsers;
-}
+import { getContactMessagesRT, getJobApplicationsRT, getRecentSignupsRT, getSupportRequestsRT, getGlobalStatsRT } from "@/lib/data";
 
 function AdminHeader() {
     const router = useRouter();
@@ -52,18 +27,6 @@ function AdminHeader() {
     }, []);
 
     const handleLogout = () => {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem('signupData');
-            localStorage.removeItem('onboardingData');
-            localStorage.removeItem('paymentComplete');
-            localStorage.removeItem('userAvatar');
-            localStorage.removeItem('welcomeEmailSent');
-            localStorage.removeItem('aiSuggestion');
-            localStorage.removeItem('roadmapTasks');
-            localStorage.removeItem('forumPosts');
-            localStorage.removeItem('userName');
-            localStorage.removeItem('userPlan');
-        }
         router.push('/');
     };
 
@@ -130,40 +93,55 @@ export default function AdminPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // --- User Stats ---
-        const allUsers = getAllUsers();
-        setUserStats({
-            totalUsers: allUsers.length,
-            dailyActive: allUsers.length > 0 ? allUsers.length : 0, // Simplified: count all users in localstorage as active
+        // --- Real-time Stats ---
+        const unsubStats = getGlobalStatsRT(stats => {
+            setUserStats(prev => ({
+                ...prev,
+                totalUsers: stats.students ?? prev.totalUsers,
+                dailyActive: stats.students ?? prev.dailyActive, // Simplified logic
+            }));
         });
 
-        // --- Support Requests ---
-        const requests = getFromLocalStorage('humanChatRequests', []);
-        setSupportRequests(requests.filter((r: any) => r.status === 'pending').length);
+        // --- Real-time Support Requests ---
+        const unsubSupport = getSupportRequestsRT(requests => {
+            setSupportRequests(requests.filter((r: any) => r.status === 'pending').length);
+        });
         
-        // --- Contact Messages ---
-        const messages = getFromLocalStorage('contactMessages', []);
-        setContactMessages(messages.filter((m: any) => m.status === 'New').length);
+        // --- Real-time Contact Messages ---
+        const unsubMessages = getContactMessagesRT(messages => {
+            setContactMessages(messages.filter((m: any) => m.status === 'New').length);
+        });
 
-        // --- Job Applications ---
-        const applications = getFromLocalStorage('jobApplications', []);
-        setJobApplications(applications.filter((a: any) => a.status === 'New').length);
+        // --- Real-time Job Applications ---
+        const unsubApps = getJobApplicationsRT(applications => {
+            setJobApplications(applications.filter((a: any) => a.status === 'New').length);
+        });
 
-        // --- Recent Signups ---
-        const signupsWithAvatars = [...allUsers].reverse().slice(0, 4).map((user: any) => ({
-            ...user,
-            avatar: user.name.charAt(0).toUpperCase(),
-            hint: "student face", // generic hint
-        }));
-        setRecentSignups(signupsWithAvatars as any);
+        // --- Real-time Recent Signups ---
+        const unsubSignups = getRecentSignupsRT(users => {
+            const signupsWithAvatars = users.map((user: any) => ({
+                ...user,
+                avatar: user.name.charAt(0).toUpperCase(),
+                hint: "student face",
+            }));
+            setRecentSignups(signupsWithAvatars as any);
+        });
 
-        // --- Feature Engagement ---
-        const engagementData = getFromLocalStorage('featureEngagement', {});
+        // --- Feature Engagement (from localStorage, as it's client-specific) ---
+        const engagementData = JSON.parse(localStorage.getItem('featureEngagement') || '{}');
         const chartData = Object.entries(engagementData).map(([name, usage]) => ({
-            name: formatFeatureName(name), // Format name for display
+            name: formatFeatureName(name),
             usage: usage as number,
         }));
         setFeatureEngagementData(chartData as any);
+
+        return () => {
+            unsubStats();
+            unsubSupport();
+            unsubMessages();
+            unsubApps();
+            unsubSignups();
+        };
         
     }, []);
 

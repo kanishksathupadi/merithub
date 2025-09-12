@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState } from 'react';
@@ -13,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Sparkles, Wand2, Lightbulb, ThumbsUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { incrementStat } from '@/lib/data';
 
 const essaySchema = z.object({
   prompt: z.string().min(10, "Please enter the full essay prompt."),
@@ -34,14 +36,7 @@ const FeedbackCard = ({ title, content, icon }: { title: string, content: string
 );
 
 const trackEssayReviewStat = () => {
-    try {
-        const stats = JSON.parse(localStorage.getItem('essayReviewStats') || '{"count": 0}');
-        stats.count += 1;
-        localStorage.setItem('essayReviewStats', JSON.stringify(stats));
-        window.dispatchEvent(new StorageEvent('storage', { key: 'essayReviewStats' }));
-    } catch (error) {
-        console.error("Failed to track essay review stats:", error);
-    }
+    incrementStat('essaysReviewed').catch(console.error);
 };
 
 export default function EssayReviewPage() {

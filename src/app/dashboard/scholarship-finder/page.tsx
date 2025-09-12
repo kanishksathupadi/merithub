@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -10,19 +11,13 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { FindScholarshipsOutput, FindScholarshipsInput } from '@/lib/types';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { incrementStat } from '@/lib/data';
 
 
 const trackScholarshipStat = (scholarshipsFound: FindScholarshipsOutput) => {
-    try {
-        const count = scholarshipsFound.scholarships.length;
-        if (count > 0) {
-            const stats = JSON.parse(localStorage.getItem('scholarshipFinderStats') || '{"count": 0}');
-            stats.count += count;
-            localStorage.setItem('scholarshipFinderStats', JSON.stringify(stats));
-            window.dispatchEvent(new StorageEvent('storage', { key: 'scholarshipFinderStats' }));
-        }
-    } catch (error) {
-        console.error("Failed to track scholarship finder stats:", error);
+    const count = scholarshipsFound.scholarships.length;
+    if (count > 0) {
+        incrementStat('scholarshipsFound', count).catch(console.error);
     }
 };
 

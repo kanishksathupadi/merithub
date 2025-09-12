@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -18,8 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
-import { useRouter } from "next/navigation";
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 
 const settingsSchema = z.object({
@@ -34,7 +35,6 @@ const defaultValues: Partial<SettingsValues> = {};
 export function SettingsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   const form = useForm<SettingsValues>({
     resolver: zodResolver(settingsSchema),
@@ -55,69 +55,43 @@ export function SettingsForm() {
   }, [form]);
 
 
-  function onSubmit(data: SettingsValues) {
-    console.log("Settings saved:", data);
-    
-    // Update local storage
+  async function onSubmit(data: SettingsValues) {
     const userData = localStorage.getItem('signupData');
-    if (userData) {
-      const parsedData = JSON.parse(userData);
-      const updatedData = { ...parsedData, name: data.name, email: data.email };
-      localStorage.setItem('signupData', JSON.stringify(updatedData));
-      localStorage.setItem('userName', data.name);
+    if (!userData) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not find user data.'});
+      return;
     }
-    
-    // Dispatch event to notify other components
-    window.dispatchEvent(new Event('storage'));
+    const parsedData = JSON.parse(userData);
+    const userId = parsedData.userId;
 
-    toast({
-      title: "Settings Saved",
-      description: "Your changes have been successfully saved.",
-    });
+    try {
+        const userDocRef = doc(db, 'users', userId);
+        await updateDoc(userDocRef, {
+            name: data.name,
+            email: data.email,
+        });
+
+        // Update local storage
+        const updatedData = { ...parsedData, name: data.name, email: data.email };
+        localStorage.setItem('signupData', JSON.stringify(updatedData));
+        localStorage.setItem('userName', data.name);
+        
+        // Dispatch event to notify other components
+        window.dispatchEvent(new Event('storage'));
+
+        toast({
+        title: "Settings Saved",
+        description: "Your changes have been successfully saved.",
+        });
+    } catch(error) {
+        console.error("Failed to save settings:", error);
+         toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Failed to save your changes. Please try again.',
+        });
+    }
   }
-
-  const handleDeleteAccount = () => {
-    const userDataStr = localStorage.getItem('signupData');
-    if (userDataStr) {
-      const userData = JSON.parse(userDataStr);
-      const userEmail = userData.email;
-
-      // Remove all user-specific data
-      localStorage.removeItem(`onboarding-${userEmail}`);
-      localStorage.removeItem(`payment-${userEmail}`);
-      localStorage.removeItem(`roadmapTasks-${userEmail}`);
-      localStorage.removeItem(`aiSuggestion-${userEmail}`);
-      localStorage.removeItem(`lastCheckIn-${userEmail}`);
-      
-      // Remove generic session data
-      localStorage.removeItem('signupData');
-      localStorage.removeItem('onboardingData');
-      localStorage.removeItem('paymentComplete');
-      localStorage.removeItem('userAvatar');
-      localStorage.removeItem('welcomeEmailSent');
-      localStorage.removeItem('userName');
-      localStorage.removeItem('userPlan');
-      localStorage.removeItem('hasBeenWelcomed');
-      localStorage.removeItem('userNotifications');
-
-
-      // Remove user from the master list of all signups
-      const allSignupsStr = localStorage.getItem('allSignups');
-      if (allSignupsStr) {
-          let allSignups = JSON.parse(allSignupsStr);
-          allSignups = allSignups.filter((user: any) => user.email !== userEmail);
-          localStorage.setItem('allSignups', JSON.stringify(allSignups));
-      }
-
-      toast({
-        title: "Account Deleted",
-        description: "Your account and all associated data have been removed.",
-      });
-
-      // Redirect to home page after deletion
-      router.push('/');
-    }
-  };
 
 
   if (loading) {
@@ -128,12 +102,6 @@ export function SettingsForm() {
                 <CardContent className="space-y-4">
                     <Skeleton className="h-10 w-full" />
                     <Skeleton className="h-10 w-full" />
-                </CardContent>
-            </Card>
-             <Card>
-                <CardHeader><Skeleton className="h-8 w-1/3" /></CardHeader>
-                <CardContent className="space-y-4">
-                    <Skeleton className="h-20 w-full" />
                 </CardContent>
             </Card>
         </div>
@@ -166,7 +134,7 @@ export function SettingsForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email Address</FormLabel>
-                  <FormControl><Input type="email" {...field} /></FormControl>
+                  <FormControl><Input type="email" {...field} disabled /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -178,36 +146,6 @@ export function SettingsForm() {
             <Button type="submit">Save Changes</Button>
         </div>
       </form>
-      
-      <Card className="border-destructive">
-          <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
-            <CardDescription>This is a permanent action and cannot be undone.</CardDescription>
-          </CardHeader>
-          <CardFooter className="flex justify-between items-center">
-             <p className="text-sm text-muted-foreground">Delete your account and all of your data.</p>
-             <AlertDialog>
-                <AlertDialogTrigger asChild>
-                    <Button variant="destructive">Delete Account</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action is permanent and cannot be undone. This will permanently delete your account and remove all of your data from our servers.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
-                            Yes, delete my account
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-          </CardFooter>
-        </Card>
-
     </Form>
   );
 }

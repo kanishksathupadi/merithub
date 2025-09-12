@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState, Suspense } from 'react';
@@ -8,36 +9,16 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-
-const getFromLocalStorage = (key: string, defaultValue: any) => {
-    if (typeof window === 'undefined') return defaultValue;
-    try {
-        const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-        console.error(`Error parsing localStorage key "${key}":`, error);
-        return defaultValue;
-    }
-};
-
-const getUniqueUsers = () => {
-    const allUsers = getFromLocalStorage('allSignups', []);
-    const uniqueUsers = allUsers.reduce((acc: any[], current: any) => {
-        if (!acc.find(item => item.email === current.email)) {
-            acc.push(current);
-        }
-        return acc;
-    }, []);
-    return uniqueUsers;
-};
+import { getAllUsers } from '@/lib/data';
 
 function ActiveUsersList() {
     const [users, setUsers] = useState<any[]>([]);
 
     useEffect(() => {
-        const allUsers = getUniqueUsers();
-        // For this demo, "active users" are all unique users.
-        setUsers(allUsers);
+        getAllUsers().then(allUsers => {
+            // For this demo, "active users" are all unique users.
+            setUsers(allUsers);
+        });
     }, []);
 
     const pageTitle = "Daily Active Users";

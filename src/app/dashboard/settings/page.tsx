@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { SettingsForm } from "@/components/dashboard/settings-form";
@@ -7,10 +8,19 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { Card, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function SettingsPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+  const router = useRouter();
+
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -24,6 +34,40 @@ export default function SettingsPage() {
     }
     setLoading(false);
   }, []);
+  
+  const handleDeleteAccount = async () => {
+    const userDataStr = localStorage.getItem('signupData');
+    if (userDataStr) {
+      const userData = JSON.parse(userDataStr);
+      const userId = userData.userId;
+
+      try {
+        await deleteDoc(doc(db, "users", userId));
+        
+        // Clear local session data
+        Object.keys(localStorage).forEach(key => {
+            if(key.includes(userData.email) || ['signupData', 'onboardingData', 'paymentComplete', 'userAvatar', 'userName', 'userPlan', 'hasBeenWelcomed', 'userNotifications'].includes(key)) {
+                localStorage.removeItem(key);
+            }
+        });
+
+        toast({
+          title: "Account Deleted",
+          description: "Your account and all associated data have been removed.",
+        });
+
+        router.push('/');
+      } catch (error) {
+        console.error("Failed to delete account:", error);
+        toast({
+            variant: 'destructive',
+            title: "Error",
+            description: "Failed to delete your account. Please try again.",
+        });
+      }
+    }
+  };
+
 
   if (loading) {
       return <div>Loading...</div>
@@ -43,6 +87,36 @@ export default function SettingsPage() {
             <p className="text-muted-foreground">Manage your account, notifications, and privacy settings.</p>
         </header>
         <SettingsForm />
+        
+        <Card className="border-destructive">
+          <CardHeader>
+            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            <CardDescription>This is a permanent action and cannot be undone.</CardDescription>
+          </CardHeader>
+          <CardFooter className="flex justify-between items-center">
+             <p className="text-sm text-muted-foreground">Delete your account and all of your data.</p>
+             <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive">Delete Account</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action is permanent and cannot be undone. This will permanently delete your account and remove all of your data from our servers.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                            Yes, delete my account
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+          </CardFooter>
+        </Card>
+        
         <Toaster />
     </div>
   );

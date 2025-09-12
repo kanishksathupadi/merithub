@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState } from "react";
@@ -14,6 +15,7 @@ import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Label } from "@/components/ui/label";
+import { createUser } from "@/lib/data";
 
 
 export function SignupForm() {
@@ -69,9 +71,6 @@ export function SignupForm() {
     }
     
     try {
-        const allSignupsStr = localStorage.getItem('allSignups');
-        const allSignups = allSignupsStr ? JSON.parse(allSignupsStr) : [];
-        
         const newUser = { 
             ...formValues,
             grade: Number(formValues.grade) || 0,
@@ -82,10 +81,10 @@ export function SignupForm() {
             lastLoginTimestamp: new Date().toISOString(),
             tasks: [],
             suggestion: null,
+            onboardingData: null,
         };
 
-        allSignups.push(newUser);
-        localStorage.setItem('allSignups', JSON.stringify(allSignups));
+        await createUser(newUser);
 
         localStorage.setItem('signupData', JSON.stringify(newUser));
         localStorage.setItem('userName', newUser.name);

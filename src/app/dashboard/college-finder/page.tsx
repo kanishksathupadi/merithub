@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -18,6 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
 import { differenceInDays, formatDistanceToNow, addDays } from 'date-fns';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { incrementStat } from '@/lib/data';
 
 const filterSchema = z.object({
   filterQuery: z.string().optional(),
@@ -152,16 +154,9 @@ export default function CollegeFinderPage() {
     });
 
     const trackCollegeStat = (collegesFound: FindMatchingCollegesOutput) => {
-        try {
-            const count = collegesFound.reachSchools.length + collegesFound.targetSchools.length + collegesFound.safetySchools.length;
-            if (count > 0) {
-                const stats = JSON.parse(localStorage.getItem('collegeFinderStats') || '{"count": 0}');
-                stats.count += count;
-                localStorage.setItem('collegeFinderStats', JSON.stringify(stats));
-                window.dispatchEvent(new StorageEvent('storage', { key: 'collegeFinderStats' }));
-            }
-        } catch (error) {
-            console.error("Failed to track college finder stats:", error);
+        const count = collegesFound.reachSchools.length + collegesFound.targetSchools.length + collegesFound.safetySchools.length;
+        if (count > 0) {
+            incrementStat('collegesFound', count).catch(console.error);
         }
     };
 
