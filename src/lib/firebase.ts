@@ -7,7 +7,7 @@ import { getFirestore } from "firebase/firestore";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration - REPLACE WITH YOUR CONFIG
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// You can get this from your project's settings in the Firebase console
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
