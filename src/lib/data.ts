@@ -52,22 +52,6 @@ export const incrementStat = async (statName: 'totalUsers' | 'collegesFound' | '
     });
 };
 
-// Fetches stats once for server components
-export const getGlobalStats = async () => {
-    const docSnap = await getDoc(statsDocRef);
-    if (docSnap.exists()) {
-        const data = docSnap.data();
-        const usersSnapshot = await getDocs(collection(db, 'users'));
-        return {
-            students: usersSnapshot.size, // Real-time user count
-            colleges: data.collegesFound || 0,
-            essays: data.essaysReviewed || 0,
-            scholarships: data.scholarshipsFound || 0
-        };
-    }
-    return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
-};
-
 // Sets up a real-time listener for client components
 export const getGlobalStatsRT = (callback: (stats: any) => void) => {
     let unsubs: (() => void)[] = [];

@@ -1,5 +1,4 @@
 
-
 import { Button } from "@/components/ui/button";
 import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
 import Image from "next/image";
@@ -12,13 +11,36 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { AppLogo } from "@/components/logo";
-import { getGlobalStats } from "@/lib/data";
+import { db } from "@/lib/firebase";
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+
+async function getGlobalStats() {
+    try {
+        const statsDocRef = doc(db, 'stats', 'global');
+        const docSnap = await getDoc(statsDocRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const usersSnapshot = await getDocs(collection(db, 'users'));
+            return {
+                students: usersSnapshot.size, // Real-time user count
+                colleges: data.collegesFound || 0,
+                essays: data.essaysReviewed || 0,
+                scholarships: data.scholarshipsFound || 0
+            };
+        }
+    } catch (error) {
+        console.error("Error fetching global stats:", error);
+    }
+    // Return a default object if there's an error or the document doesn't exist
+    return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
+}
 
 
 async function LiveStats() {
     const stats = await getGlobalStats();
 
-    const StatCard = ({ icon, value, label }: { icon: React.ReactNode, value: number, label: string }) => (
+    const StatCard = ({ icon: Icon, value, label }: { icon: React.ElementType, value: number, label: string }) => (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -26,7 +48,7 @@ async function LiveStats() {
             className="flex flex-col items-center justify-center p-6 bg-card rounded-xl shadow-lg border border-border"
         >
             <div className="p-3 rounded-full bg-primary/10 text-primary w-fit mb-4">
-                {icon}
+                <Icon className="w-8 h-8" />
             </div>
             <p className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-foreground/80">
                  {value.toLocaleString()}
@@ -37,10 +59,10 @@ async function LiveStats() {
 
     return (
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCard icon={<UserCheck className="w-8 h-8" />} value={stats.students} label="Students Guided" />
-            <StatCard icon={<BrainCircuit className="w-8 h-8" />} value={stats.colleges} label="College Matches Found" />
-            <StatCard icon={<Award className="w-8 h-8" />} value={stats.scholarships} label="Scholarships Found" />
-            <StatCard icon={<FileText className="w-8 h-8" />} value={stats.essays} label="Essays Reviewed" />
+            <StatCard icon={UserCheck} value={stats.students} label="Students Guided" />
+            <StatCard icon={BrainCircuit} value={stats.colleges} label="College Matches Found" />
+            <StatCard icon={Award} value={stats.scholarships} label="Scholarships Found" />
+            <StatCard icon={FileText} value={stats.essays} label="Essays Reviewed" />
         </div>
     );
 }
@@ -442,3 +464,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
+
+    
