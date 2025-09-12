@@ -1,112 +1,95 @@
 
-import { doc, updateDoc, increment as firestoreIncrement, onSnapshot, query, orderBy, limit, collection, getDocs, setDoc, getDoc } from "firebase/firestore";
-import { db } from '@/lib/firebase';
+
+import { v4 as uuidv4 } from 'uuid';
+import { isFirebaseConfigValid, db } from '@/lib/firebase';
 
 // --- USER MANAGEMENT ---
 
-export const findUserByEmail = async (email: string) => {
-    if (!db) return null;
-    const q = query(collection(db, "users"));
-    const querySnapshot = await getDocs(q);
-    const users = querySnapshot.docs.map(doc => doc.data());
-    const user = users.find(u => u.email === email);
-
-    if (user && user.userId) {
-        const userDoc = await getDoc(doc(db, "users", user.userId));
-        return { id: userDoc.id, ...userDoc.data() };
-    }
-    return null;
-};
-
 export const getAllUsers = async () => {
-    if (!db) return [];
-    const q = query(collection(db, "users"));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    if (typeof window === 'undefined') return [];
+    try {
+        const allUsersStr = localStorage.getItem('allSignups');
+        return allUsersStr ? JSON.parse(allUsersStr) : [];
+    } catch (e) {
+        console.error("Failed to get all users:", e);
+        return [];
+    }
 };
 
 
 // --- STATS TRACKING ---
 
-// This function can only be used on the server, as it uses the Admin SDK.
-// The `get-global-stats.ts` flow is the server-side entrypoint.
-export const incrementStat = async (statName: 'totalUsers' | 'collegesFound' | 'essaysReviewed' | 'scholarshipsFound', value: number = 1) => {
-    if (!db) return;
-    const statsDocRef = doc(db, 'stats', 'global');
+// This function now uses localStorage for the prototype.
+export const incrementStat = (statName: 'totalUsers' | 'collegesFound' | 'essaysReviewed' | 'scholarshipsFound', value: number = 1) => {
+    if (typeof window === 'undefined') return;
     try {
-        const docSnap = await getDoc(statsDocRef);
-        if (!docSnap.exists()) {
-            await setDoc(statsDocRef, {
-                collegesFound: 0,
-                essaysReviewed: 0,
-                scholarshipsFound: 0,
-            });
-        }
-        await updateDoc(statsDocRef, {
-            [statName]: firestoreIncrement(value)
-        });
+        const statsStr = localStorage.getItem('globalStats');
+        const stats = statsStr ? JSON.parse(statsStr) : {
+            collegesFound: 0,
+            essaysReviewed: 0,
+            scholarshipsFound: 0,
+        };
+        stats[statName] = (stats[statName] || 0) + value;
+        localStorage.setItem('globalStats', JSON.stringify(stats));
+
+        // Dispatch a storage event to notify other components (like the admin dashboard) that stats have changed.
+        window.dispatchEvent(new StorageEvent('storage', { key: 'globalStats' }));
+
     } catch(e) {
         console.error("Could not increment stat", e);
     }
 };
 
-// Sets up a real-time listener for client components
+// Sets up a "real-time" listener for client components using localStorage
 export const getGlobalStatsRT = (callback: (stats: any) => void) => {
-    if (!db) {
+    if (typeof window === 'undefined') {
         callback({ students: 0, colleges: 0, essays: 0, scholarships: 0 });
-        return () => {}; // Return an empty unsubscribe function
+        return () => {};
     }
 
-    let unsubs: (() => void)[] = [];
-    const statsDocRef = doc(db, 'stats', 'global');
+    const updateStats = () => {
+        const allUsersStr = localStorage.getItem('allSignups');
+        const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+        
+        const statsStr = localStorage.getItem('globalStats');
+        const statsData = statsStr ? JSON.parse(statsStr) : {
+            collegesFound: 0,
+            essaysReviewed: 0,
+            scholarshipsFound: 0,
+        };
 
-    const statsUnsub = onSnapshot(statsDocRef, (doc) => {
-        const statsData = doc.data() || { collegesFound: 0, essaysReviewed: 0, scholarshipsFound: 0 };
-         callback({
+        callback({
+            students: allUsers.length,
             colleges: statsData.collegesFound,
             essays: statsData.essaysReviewed,
             scholarships: statsData.scholarshipsFound
         });
-    });
-    unsubs.push(statsUnsub);
+    };
 
-    const usersUnsub = onSnapshot(collection(db, 'users'), (snapshot) => {
-        callback({ students: snapshot.size });
-    });
-    unsubs.push(usersUnsub);
+    updateStats(); // Initial call
 
+    const storageListener = (e: StorageEvent) => {
+        if (e.key === 'allSignups' || e.key === 'globalStats') {
+            updateStats();
+        }
+    };
+    
+    window.addEventListener('storage', storageListener);
+    
     return () => {
-        unsubs.forEach(unsub => unsub());
+        window.removeEventListener('storage', storageListener);
     };
 };
 
 
 // --- OTHER DATA OPERATIONS ---
 
-export const saveOnboardingData = async (userId: string, data: any) => {
-    if (!db) return;
-    try {
-        // Persist to user's own document
-        await updateDoc(doc(db, "users", userId), { onboardingData: data });
-
-        // Also save to a separate collection for this specific user
-        const onboardingDocRef = doc(db, `onboarding`, userId);
-        await setDoc(onboardingDocRef, data);
-
-        // This is a local-only operation for prototype convenience
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(`onboarding-${userId}`, JSON.stringify(data));
-        }
-
-    } catch (e) {
-        console.error("Failed to save onboarding data:", e);
-    }
-};
-
 // The following functions are for prototype purposes and use localStorage.
 // In a real app, these would be robust, secure, server-side operations.
 
 export const getRecentSignupsRT = (callback: (users: any[]) => void) => {
+    if (typeof window === 'undefined') return callback([]);
+    
     const allUsersStr = localStorage.getItem('allSignups');
     const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
     const recent = allUsers.sort((a: any, b: any) => new Date(b.signupTimestamp).getTime() - new Date(a.signupTimestamp).getTime()).slice(0, 4);
@@ -115,6 +98,7 @@ export const getRecentSignupsRT = (callback: (users: any[]) => void) => {
 };
 
 export const getContactMessagesRT = (callback: (messages: any[]) => void) => {
+    if (typeof window === 'undefined') return callback([]);
     const messagesStr = localStorage.getItem('contactMessages');
     const messages = messagesStr ? JSON.parse(messagesStr) : [];
     callback(messages);
@@ -122,6 +106,7 @@ export const getContactMessagesRT = (callback: (messages: any[]) => void) => {
 };
 
 export const getJobApplicationsRT = (callback: (apps: any[]) => void) => {
+    if (typeof window === 'undefined') return callback([]);
     const appsStr = localStorage.getItem('jobApplications');
     const apps = appsStr ? JSON.parse(appsStr) : [];
     callback(apps);
@@ -129,6 +114,7 @@ export const getJobApplicationsRT = (callback: (apps: any[]) => void) => {
 };
 
 export const getSupportRequestsRT = (callback: (reqs: any[]) => void) => {
+    if (typeof window === 'undefined') return callback([]);
     const reqsStr = localStorage.getItem('humanChatRequests');
     const reqs = reqsStr ? JSON.parse(reqsStr) : [];
     callback(reqs);
