@@ -9,23 +9,38 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration - REPLACE WITH YOUR CONFIG
 // You can get this from your project's settings in the Firebase console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  // This is a placeholder configuration.
+  // To use Firebase features, you will need to replace this
+  // with your own project's configuration from the Firebase console.
+  apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
+  projectId: "YOUR-PROJECT-ID",
+  storageBucket: "YOUR-PROJECT-ID.appspot.com",
+  messagingSenderId: "YOUR-SENDER-ID",
+  appId: "1:YOUR-SENDER-ID:web:XXXXXXXXXXXXXXXXXXXXXX",
+  measurementId: "G-XXXXXXXXXX"
 };
 
 // Initialize Firebase
 let app;
-if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-} else {
-    app = getApps()[0];
+let db: any = {}; // Use a dummy object when not initialized
+
+try {
+    if (!getApps().length) {
+        // Avoid initialization if config is just a placeholder
+        if (firebaseConfig.projectId !== "YOUR-PROJECT-ID") {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+        } else {
+            console.warn("Firebase config is not set. Database features will be disabled.");
+        }
+    } else {
+        app = getApps()[0];
+        db = getFirestore(app);
+    }
+} catch (error) {
+    console.error("Firebase initialization failed:", error);
 }
 
-const db = getFirestore(app);
 
 export { db };
