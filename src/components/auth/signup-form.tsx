@@ -14,9 +14,6 @@ import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Label } from "@/components/ui/label";
-import { doc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-
 
 export function SignupForm() {
   const router = useRouter();
@@ -48,16 +45,6 @@ export function SignupForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (typeof window === 'undefined') return;
-
-     if (!db) {
-        toast({
-            variant: "destructive",
-            title: "Database Not Configured",
-            description: "Firebase is not configured. Please add your project configuration in src/lib/firebase.ts to enable account creation.",
-            duration: 8000,
-        });
-        return;
-    }
 
     if (!formValues.acceptTerms) {
         toast({
@@ -94,19 +81,12 @@ export function SignupForm() {
             onboardingData: null,
         };
 
-        // Use the client-side SDK directly here
-        await setDoc(doc(db, "users", newUser.userId), newUser);
-
-        // This is a prototype-only helper to make the leaderboard work across sessions.
-        // In a real app, this would be handled server-side.
-        try {
-            const allUsersStr = localStorage.getItem('allSignups');
-            const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-            allUsers.push(newUser);
-            localStorage.setItem('allSignups', JSON.stringify(allUsers));
-        } catch(e) {
-            console.error("Could not update master user list for demo.", e)
-        }
+        // --- LocalStorage Logic ---
+        const allUsersStr = localStorage.getItem('allSignups');
+        const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+        allUsers.push(newUser);
+        localStorage.setItem('allSignups', JSON.stringify(allUsers));
+        // --- End LocalStorage Logic ---
 
         localStorage.setItem('signupData', JSON.stringify(newUser));
         localStorage.setItem('userName', newUser.name);

@@ -1,16 +1,17 @@
 
+import { doc, updateDoc, increment as firestoreIncrement, onSnapshot, query, orderBy, limit, collection, getDocs, setDoc, getDoc } from "firebase/firestore";
 import { db } from '@/lib/firebase';
-import { collection, doc, getDoc, setDoc, getDocs, updateDoc, increment as firestoreIncrement, onSnapshot, query, orderBy, limit } from "firebase/firestore";
 
 // --- USER MANAGEMENT ---
 
 export const findUserByEmail = async (email: string) => {
+    if (!db) return null;
     const q = query(collection(db, "users"));
     const querySnapshot = await getDocs(q);
     const users = querySnapshot.docs.map(doc => doc.data());
     const user = users.find(u => u.email === email);
 
-    if (user) {
+    if (user && user.userId) {
         const userDoc = await getDoc(doc(db, "users", user.userId));
         return { id: userDoc.id, ...userDoc.data() };
     }
@@ -18,6 +19,7 @@ export const findUserByEmail = async (email: string) => {
 };
 
 export const getAllUsers = async () => {
+    if (!db) return [];
     const q = query(collection(db, "users"));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -26,35 +28,40 @@ export const getAllUsers = async () => {
 
 // --- STATS TRACKING ---
 
-const statsDocRef = doc(db, 'stats', 'global');
-
-// Initializes the stats document if it doesn't exist
-const ensureStatsDoc = async () => {
-    const docSnap = await getDoc(statsDocRef);
-    if (!docSnap.exists()) {
-        await setDoc(statsDocRef, {
-            totalUsers: 0,
-            collegesFound: 0,
-            essaysReviewed: 0,
-            scholarshipsFound: 0,
-        });
-    }
-};
-
+// This function can only be used on the server, as it uses the Admin SDK.
+// The `get-global-stats.ts` flow is the server-side entrypoint.
 export const incrementStat = async (statName: 'totalUsers' | 'collegesFound' | 'essaysReviewed' | 'scholarshipsFound', value: number = 1) => {
-    await ensureStatsDoc();
-    await updateDoc(statsDocRef, {
-        [statName]: firestoreIncrement(value)
-    });
+    if (!db) return;
+    const statsDocRef = doc(db, 'stats', 'global');
+    try {
+        const docSnap = await getDoc(statsDocRef);
+        if (!docSnap.exists()) {
+            await setDoc(statsDocRef, {
+                collegesFound: 0,
+                essaysReviewed: 0,
+                scholarshipsFound: 0,
+            });
+        }
+        await updateDoc(statsDocRef, {
+            [statName]: firestoreIncrement(value)
+        });
+    } catch(e) {
+        console.error("Could not increment stat", e);
+    }
 };
 
 // Sets up a real-time listener for client components
 export const getGlobalStatsRT = (callback: (stats: any) => void) => {
+    if (!db) {
+        callback({ students: 0, colleges: 0, essays: 0, scholarships: 0 });
+        return () => {}; // Return an empty unsubscribe function
+    }
+
     let unsubs: (() => void)[] = [];
+    const statsDocRef = doc(db, 'stats', 'global');
 
     const statsUnsub = onSnapshot(statsDocRef, (doc) => {
         const statsData = doc.data() || { collegesFound: 0, essaysReviewed: 0, scholarshipsFound: 0 };
-         // We'll get total users from the other listener
          callback({
             colleges: statsData.collegesFound,
             essays: statsData.essaysReviewed,
@@ -68,7 +75,6 @@ export const getGlobalStatsRT = (callback: (stats: any) => void) => {
     });
     unsubs.push(usersUnsub);
 
-    // Return a function that unsubscribes from all listeners
     return () => {
         unsubs.forEach(unsub => unsub());
     };
@@ -77,78 +83,54 @@ export const getGlobalStatsRT = (callback: (stats: any) => void) => {
 
 // --- OTHER DATA OPERATIONS ---
 
-export const getForumPosts = async () => {
-    const q = query(collection(db, "forumPosts"), orderBy("timestamp", "desc"));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-};
-
-export const createForumPost = async (post: any) => {
-    await setDoc(doc(db, "forumPosts", post.id), post);
-};
-
-export const getForumPostById = async (id: string) => {
-    const docRef = doc(db, "forumPosts", id);
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
-};
-
-export const addForumReply = async (postId: string, replies: any[]) => {
-    await updateDoc(doc(db, "forumPosts", postId), { replies });
-};
-
-export const saveRoadmapTasks = async (userId: string, tasks: any[]) => {
-    await updateDoc(doc(db, "users", userId), { tasks: tasks });
-};
-
-export const saveSuggestion = async (userId: string, suggestion: any) => {
-    await updateDoc(doc(db, "users", userId), { suggestion: suggestion });
-};
-
 export const saveOnboardingData = async (userId: string, data: any) => {
-    await updateDoc(doc(db, "users", userId), { onboardingData: data });
+    if (!db) return;
+    try {
+        // Persist to user's own document
+        await updateDoc(doc(db, "users", userId), { onboardingData: data });
+
+        // Also save to a separate collection for this specific user
+        const onboardingDocRef = doc(db, `onboarding`, userId);
+        await setDoc(onboardingDocRef, data);
+
+        // This is a local-only operation for prototype convenience
+        if (typeof window !== 'undefined') {
+            localStorage.setItem(`onboarding-${userId}`, JSON.stringify(data));
+        }
+
+    } catch (e) {
+        console.error("Failed to save onboarding data:", e);
+    }
 };
+
+// The following functions are for prototype purposes and use localStorage.
+// In a real app, these would be robust, secure, server-side operations.
 
 export const getRecentSignupsRT = (callback: (users: any[]) => void) => {
-    const q = query(collection(db, "users"), orderBy("signupTimestamp", "desc"), limit(4));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-        const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        callback(users);
-    });
-    return unsubscribe;
+    const allUsersStr = localStorage.getItem('allSignups');
+    const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+    const recent = allUsers.sort((a: any, b: any) => new Date(b.signupTimestamp).getTime() - new Date(a.signupTimestamp).getTime()).slice(0, 4);
+    callback(recent);
+    return () => {}; // No real-time listener for localStorage
 };
 
 export const getContactMessagesRT = (callback: (messages: any[]) => void) => {
-    const q = query(collection(db, "contactMessages"), orderBy("submittedAt", "desc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-        const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        callback(messages);
-    });
-    return unsubscribe;
+    const messagesStr = localStorage.getItem('contactMessages');
+    const messages = messagesStr ? JSON.parse(messagesStr) : [];
+    callback(messages);
+    return () => {};
 };
 
-export const saveContactMessage = async (message: any) => {
-    await setDoc(doc(db, "contactMessages", message.id), message);
-}
-
 export const getJobApplicationsRT = (callback: (apps: any[]) => void) => {
-    const q = query(collection(db, "jobApplications"), orderBy("submittedAt", "desc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-        const apps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        callback(apps);
-    });
-    return unsubscribe;
+    const appsStr = localStorage.getItem('jobApplications');
+    const apps = appsStr ? JSON.parse(appsStr) : [];
+    callback(apps);
+    return () => {};
 };
 
 export const getSupportRequestsRT = (callback: (reqs: any[]) => void) => {
-    const q = query(collection(db, "supportRequests"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-        const reqs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        callback(reqs);
-    });
-    return unsubscribe;
-};
-
-export const saveSupportRequest = async (request: any) => {
-    await setDoc(doc(db, "supportRequests", request.userId), request);
+    const reqsStr = localStorage.getItem('humanChatRequests');
+    const reqs = reqsStr ? JSON.parse(reqsStr) : [];
+    callback(reqs);
+    return () => {};
 };

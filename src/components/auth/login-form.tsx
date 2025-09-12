@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -20,49 +19,52 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { v4 as uuidv4 } from "uuid";
-import { getYear, setYear, isBefore } from "date-fns";
-import { findUserByEmail } from "@/lib/data";
+import { getYear } from "date-fns";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(1, { message: "Password is required." }),
 });
 
-// Automatically update grade based on school year cutoff (e.g., August 1st)
+const findUserByEmail = (email: string): any | null => {
+    if (typeof window === 'undefined') return null;
+    const allUsersStr = localStorage.getItem('allSignups');
+    if (!allUsersStr) return null;
+    const allUsers = JSON.parse(allUsersStr);
+    return allUsers.find((user: any) => user.email === email) || null;
+}
+
+const updateUserInLocalStorage = (updatedUser: any) => {
+    if (typeof window === 'undefined') return;
+    const allUsersStr = localStorage.getItem('allSignups');
+    if (!allUsersStr) return;
+    let allUsers = JSON.parse(allUsersStr);
+    allUsers = allUsers.map((user: any) => user.userId === updatedUser.userId ? updatedUser : user);
+    localStorage.setItem('allSignups', JSON.stringify(allUsers));
+};
+
+
+// Automatically update grade based on school year cutoff
 const updateUserGrade = (user: any) => {
-    console.log("Checking for grade update for user:", user.email);
     if (typeof user.grade !== 'number' || !user.lastLoginTimestamp) {
-        console.log("No grade or last login timestamp, skipping update.");
         return user;
     }
     
     const lastLogin = new Date(user.lastLoginTimestamp);
     const today = new Date();
     
-    console.log(`Last login: ${lastLogin.toDateString()}, Current grade: ${user.grade}`);
-
-    // Define the school year cutoff (August 1st)
     const lastLoginYear = getYear(lastLogin);
     const currentYear = getYear(today);
 
-    // If a new school year has started since the last login
     if (currentYear > lastLoginYear) {
         const yearsPassed = currentYear - lastLoginYear;
         const newGrade = user.grade + yearsPassed;
-        console.log(`New school year detected. ${yearsPassed} year(s) have passed.`);
-
+        
         if (newGrade <= 12) {
             user.grade = newGrade;
-            console.log(`GRADE PROMOTED! New grade is ${user.grade}`);
         } else if (user.grade < 12) {
             user.grade = 12; // Cap at 12th grade
-            console.log(`GRADE CAPPED! New grade is 12.`);
-        } else {
-             console.log(`User is already grade 12 or higher. No grade change.`);
         }
-    } else {
-        console.log("Not a new school year. Grade remains the same.");
     }
 
     user.lastLoginTimestamp = today.toISOString();
@@ -81,7 +83,7 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (typeof window === 'undefined') return;
 
     if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
@@ -98,7 +100,6 @@ export function LoginForm() {
         return;
     }
     
-    // Check for mentor login
     if (values.email.endsWith('@aischoolmentor.com') && values.password === 'mentor123') {
         const mentorName = values.email.split('@')[0].replace('.', ' ').replace(/\b\w/g, l => l.toUpperCase());
         const mentorData = {
@@ -112,24 +113,19 @@ export function LoginForm() {
          return;
     }
 
-
     try {
-        let user = await findUserByEmail(values.email);
+        let user = findUserByEmail(values.email);
 
         if (user && user.password === values.password) {
             user = updateUserGrade(user);
-
-            // Update user in Firestore if grade changed
-            // await createUser(user); // `createUser` does a setDoc, which is fine here.
+            updateUserInLocalStorage(user);
 
             localStorage.setItem('signupData', JSON.stringify(user));
             localStorage.setItem('userName', user.name);
             localStorage.setItem('userPlan', user.plan);
-
-            // Clear previous session data just in case
+            
             localStorage.removeItem('onboardingData');
             
-            // Restore persisted data for this user into the current session
             if(user.onboardingData) {
               localStorage.setItem('onboardingData', JSON.stringify(user.onboardingData));
             }
