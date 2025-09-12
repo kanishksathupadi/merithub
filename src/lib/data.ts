@@ -4,10 +4,6 @@ import { collection, doc, getDoc, setDoc, getDocs, updateDoc, increment as fires
 
 // --- USER MANAGEMENT ---
 
-export const createUser = async (user: any) => {
-  await setDoc(doc(db, "users", user.userId), user);
-};
-
 export const findUserByEmail = async (email: string) => {
     const q = query(collection(db, "users"));
     const querySnapshot = await getDocs(q);

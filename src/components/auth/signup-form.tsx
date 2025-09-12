@@ -15,7 +15,8 @@ import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Label } from "@/components/ui/label";
-import { createUser } from "@/lib/data";
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 
 export function SignupForm() {
@@ -84,7 +85,19 @@ export function SignupForm() {
             onboardingData: null,
         };
 
-        await createUser(newUser);
+        // Use the client-side SDK directly here
+        await setDoc(doc(db, "users", newUser.userId), newUser);
+
+        // This is a prototype-only helper to make the leaderboard work across sessions.
+        // In a real app, this would be handled server-side.
+        try {
+            const allUsersStr = localStorage.getItem('allSignups');
+            const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+            allUsers.push(newUser);
+            localStorage.setItem('allSignups', JSON.stringify(allUsers));
+        } catch(e) {
+            console.error("Could not update master user list for demo.", e)
+        }
 
         localStorage.setItem('signupData', JSON.stringify(newUser));
         localStorage.setItem('userName', newUser.name);
