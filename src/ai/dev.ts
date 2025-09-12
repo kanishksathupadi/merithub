@@ -18,6 +18,7 @@ import '@/ai/flows/support-chat.ts';
 import '@/ai/flows/validate-contact-message.ts';
 import '@/ai/flows/validate-job-application.ts';
 import '@/ai/flows/send-welcome-email.ts';
+import '@/ai/flows/get-global-stats.ts';
 import '@/ai/tools/validate-academic-subject.ts';
 import '@/ai/tools/find-online-resource.ts';
 import '@/ai/tools/validate-avatar-image.ts';

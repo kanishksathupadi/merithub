@@ -1,6 +1,8 @@
 
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { Rocket, LogIn, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
+import { Rocket, TrendingUp, Zap, Target, Star, ShieldCheck, BarChart, BrainCircuit, Check, Award, Smile, DollarSign, ArrowUpCircle, BookOpen, ListChecks, PenSquare, MessageSquare, Users, UserCheck, FileText, X, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,34 +13,23 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { AppLogo } from "@/components/logo";
-import { db } from "@/lib/firebase";
-import { doc, getDoc, getDocs, collection } from "firebase/firestore";
-
-async function getGlobalStats() {
-    try {
-        const statsDocRef = doc(db, 'stats', 'global');
-        const docSnap = await getDoc(statsDocRef);
-
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            const usersSnapshot = await getDocs(collection(db, 'users'));
-            return {
-                students: usersSnapshot.size, // Real-time user count
-                colleges: data.collegesFound || 0,
-                essays: data.essaysReviewed || 0,
-                scholarships: data.scholarshipsFound || 0
-            };
-        }
-    } catch (error) {
-        console.error("Error fetching global stats:", error);
-    }
-    // Return a default object if there's an error or the document doesn't exist
-    return { students: 0, colleges: 0, essays: 0, scholarships: 0 };
-}
+import { getGlobalStats } from "@/ai/flows/get-global-stats";
 
 
 async function LiveStats() {
-    const stats = await getGlobalStats();
+    let stats;
+    try {
+        stats = await getGlobalStats();
+    } catch(error) {
+        console.error("Error fetching global stats:", error);
+        // Provide default stats on error to prevent crash
+        stats = {
+            students: 0,
+            colleges: 0,
+            scholarships: 0,
+            essays: 0,
+        };
+    }
 
     const StatCard = ({ icon: Icon, value, label }: { icon: React.ElementType, value: number, label: string }) => (
         <motion.div
@@ -464,7 +455,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
