@@ -18,10 +18,10 @@ import { getGlobalStats as getGlobalStatsClient } from "@/lib/data-client-admin"
 
 function LiveStats() {
     const [stats, setStats] = useState({
-        students: 10,
-        colleges: 4,
-        scholarships: 8,
-        essays: 10,
+        students: 0,
+        colleges: 0,
+        scholarships: 0,
+        essays: 0,
     });
 
     useEffect(() => {

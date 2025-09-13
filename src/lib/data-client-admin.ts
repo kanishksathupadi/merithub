@@ -24,10 +24,37 @@ export const getAllUsers = async () => {
 // --- STATS ---
 export const getGlobalStats = async () => {
     const allUsers = safeJSONParse('allSignups', []);
-    const globalStats = safeJSONParse('globalStats', { collegesFound: 0, essaysReviewed: 0, scholarshipsFound: 0 });
+    
+    // Define the baseline stats
+    const baselineStats = {
+        collegesFound: 4,
+        essaysReviewed: 10,
+        scholarshipsFound: 8,
+    };
+
+    let globalStats = safeJSONParse('globalStats', baselineStats);
+
+    // Ensure stats are at least the baseline
+    let needsUpdate = false;
+    if (!globalStats.collegesFound || globalStats.collegesFound < baselineStats.collegesFound) {
+        globalStats.collegesFound = baselineStats.collegesFound;
+        needsUpdate = true;
+    }
+    if (!globalStats.essaysReviewed || globalStats.essaysReviewed < baselineStats.essaysReviewed) {
+        globalStats.essaysReviewed = baselineStats.essaysReviewed;
+        needsUpdate = true;
+    }
+     if (!globalStats.scholarshipsFound || globalStats.scholarshipsFound < baselineStats.scholarshipsFound) {
+        globalStats.scholarshipsFound = baselineStats.scholarshipsFound;
+        needsUpdate = true;
+    }
+
+    if (needsUpdate) {
+         localStorage.setItem('globalStats', JSON.stringify(globalStats));
+    }
     
     return {
-        students: allUsers.length,
+        students: allUsers.length > 0 ? allUsers.length : 10,
         colleges: globalStats.collegesFound,
         essays: globalStats.essaysReviewed,
         scholarships: globalStats.scholarshipsFound,
@@ -35,9 +62,14 @@ export const getGlobalStats = async () => {
 };
 
 export const incrementStat = async (statName: 'collegesFound' | 'essaysReviewed' | 'scholarshipsFound', value: number = 1) => {
-    const stats = safeJSONParse('globalStats', { collegesFound: 0, essaysReviewed: 0, scholarshipsFound: 0 });
-    stats[statName] = (stats[statName] || 0) + value;
-    localStorage.setItem('globalStats', JSON.stringify(stats));
+    const stats = await getGlobalStats(); // Use this to get initialized stats
+    const newStats = {
+        collegesFound: stats.colleges,
+        essaysReviewed: stats.essays,
+        scholarshipsFound: stats.scholarships,
+    };
+    newStats[statName] = (newStats[statName] || 0) + value;
+    localStorage.setItem('globalStats', JSON.stringify(newStats));
     window.dispatchEvent(new StorageEvent('storage', { key: 'globalStats' }));
 };
 
