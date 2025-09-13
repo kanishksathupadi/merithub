@@ -25,6 +25,7 @@ const RoadmapTaskSchema = z.object({
     })).optional(),
     points: z.number().optional(),
     dueDate: z.string().optional(),
+    requiresProof: z.boolean().optional(),
 });
 
 
@@ -32,6 +33,11 @@ const UpdateStudentPlanInputSchema = z.object({
   existingPlan: z.array(RoadmapTaskSchema).describe("The student's current list of roadmap tasks."),
   checkInText: z.string().describe("The new information or update provided by the student during their check-in."),
 });
+
+const PromptInputSchema = UpdateStudentPlanInputSchema.extend({
+    existingPlanJson: z.string(),
+});
+
 export type UpdateStudentPlanInput = z.infer<typeof UpdateStudentPlanInputSchema>;
 
 const UpdateStudentPlanOutputSchema = z.object({
@@ -46,7 +52,7 @@ export async function updateStudentPlan(input: UpdateStudentPlanInput): Promise<
 
 const prompt = ai.definePrompt({
   name: 'updateStudentPlanPrompt',
-  input: {schema: UpdateStudentPlanInputSchema},
+  input: {schema: PromptInputSchema},
   output: {schema: UpdateStudentPlanOutputSchema},
   tools: [findOnlineResource],
   model: 'googleai/gemini-2.0-flash',
@@ -92,3 +98,4 @@ const updateStudentPlanFlow = ai.defineFlow(
     return output;
   }
 );
+

@@ -70,14 +70,16 @@ export default function RoadmapPage() {
 
   const onSubmit = async (values: z.infer<typeof taskSchema>) => {
     let currentUserId: string | null = null;
+    let currentUserGrade: string | null = null;
     const signupDataStr = localStorage.getItem('signupData');
     if (signupDataStr) {
         const signupData = JSON.parse(signupDataStr);
         currentUserId = signupData.userId;
+        currentUserGrade = `${signupData.grade}th Grade`;
     }
 
-    if (!currentUserId) {
-      toast({ variant: "destructive", title: "Error", description: "Could not identify user." });
+    if (!currentUserId || !currentUserGrade) {
+      toast({ variant: "destructive", title: "Error", description: "Could not identify user or grade." });
       return;
     }
     
@@ -85,8 +87,8 @@ export default function RoadmapPage() {
       id: uuidv4(),
       title: values.title,
       description: values.description,
-      category: values.category as any, // Cast to any to allow custom strings
-      grade: "Custom",
+      category: values.category as any,
+      grade: currentUserGrade, // Set the grade to the user's current grade.
       completed: false,
       relatedResources: (values.resource && values.resource.url && values.resource.title) ? [{title: values.resource.title, url: values.resource.url}] as { title: string, url: string }[] : [],
       dueDate: values.dueDate?.toISOString(),
@@ -99,7 +101,17 @@ export default function RoadmapPage() {
     const userIndex = allUsers.findIndex((u: any) => u.userId === currentUserId);
     
     if (userIndex !== -1) {
-        const userTasks = allUsers[userIndex].tasks || [];
+        let userTasks = allUsers[userIndex].tasks || [];
+
+        // Check if a task with the same category already exists for the user's grade level.
+        // This is a simplified check. A more robust implementation might check existing categories more broadly.
+        const categoryExists = userTasks.some((task: RoadmapTask) => task.grade === currentUserGrade && task.category.toLowerCase() === values.category.toLowerCase());
+        
+        if (!categoryExists) {
+            // If the category doesn't exist for this grade, we still add it, but it might create a new group.
+            // The roadmap view logic naturally handles grouping by grade and then category.
+        }
+
         const updatedTasks = [...userTasks, newTask];
         allUsers[userIndex].tasks = updatedTasks;
         

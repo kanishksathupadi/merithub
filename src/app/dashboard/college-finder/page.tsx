@@ -13,11 +13,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { GraduationCap, Loader2, Search, Sparkles, Image as ImageIcon, Target, TrendingUp, ShieldCheck, Lock } from 'lucide-react';
+import { GraduationCap, Loader2, Search, Sparkles, Image as ImageIcon, Target, TrendingUp, ShieldCheck, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
-import { differenceInDays, formatDistanceToNow, addDays } from 'date-fns';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { incrementStat } from '@/lib/data-client-admin';
 
@@ -85,9 +84,7 @@ export default function CollegeFinderPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [colleges, setColleges] = useState<CategorizedColleges | null>(null);
     const [studentProfile, setStudentProfile] = useState<Omit<FindMatchingCollegesInput, 'filterQuery'> | null>(null);
-    const [isLocked, setIsLocked] = useState(true);
-    const [unlocksIn, setUnlocksIn] = useState("");
-
+    
     useEffect(() => {
         const onboardingDataStr = localStorage.getItem('onboardingData');
         const signupDataStr = localStorage.getItem('signupData');
@@ -96,22 +93,6 @@ export default function CollegeFinderPage() {
             const signupData = JSON.parse(signupDataStr);
             setStudentProfile({ ...onboardingData, grade: signupData.grade });
 
-            const signupDate = new Date(signupData.signupTimestamp);
-            if (isNaN(signupDate.getTime())) {
-                // Invalid date from localStorage, default to unlocked to avoid crashing.
-                setIsLocked(false);
-                return;
-            }
-
-            const daysSinceSignup = differenceInDays(new Date(), signupDate);
-            const daysToUnlock = 7;
-            
-            if (daysSinceSignup >= daysToUnlock) {
-                setIsLocked(false);
-            } else {
-                const unlockDate = addDays(signupDate, daysToUnlock);
-                setUnlocksIn(formatDistanceToNow(unlockDate, { addSuffix: true }));
-            }
         } else {
              toast({
                 variant: "destructive",
@@ -202,47 +183,43 @@ export default function CollegeFinderPage() {
                 <h1 className="text-3xl font-bold">AI College Finder</h1>
                 <p className="text-muted-foreground">Discover colleges and universities that align with your profile and interests.</p>
             </header>
-
-            {isLocked ? (
-                <Alert>
-                    <Lock className="h-4 w-4" />
-                    <AlertTitle>Feature Locked</AlertTitle>
-                    <AlertDescription>
-                        To ensure our AI has enough data for the best recommendations, the College Finder will unlock {unlocksIn}. This gives the system time to learn your unique profile.
-                    </AlertDescription>
-                </Alert>
-            ) : (
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Find Your Fit</CardTitle>
-                        <CardDescription>Enter keywords to filter your recommendations (e.g., "small liberal arts colleges in California", "universities with strong engineering programs"). Leave it blank for general recommendations.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4">
-                                <FormField
-                                control={form.control}
-                                name="filterQuery"
-                                render={({ field }) => (
-                                    <FormItem className="relative flex-1">
-                                    <FormControl>
-                                        <div className="relative flex-1">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                        <Input placeholder="Filter by location, size, program, etc..." className="pl-10" {...field} />
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage className="absolute" />
-                                    </FormItem>
-                                )}
-                                />
-                                <Button type="submit" disabled={isLoading} className="min-w-[120px]">
-                                    {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2" />Find Colleges</>}
-                                </Button>
-                            </form>
-                        </Form>
-                    </CardContent>
-                </Card>
-            )}
+             <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle>This feature gets better over time!</AlertTitle>
+                <AlertDescription>
+                    The AI's recommendations become more accurate as you complete tasks and use the app. For now, it will provide strong general recommendations.
+                </AlertDescription>
+            </Alert>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Find Your Fit</CardTitle>
+                    <CardDescription>Enter keywords to filter your recommendations (e.g., "small liberal arts colleges in California", "universities with strong engineering programs"). Leave it blank for general recommendations.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                        <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4">
+                            <FormField
+                            control={form.control}
+                            name="filterQuery"
+                            render={({ field }) => (
+                                <FormItem className="relative flex-1">
+                                <FormControl>
+                                    <div className="relative flex-1">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                    <Input placeholder="Filter by location, size, program, etc..." className="pl-10" {...field} />
+                                    </div>
+                                </FormControl>
+                                <FormMessage className="absolute" />
+                                </FormItem>
+                            )}
+                            />
+                            <Button type="submit" disabled={isLoading} className="min-w-[120px]">
+                                {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2" />Find Colleges</>}
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
 
             {isLoading && !colleges && (
                  <div className="space-y-6">
