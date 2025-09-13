@@ -62,25 +62,6 @@ function generateTasksFromSuggestion(suggestion: SuggestNextStepOutput): Roadmap
     return tasks;
 }
 
-const updateMasterUserList = (userId: string, updatedData: { tasks?: RoadmapTask[], suggestion?: SuggestNextStepOutput }) => {
-  if (typeof window === 'undefined') return;
-  try {
-    const allUsersStr = localStorage.getItem('allSignups');
-    if (allUsersStr) {
-      let allUsers = JSON.parse(allUsersStr);
-      allUsers = allUsers.map((user: any) => {
-        if (user.userId === userId) {
-          return { ...user, ...updatedData };
-        }
-        return user;
-      });
-      localStorage.setItem('allSignups', JSON.stringify(allUsers));
-    }
-  } catch(e) {
-    console.error("Failed to update master user list:", e);
-  }
-};
-
 
 function SuggestionView() {
     const [tasks, setTasks] = useState<RoadmapTask[]>([]);
@@ -129,7 +110,11 @@ function SuggestionView() {
     const saveTasks = useCallback(async (tasksToSave: RoadmapTask[], suggestion?: SuggestNextStepOutput) => {
          if (!currentUser) return;
         const updatedUser = { ...currentUser, tasks: tasksToSave, suggestion };
-        await updateUser(updatedUser);
+        await updateUser(updatedUser); // This updates the master list
+        
+        // Also update the local session data for immediate UI consistency
+        localStorage.setItem('signupData', JSON.stringify(updatedUser));
+
         setTasks(tasksToSave);
         await loadTasksAndBriefing();
     }, [currentUser, loadTasksAndBriefing]);

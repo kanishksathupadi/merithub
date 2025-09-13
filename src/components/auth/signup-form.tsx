@@ -92,8 +92,10 @@ export function SignupForm() {
             onboardingData: null,
         };
 
+        // This now saves to the 'allSignups' list in localStorage
         await addUser(newUser);
 
+        // Set session data for the current user
         localStorage.setItem('signupData', JSON.stringify(newUser));
         localStorage.setItem('userName', newUser.name);
         localStorage.setItem('userPlan', newUser.plan);

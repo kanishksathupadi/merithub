@@ -71,10 +71,10 @@ export function OnboardingForm() {
             const signupData = JSON.parse(signupDataStr);
             const updatedUser = { ...signupData, onboardingData: data };
             
-            // Save to the central "DB"
+            // Save to the central list in localStorage
             await updateUser(updatedUser);
             
-            // Update the session data
+            // Update the session data for the current user
             localStorage.setItem('signupData', JSON.stringify(updatedUser));
         }
     }

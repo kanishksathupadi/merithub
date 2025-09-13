@@ -12,25 +12,7 @@ import { Button } from '../ui/button';
 import { CheckCircle, Link as LinkIcon, Star, Trophy, BrainCircuit, Repeat, Calendar as CalendarIcon, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-
-const updateMasterUserList = (userId: string, updatedTasks: RoadmapTask[]) => {
-    if (typeof window === 'undefined') return;
-    try {
-        const allUsersStr = localStorage.getItem('allSignups');
-        if (allUsersStr) {
-        let allUsers = JSON.parse(allUsersStr);
-        allUsers = allUsers.map((user: any) => {
-            if (user.userId === userId) {
-            return { ...user, tasks: updatedTasks };
-            }
-            return user;
-        });
-        localStorage.setItem('allSignups', JSON.stringify(allUsers));
-        }
-    } catch(e) {
-        console.error("Failed to update master user list:", e);
-    }
-};
+import { updateUser } from '@/lib/data-client';
 
 const dayOfWeekMap: { [key: string]: number } = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
 const dayHeaders = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -131,9 +113,10 @@ export function CalendarView() {
         }
     }, []);
 
-    const handleTaskToggle = (taskId: string) => {
+    const handleTaskToggle = async (taskId: string) => {
         if (!currentUserId) return;
 
+        let toggledTask: RoadmapTask | undefined;
         const newTasks = tasks.map(task => {
             if (task.id === taskId) {
                 const wasCompleted = task.completed;
@@ -144,13 +127,23 @@ export function CalendarView() {
                         description: `You earned ${task.points || 10} points for "${task.title}".`
                     });
                 }
-                return { ...task, completed: isNowCompleted };
+                toggledTask = { ...task, completed: isNowCompleted };
+                return toggledTask;
             }
             return task;
         });
 
         setTasks(newTasks);
-        updateMasterUserList(currentUserId, newTasks);
+        
+        const allUsersStr = localStorage.getItem('allSignups');
+        const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+        const userIndex = allUsers.findIndex((u: any) => u.userId === currentUserId);
+        
+        if (userIndex !== -1) {
+            allUsers[userIndex].tasks = newTasks;
+            await updateUser(allUsers[userIndex]);
+        }
+        
         window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
     };
 

@@ -15,25 +15,7 @@ import { addNotification } from "@/lib/tracking";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-
-const updateMasterUserList = (userId: string, updatedTasks: RoadmapTask[]) => {
-  if (typeof window === 'undefined') return;
-  try {
-    const allUsersStr = localStorage.getItem('allSignups');
-    if (allUsersStr) {
-      let allUsers = JSON.parse(allUsersStr);
-      allUsers = allUsers.map((user: any) => {
-        if (user.userId === userId) {
-          return { ...user, tasks: updatedTasks };
-        }
-        return user;
-      });
-      localStorage.setItem('allSignups', JSON.stringify(allUsers));
-    }
-  } catch(e) {
-    console.error("Failed to update master user list:", e);
-  }
-};
+import { updateUser } from '@/lib/data-client';
 
 const getCategoryIcon = (category: RoadmapTask['category']) => {
     switch (category) {
@@ -199,7 +181,7 @@ export function RoadmapView() {
   }, [groupedTasks]);
 
 
-  const toggleTask = (taskId: string, proof?: string) => {
+  const toggleTask = async (taskId: string, proof?: string) => {
     if (!currentUserId) return;
 
     const newTasks = tasks.map(task => {
@@ -222,7 +204,16 @@ export function RoadmapView() {
     });
 
     setTasks(newTasks);
-    updateMasterUserList(currentUserId, newTasks);
+    
+    // Update the master user list in localStorage
+    const allUsersStr = localStorage.getItem('allSignups');
+    const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
+    const userIndex = allUsers.findIndex((u: any) => u.userId === currentUserId);
+    if (userIndex !== -1) {
+        allUsers[userIndex].tasks = newTasks;
+        await updateUser(allUsers[userIndex]);
+    }
+    
     // Dispatch a storage event to notify other components (like calendar)
     window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
   };

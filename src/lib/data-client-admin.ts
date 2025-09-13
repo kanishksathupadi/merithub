@@ -44,7 +44,11 @@ export const incrementStat = async (statName: 'collegesFound' | 'essaysReviewed'
 // --- ADMIN DATA ---
 export const getRecentSignups = async () => {
     const allUsers = await getAllUsers();
-    return allUsers.sort((a: any, b: any) => new Date(b.signupTimestamp).getTime() - new Date(a.signupTimestamp).getTime()).slice(0, 4);
+    // Ensure signupTimestamp is valid before sorting
+    return allUsers
+        .filter((user: any) => user.signupTimestamp)
+        .sort((a: any, b: any) => new Date(b.signupTimestamp).getTime() - new Date(a.signupTimestamp).getTime())
+        .slice(0, 4);
 };
 
 export const getContactMessages = async () => {

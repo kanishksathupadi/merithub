@@ -14,6 +14,10 @@ const readDb = () => {
     try {
         if (fs.existsSync(dbPath)) {
             const data = fs.readFileSync(dbPath, 'utf-8');
+            // Handle empty file case
+            if (data.trim() === '') {
+                 return { users: [], stats: { collegesFound: 0, essaysReviewed: 0, scholarshipsFound: 0 }, humanChatRequests: [], contactMessages: [], jobApplications: [] };
+            }
             return JSON.parse(data);
         }
     } catch (error) {
@@ -44,6 +48,7 @@ export const findUserByEmail = async (email: string) => {
 
 export const addUser = async (user: any) => {
     const db = readDb();
+    if (!db.users) db.users = [];
     db.users.push(user);
     writeDb(db);
     return user;
@@ -63,17 +68,20 @@ export const updateUser = async(updatedUser: any) => {
 // --- STATS TRACKING ---
 export const incrementStat = async (statName: 'collegesFound' | 'essaysReviewed' | 'scholarshipsFound', value: number = 1) => {
     const db = readDb();
+    if (!db.stats) db.stats = { collegesFound: 0, essaysReviewed: 0, scholarshipsFound: 0 };
     db.stats[statName] = (db.stats[statName] || 0) + value;
     writeDb(db);
 };
 
 export const getGlobalStats = async () => {
     const db = readDb();
+    const users = db.users || [];
+    const stats = db.stats || { collegesFound: 0, essaysReviewed: 0, scholarshipsFound: 0 };
     return {
-        students: db.users.length,
-        colleges: db.stats.collegesFound || 0,
-        scholarships: db.stats.scholarshipsFound || 0,
-        essays: db.stats.essaysReviewed || 0,
+        students: users.length,
+        colleges: stats.collegesFound,
+        scholarships: stats.scholarshipsFound,
+        essays: stats.essaysReviewed,
     };
 };
 
@@ -91,6 +99,7 @@ export const getContactMessages = async () => {
 
 export const addContactMessage = async (message: any) => {
     const db = readDb();
+    if(!db.contactMessages) db.contactMessages = [];
     db.contactMessages.push(message);
     writeDb(db);
 };
@@ -102,6 +111,7 @@ export const getJobApplications = async () => {
 
 export const addJobApplication = async (application: any) => {
     const db = readDb();
+    if(!db.jobApplications) db.jobApplications = [];
     db.jobApplications.push(application);
     writeDb(db);
 };
@@ -117,33 +127,3 @@ export const updateSupportRequests = async (requests: any[]) => {
     db.humanChatRequests = requests;
     writeDb(db);
 }
-
-
-// These functions are no longer "RT" (real-time) as we're not using a real-time database like Firestore.
-// They are here to keep the component-side API the same. In a real app, you'd implement polling or WebSockets.
-export const getGlobalStatsRT = (callback: (stats: any) => void) => {
-    // This now just fetches once.
-    getGlobalStats().then(callback);
-    // Return an empty unsubscribe function
-    return () => {};
-};
-
-export const getRecentSignupsRT = (callback: (users: any[]) => void) => {
-    getRecentSignups().then(callback);
-    return () => {};
-};
-
-export const getContactMessagesRT = (callback: (messages: any[]) => void) => {
-    getContactMessages().then(callback);
-    return () => {};
-};
-
-export const getJobApplicationsRT = (callback: (apps: any[]) => void) => {
-    getJobApplications().then(callback);
-    return () => {};
-};
-
-export const getSupportRequestsRT = (callback: (reqs: any[]) => void) => {
-    getSupportRequests().then(callback);
-    return () => {};
-};

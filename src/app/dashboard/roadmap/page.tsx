@@ -20,6 +20,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarView } from "@/components/dashboard/calendar-view";
+import { updateUser } from '@/lib/data-client';
 
 
 const daysOfWeek = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
@@ -38,24 +39,6 @@ const taskSchema = z.object({
   recurringDays: z.array(z.string()).optional(),
   resource: resourceSchema.optional(),
 });
-
-const updateMasterUserList = (userId: string, updatedTasks: RoadmapTask[]) => {
-  try {
-    const allUsersStr = localStorage.getItem('allSignups');
-    if (allUsersStr) {
-      let allUsers = JSON.parse(allUsersStr);
-      allUsers = allUsers.map((user: any) => {
-        if (user.userId === userId) {
-          return { ...user, tasks: updatedTasks };
-        }
-        return user;
-      });
-      localStorage.setItem('allSignups', JSON.stringify(allUsers));
-    }
-  } catch(e) {
-    console.error("Failed to update master user list:", e);
-  }
-}
 
 export default function RoadmapPage() {
   const [update, setUpdate] = useState(0);
@@ -84,7 +67,7 @@ export default function RoadmapPage() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof taskSchema>) => {
+  const onSubmit = async (values: z.infer<typeof taskSchema>) => {
     let currentUserId: string | null = null;
     const signupDataStr = localStorage.getItem('signupData');
     if (signupDataStr) {
@@ -112,23 +95,20 @@ export default function RoadmapPage() {
     
     const allUsersStr = localStorage.getItem('allSignups');
     const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-    let userTasks: RoadmapTask[] = [];
-
     const userIndex = allUsers.findIndex((u: any) => u.userId === currentUserId);
-    if (userIndex !== -1) {
-        userTasks = allUsers[userIndex].tasks || [];
-    }
-
-    const updatedTasks = [...userTasks, newTask];
     
     if (userIndex !== -1) {
+        const userTasks = allUsers[userIndex].tasks || [];
+        const updatedTasks = [...userTasks, newTask];
         allUsers[userIndex].tasks = updatedTasks;
+        
+        await updateUser(allUsers[userIndex]);
+        
+        // Also update the session data for immediate UI update
+        const currentSessionData = JSON.parse(localStorage.getItem('signupData') || '{}');
+        currentSessionData.tasks = updatedTasks;
+        localStorage.setItem('signupData', JSON.stringify(currentSessionData));
     }
-
-    localStorage.setItem('allSignups', JSON.stringify(allUsers));
-
-    // Also update the session-specific tasks for immediate view update
-    localStorage.setItem(`roadmapTasks-${allUsers[userIndex].email}`, JSON.stringify(updatedTasks));
 
 
     window.dispatchEvent(new Event('storage'));

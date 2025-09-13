@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { getAllUsers } from '@/lib/data';
+import { getAllUsers } from '@/lib/data-client-admin';
 
 
 function UsersList() {
