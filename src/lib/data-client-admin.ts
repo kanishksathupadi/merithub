@@ -27,6 +27,7 @@ export const getGlobalStats = async () => {
     
     // Define the baseline stats
     const baselineStats = {
+        students: 10,
         collegesFound: 4,
         essaysReviewed: 10,
         scholarshipsFound: 8,
@@ -34,8 +35,14 @@ export const getGlobalStats = async () => {
 
     let globalStats = safeJSONParse('globalStats', baselineStats);
 
-    // Ensure stats are at least the baseline
+    // --- Ensure all stats are at least the baseline ---
     let needsUpdate = false;
+
+    // Students
+    const studentCount = allUsers.length;
+    const finalStudentCount = studentCount > baselineStats.students ? studentCount : baselineStats.students;
+
+    // Other stats
     if (!globalStats.collegesFound || globalStats.collegesFound < baselineStats.collegesFound) {
         globalStats.collegesFound = baselineStats.collegesFound;
         needsUpdate = true;
@@ -54,7 +61,7 @@ export const getGlobalStats = async () => {
     }
     
     return {
-        students: allUsers.length > 0 ? allUsers.length : 10,
+        students: finalStudentCount,
         colleges: globalStats.collegesFound,
         essays: globalStats.essaysReviewed,
         scholarships: globalStats.scholarshipsFound,
