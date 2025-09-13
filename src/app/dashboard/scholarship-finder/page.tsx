@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { FindScholarshipsOutput, FindScholarshipsInput } from '@/lib/types';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { incrementStat } from '@/lib/data';
+import { incrementStat } from '@/lib/data-client-admin';
 
 
 const trackScholarshipStat = (scholarshipsFound: FindScholarshipsOutput) => {

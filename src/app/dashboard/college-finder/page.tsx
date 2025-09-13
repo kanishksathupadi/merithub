@@ -19,7 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
 import { differenceInDays, formatDistanceToNow, addDays } from 'date-fns';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { incrementStat } from '@/lib/data';
+import { incrementStat } from '@/lib/data-client-admin';
 
 const filterSchema = z.object({
   filterQuery: z.string().optional(),

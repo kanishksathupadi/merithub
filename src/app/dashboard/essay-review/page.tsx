@@ -14,7 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Sparkles, Wand2, Lightbulb, ThumbsUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { incrementStat } from '@/lib/data';
+import { incrementStat } from '@/lib/data-client-admin';
 
 const essaySchema = z.object({
   prompt: z.string().min(10, "Please enter the full essay prompt."),
