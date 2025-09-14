@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React, { useState } from "react";
@@ -15,7 +14,8 @@ import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Label } from "@/components/ui/label";
-import { addUser, findUserByEmail } from "@/lib/data-client";
+import { addUser, findUserByEmail } from "@/lib/data-server-actions";
+
 
 export function SignupForm() {
   const router = useRouter();
@@ -46,7 +46,6 @@ export function SignupForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (typeof window === 'undefined') return;
 
     if (!formValues.acceptTerms) {
         toast({
@@ -57,7 +56,6 @@ export function SignupForm() {
         return;
     }
     
-    // Simple check for non-empty fields
     for (const [key, value] of Object.entries(formValues)) {
         if (key !== 'acceptTerms' && !value) {
             toast({
@@ -93,13 +91,9 @@ export function SignupForm() {
             onboardingData: null,
         };
 
-        // This now saves to the 'allSignups' list in localStorage
         await addUser(newUser);
 
-        // Set session data for the current user
-        localStorage.setItem('signupData', JSON.stringify(newUser));
-        localStorage.setItem('userName', newUser.name);
-        localStorage.setItem('userPlan', newUser.plan);
+        sessionStorage.setItem('user', JSON.stringify(newUser));
 
         if (newUser.email.endsWith('@gmail.com')) {
             sendWelcomeEmail({ name: newUser.name, email: newUser.email }).catch(err => {
@@ -109,7 +103,7 @@ export function SignupForm() {
 
         router.push("/onboarding");
     } catch (error) {
-         console.error("Signup Error:", error);
+        console.error("Signup Error:", error);
         toast({
             variant: "destructive",
             title: "Signup Failed",

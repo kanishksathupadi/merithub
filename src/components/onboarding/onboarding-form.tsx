@@ -1,8 +1,7 @@
 
-
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -27,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
-import { updateUser } from "@/lib/data-client";
+import { updateUser } from "@/lib/data-server-actions";
 
 const formSchema = z.object({
   academicStrengths: z.string().min(3, { message: "Please list at least one strength." }),
@@ -50,6 +49,16 @@ const steps = [
 export function OnboardingForm() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userStr = sessionStorage.getItem('user');
+    if (userStr) {
+      setCurrentUser(JSON.parse(userStr));
+    } else {
+      router.push('/login');
+    }
+  }, [router]);
 
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(formSchema),
@@ -65,20 +74,12 @@ export function OnboardingForm() {
   });
 
   const onSubmit = async (data: OnboardingValues) => {
-    console.log("Onboarding complete, redirecting to dashboard:", data);
-    if (typeof window !== 'undefined') {
-        const signupDataStr = localStorage.getItem('signupData');
-        if (signupDataStr) {
-            const signupData = JSON.parse(signupDataStr);
-            const updatedUser = { ...signupData, onboardingData: data };
-            
-            // Save to the central list in localStorage
-            await updateUser(updatedUser);
-            
-            // Update the session data for the current user
-            localStorage.setItem('signupData', JSON.stringify(updatedUser));
-        }
-    }
+    if (!currentUser) return;
+    
+    const updatedUserData = { ...currentUser, onboardingData: data };
+    await updateUser(currentUser.userId, { onboardingData: data });
+    
+    sessionStorage.setItem('user', JSON.stringify(updatedUserData));
     router.push("/dashboard");
   };
 

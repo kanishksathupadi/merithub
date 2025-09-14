@@ -1,15 +1,13 @@
 
-
 "use client";
 
 import { generateAvatar } from "@/ai/flows/generate-avatar";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SupportChatWidget } from "@/components/dashboard/support-chat-widget";
-import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useLayoutEffect } from "react";
-
 
 export default function DashboardLayout({
   children,
@@ -18,40 +16,25 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const [isVerified, setIsVerified] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isMentor, setIsMentor] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
-  // Use useLayoutEffect to run verification synchronously before the browser paints.
-  // This is the key to preventing any "loading" flicker for verified users.
   useLayoutEffect(() => {
-    const signupDataStr = localStorage.getItem('signupData');
-    if (!signupDataStr) {
+    const userStr = sessionStorage.getItem('user');
+    if (!userStr) {
       router.replace('/login');
       return;
     }
 
-    const signupData = JSON.parse(signupDataStr);
+    const userData = JSON.parse(userStr);
+    setUser(userData);
     
-    if (signupData.email === 'admin@dymera.com') {
-      setIsAdmin(true);
-      setIsVerified(true);
-      return;
-    }
-    
-    if (signupData.email.endsWith('@aischoolmentor.com')) {
-      setIsMentor(true);
+    if (userData.email === 'admin@dymera.com' || userData.email.endsWith('@aischoolmentor.com')) {
       setIsVerified(true);
       return;
     }
 
-    // Find the full user object from the master list
-    const allUsersStr = localStorage.getItem('allSignups');
-    const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-    const currentUser = allUsers.find((u: any) => u.userId === signupData.userId);
-
-    // If the user has onboarding data in the master list, they are verified
-    if (currentUser && currentUser.onboardingData) {
+    if (userData.onboardingData) {
         setIsVerified(true);
     } else {
         router.replace('/onboarding');
@@ -59,18 +42,18 @@ export default function DashboardLayout({
   }, [router]);
 
   useEffect(() => {
-    // Handle non-critical side effects like avatar generation after verification.
-    if (isVerified) {
-      const signupData = JSON.parse(localStorage.getItem('signupData')!);
-      const firstLetter = signupData.name?.charAt(0).toUpperCase();
-      const storedAvatar = localStorage.getItem('userAvatar');
+    if (isVerified && user) {
+      const firstLetter = user.name?.charAt(0).toUpperCase();
+      
+      const storedAvatarKey = `userAvatar-${user.userId}`;
+      const storedAvatar = localStorage.getItem(storedAvatarKey);
 
       if (storedAvatar) {
         setAvatarUrl(storedAvatar);
-      } else if (!isAdmin && !isMentor && firstLetter) {
+      } else if (user.email !== 'admin@dymera.com' && !user.email.endsWith('@aischoolmentor.com') && firstLetter) {
         generateAvatar({ letter: firstLetter })
           .then(result => {
-              localStorage.setItem('userAvatar', result.imageUrl);
+              localStorage.setItem(storedAvatarKey, result.imageUrl);
               setAvatarUrl(result.imageUrl);
               window.dispatchEvent(new Event('storage'));
           })
@@ -79,35 +62,19 @@ export default function DashboardLayout({
           });
       }
     }
-  }, [isVerified, isAdmin, isMentor]);
-
-  // If the user is not yet verified, we return null.
-  // Because this check runs in useLayoutEffect, this happens before the browser can paint,
-  // preventing any flicker or loading state from showing on the screen.
-  if (!isVerified) {
+  }, [isVerified, user]);
+  
+  if (!isVerified || !user) {
     return null;
   }
   
-  // Use defaultOpen={true} and collapsible="none" for admin/mentor to keep it always open
-  const sidebarProps = {
-    collapsible: "icon" as const
-  };
+  const isAdmin = user.email === 'admin@dymera.com';
+  const isMentor = user.email.endsWith('@aischoolmentor.com');
 
-  if (isAdmin || isMentor) {
-     return (
-        <SidebarProvider {...sidebarProps} defaultOpen={true}>
-            <div className="flex min-h-screen">
-                <AppSidebar avatarUrl={avatarUrl} />
-                <SidebarInset>
-                    <div className="p-6 sm:p-8 lg:p-12 flex-1">
-                        {children}
-                    </div>
-                    <Toaster />
-                </SidebarInset>
-            </div>
-        </SidebarProvider>
-     )
-  }
+  const sidebarProps = {
+    collapsible: (isAdmin || isMentor) ? "none" as const : "icon" as const,
+    defaultOpen: (isAdmin || isMentor) ? true : undefined,
+  };
 
   return (
     <SidebarProvider {...sidebarProps}>
@@ -115,13 +82,15 @@ export default function DashboardLayout({
         <AppSidebar avatarUrl={avatarUrl} />
         <SidebarInset>
             <div className="p-6 sm:p-8 lg:p-12 flex-1">
-                 <div className="mb-4 md:hidden">
-                    <SidebarTrigger />
-                 </div>
+                 {!(isAdmin || isMentor) && (
+                    <div className="mb-4 md:hidden">
+                        <SidebarTrigger />
+                    </div>
+                 )}
                 {children}
             </div>
             <Toaster />
-            <SupportChatWidget />
+            {!(isAdmin || isMentor) && <SupportChatWidget />}
         </SidebarInset>
       </div>
     </SidebarProvider>

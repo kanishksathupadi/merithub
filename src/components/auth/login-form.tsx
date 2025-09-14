@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -21,14 +20,13 @@ import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getYear } from "date-fns";
-import { findUserByEmail, updateUser } from "@/lib/data-client";
+import { findUserByEmail, updateUser } from "@/lib/data-server-actions";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(1, { message: "Password is required." }),
 });
 
-// Automatically update grade based on school year cutoff
 const updateUserGrade = (user: any) => {
     if (typeof user.grade !== 'number' || !user.lastLoginTimestamp) {
         return user;
@@ -47,7 +45,7 @@ const updateUserGrade = (user: any) => {
         if (newGrade <= 12) {
             user.grade = newGrade;
         } else if (user.grade < 12) {
-            user.grade = 12; // Cap at 12th grade
+            user.grade = 12;
         }
     }
 
@@ -68,47 +66,25 @@ export function LoginForm() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (typeof window === 'undefined') return;
-
     if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
-        const adminData = {
-            name: 'Admin',
-            email: 'admin@dymera.com',
-            plan: 'elite',
-            userId: 'admin-user-id',
-        };
-        localStorage.setItem('signupData', JSON.stringify(adminData));
-        localStorage.setItem('userName', 'Admin');
-        localStorage.setItem('userPlan', 'elite');
+        const adminData = { name: 'Admin', email: 'admin@dymera.com' };
+        sessionStorage.setItem('user', JSON.stringify(adminData));
         router.push('/dashboard/admin');
         return;
     }
     
-    if (values.email.endsWith('@aischoolmentor.com') && values.password === 'mentor123') {
-        const mentorName = values.email.split('@')[0].replace('.', ' ').replace(/\b\w/g, l => l.toUpperCase());
-        const mentorData = {
-            name: mentorName,
-            email: values.email,
-            userId: `mentor-${mentorName.split(' ')[0].toLowerCase()}`
-        }
-         localStorage.setItem('signupData', JSON.stringify(mentorData));
-         localStorage.setItem('userName', mentorData.name);
-         router.push('/dashboard/mentor/admin');
-         return;
-    }
-
     try {
         let user = await findUserByEmail(values.email);
 
         if (user && user.password === values.password) {
             user = updateUserGrade(user);
-            await updateUser(user);
+            await updateUser(user.userId, { 
+                grade: user.grade, 
+                lastLoginTimestamp: user.lastLoginTimestamp 
+            });
 
-            localStorage.setItem('signupData', JSON.stringify(user));
-            localStorage.setItem('userName', user.name);
-            localStorage.setItem('userPlan', user.plan);
+            sessionStorage.setItem('user', JSON.stringify(user));
             
-            // We only care if the user has ONBOARDING DATA saved inside their user object.
             if (!user.onboardingData) {
                 router.push('/onboarding');
             } else {
@@ -122,7 +98,7 @@ export function LoginForm() {
             });
         }
     } catch (error) {
-         console.error("Login Error:", error);
+        console.error("Login Error:", error);
         toast({
             variant: "destructive",
             title: "An Error Occurred",
@@ -174,7 +150,7 @@ export function LoginForm() {
         </Form>
         
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Don&apos;t have an account?{" "}
+          Don't have an account?{" "}
           <Link href="/signup" className="text-primary hover:underline font-medium">
             Sign up
           </Link>
