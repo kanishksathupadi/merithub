@@ -66,7 +66,7 @@ export async function validateSchoolName(input: SchoolValidationInput): Promise<
           searchQueries = [input.query];
       }
   } else {
-      console.log("GEMINI_API_KEY not found. Skipping AI query expansion.");
+      console.log("GEMINI_API_KEY not found. Skipping AI query expansion and using direct search.");
   }
   
   // 2. Search for all expanded queries in parallel
@@ -112,3 +112,4 @@ export async function validateSchoolName(input: SchoolValidationInput): Promise<
     return { schools: [] };
   }
 }
+
