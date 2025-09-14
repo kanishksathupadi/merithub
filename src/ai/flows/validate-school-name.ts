@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -75,7 +74,7 @@ export async function validateSchoolName(input: SchoolValidationInput): Promise<
     const allSchools = results.flat();
 
     // 3. Filter, deduplicate, and format the results
-    const uniqueSchools = new Map<number, School>();
+    const uniqueSchools = new Map<number, { place_id: number; display_name: string; }>();
     allSchools
         .filter((item: any) => 
             item.type === 'school' || item.type === 'university' || item.type === 'college'
