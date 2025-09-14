@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -35,22 +36,38 @@ export async function validateSchoolName(input: SchoolValidationInput): Promise<
     return { schools: [] };
   }
 
-  // 1. Use an LLM to expand the user's query
-  const expansionPrompt = `You are a search query expansion expert. A user is searching for a school. Take their raw query, correct any spelling mistakes, and generate a list of 3-5 likely, more specific search queries. For example, if the user types "thmas russle", you should generate queries like ["Thomas Russell Middle School", "Thomas Russell School"]. If they type "washingtn high", generate ["Washington High School"]. Include common terms like "School", "High School", "Academy", "University", "College".
+  let searchQueries = [input.query];
 
-  User query: "${input.query}"
-  
-  Return a JSON object with a "queries" array.`;
+  // Gracefully degrade if the API key is not present.
+  if (process.env.GEMINI_API_KEY) {
+      try {
+        // 1. Use an LLM to expand the user's query
+        const expansionPrompt = `You are a search query expansion expert. A user is searching for a school. Take their raw query, correct any spelling mistakes, and generate a list of 3-5 likely, more specific search queries. For example, if the user types "thmas russle", you should generate queries like ["Thomas Russell Middle School", "Thomas Russell School"]. If they type "washingtn high", generate ["Washington High School"]. Include common terms like "School", "High School", "Academy", "University", "College".
 
-  const llmResponse = await ai.generate({
-      prompt: expansionPrompt,
-      model: 'googleai/gemini-1.5-flash-latest',
-      output: {
-          schema: searchQueriesSchema,
+        User query: "${input.query}"
+        
+        Return a JSON object with a "queries" array.`;
+
+        const llmResponse = await ai.generate({
+            prompt: expansionPrompt,
+            model: 'googleai/gemini-1.5-flash-latest',
+            output: {
+                schema: searchQueriesSchema,
+            }
+        });
+        
+        if (llmResponse.output?.queries) {
+            searchQueries = llmResponse.output.queries;
+        }
+
+      } catch (error) {
+          console.error("AI query expansion failed. Falling back to direct search.", error);
+          // If AI fails for any reason, we fall back to using the original query.
+          searchQueries = [input.query];
       }
-  });
-  
-  const searchQueries = llmResponse.output?.queries || [input.query];
+  } else {
+      console.log("GEMINI_API_KEY not found. Skipping AI query expansion.");
+  }
   
   // 2. Search for all expanded queries in parallel
   const searchPromises = searchQueries.map(query => 
