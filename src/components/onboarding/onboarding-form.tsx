@@ -26,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
-import { updateUser } from "@/lib/data-server-actions";
+import { updateUser } from "@/lib/data-client";
 
 const formSchema = z.object({
   academicStrengths: z.string().min(3, { message: "Please list at least one strength." }),
