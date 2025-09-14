@@ -14,7 +14,7 @@ import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Label } from "@/components/ui/label";
-import { addUser, findUserByEmail } from "@/lib/data-server-actions";
+import { addUser, findUserByEmail } from "@/lib/data-client";
 
 
 export function SignupForm() {

@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getYear } from "date-fns";
-import { findUserByEmail, updateUser } from "@/lib/data-server-actions";
+import { findUserByEmail, updateUser } from "@/lib/data-client";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
