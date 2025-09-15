@@ -49,7 +49,7 @@ export async function validateSchoolName(input: SchoolValidationInput): Promise<
 
         const llmResponse = await ai.generate({
             prompt: expansionPrompt,
-            model: 'googleai/gemini-pro',
+            model: 'googleai/gemini-1.5-flash-latest',
             output: {
                 schema: searchQueriesSchema,
             }
