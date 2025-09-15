@@ -1,7 +1,10 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -13,62 +16,43 @@ import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
-import { Label } from "@/components/ui/label";
 import { addUser, findUserByEmail } from "@/lib/data-client";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+
+const signupSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email." }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+  birthdate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Please enter a valid date." }),
+  grade: z.coerce.number().min(0, "Grade cannot be negative.").max(12, "Grade must be 12 or lower."),
+  school: z.string().min(3, { message: "Please select or enter your school name." }),
+  acceptTerms: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms and conditions.",
+  }),
+});
 
 
 export function SignupForm() {
   const router = useRouter();
   const { toast } = useToast();
   
-  const [formValues, setFormValues] = useState({
+  const form = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
       name: "",
       email: "",
       password: "",
       birthdate: "",
-      grade: "",
+      grade: undefined,
       school: "",
       acceptTerms: false,
+    },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormValues(prev => ({ ...prev, [name]: value }));
-  };
-  
-  const handleCheckboxChange = (checked: boolean | "indeterminate") => {
-    setFormValues(prev => ({...prev, acceptTerms: !!checked }));
-  }
 
-  const handleSchoolChange = (value: string) => {
-    setFormValues(prev => ({...prev, school: value}));
-  }
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!formValues.acceptTerms) {
-        toast({
-            variant: "destructive",
-            title: "Terms and Conditions",
-            description: "You must accept the Terms of Service to continue.",
-        });
-        return;
-    }
-    
-    for (const [key, value] of Object.entries(formValues)) {
-        if (key !== 'acceptTerms' && !value) {
-            toast({
-                variant: "destructive",
-                title: "Missing Information",
-                description: `Please fill out the ${key} field.`,
-            });
-            return;
-        }
-    }
-    
+  const onSubmit = async (values: z.infer<typeof signupSchema>) => {
     try {
-        const existingUser = await findUserByEmail(formValues.email);
+        const existingUser = await findUserByEmail(values.email);
         if (existingUser) {
             toast({
                 variant: "destructive",
@@ -79,9 +63,12 @@ export function SignupForm() {
         }
         
         const newUser = { 
-            ...formValues,
-            grade: Number(formValues.grade) || 0,
-            birthdate: new Date(formValues.birthdate).toISOString(),
+            name: values.name,
+            email: values.email,
+            password: values.password,
+            school: values.school,
+            grade: Number(values.grade) || 0,
+            birthdate: new Date(values.birthdate).toISOString(),
             plan: 'elite',
             userId: uuidv4(),
             signupTimestamp: new Date().toISOString(),
@@ -122,62 +109,113 @@ export function SignupForm() {
         <CardDescription>Start your path to success today.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" name="name" placeholder="John Doe" value={formValues.name} onChange={handleInputChange} required />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" placeholder="you@example.com" value={formValues.email} onChange={handleInputChange} required />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" name="password" type="password" placeholder="••••••••" value={formValues.password} onChange={handleInputChange} required />
-            </div>
-
-            <div className="flex gap-4">
-                <div className="space-y-2 flex-1">
-                    <Label htmlFor="birthdate">Date of birth</Label>
-                    <Input id="birthdate" name="birthdate" type="date" value={formValues.birthdate} onChange={handleInputChange} required />
-                </div>
-                <div className="space-y-2 flex-1">
-                    <Label htmlFor="grade">Grade</Label>
-                    <Input id="grade" name="grade" type="number" placeholder="e.g., 9" value={formValues.grade} onChange={handleInputChange} required />
-                </div>
-            </div>
-
-             <div className="space-y-2">
-                <Label htmlFor="school">School</Label>
-                <SchoolAutocomplete 
-                    value={formValues.school}
-                    onValueChange={handleSchoolChange}
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                 <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl><Input placeholder="John Doe" {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </div>
-            
-            <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm !mt-6">
-                <Checkbox
-                    id="acceptTerms"
-                    checked={formValues.acceptTerms}
-                    onCheckedChange={handleCheckboxChange}
-                    required
+                 <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl><Input type="email" placeholder="you@example.com" {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-                <div className="space-y-1 leading-none">
-                    <label htmlFor="acceptTerms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Accept terms and conditions
-                    </label>
-                    <p className="text-sm text-muted-foreground">
-                    By creating an account, you agree to our{' '}
-                    <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
-                        Terms of Service
-                    </a>
-                    .
-                    </p>
-                </div>
-            </div>
+                 <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <Button type="submit" className="w-full !mt-6 bg-primary text-primary-foreground hover:bg-primary/90">Create Account</Button>
-          </form>
+                <div className="flex gap-4">
+                     <FormField
+                        control={form.control}
+                        name="birthdate"
+                        render={({ field }) => (
+                            <FormItem className="flex-1">
+                                <FormLabel>Date of birth</FormLabel>
+                                <FormControl><Input type="date" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="grade"
+                        render={({ field }) => (
+                            <FormItem className="flex-1">
+                                <FormLabel>Grade</FormLabel>
+                                <FormControl><Input type="number" placeholder="e.g., 9" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+
+                <FormField
+                    control={form.control}
+                    name="school"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>School</FormLabel>
+                            <FormControl>
+                                <SchoolAutocomplete 
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                
+                <FormField
+                    control={form.control}
+                    name="acceptTerms"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm !mt-6">
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>Accept terms and conditions</FormLabel>
+                                <p className="text-sm text-muted-foreground">
+                                    By creating an account, you agree to our{' '}
+                                    <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
+                                        Terms of Service
+                                    </a>.
+                                </p>
+                                <FormMessage />
+                            </div>
+                        </FormItem>
+                    )}
+                />
+
+
+                <Button type="submit" className="w-full !mt-6 bg-primary text-primary-foreground hover:bg-primary/90">Create Account</Button>
+            </form>
+        </Form>
        
         <p className="text-center text-sm text-muted-foreground mt-6">
           Already have an account?{" "}
