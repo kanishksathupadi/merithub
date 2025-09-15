@@ -61,11 +61,11 @@ export function SignupForm() {
             return;
         }
         
+        const { acceptTerms, ...rest } = values;
+
         const newUser = { 
-            name: values.name,
-            email: values.email,
+            ...rest,
             password: values.password, // In a real app, this would be hashed.
-            school: values.school,
             grade: Number(values.grade) || 0,
             birthdate: new Date(values.birthdate).toISOString(),
             plan: 'elite',
