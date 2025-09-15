@@ -30,6 +30,9 @@ export const findUserById = async (userId: string) => {
 };
 
 export const addUser = async (user: any) => {
+    if (!user || !user.userId) {
+        throw new Error("A user object with a userId is required to add a user.");
+    }
     const userRef = doc(db, "users", user.userId);
     await setDoc(userRef, user);
     return user;

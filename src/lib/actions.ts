@@ -16,6 +16,7 @@ export async function findUserByEmailAction(email: string) {
 
 export async function addUserAction(user: any) {
     try {
+        // This now correctly passes the user object to the database function.
         return await dbAddUser(user);
     } catch (error) {
         console.error("Server Action Error in addUserAction:", error);
