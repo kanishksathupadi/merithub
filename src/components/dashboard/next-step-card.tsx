@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -172,7 +171,6 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                     <DialogTitle>Proof of Completion</DialogTitle>
                     <DialogDescription>
                         This task requires proof. Please provide a link to your work or a brief description of the outcome.
-                        <strong className="block mt-2">Note: This information will be visible on your public portfolio.</strong>
                     </DialogDescription>
                 </DialogHeader>
                 <div className="py-4 space-y-2">
@@ -184,6 +182,9 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                         placeholder="e.g., https://github.com/my-project or 'I presented my project at the school science fair...'"
                         rows={5}
                     />
+                    <p className="text-sm text-muted-foreground">
+                        <span className="font-bold">Note:</span> This information will be visible on your public portfolio.
+                    </p>
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setShowProofDialog(false)}>Cancel</Button>

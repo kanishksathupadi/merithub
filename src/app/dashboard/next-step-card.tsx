@@ -182,6 +182,9 @@ export function NextStepCard({ briefing, tasks, onTaskToggle }: NextStepCardProp
                         placeholder="e.g., https://github.com/my-project or 'I presented my project at the school science fair...'"
                         rows={5}
                     />
+                    <p className="text-sm text-muted-foreground">
+                        <span className="font-bold">Note:</span> This information will be visible on your public portfolio.
+                    </p>
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setShowProofDialog(false)}>Cancel</Button>
