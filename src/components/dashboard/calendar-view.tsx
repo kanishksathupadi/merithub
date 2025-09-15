@@ -33,16 +33,14 @@ function TaskDialog({ task, onToggle, children }: { task: RoadmapTask; onToggle:
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-start gap-2">
-            <span className="mt-1">{getCategoryIcon(task.category)}</span>
-            <div className='flex-1'>
-                {task.title}
-                <Badge variant="outline" className="ml-2">{task.category}</Badge>
-            </div>
-            </DialogTitle>
+          <DialogTitle>{task.title}</DialogTitle>
           <DialogDescription>{task.description}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
+             <div className="flex items-center gap-2">
+                {getCategoryIcon(task.category)}
+                <Badge variant="outline">{task.category}</Badge>
+            </div>
              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                 {task.points && (
                     <span className="flex items-center gap-1.5"><Star className="w-4 h-4 text-yellow-400"/> {task.points} pts</span>
