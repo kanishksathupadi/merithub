@@ -50,6 +50,7 @@ export function SignupForm() {
 
 
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
+    console.log("CLIENT: Signup form submitted. Triggering server action...");
     try {
         const existingUser = await findUserByEmailAction(values.email);
         if (existingUser) {
@@ -78,6 +79,7 @@ export function SignupForm() {
         };
 
         await addUserAction(newUser);
+        console.log("CLIENT: addUserAction completed successfully.");
 
         sessionStorage.setItem('user', JSON.stringify(newUser));
 
@@ -87,12 +89,12 @@ export function SignupForm() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: newUser.name, email: newUser.email }),
         }).catch(err => {
-            console.error("Failed to trigger welcome email:", err);
+            console.error("CLIENT: Failed to trigger welcome email (this is non-blocking).", err);
         });
 
         router.push("/onboarding");
     } catch (error) {
-        console.error("Signup Error:", error);
+        console.error("CLIENT: Signup Error in onSubmit", error);
         toast({
             variant: "destructive",
             title: "Signup Failed",

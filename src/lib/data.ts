@@ -9,13 +9,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 // --- USER MANAGEMENT ---
 export const findUserByEmail = async (email: string) => {
+    console.log("DATABASE: findUserByEmail called for", email);
     if (!email) return null;
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("email", "==", email), limit(1));
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) {
+        console.log("DATABASE: No user found with email", email);
         return null;
     }
+    console.log("DATABASE: User found with email", email);
     return querySnapshot.docs[0].data();
 };
 
@@ -33,8 +36,10 @@ export const addUser = async (user: any) => {
     if (!user || !user.userId) {
         throw new Error("A user object with a userId is required to add a user.");
     }
+    console.log(`DATABASE: Attempting to write user ${user.userId} to Firestore.`);
     const userRef = doc(db, "users", user.userId);
     await setDoc(userRef, user);
+    console.log(`DATABASE: Successfully wrote user ${user.userId} to Firestore.`);
     return user;
 };
 

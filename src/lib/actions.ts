@@ -6,31 +6,31 @@
 import { findUserByEmail as dbFindUserByEmail, addUser as dbAddUser, updateUser as dbUpdateUser } from "./data";
 
 export async function findUserByEmailAction(email: string) {
+    console.log("SERVER ACTION: findUserByEmailAction called for", email);
     try {
         return await dbFindUserByEmail(email);
     } catch (error) {
-        console.error("Server Action Error in findUserByEmailAction:", error);
+        console.error("SERVER ACTION ERROR in findUserByEmailAction:", error);
         return null;
     }
 }
 
 export async function addUserAction(user: any) {
+    console.log("SERVER ACTION: addUserAction called for user:", user.email);
     try {
-        // This now correctly passes the user object to the database function.
         return await dbAddUser(user);
     } catch (error) {
-        console.error("Server Action Error in addUserAction:", error);
-        // It's often better to throw the error here to be caught by the form handler
-        // so the UI can show a meaningful error message.
+        console.error("SERVER ACTION ERROR in addUserAction:", error);
         throw new Error("Failed to create a new user.");
     }
 }
 
 export async function updateUserAction(userId: string, data: any) {
+    console.log("SERVER ACTION: updateUserAction called for userId:", userId);
     try {
         return await dbUpdateUser(userId, data);
     } catch (error) {
-        console.error("Server Action Error in updateUserAction:", error);
+        console.error("SERVER ACTION ERROR in updateUserAction:", error);
         throw new Error("Failed to update user data.");
     }
 }
