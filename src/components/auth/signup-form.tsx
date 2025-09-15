@@ -15,8 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
-import { addUser, findUserByEmail } from "@/lib/data-client";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { addUserAction, findUserByEmailAction } from "@/lib/actions";
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -51,7 +51,7 @@ export function SignupForm() {
 
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
     try {
-        const existingUser = await findUserByEmail(values.email);
+        const existingUser = await findUserByEmailAction(values.email);
         if (existingUser) {
             toast({
                 variant: "destructive",
@@ -77,7 +77,7 @@ export function SignupForm() {
             onboardingData: null,
         };
 
-        await addUser(newUser);
+        await addUserAction(newUser);
 
         sessionStorage.setItem('user', JSON.stringify(newUser));
 
