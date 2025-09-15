@@ -79,8 +79,7 @@ export function SignupForm() {
         };
 
         await addUserAction(newUser);
-        console.log("CLIENT: addUserAction completed successfully.");
-
+        
         sessionStorage.setItem('user', JSON.stringify(newUser));
 
         // Fire-and-forget request to the API route for sending the welcome email
