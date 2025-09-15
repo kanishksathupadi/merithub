@@ -43,7 +43,7 @@ export function SignupForm() {
       email: "",
       password: "",
       birthdate: "",
-      grade: undefined,
+      grade: '' as any,
       school: "",
       acceptTerms: false,
     },
