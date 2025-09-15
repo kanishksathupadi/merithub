@@ -3,7 +3,9 @@
 
 // This file contains server actions that can be called from client components.
 
-import { findUserByEmail as dbFindUserByEmail, addUser as dbAddUser, updateUser as dbUpdateUser } from "./data";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from './firebase';
+import { findUserByEmail as dbFindUserByEmail, updateUser as dbUpdateUser } from "./data";
 
 export async function findUserByEmailAction(email: string) {
     console.log("SERVER ACTION: findUserByEmailAction triggered for email:", email);
@@ -19,10 +21,15 @@ export async function findUserByEmailAction(email: string) {
 
 export async function addUserAction(user: any) {
     console.log("SERVER ACTION: addUserAction triggered for user:", user.email);
+    if (!user || !user.userId) {
+        throw new Error("A user object with a userId is required to add a user.");
+    }
     try {
-        const result = await dbAddUser(user);
-        console.log("SERVER ACTION: addUserAction completed successfully.");
-        return result;
+        console.log(`DATABASE: Attempting to write user ${user.userId} to Firestore directly in server action.`);
+        const userRef = doc(db, "users", user.userId);
+        await setDoc(userRef, user);
+        console.log(`DATABASE: Successfully wrote user ${user.userId} to Firestore.`);
+        return user;
     } catch (error) {
         console.error("SERVER ACTION ERROR in addUserAction:", error);
         throw new Error("Failed to create a new user. See server logs for details.");

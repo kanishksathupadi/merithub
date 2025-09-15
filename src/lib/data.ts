@@ -32,22 +32,6 @@ export const findUserById = async (userId: string) => {
     return null;
 };
 
-export const addUser = async (user: any) => {
-    if (!user || !user.userId) {
-        throw new Error("A user object with a userId is required to add a user.");
-    }
-    console.log(`DATABASE: Attempting to write user ${user.userId} to Firestore.`);
-    try {
-        const userRef = doc(db, "users", user.userId);
-        await setDoc(userRef, user);
-        console.log(`DATABASE: Successfully wrote user ${user.userId} to Firestore.`);
-        return user;
-    } catch (dbError) {
-        console.error("DATABASE: An error occurred while adding the user.", dbError);
-        throw dbError; // Re-throw the error to be caught by the server action
-    }
-};
-
 export const updateUser = async (userId: string, updatedData: any) => {
     if (!userId) throw new Error("User ID is required to update.");
     const userRef = doc(db, "users", userId);
