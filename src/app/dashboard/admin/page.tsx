@@ -7,7 +7,7 @@ import { Users, LineChart, Star, Crown, Settings, LogOut, MessageSquareWarning, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -19,9 +19,9 @@ function AdminHeader() {
     const [userName, setUserName] = useState<string | null>(null);
 
     useEffect(() => {
-        const name = localStorage.getItem('userName');
-        if (name) {
-            setUserName(name);
+        const userStr = sessionStorage.getItem('user');
+        if (userStr) {
+            setUserName(JSON.parse(userStr).name);
         }
     }, []);
 
@@ -91,48 +91,46 @@ export default function AdminPage() {
     const [recentSignups, setRecentSignups] = useState([]);
     const router = useRouter();
 
-    const updateAllStats = async () => {
-        const globalStats = await getGlobalStats();
-        setUserStats({
-            totalUsers: globalStats.students,
-            dailyActive: globalStats.students, // Simplified for prototype
-        });
+    const updateAllStats = useCallback(async () => {
+        try {
+            const [globalStats, supportReqs, contactMsgs, jobApps, recent] = await Promise.all([
+                getGlobalStats(),
+                getSupportRequests(),
+                getContactMessages(),
+                getJobApplications(),
+                getRecentSignups()
+            ]);
 
-        const supportReqs = await getSupportRequests();
-        setSupportRequests(supportReqs.filter((r: any) => r.status === 'pending').length);
-        
-        const contactMsgs = await getContactMessages();
-        setContactMessages(contactMsgs.filter((m: any) => m.status === 'New').length);
-        
-        const jobApps = await getJobApplications();
-        setJobApplications(jobApps.filter((a: any) => a.status === 'New').length);
+            setUserStats({
+                totalUsers: globalStats.students,
+                dailyActive: globalStats.students, // Simplified for prototype
+            });
+            setSupportRequests(supportReqs.filter((r: any) => r.status === 'pending').length);
+            setContactMessages(contactMsgs.filter((m: any) => m.status === 'New').length);
+            setJobApplications(jobApps.filter((a: any) => a.status === 'New').length);
 
-        const recent = await getRecentSignups();
-        const signupsWithAvatars = recent.map((user: any) => ({
-            ...user,
-            avatar: user.name.charAt(0).toUpperCase(),
-            hint: "student face",
-        }));
-        setRecentSignups(signupsWithAvatars as any);
+            const signupsWithAvatars = recent.map((user: any) => ({
+                ...user,
+                avatar: user.name.charAt(0).toUpperCase(),
+                hint: "student face",
+            }));
+            setRecentSignups(signupsWithAvatars as any);
 
-        const engagementData = JSON.parse(localStorage.getItem('featureEngagement') || '{}');
-        const chartData = Object.entries(engagementData).map(([name, usage]) => ({
-            name: formatFeatureName(name),
-            usage: usage as number,
-        }));
-        setFeatureEngagementData(chartData as any);
-    };
+            // Feature engagement still uses localStorage for simplicity in this prototype
+            const engagementData = JSON.parse(localStorage.getItem('featureEngagement') || '{}');
+            const chartData = Object.entries(engagementData).map(([name, usage]) => ({
+                name: formatFeatureName(name),
+                usage: usage as number,
+            }));
+            setFeatureEngagementData(chartData as any);
+        } catch (error) {
+            console.error("Failed to fetch admin dashboard data:", error);
+        }
+    }, []);
 
     useEffect(() => {
-        updateAllStats(); // Initial fetch
-        
-        // Listen for storage changes to re-fetch data
-        const handleStorageChange = () => {
-            updateAllStats();
-        };
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, []);
+        updateAllStats();
+    }, [updateAllStats]);
 
     const handleCardClick = (path: string) => {
         router.push(path);

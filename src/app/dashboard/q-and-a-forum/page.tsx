@@ -36,6 +36,8 @@ export default function QandAForumPage() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // In a real app, this would be a fetch call to a database.
+    // For this prototype, we use localStorage.
     try {
       const savedPosts = localStorage.getItem("forumPosts");
       if (savedPosts) {
@@ -75,10 +77,10 @@ export default function QandAForumPage() {
         }
 
         let userName = "Anonymous";
-        const signupDataStr = localStorage.getItem('signupData');
-        if (signupDataStr) {
-            const signupData = JSON.parse(signupDataStr);
-            userName = signupData.name || "Anonymous";
+        const userStr = sessionStorage.getItem('user');
+        if (userStr) {
+            const userData = JSON.parse(userStr);
+            userName = userData.name || "Anonymous";
         }
 
         const userAvatar = userName.charAt(0).toUpperCase();
@@ -92,7 +94,7 @@ export default function QandAForumPage() {
           content: values.content,
           replies: [],
           upvotes: 0,
-          tags: ["New", "Discussion"], // We can add tag selection later
+          tags: ["New", "Discussion"],
         };
 
         const updatedPosts = [newPost, ...forumPosts];

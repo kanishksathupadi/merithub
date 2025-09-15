@@ -1,5 +1,4 @@
 
-
 "use client";
 import { RoadmapView } from "@/components/dashboard/roadmap-view";
 import { Button } from "@/components/ui/button";
@@ -47,16 +46,6 @@ export default function RoadmapPage() {
   const { toast } = useToast();
   const [activeView, setActiveView] = useState<'list' | 'calendar'>('list');
 
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setUpdate(u => u + 1);
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
   const form = useForm<z.infer<typeof taskSchema>>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -69,26 +58,19 @@ export default function RoadmapPage() {
   });
 
   const onSubmit = async (values: z.infer<typeof taskSchema>) => {
-    let currentUserId: string | null = null;
-    let currentUserGrade: string | null = null;
-    const signupDataStr = localStorage.getItem('signupData');
-    if (signupDataStr) {
-        const signupData = JSON.parse(signupDataStr);
-        currentUserId = signupData.userId;
-        currentUserGrade = `${signupData.grade}th Grade`;
-    }
-
-    if (!currentUserId || !currentUserGrade) {
-      toast({ variant: "destructive", title: "Error", description: "Could not identify user or grade." });
+    const userStr = sessionStorage.getItem('user');
+    if (!userStr) {
+      toast({ variant: "destructive", title: "Error", description: "Could not identify user." });
       return;
     }
+    const currentUser = JSON.parse(userStr);
     
     const newTask: RoadmapTask = {
       id: uuidv4(),
       title: values.title,
       description: values.description,
       category: values.category as any,
-      grade: currentUserGrade, // Set the grade to the user's current grade.
+      grade: `${currentUser.grade}th Grade`, // Set the grade to the user's current grade.
       completed: false,
       relatedResources: (values.resource && values.resource.url && values.resource.title) ? [{title: values.resource.title, url: values.resource.url}] as { title: string, url: string }[] : [],
       dueDate: values.dueDate?.toISOString(),
@@ -96,46 +78,25 @@ export default function RoadmapPage() {
       points: 0, // Custom tasks are worth 0 points
     };
     
-    const allUsersStr = localStorage.getItem('allSignups');
-    const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-    const userIndex = allUsers.findIndex((u: any) => u.userId === currentUserId);
-    
-    if (userIndex !== -1) {
-        let userTasks = allUsers[userIndex].tasks || [];
-
-        // Check if a task with the same category already exists for the user's grade level.
-        // This is a simplified check. A more robust implementation might check existing categories more broadly.
-        const categoryExists = userTasks.some((task: RoadmapTask) => task.grade === currentUserGrade && task.category.toLowerCase() === values.category.toLowerCase());
+    try {
+        const updatedTasks = [...(currentUser.tasks || []), newTask];
+        await updateUser(currentUser.userId, { tasks: updatedTasks });
         
-        if (!categoryExists) {
-            // If the category doesn't exist for this grade, we still add it, but it might create a new group.
-            // The roadmap view logic naturally handles grouping by grade and then category.
-        }
+        // Update session storage to reflect the change immediately
+        currentUser.tasks = updatedTasks;
+        sessionStorage.setItem('user', JSON.stringify(currentUser));
 
-        const updatedTasks = [...userTasks, newTask];
-        allUsers[userIndex].tasks = updatedTasks;
-        
-        await updateUser(allUsers[userIndex]);
-        
-        // Also update the session data for immediate UI update
-        const currentSessionData = JSON.parse(localStorage.getItem('signupData') || '{}');
-        currentSessionData.tasks = updatedTasks;
-        localStorage.setItem('signupData', JSON.stringify(currentSessionData));
-    }
+        // Manually trigger a re-render/update
+        setUpdate(u => u + 1);
 
-
-    window.dispatchEvent(new Event('storage'));
-    
-    if (values.dueDate) {
         toast({
             title: "Task Added!",
-            description: "Your custom task has been added to your action plan and calendar.",
+            description: "Your custom task has been added to your action plan.",
         });
-    } else {
-        toast({
-            title: "Task Added!",
-            description: "Note: Tasks without a due date will not appear on the calendar view.",
-        });
+        
+    } catch (error) {
+        console.error("Failed to add custom task:", error);
+        toast({ variant: "destructive", title: "Error", description: "Failed to save the new task." });
     }
 
     form.reset();

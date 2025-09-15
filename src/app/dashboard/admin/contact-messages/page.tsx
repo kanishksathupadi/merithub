@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { getContactMessages } from '@/lib/data-client-admin';
+
 
 interface ContactMessage {
     id: string;
@@ -21,23 +23,13 @@ interface ContactMessage {
     submittedAt: string;
 }
 
-const getFromLocalStorage = (key: string, defaultValue: any) => {
-    if (typeof window === 'undefined') return defaultValue;
-    try {
-        const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-        console.error(`Error parsing localStorage key "${key}":`, error);
-        return defaultValue;
-    }
-};
-
 function ContactMessagesList() {
     const [messages, setMessages] = useState<ContactMessage[]>([]);
     
     useEffect(() => {
-        const allMessages = getFromLocalStorage('contactMessages', []);
-        setMessages(allMessages.sort((a: ContactMessage, b: ContactMessage) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()));
+        getContactMessages().then(allMessages => {
+            setMessages(allMessages.sort((a: ContactMessage, b: ContactMessage) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()));
+        });
     }, []);
 
 

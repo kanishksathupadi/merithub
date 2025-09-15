@@ -32,6 +32,7 @@ import { validateContactMessage } from "@/ai/flows/validate-contact-message";
 import { useState } from "react";
 import { MarketingHeader } from "@/components/layout/marketing-header";
 import { AppLogo } from "@/components/logo";
+import { addContactMessage } from "@/lib/data";
 
 
 const formSchema = z.object({
@@ -69,11 +70,9 @@ export default function ContactPage() {
                     status: 'New',
                     submittedAt: new Date().toISOString(),
                 };
-                const existingMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-                existingMessages.push(newMessage);
-                localStorage.setItem('contactMessages', JSON.stringify(existingMessages));
+                // Save to Firestore via server action
+                await addContactMessage(newMessage);
             } else {
-                // If it's not genuine, we don't save it, but we don't tell the user.
                 console.log(`Spam message detected and blocked. Reason: ${validationResult.reasoning}`);
             }
 

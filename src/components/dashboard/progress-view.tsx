@@ -8,6 +8,7 @@ import { useEffect, useState, useCallback } from "react";
 import type { RoadmapTask } from "@/lib/types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { subDays, format, parseISO, isSameDay } from "date-fns";
+import { findUserById } from "@/lib/data";
 
 
 const generateTimelineData = (tasks: RoadmapTask[]) => {
@@ -36,17 +37,15 @@ export function ProgressView() {
     const [timelineData, setTimelineData] = useState<any[]>([]);
     const [totalPoints, setTotalPoints] = useState(0);
 
-    const loadData = useCallback(() => {
+    const loadData = useCallback(async () => {
         if (typeof window === 'undefined') return;
 
-        const signupDataStr = localStorage.getItem('signupData');
-        if (!signupDataStr) return;
+        const userStr = sessionStorage.getItem('user');
+        if (!userStr) return;
 
         try {
-            const userId = JSON.parse(signupDataStr).userId;
-            const allUsersStr = localStorage.getItem('allSignups');
-            const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-            const currentUser = allUsers.find((u: any) => u.userId === userId);
+            const userId = JSON.parse(userStr).userId;
+            const currentUser: any = await findUserById(userId);
 
             if (currentUser && currentUser.tasks) {
                 const parsedTasks: RoadmapTask[] = currentUser.tasks;
@@ -65,10 +64,6 @@ export function ProgressView() {
 
     useEffect(() => {
         loadData();
-        window.addEventListener('storage', loadData);
-        return () => {
-            window.removeEventListener('storage', loadData);
-        };
     }, [loadData]);
 
     const completedTasks = tasks.filter(task => task.completed).length;

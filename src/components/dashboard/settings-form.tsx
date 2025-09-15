@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
+import { updateUser } from "@/lib/data-client";
 
 
 const settingsSchema = z.object({
@@ -39,10 +40,10 @@ export function SettingsForm() {
   });
 
   useEffect(() => {
-    const userData = localStorage.getItem('signupData');
+    const userStr = sessionStorage.getItem('user');
 
-    if (userData) {
-      const parsedData = JSON.parse(userData);
+    if (userStr) {
+      const parsedData = JSON.parse(userStr);
       form.reset({
         name: parsedData.name,
         email: parsedData.email,
@@ -53,36 +54,21 @@ export function SettingsForm() {
 
 
   async function onSubmit(data: SettingsValues) {
-    const userData = localStorage.getItem('signupData');
-    if (!userData) {
+    const userStr = sessionStorage.getItem('user');
+    if (!userStr) {
       toast({ variant: 'destructive', title: 'Error', description: 'Could not find user data.'});
       return;
     }
-    const parsedData = JSON.parse(userData);
+    const parsedData = JSON.parse(userStr);
     const userId = parsedData.userId;
 
     try {
-        // Update local storage master list
-        const allUsersStr = localStorage.getItem('allSignups');
-        if (allUsersStr) {
-            let allUsers = JSON.parse(allUsersStr);
-            allUsers = allUsers.map((user: any) => {
-                if (user.userId === userId) {
-                    return { ...user, name: data.name, email: data.email };
-                }
-                return user;
-            });
-            localStorage.setItem('allSignups', JSON.stringify(allUsers));
-        }
+        await updateUser(userId, { name: data.name, email: data.email });
 
         // Update session storage
         const updatedData = { ...parsedData, name: data.name, email: data.email };
-        localStorage.setItem('signupData', JSON.stringify(updatedData));
-        localStorage.setItem('userName', data.name);
+        sessionStorage.setItem('user', JSON.stringify(updatedData));
         
-        // Dispatch event to notify other components
-        window.dispatchEvent(new Event('storage'));
-
         toast({
         title: "Settings Saved",
         description: "Your changes have been successfully saved.",

@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -28,26 +27,31 @@ export default function ScholarshipFinderPage() {
     const [studentProfile, setStudentProfile] = useState<FindScholarshipsInput | null>(null);
 
     useEffect(() => {
-        // Automatically load the user's profile from localStorage on component mount.
-        const onboardingDataStr = localStorage.getItem('onboardingData');
-        const signupDataStr = localStorage.getItem('signupData');
+        const userStr = sessionStorage.getItem('user');
 
-        if (onboardingDataStr && signupDataStr) {
-            const onboardingData = JSON.parse(onboardingDataStr);
-            const signupData = JSON.parse(signupDataStr);
+        if (userStr) {
+            const userData = JSON.parse(userStr);
+            const onboardingData = userData.onboardingData;
             
-            // Map the existing data to the format expected by the scholarship AI.
-            setStudentProfile({
-                academicProfile: `Strengths: ${onboardingData.academicStrengths}. Weaknesses: ${onboardingData.academicWeaknesses}.`,
-                extracurriculars: onboardingData.currentExtracurriculars,
-                interests: onboardingData.subjectsOfInterest,
-                background: `Grade ${signupData.grade}. Learning Style: ${onboardingData.preferredLearningStyle}. College Environment: ${onboardingData.collegeEnvironment}.`,
-            });
+            if (onboardingData) {
+                setStudentProfile({
+                    academicProfile: `Strengths: ${onboardingData.academicStrengths}. Weaknesses: ${onboardingData.academicWeaknesses}.`,
+                    extracurriculars: onboardingData.currentExtracurriculars,
+                    interests: onboardingData.subjectsOfInterest,
+                    background: `Grade ${userData.grade}. Learning Style: ${onboardingData.preferredLearningStyle}. College Environment: ${onboardingData.collegeEnvironment}.`,
+                });
+            } else {
+                 toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Could not load your profile. Please complete onboarding first.",
+                });
+            }
         } else {
              toast({
                 variant: "destructive",
                 title: "Error",
-                description: "Could not load your profile. Please complete onboarding first.",
+                description: "Could not load your profile. Please log in again.",
             });
         }
     }, [toast]);
@@ -144,5 +148,3 @@ export default function ScholarshipFinderPage() {
         </div>
     );
 }
-
-    

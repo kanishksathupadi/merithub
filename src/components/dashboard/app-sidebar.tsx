@@ -25,36 +25,30 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(propAvatarUrl);
   const { open } = useSidebar();
   const router = useRouter();
-  const { toast } = useToast();
-
 
   useEffect(() => {
     const updateUserState = () => {
-      const name = localStorage.getItem('userName');
-      const signupDataStr = localStorage.getItem('signupData');
-      const storedAvatar = localStorage.getItem('userAvatar');
-      
-      if (signupDataStr) {
-          try {
-            const signupData = JSON.parse(signupDataStr);
-            setUserEmail(signupData.email);
-            setUserId(signupData.userId); // This is the key change
-          } catch(e) {
-            console.error("Failed to parse signupData", e)
-          }
-      }
-      if (name) {
-          setUserName(name);
-      }
-      if (storedAvatar) {
-        setAvatarUrl(storedAvatar);
-      }
+        const userStr = sessionStorage.getItem('user');
+        if (userStr) {
+            try {
+                const userData = JSON.parse(userStr);
+                setUserName(userData.name);
+                setUserEmail(userData.email);
+                setUserId(userData.userId);
+                 const storedAvatar = localStorage.getItem(`userAvatar-${userData.userId}`);
+                 if (storedAvatar) {
+                    setAvatarUrl(storedAvatar);
+                 }
+            } catch(e) {
+                console.error("Failed to parse user data from session storage", e);
+            }
+        }
     };
 
     updateUserState(); // Initial load
-      
-    window.addEventListener('storage', updateUserState);
-    return () => window.removeEventListener('storage', updateUserState);
+    // Listen for custom event that might signify a user data update
+    window.addEventListener('sessionStorageUpdated', updateUserState);
+    return () => window.removeEventListener('sessionStorageUpdated', updateUserState);
   }, []);
 
   useEffect(() => {
@@ -63,23 +57,7 @@ export function AppSidebar({ avatarUrl: propAvatarUrl }: AppSidebarProps) {
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
-        const email = userEmail;
-        // Clear session-specific data
-        localStorage.removeItem('signupData');
-        localStorage.removeItem('onboardingData');
-        localStorage.removeItem('paymentComplete');
-        localStorage.removeItem('userAvatar');
-        localStorage.removeItem('welcomeEmailSent');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userPlan');
-        localStorage.removeItem('hasBeenWelcomed');
-
-        // Note: We are intentionally NOT clearing user-specific persisted data like:
-        // - `onboarding-${email}`
-        // - `payment-${email}`
-        // - `roadmapTasks-${email}`
-        // - `aiSuggestion-${email}`
-        // This ensures that when the user logs back in, their progress is restored.
+        sessionStorage.clear();
     }
     router.push('/');
   };

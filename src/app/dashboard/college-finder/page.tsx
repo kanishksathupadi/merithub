@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -19,6 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { incrementStat } from '@/lib/data-client-admin';
+import { findUserById } from '@/lib/data';
 
 const filterSchema = z.object({
   filterQuery: z.string().optional(),
@@ -86,18 +86,23 @@ export default function CollegeFinderPage() {
     const [studentProfile, setStudentProfile] = useState<Omit<FindMatchingCollegesInput, 'filterQuery'> | null>(null);
     
     useEffect(() => {
-        const onboardingDataStr = localStorage.getItem('onboardingData');
-        const signupDataStr = localStorage.getItem('signupData');
-        if (onboardingDataStr && signupDataStr) {
-            const onboardingData = JSON.parse(onboardingDataStr);
-            const signupData = JSON.parse(signupDataStr);
-            setStudentProfile({ ...onboardingData, grade: signupData.grade });
-
+        const userStr = sessionStorage.getItem('user');
+        if (userStr) {
+            const userData = JSON.parse(userStr);
+            if (userData.onboardingData) {
+                setStudentProfile({ ...userData.onboardingData, grade: userData.grade });
+            } else {
+                 toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Could not load your profile. Please complete onboarding.",
+                });
+            }
         } else {
              toast({
                 variant: "destructive",
                 title: "Error",
-                description: "Could not load your profile. Please complete onboarding.",
+                description: "Could not load your profile. Please log in again.",
             });
         }
     }, [toast]);

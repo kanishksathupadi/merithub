@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import type { ChatMessage } from '@/lib/types';
+import { getSupportRequests, updateSupportRequests } from '@/lib/data-client-admin';
 
 
 interface ChatRequest {
@@ -26,26 +27,6 @@ interface ChatRequest {
     chatHistory: ChatMessage[];
 }
 
-const getFromLocalStorage = (key: string, defaultValue: any) => {
-    if (typeof window === 'undefined') return defaultValue;
-    try {
-        const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-        console.error(`Error parsing localStorage key "${key}":`, error);
-        return defaultValue;
-    }
-};
-
-const saveToLocalStorage = (key: string, value: any) => {
-    if (typeof window === 'undefined') return;
-    try {
-        localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.error(`Error saving to localStorage key "${key}":`, error);
-    }
-}
-
 function SupportRequestsList() {
     const { toast } = useToast();
     const [requests, setRequests] = useState<ChatRequest[]>([]);
@@ -53,15 +34,14 @@ function SupportRequestsList() {
     const [currentChatId, setCurrentChatId] = useState<string | null>(null);
     
     useEffect(() => {
-        const allRequests = getFromLocalStorage('humanChatRequests', []);
-        setRequests(allRequests);
+        getSupportRequests().then(allRequests => {
+            setRequests(allRequests);
+        });
     }, []);
 
     const updateChatGlobally = (updatedRequests: ChatRequest[]) => {
         setRequests(updatedRequests);
-        saveToLocalStorage('humanChatRequests', updatedRequests);
-        // This event allows other components (like the student's widget) to update if they are open.
-        window.dispatchEvent(new StorageEvent('storage', { key: 'humanChatRequests' }));
+        updateSupportRequests(updatedRequests);
     }
 
     const markAsResolved = (userId: string) => {

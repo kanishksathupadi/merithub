@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Star } from "lucide-react";
 import type { RoadmapTask } from "@/lib/types";
+import { getAllUsersForAdmin } from "@/lib/data";
 
 interface LeaderboardUser {
     name: string;
@@ -21,52 +22,39 @@ const calculateUserPoints = (tasks: RoadmapTask[]): number => {
         .reduce((sum, task) => sum + (task.points || 0), 0);
 };
 
-const getLeaderboardData = (): LeaderboardUser[] => {
-    if (typeof window === 'undefined') return [];
-
-    try {
-        const allUsersStr = localStorage.getItem('allSignups');
-        if (!allUsersStr) return [];
-        
-        const allUsers = JSON.parse(allUsersStr);
-
-        // Deduplicate users by email before calculating points
-        const uniqueUsers = allUsers.reduce((acc: any[], current: any) => {
-            if (!acc.find(item => item.email === current.email)) {
-                acc.push(current);
-            }
-            return acc;
-        }, []);
-        
-        const usersWithPoints = uniqueUsers.map((user: any) => {
-            const tasks: RoadmapTask[] = user.tasks || [];
-            const points = calculateUserPoints(tasks);
-            const avatarFallback = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-
-            return {
-                name: user.name,
-                avatar: avatarFallback,
-                // In a real app, the avatar URL would be stored with the user object.
-                // For this prototype, we can't access another session's stored avatar.
-                avatarUrl: undefined, 
-                points: points,
-            };
-        });
-
-        // Sort users by points in descending order
-        return usersWithPoints.sort((a: LeaderboardUser, b: LeaderboardUser) => b.points - a.points);
-    } catch (error) {
-        console.error("Failed to build leaderboard:", error);
-        return [];
-    }
-};
-
 
 export default function LeaderboardPage() {
     const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
 
     useEffect(() => {
-        setLeaderboard(getLeaderboardData());
+        const getLeaderboardData = async () => {
+             try {
+                const allUsers = await getAllUsersForAdmin();
+
+                const usersWithPoints = allUsers.map((user: any) => {
+                    const tasks: RoadmapTask[] = user.tasks || [];
+                    const points = calculateUserPoints(tasks);
+                    const avatarFallback = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+
+                    return {
+                        name: user.name,
+                        avatar: avatarFallback,
+                        // In a real app, avatarUrl would be part of the user object.
+                        // For this prototype, we'll leave it undefined.
+                        avatarUrl: undefined, 
+                        points: points,
+                    };
+                });
+
+                // Sort users by points in descending order
+                setLeaderboard(usersWithPoints.sort((a, b) => b.points - a.points));
+            } catch (error) {
+                console.error("Failed to build leaderboard:", error);
+                setLeaderboard([]);
+            }
+        };
+
+        getLeaderboardData();
     }, []);
 
     return (

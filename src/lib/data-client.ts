@@ -1,10 +1,14 @@
 
 'use server';
 
-// This file is now intended to be a layer of server actions.
-// Components will call these functions, which then interact with the database.
+// This file is a layer of server actions, wrapping the core database functions.
+// Client components should import from here to interact with server data.
 
-import { findUserByEmail as dbFindUserByEmail, addUser as dbAddUser, updateUser as dbUpdateUser } from "./data";
+import { 
+    findUserByEmail as dbFindUserByEmail, 
+    addUser as dbAddUser, 
+    updateUser as dbUpdateUser 
+} from "./data";
 
 export async function findUserByEmail(email: string) {
     return dbFindUserByEmail(email);

@@ -64,7 +64,7 @@ export function SignupForm() {
         const newUser = { 
             name: values.name,
             email: values.email,
-            password: values.password,
+            password: values.password, // In a real app, this would be hashed.
             school: values.school,
             grade: Number(values.grade) || 0,
             birthdate: new Date(values.birthdate).toISOString(),
@@ -82,13 +82,11 @@ export function SignupForm() {
         sessionStorage.setItem('user', JSON.stringify(newUser));
 
         // Fire-and-forget request to the API route for sending the welcome email
-        // We do not await this, so the UI is not blocked.
         fetch('/api/send-welcome-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: newUser.name, email: newUser.email }),
         }).catch(err => {
-            // Log error, but don't block user
             console.error("Failed to trigger welcome email:", err);
         });
 
@@ -231,5 +229,3 @@ export function SignupForm() {
     </Card>
   );
 }
-
-    

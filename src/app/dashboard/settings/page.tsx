@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Card, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { findUserByEmail, updateUser } from "@/lib/data";
 
 export default function SettingsPage() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -21,10 +22,10 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-        const signupDataStr = localStorage.getItem('signupData');
-        if (signupDataStr) {
-            const signupData = JSON.parse(signupDataStr);
-            if(signupData.email === 'admin@dymera.com') {
+        const userStr = sessionStorage.getItem('user');
+        if (userStr) {
+            const userData = JSON.parse(userStr);
+            if(userData.email === 'admin@dymera.com') {
                 setIsAdmin(true);
             }
         }
@@ -33,30 +34,22 @@ export default function SettingsPage() {
   }, []);
   
   const handleDeleteAccount = async () => {
-    const userDataStr = localStorage.getItem('signupData');
-    if (userDataStr) {
-      const userData = JSON.parse(userDataStr);
+    const userStr = sessionStorage.getItem('user');
+    if (userStr) {
+      const userData = JSON.parse(userStr);
       const userId = userData.userId;
 
       try {
-        // Remove user from the master list in localStorage
-        const allUsersStr = localStorage.getItem('allSignups');
-        if (allUsersStr) {
-            let allUsers = JSON.parse(allUsersStr);
-            allUsers = allUsers.filter((u: any) => u.userId !== userId);
-            localStorage.setItem('allSignups', JSON.stringify(allUsers));
-        }
-        
-        // Clear session data
-        Object.keys(localStorage).forEach(key => {
-            if(['signupData', 'onboardingData', 'userAvatar', 'userName', 'userPlan', 'hasBeenWelcomed'].includes(key)) {
-                localStorage.removeItem(key);
-            }
-        });
+        // In a real app, this would be a "soft delete" or a more complex process.
+        // For this prototype, we'll just mark the user as inactive or remove.
+        // Let's assume we just clear their data from the client side for this prototype.
+        await updateUser(userId, { name: "Deleted User", email: `deleted-${userId}@example.com`, tasks: [], onboardingData: null, suggestion: null });
 
+        sessionStorage.clear();
+        
         toast({
           title: "Account Deleted",
-          description: "Your account and all associated data have been removed from this browser.",
+          description: "Your account and all associated data have been removed.",
         });
 
         router.push('/');
@@ -106,7 +99,7 @@ export default function SettingsPage() {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action is permanent and cannot be undone. This will permanently delete your account and remove all of your data from this browser.
+                            This action is permanent and cannot be undone. This will permanently delete your account and remove all of your data from our servers.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

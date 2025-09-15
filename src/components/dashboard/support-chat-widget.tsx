@@ -14,6 +14,7 @@ import type { OnboardingData, RoadmapTask, ChatMessage } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { cn } from '@/lib/utils';
+import { getSupportRequests, updateSupportRequest } from '@/lib/data';
 
 export function SupportChatWidget() {
     const { toast } = useToast();
@@ -28,10 +29,10 @@ export function SupportChatWidget() {
 
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-    const loadChatState = useCallback(() => {
+    const loadChatState = useCallback(async () => {
         if (!userData) return;
         try {
-            const allRequests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
+            const allRequests: any[] = await getSupportRequests();
             const myRequest = allRequests.find((r: any) => r.userId === userData.studentProfile.userId);
             if (myRequest) {
                 setMessages(myRequest.chatHistory);
@@ -45,26 +46,18 @@ export function SupportChatWidget() {
     useEffect(() => {
         if (isOpen && !userData) {
             try {
-                const signupDataStr = localStorage.getItem('signupData');
-                const onboardingDataStr = localStorage.getItem('onboardingData');
-                const email = signupDataStr ? JSON.parse(signupDataStr).email : null;
-                const roadmapTasksStr = email ? localStorage.getItem(`roadmapTasks-${email}`) : '[]';
-
-                if (signupDataStr && onboardingDataStr && roadmapTasksStr) {
-                    const signupData = JSON.parse(signupDataStr);
-                    const onboardingData = JSON.parse(onboardingDataStr);
-                    const roadmapTasks = JSON.parse(roadmapTasksStr);
-
-                    const loadedUserData = {
+                const userStr = sessionStorage.getItem('user');
+                if (userStr) {
+                    const sessionUser = JSON.parse(userStr);
+                     setUserData({
                         studentProfile: {
-                            userId: signupData.userId,
-                            name: signupData.name,
-                            grade: signupData.grade,
-                            onboardingData: onboardingData,
+                            userId: sessionUser.userId,
+                            name: sessionUser.name,
+                            grade: sessionUser.grade,
+                            onboardingData: sessionUser.onboardingData,
                         },
-                        roadmap: roadmapTasks,
-                    };
-                    setUserData(loadedUserData as any);
+                        roadmap: sessionUser.tasks || [],
+                    });
                 } else {
                      toast({
                         variant: "destructive",
@@ -81,27 +74,30 @@ export function SupportChatWidget() {
     
     useEffect(() => {
         if (userData && messages.length === 0) {
-            const allRequests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
-            const myRequest = allRequests.find((r: any) => r.userId === userData.studentProfile.userId);
+            const initChat = async () => {
+                const allRequests: any[] = await getSupportRequests();
+                const myRequest = allRequests.find((r: any) => r.userId === userData.studentProfile.userId);
 
-            if (myRequest) {
-                setMessages(myRequest.chatHistory);
-            } else {
-                setIsLoading(true);
-                supportChat({
-                    ...userData,
-                    studentProfile: userData.studentProfile as any,
-                    chatHistory: [],
-                })
-                .then(result => {
-                    setMessages([{ role: 'model', content: result.response }]);
-                })
-                .catch(err => {
-                    toast({ variant: 'destructive', title: "Error", description: "Couldn't connect to the AI assistant."});
-                    console.error(err);
-                })
-                .finally(() => setIsLoading(false));
-            }
+                if (myRequest) {
+                    setMessages(myRequest.chatHistory);
+                } else {
+                    setIsLoading(true);
+                    try {
+                        const result = await supportChat({
+                            studentProfile: userData.studentProfile as any,
+                            roadmap: userData.roadmap,
+                            chatHistory: [],
+                        });
+                        setMessages([{ role: 'model', content: result.response }]);
+                    } catch(err) {
+                        toast({ variant: 'destructive', title: "Error", description: "Couldn't connect to the AI assistant."});
+                        console.error(err);
+                    } finally {
+                        setIsLoading(false);
+                    }
+                }
+            };
+            initChat();
         }
     }, [userData, messages.length, toast]);
 
@@ -110,17 +106,14 @@ export function SupportChatWidget() {
             scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
         }
         
-        window.addEventListener('storage', loadChatState);
-        return () => window.removeEventListener('storage', loadChatState);
+    }, [messages]);
 
-    }, [messages, loadChatState]);
-
-    const handleHumanRequest = () => {
+    const handleHumanRequest = async () => {
         if (!userData) return;
         
         try {
-            const requests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
-            const existingRequest = requests.find((r: any) => r.userId === userData.studentProfile.userId);
+            const allRequests: any[] = await getSupportRequests();
+            const existingRequest = allRequests.find((r: any) => r.userId === userData.studentProfile.userId);
 
             if (existingRequest && existingRequest.status === 'pending') {
                 toast({ title: "Request Already Sent", description: "You've already requested to speak with a human. We'll be in touch soon!" });
@@ -135,16 +128,13 @@ export function SupportChatWidget() {
                 chatHistory: [...messages, { role: 'user', content: '--- User requested human support ---' }]
             };
             
-            const otherRequests = requests.filter((r: any) => r.userId !== userData.studentProfile.userId);
-            const updatedRequests = [...otherRequests, newRequest];
-
-            localStorage.setItem('humanChatRequests', JSON.stringify(updatedRequests));
+            await updateSupportRequest(newRequest.userId, newRequest);
 
             const humanSupportMessage: ChatMessage = {
                 role: 'model',
                 content: "I've notified our human support team. They will review our conversation and get back to you here in this chat window. You can close this chat for now."
             };
-            setMessages(newRequest.chatHistory); 
+            setMessages([...newRequest.chatHistory, humanSupportMessage]); 
             
             toast({ title: "Request Sent!", description: "A human mentor will respond in this chat window soon." });
 
@@ -167,8 +157,8 @@ export function SupportChatWidget() {
 
         try {
             const result = await supportChat({
-                ...userData,
                 studentProfile: userData.studentProfile as any,
+                roadmap: userData.roadmap,
                 chatHistory: currentMessages,
             });
             
@@ -190,10 +180,7 @@ export function SupportChatWidget() {
             }
 
             setMessages(finalMessages);
-
-            const requests = JSON.parse(localStorage.getItem('humanChatRequests') || '[]');
-            const updatedRequests = requests.map((r: any) => r.userId === userData.studentProfile.userId ? {...r, chatHistory: finalMessages} : r);
-            localStorage.setItem('humanChatRequests', JSON.stringify(updatedRequests));
+            await updateSupportRequest(userData.studentProfile.userId, { chatHistory: finalMessages });
 
         } catch (error) {
             console.error("Chat API error:", error);

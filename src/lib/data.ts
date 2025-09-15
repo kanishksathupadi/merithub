@@ -1,10 +1,15 @@
 
+'use server';
 import { collection, doc, getDoc, getDocs, setDoc, query, where, orderBy, limit, updateDoc, increment } from "firebase/firestore";
 import { db } from './firebase';
 import { v4 as uuidv4 } from 'uuid';
 
+// This file directly interacts with Firebase Firestore.
+// It should only be called from Server Actions or other server-side code.
+
 // --- USER MANAGEMENT ---
 export const findUserByEmail = async (email: string) => {
+    if (!email) return null;
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("email", "==", email), limit(1));
     const querySnapshot = await getDocs(q);
@@ -14,6 +19,16 @@ export const findUserByEmail = async (email: string) => {
     return querySnapshot.docs[0].data();
 };
 
+export const findUserById = async (userId: string) => {
+    if (!userId) return null;
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+        return userSnap.data();
+    }
+    return null;
+};
+
 export const addUser = async (user: any) => {
     const userRef = doc(db, "users", user.userId);
     await setDoc(userRef, user);
@@ -21,9 +36,10 @@ export const addUser = async (user: any) => {
 };
 
 export const updateUser = async (userId: string, updatedData: any) => {
+    if (!userId) throw new Error("User ID is required to update.");
     const userRef = doc(db, "users", userId);
     await updateDoc(userRef, updatedData);
-    return { ...updatedData };
+    return { userId, ...updatedData };
 };
 
 
@@ -32,34 +48,51 @@ export const getGlobalStats = async () => {
     const statsRef = doc(db, "meta", "globalStats");
     const usersCollectionRef = collection(db, "users");
 
-    const [statsSnap, usersSnap] = await Promise.all([
-        getDoc(statsRef),
-        getDocs(usersCollectionRef)
-    ]);
+    try {
+        const [statsSnap, usersSnap] = await Promise.all([
+            getDoc(statsRef),
+            getDocs(usersCollectionRef)
+        ]);
 
-    const studentCount = usersSnap.size;
-    let stats = statsSnap.exists() ? statsSnap.data() : {};
+        const studentCount = usersSnap.size;
+        let stats = statsSnap.exists() ? statsSnap.data() : {};
 
-    const baseline = {
-        students: 10,
-        collegesFound: 4,
-        essaysReviewed: 10,
-        scholarshipsFound: 8,
-    };
-    
-    return {
-        students: Math.max(studentCount, baseline.students),
-        colleges: Math.max(stats.collegesFound || 0, baseline.collegesFound),
-        scholarships: Math.max(stats.scholarshipsFound || 0, baseline.scholarshipsFound),
-        essays: Math.max(stats.essaysReviewed || 0, baseline.essaysReviewed),
-    };
+        // This object defines the minimum value for each stat.
+        const baseline = {
+            students: 10,
+            collegesFound: 4,
+            essaysReviewed: 10,
+            scholarshipsFound: 8,
+        };
+        
+        return {
+            students: Math.max(studentCount, baseline.students),
+            colleges: Math.max(stats.collegesFound || 0, baseline.collegesFound),
+            scholarships: Math.max(stats.scholarshipsFound || 0, baseline.scholarshipsFound),
+            essays: Math.max(stats.essaysReviewed || 0, baseline.essaysReviewed),
+        };
+    } catch (error) {
+        console.error("Error fetching global stats:", error);
+        // Return baseline if Firestore fails
+        return { students: 10, colleges: 4, scholarships: 8, essays: 10 };
+    }
 };
 
 export const incrementStat = async (statName: 'collegesFound' | 'essaysReviewed' | 'scholarshipsFound') => {
     const statsRef = doc(db, "meta", "globalStats");
-    await updateDoc(statsRef, {
-        [statName]: increment(1)
-    }, { merge: true });
+    try {
+        // This atomically increments the value in Firestore.
+        await updateDoc(statsRef, {
+            [statName]: increment(1)
+        });
+    } catch (error) {
+        // If the document doesn't exist, create it.
+        if ((error as any).code === 'not-found') {
+            await setDoc(statsRef, { [statName]: increment(1) }, { merge: true });
+        } else {
+            console.error(`Failed to increment stat '${statName}':`, error);
+        }
+    }
 };
 
 

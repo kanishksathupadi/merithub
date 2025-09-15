@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import type { RoadmapTask } from "@/lib/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,9 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { addNotification } from "@/lib/tracking";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { updateUser } from '@/lib/data-client';
+import { updateUser, findUserById } from '@/lib/data';
 
 const getCategoryIcon = (category: RoadmapTask['category']) => {
     switch (category) {
@@ -27,13 +26,18 @@ const getCategoryIcon = (category: RoadmapTask['category']) => {
 }
 
 function TaskCompletionDialog({ task, onToggle, children }: { task: RoadmapTask, onToggle: (id: string, proof?: string) => void, children: React.ReactNode }) {
-    const [proof, setProof] = useState("");
+    const [proof, setProof] = useState(task.completionProof || "");
     const [isOpen, setIsOpen] = useState(false);
     const requiresProof = task.requiresProof && !task.completed;
     const canComplete = !requiresProof || (requiresProof && proof.trim().length > 0);
 
     const handleComplete = () => {
         onToggle(task.id, proof);
+        setIsOpen(false);
+    };
+    
+    const handleIncomplete = () => {
+        onToggle(task.id, undefined); // Clear proof when marking as incomplete
         setIsOpen(false);
     };
 
@@ -51,7 +55,7 @@ function TaskCompletionDialog({ task, onToggle, children }: { task: RoadmapTask,
                     </DialogDescription>
                 </DialogHeader>
                 <div className="py-4 space-y-4">
-                    {requiresProof && (
+                    {requiresProof ? (
                         <div className="space-y-2">
                              <label htmlFor="proof" className="text-sm font-medium">Proof of Completion</label>
                              <Textarea 
@@ -62,11 +66,16 @@ function TaskCompletionDialog({ task, onToggle, children }: { task: RoadmapTask,
                              />
                              <p className="text-xs text-muted-foreground">This is required to mark this task as complete.</p>
                         </div>
-                    )}
+                    ) : task.completionProof ? (
+                         <div className="space-y-2">
+                             <label className="text-sm font-medium">Proof Provided</label>
+                             <p className="text-sm p-3 bg-muted rounded-md border">{task.completionProof}</p>
+                        </div>
+                    ) : null}
                 </div>
                 <DialogFooter>
                     {task.completed ? (
-                         <Button onClick={() => onToggle(task.id)} variant="outline">Mark as Incomplete</Button>
+                         <Button onClick={handleIncomplete} variant="outline">Mark as Incomplete</Button>
                     ) : (
                         <Button onClick={handleComplete} disabled={!canComplete}>
                             Complete Task
@@ -80,10 +89,23 @@ function TaskCompletionDialog({ task, onToggle, children }: { task: RoadmapTask,
 
 
 function TaskCard({ task, onToggle }: { task: RoadmapTask, onToggle: (id: string, proof?: string) => void }) {
+    const handleCheckboxToggle = () => {
+        // For non-proof tasks, toggle directly. For proof tasks, this just opens the dialog.
+        if (!task.requiresProof || task.completed) {
+            onToggle(task.id);
+        }
+    };
+    
     return (
         <TaskCompletionDialog task={task} onToggle={onToggle}>
             <div className={`p-4 rounded-lg transition-all flex items-start gap-4 cursor-pointer ${task.completed ? 'bg-muted/50 opacity-70' : 'bg-background/50 hover:bg-muted/80'}`}>
-                <Checkbox id={`task-${task.id}`} checked={task.completed} className="mt-1" />
+                 <Checkbox 
+                    id={`task-${task.id}`} 
+                    checked={task.completed} 
+                    onCheckedChange={handleCheckboxToggle}
+                    className="mt-1" 
+                    aria-label={`Mark task ${task.title} as ${task.completed ? 'incomplete' : 'complete'}`}
+                />
                 <div className="flex-1 space-y-1">
                     <p className={`font-semibold ${task.completed ? 'line-through' : ''}`}>{task.title}</p>
                     <p className="text-sm text-muted-foreground">{task.description}</p>
@@ -127,34 +149,37 @@ export function RoadmapView() {
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
+  const loadTasks = useCallback(async () => {
+    if (typeof window === 'undefined') {
+        setLoading(false);
+        return;
+    }
     try {
-        const signupDataStr = localStorage.getItem('signupData');
-        if (signupDataStr) {
-          const signupData = JSON.parse(signupDataStr);
-          setCurrentUserId(signupData.userId);
-
-          const allUsersStr = localStorage.getItem('allSignups');
-          const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-          const currentUser = allUsers.find((u: any) => u.userId === signupData.userId);
-          
-          if (currentUser && currentUser.tasks) {
-            let parsedTasks: RoadmapTask[] = currentUser.tasks;
-            parsedTasks = parsedTasks.map((task, index) => ({
-                ...task,
-                points: task.points || Math.floor(Math.random() * 20) + 10,
-                dueDate: task.dueDate,
-            }));
-            setTasks(parsedTasks);
-          }
+        const userStr = sessionStorage.getItem('user');
+        if (userStr) {
+            const sessionUser = JSON.parse(userStr);
+            setCurrentUserId(sessionUser.userId);
+            
+            const user: any = await findUserById(sessionUser.userId);
+            
+            if (user && user.tasks) {
+                const parsedTasks: RoadmapTask[] = user.tasks.map((task: RoadmapTask, index: number) => ({
+                    ...task,
+                    points: task.points || Math.floor(Math.random() * 20) + 10,
+                }));
+                setTasks(parsedTasks);
+            }
         }
     } catch(error) {
-        console.error("Failed to parse roadmap tasks from localStorage", error);
+        console.error("Failed to load roadmap tasks:", error);
     } finally {
         setLoading(false);
     }
   }, []);
+  
+  useEffect(() => {
+    loadTasks();
+  }, [loadTasks]);
   
   const groupedTasks = useMemo(() => {
     return tasks.reduce((acc, task) => {
@@ -204,18 +229,7 @@ export function RoadmapView() {
     });
 
     setTasks(newTasks);
-    
-    // Update the master user list in localStorage
-    const allUsersStr = localStorage.getItem('allSignups');
-    const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-    const userIndex = allUsers.findIndex((u: any) => u.userId === currentUserId);
-    if (userIndex !== -1) {
-        allUsers[userIndex].tasks = newTasks;
-        await updateUser(allUsers[userIndex]);
-    }
-    
-    // Dispatch a storage event to notify other components (like calendar)
-    window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
+    await updateUser(currentUserId, { tasks: newTasks });
   };
 
 
@@ -243,7 +257,6 @@ export function RoadmapView() {
     <div className="w-full space-y-4">
         <Accordion type="single" collapsible defaultValue={`${gradeOrder[0]}`} className="w-full space-y-4">
            {gradeOrder.map(grade => {
-                // Determine all categories present for this grade
                 const categoriesForGrade = Object.keys(groupedTasks[grade] || {});
                 if (categoriesForGrade.length === 0) return null;
 

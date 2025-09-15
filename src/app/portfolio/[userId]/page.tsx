@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,6 +10,7 @@ import { BrainCircuit, CheckCircle, Trophy, Star, ListChecks, Link as LinkIcon }
 import type { RoadmapTask } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { findUserById } from "@/lib/data";
 
 interface UserData {
     userId: string;
@@ -48,58 +48,43 @@ export default function PortfolioPage() {
     const [error, setError] = useState<string | null>(null);
     
     useEffect(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-
-        if (!userId) {
-            setError("User ID not found in the URL.");
-            setLoading(false);
-            return;
-        }
-
-        try {
-            const allUsersStr = localStorage.getItem('allSignups');
-            if (!allUsersStr) {
-                setError("No user data found in storage. This feature works by sharing from a device where a user has logged in.");
+        const fetchPortfolio = async () => {
+             if (!userId) {
+                setError("User ID not found in the URL.");
                 setLoading(false);
                 return;
             }
 
-            const allUsers: UserData[] = JSON.parse(allUsersStr);
-            const user = allUsers.find(u => u.userId === userId);
+            try {
+                const user = await findUserById(userId) as UserData | null;
 
-            if (!user) {
-                setError("Portfolio not found. The user may not exist or the link is incorrect.");
+                if (!user) {
+                    setError("Portfolio not found. The user may not exist or the link is incorrect.");
+                    setLoading(false);
+                    return;
+                }
+
+                const completedTasks = (user.tasks || []).filter(t => t.completed);
+                const userAvatar = typeof window !== 'undefined' ? localStorage.getItem(`userAvatar-${user.userId}`) : null;
+                const suggestionTitle = user.suggestion?.title || "Personalized Strategic Plan";
+                const suggestionIntro = user.suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
+
+                setPortfolio({
+                    user: { ...user, avatarUrl: userAvatar || undefined },
+                    tasks: completedTasks,
+                    suggestionTitle,
+                    suggestionIntro,
+                });
+
+            } catch (e) {
+                console.error("Failed to load portfolio:", e);
+                setError("A problem occurred while trying to load the portfolio data.");
+            } finally {
                 setLoading(false);
-                return;
             }
+        };
 
-            const completedTasks = (user.tasks || []).filter(t => t.completed);
-            
-            // In a real app, avatar would be in the DB. We can't access another session's avatar.
-            // We'll have to rely on the fallback for this prototype.
-            const userAvatar = undefined;
-
-            const suggestionStr = localStorage.getItem(`aiSuggestion-${user.email}`);
-            const suggestion = suggestionStr ? JSON.parse(suggestionStr) : null;
-            const suggestionTitle = suggestion?.title || "Personalized Strategic Plan";
-            const suggestionIntro = suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
-
-            setPortfolio({
-                user: { ...user, avatarUrl: userAvatar },
-                tasks: completedTasks,
-                suggestionTitle,
-                suggestionIntro,
-            });
-
-        } catch (e) {
-            console.error("Failed to load portfolio:", e);
-            setError("A problem occurred while trying to load the portfolio data.");
-        } finally {
-            setLoading(false);
-        }
-
+        fetchPortfolio();
     }, [userId]);
 
     const isUrl = (text: string) => {

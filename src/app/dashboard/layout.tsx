@@ -29,11 +29,13 @@ export default function DashboardLayout({
     const userData = JSON.parse(userStr);
     setUser(userData);
     
+    // Admins and mentors don't need onboarding data
     if (userData.email === 'admin@dymera.com' || userData.email.endsWith('@aischoolmentor.com')) {
       setIsVerified(true);
       return;
     }
 
+    // Regular users need onboarding data
     if (userData.onboardingData) {
         setIsVerified(true);
     } else {
@@ -44,18 +46,16 @@ export default function DashboardLayout({
   useEffect(() => {
     if (isVerified && user) {
       const firstLetter = user.name?.charAt(0).toUpperCase();
-      
       const storedAvatarKey = `userAvatar-${user.userId}`;
       const storedAvatar = localStorage.getItem(storedAvatarKey);
 
       if (storedAvatar) {
         setAvatarUrl(storedAvatar);
-      } else if (user.email !== 'admin@dymera.com' && !user.email.endsWith('@aischoolmentor.com') && firstLetter) {
+      } else if (user.userId !== 'admin' && !user.email.endsWith('@aischoolmentor.com') && firstLetter) {
         generateAvatar({ letter: firstLetter })
           .then(result => {
               localStorage.setItem(storedAvatarKey, result.imageUrl);
               setAvatarUrl(result.imageUrl);
-              window.dispatchEvent(new Event('storage'));
           })
           .catch(err => {
               console.error("Failed to generate avatar", err);
@@ -65,7 +65,7 @@ export default function DashboardLayout({
   }, [isVerified, user]);
   
   if (!isVerified || !user) {
-    return null;
+    return null; // Or a loading spinner
   }
   
   const isAdmin = user.email === 'admin@dymera.com';

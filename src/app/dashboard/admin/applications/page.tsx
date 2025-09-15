@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { getJobApplications } from '@/lib/data-client-admin';
 
 interface Application {
     id: string;
@@ -23,23 +24,14 @@ interface Application {
     submittedAt: string;
 }
 
-const getFromLocalStorage = (key: string, defaultValue: any) => {
-    if (typeof window === 'undefined') return defaultValue;
-    try {
-        const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-        console.error(`Error parsing localStorage key "${key}":`, error);
-        return defaultValue;
-    }
-};
 
 function JobApplicationsList() {
     const [applications, setApplications] = useState<Application[]>([]);
     
     useEffect(() => {
-        const allApplications = getFromLocalStorage('jobApplications', []);
-        setApplications(allApplications.sort((a: Application, b: Application) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()));
+        getJobApplications().then(allApplications => {
+            setApplications(allApplications.sort((a: Application, b: Application) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()));
+        });
     }, []);
 
 

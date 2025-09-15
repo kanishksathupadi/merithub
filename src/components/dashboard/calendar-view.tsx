@@ -12,7 +12,7 @@ import { Button } from '../ui/button';
 import { CheckCircle, Link as LinkIcon, Star, Trophy, BrainCircuit, Repeat, Calendar as CalendarIcon, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { updateUser } from '@/lib/data-client';
+import { updateUser, findUserById } from '@/lib/data';
 
 const dayOfWeekMap: { [key: string]: number } = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
 const dayHeaders = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -33,14 +33,14 @@ function TaskDialog({ task, onToggle, children }: { task: RoadmapTask; onToggle:
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
+           <div className="flex items-center gap-2 mb-2">
+                {getCategoryIcon(task.category)}
+                <Badge variant="outline">{task.category}</Badge>
+            </div>
           <DialogTitle>{task.title}</DialogTitle>
           <DialogDescription>{task.description}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
-             <div className="flex items-center gap-2">
-                {getCategoryIcon(task.category)}
-                <Badge variant="outline">{task.category}</Badge>
-            </div>
              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                 {task.points && (
                     <span className="flex items-center gap-1.5"><Star className="w-4 h-4 text-yellow-400"/> {task.points} pts</span>
@@ -87,24 +87,17 @@ export function CalendarView() {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     
-    const loadTasks = useCallback(() => {
+    const loadTasks = useCallback(async () => {
         if (typeof window === 'undefined') return;
         try {
-            const signupDataStr = localStorage.getItem('signupData');
-            if (signupDataStr) {
-                const signupData = JSON.parse(signupDataStr);
-                const userId = signupData.userId;
+            const userStr = sessionStorage.getItem('user');
+            if (userStr) {
+                const sessionUser = JSON.parse(userStr);
+                const userId = sessionUser.userId;
                 setCurrentUserId(userId);
-
-                const allUsersStr = localStorage.getItem('allSignups');
-                const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-                const currentUser = allUsers.find((u: any) => u.userId === userId);
-
-                if (currentUser && currentUser.tasks) {
-                    setTasks(currentUser.tasks);
-                } else {
-                    setTasks([]);
-                }
+                
+                const userData: any = await findUserById(userId);
+                setTasks(userData?.tasks || []);
             }
         } catch (error) {
             console.error("Failed to load tasks for calendar view:", error);
@@ -117,39 +110,25 @@ export function CalendarView() {
         let toggledTask: RoadmapTask | undefined;
         const newTasks = tasks.map(task => {
             if (task.id === taskId) {
-                const wasCompleted = task.completed;
-                const isNowCompleted = !wasCompleted;
-                if (isNowCompleted) {
+                if (!task.completed) {
                     addNotification({
                         title: "Task Completed!",
                         description: `You earned ${task.points || 10} points for "${task.title}".`
                     });
                 }
-                toggledTask = { ...task, completed: isNowCompleted };
+                toggledTask = { ...task, completed: !task.completed };
                 return toggledTask;
             }
             return task;
         });
 
         setTasks(newTasks);
-        
-        const allUsersStr = localStorage.getItem('allSignups');
-        const allUsers = allUsersStr ? JSON.parse(allUsersStr) : [];
-        const userIndex = allUsers.findIndex((u: any) => u.userId === currentUserId);
-        
-        if (userIndex !== -1) {
-            allUsers[userIndex].tasks = newTasks;
-            await updateUser(allUsers[userIndex]);
-        }
-        
-        window.dispatchEvent(new StorageEvent('storage', {key: 'roadmapTasks'}));
+        await updateUser(currentUserId, { tasks: newTasks });
     };
 
 
     useEffect(() => {
         loadTasks();
-        window.addEventListener('storage', loadTasks);
-        return () => window.removeEventListener('storage', loadTasks);
     }, [loadTasks]);
 
     

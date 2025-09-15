@@ -76,10 +76,14 @@ export function OnboardingForm() {
   const onSubmit = async (data: OnboardingValues) => {
     if (!currentUser) return;
     
-    const updatedUserData = { ...currentUser, onboardingData: data };
+    // Update the user data in Firestore
     await updateUser(currentUser.userId, { onboardingData: data });
     
+    // Update the session storage with the new data
+    const updatedUserData = { ...currentUser, onboardingData: data };
     sessionStorage.setItem('user', JSON.stringify(updatedUserData));
+    
+    // Redirect to the dashboard
     router.push("/dashboard");
   };
 

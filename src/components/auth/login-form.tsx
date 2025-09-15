@@ -66,25 +66,29 @@ export function LoginForm() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Special case for admin login
     if (values.email === 'admin@dymera.com' && values.password === 'admin123') {
-        const adminData = { name: 'Admin', email: 'admin@dymera.com' };
+        const adminData = { name: 'Admin', email: 'admin@dymera.com', userId: 'admin' };
         sessionStorage.setItem('user', JSON.stringify(adminData));
         router.push('/dashboard/admin');
         return;
     }
     
     try {
-        let user = await findUserByEmail(values.email);
+        let user: any = await findUserByEmail(values.email);
 
         if (user && user.password === values.password) {
+            // Update grade if a year has passed
             user = updateUserGrade(user);
             await updateUser(user.userId, { 
                 grade: user.grade, 
                 lastLoginTimestamp: user.lastLoginTimestamp 
             });
 
+            // Store user data in session storage for the current session
             sessionStorage.setItem('user', JSON.stringify(user));
             
+            // Redirect based on onboarding status
             if (!user.onboardingData) {
                 router.push('/onboarding');
             } else {
@@ -102,7 +106,7 @@ export function LoginForm() {
         toast({
             variant: "destructive",
             title: "An Error Occurred",
-            description: "Something went wrong during login.",
+            description: "Something went wrong during login. Please ensure you are online and try again.",
         });
     }
   };

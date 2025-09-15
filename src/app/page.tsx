@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Badge } from "@/components/ui/badge";
 import { AppLogo } from "@/components/logo";
 import { StatCard } from "@/components/home/stat-card";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getGlobalStats as getGlobalStatsClient } from "@/lib/data-client-admin";
 
 
@@ -24,26 +23,17 @@ function LiveStats() {
         essays: 0,
     });
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            // Using the client-side data fetching function
-            const currentStats = await getGlobalStatsClient();
-            setStats(currentStats);
-        };
-        
-        fetchStats();
-
-        // Poll for updates as a simple way to keep stats fresh without full real-time setup
-        const interval = setInterval(fetchStats, 5000); // Check every 5 seconds
-        
-        // Also listen to storage events as a faster way to update
-        window.addEventListener('storage', fetchStats);
-
-        return () => {
-            clearInterval(interval);
-            window.removeEventListener('storage', fetchStats);
-        };
+    const fetchStats = useCallback(async () => {
+        const currentStats = await getGlobalStatsClient();
+        setStats(currentStats);
     }, []);
+
+    useEffect(() => {
+        fetchStats();
+        // Set up polling as a fallback for real-time updates
+        const interval = setInterval(fetchStats, 10000); // Poll every 10 seconds
+        return () => clearInterval(interval);
+    }, [fetchStats]);
 
     return (
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">

@@ -10,6 +10,7 @@ import type { RoadmapTask } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { findUserById } from "@/lib/data";
 
 interface UserData {
     userId: string;
@@ -19,6 +20,11 @@ interface UserData {
     plan: 'standard' | 'elite';
     avatarUrl?: string;
     signupTimestamp: string;
+    tasks?: RoadmapTask[];
+    suggestion?: {
+        title: string;
+        introduction: string;
+    }
 }
 
 interface PortfolioData {
@@ -44,50 +50,48 @@ export default function MyPortfolioPage() {
     const { toast } = useToast();
     
     useEffect(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-
-        try {
-            const signupDataStr = localStorage.getItem('signupData');
-            if (!signupDataStr) {
-                setError("Could not load your profile. Please log in again.");
-                setLoading(false);
+        const loadPortfolio = async () => {
+             if (typeof window === 'undefined') {
                 return;
             }
 
-            const user: UserData = JSON.parse(signupDataStr);
-            const userAvatar = localStorage.getItem('userAvatar');
-            const email = user.email;
+            try {
+                const userStr = sessionStorage.getItem('user');
+                if (!userStr) {
+                    setError("Could not load your profile. Please log in again.");
+                    setLoading(false);
+                    return;
+                }
+                const sessionUser = JSON.parse(userStr);
+                const user: UserData | null = await findUserById(sessionUser.userId) as UserData;
+                
+                if (!user) {
+                     setError("Could not load your profile from the database.");
+                     setLoading(false);
+                     return;
+                }
 
-            if (!email) {
-                setError("Could not load your profile email. Please log in again.");
+                const userAvatar = localStorage.getItem(`userAvatar-${user.userId}`);
+                const completedTasks = (user.tasks || []).filter(t => t.completed);
+                const suggestionTitle = user.suggestion?.title || "Personalized Strategic Plan";
+                const suggestionIntro = user.suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
+
+                setPortfolio({
+                    user: { ...user, avatarUrl: userAvatar || undefined },
+                    tasks: completedTasks,
+                    suggestionTitle,
+                    suggestionIntro,
+                });
+
+            } catch (e) {
+                console.error("Failed to load portfolio:", e);
+                setError("A problem occurred while trying to load your portfolio data.");
+            } finally {
                 setLoading(false);
-                return;
             }
-
-            const roadmapTasksStr = localStorage.getItem(`roadmapTasks-${email}`);
-            const roadmapTasks: RoadmapTask[] = roadmapTasksStr ? JSON.parse(roadmapTasksStr) : [];
-            const completedTasks = roadmapTasks.filter(t => t.completed);
-
-            const suggestionStr = localStorage.getItem(`aiSuggestion-${email}`);
-            const suggestion = suggestionStr ? JSON.parse(suggestionStr) : null;
-            const suggestionTitle = suggestion?.title || "Personalized Strategic Plan";
-            const suggestionIntro = suggestion?.introduction || "A plan for success, tailored to the student's unique strengths and goals.";
-
-            setPortfolio({
-                user: { ...user, avatarUrl: userAvatar || undefined },
-                tasks: completedTasks,
-                suggestionTitle,
-                suggestionIntro,
-            });
-
-        } catch (e) {
-            console.error("Failed to load portfolio:", e);
-            setError("A problem occurred while trying to load your portfolio data.");
-        } finally {
-            setLoading(false);
-        }
+        };
+        
+        loadPortfolio();
     }, []);
 
     const handleSharePortfolio = () => {
@@ -221,5 +225,3 @@ export default function MyPortfolioPage() {
         </div>
     );
 }
-
-    
