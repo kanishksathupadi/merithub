@@ -50,10 +50,14 @@ export function SignupForm() {
 
 
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
-    console.log("CLIENT: Signup form submitted. Triggering server action...");
+    console.log("CLIENT: Signup form submitted. All client-side validation passed.");
     try {
+        console.log("CLIENT: Checking if user exists. Calling findUserByEmailAction...");
         const existingUser = await findUserByEmailAction(values.email);
+        console.log("CLIENT: findUserByEmailAction returned. User exists:", !!existingUser);
+
         if (existingUser) {
+            console.log("CLIENT: User with this email already exists. Aborting.");
             toast({
                 variant: "destructive",
                 title: "Account Exists",
@@ -62,13 +66,14 @@ export function SignupForm() {
             return;
         }
         
-        const { acceptTerms, ...rest } = values;
-
+        console.log("CLIENT: User does not exist. Proceeding with creating new user object.");
         const newUser = { 
-            ...rest,
+            name: values.name,
+            email: values.email,
             password: values.password, // In a real app, this would be hashed.
             grade: Number(values.grade) || 0,
             birthdate: new Date(values.birthdate).toISOString(),
+            school: values.school,
             plan: 'elite',
             userId: uuidv4(),
             signupTimestamp: new Date().toISOString(),
@@ -77,27 +82,31 @@ export function SignupForm() {
             suggestion: null,
             onboardingData: null,
         };
-
+        
+        console.log("CLIENT: New user object created. Calling addUserAction...");
         await addUserAction(newUser);
+        console.log("CLIENT: addUserAction completed successfully.");
         
         sessionStorage.setItem('user', JSON.stringify(newUser));
+        console.log("CLIENT: User data saved to session storage.");
 
-        // Fire-and-forget request to the API route for sending the welcome email
+        console.log("CLIENT: Firing non-blocking welcome email request...");
         fetch('/api/send-welcome-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: newUser.name, email: newUser.email }),
         }).catch(err => {
-            console.error("CLIENT: Failed to trigger welcome email (this is non-blocking).", err);
+            console.error("CLIENT: Non-blocking welcome email fetch failed, but this should not stop navigation.", err);
         });
 
+        console.log("CLIENT: Navigating to /onboarding...");
         router.push("/onboarding");
     } catch (error) {
-        console.error("CLIENT: Signup Error in onSubmit", error);
+        console.error("CLIENT: An error occurred in the onSubmit function:", error);
         toast({
             variant: "destructive",
             title: "Signup Failed",
-            description: "An unexpected error occurred. Please try again.",
+            description: "An unexpected error occurred. Please check the console for details.",
         });
     }
   };

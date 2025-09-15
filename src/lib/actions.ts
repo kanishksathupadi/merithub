@@ -6,9 +6,11 @@
 import { findUserByEmail as dbFindUserByEmail, addUser as dbAddUser, updateUser as dbUpdateUser } from "./data";
 
 export async function findUserByEmailAction(email: string) {
-    console.log("SERVER ACTION: findUserByEmailAction called for", email);
+    console.log("SERVER ACTION: findUserByEmailAction triggered for email:", email);
     try {
-        return await dbFindUserByEmail(email);
+        const user = await dbFindUserByEmail(email);
+        console.log("SERVER ACTION: findUserByEmailAction completed successfully.");
+        return user;
     } catch (error) {
         console.error("SERVER ACTION ERROR in findUserByEmailAction:", error);
         return null;
@@ -16,21 +18,25 @@ export async function findUserByEmailAction(email: string) {
 }
 
 export async function addUserAction(user: any) {
-    console.log("SERVER ACTION: addUserAction called for user:", user.email);
+    console.log("SERVER ACTION: addUserAction triggered for user:", user.email);
     try {
-        return await dbAddUser(user);
+        const result = await dbAddUser(user);
+        console.log("SERVER ACTION: addUserAction completed successfully.");
+        return result;
     } catch (error) {
         console.error("SERVER ACTION ERROR in addUserAction:", error);
-        throw new Error("Failed to create a new user.");
+        throw new Error("Failed to create a new user. See server logs for details.");
     }
 }
 
 export async function updateUserAction(userId: string, data: any) {
-    console.log("SERVER ACTION: updateUserAction called for userId:", userId);
+    console.log("SERVER ACTION: updateUserAction triggered for userId:", userId);
     try {
-        return await dbUpdateUser(userId, data);
+        const result = await dbUpdateUser(userId, data);
+        console.log("SERVER ACTION: updateUserAction completed successfully.");
+        return result;
     } catch (error) {
         console.error("SERVER ACTION ERROR in updateUserAction:", error);
-        throw new Error("Failed to update user data.");
+        throw new Error("Failed to update user data. See server logs for details.");
     }
 }
