@@ -14,7 +14,6 @@ import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
-import { sendWelcomeEmail } from "@/ai/flows/send-welcome-email";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { addUser, findUserByEmail } from "@/lib/data-client";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
@@ -82,11 +81,16 @@ export function SignupForm() {
 
         sessionStorage.setItem('user', JSON.stringify(newUser));
 
-        if (newUser.email.endsWith('@gmail.com')) {
-            sendWelcomeEmail({ name: newUser.name, email: newUser.email }).catch(err => {
-                console.error("Failed to send welcome email:", err);
-            });
-        }
+        // Fire-and-forget request to the API route for sending the welcome email
+        // We do not await this, so the UI is not blocked.
+        fetch('/api/send-welcome-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newUser.name, email: newUser.email }),
+        }).catch(err => {
+            // Log error, but don't block user
+            console.error("Failed to trigger welcome email:", err);
+        });
 
         router.push("/onboarding");
     } catch (error) {
@@ -227,3 +231,5 @@ export function SignupForm() {
     </Card>
   );
 }
+
+    
