@@ -9,13 +9,14 @@ import {
     addUser as dbAddUser, 
     updateUser as dbUpdateUser 
 } from "./data";
+import { addUserAction } from "./actions";
 
 export async function findUserByEmail(email: string) {
     return dbFindUserByEmail(email);
 }
 
 export async function addUser(user: any) {
-    return dbAddUser(user);
+    return addUserAction(user);
 }
 
 export async function updateUser(userId: string, data: any) {
