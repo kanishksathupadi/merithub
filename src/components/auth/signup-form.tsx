@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React from "react";
@@ -16,7 +17,9 @@ import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { addUserAction, findUserByEmailAction } from "@/lib/actions";
+import { findUserByEmailAction, addUserAction } from "@/lib/actions";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -83,9 +86,11 @@ export function SignupForm() {
             onboardingData: null,
         };
         
-        console.log("CLIENT: New user object created. Calling addUserAction...");
-        await addUserAction(newUser);
-        console.log("CLIENT: addUserAction completed successfully.");
+        console.log(`CLIENT: Writing user ${newUser.userId} directly to Firestore...`);
+        // --- DIRECT CLIENT-SIDE WRITE ---
+        const userRef = doc(db, "users", newUser.userId);
+        await setDoc(userRef, newUser);
+        console.log("CLIENT: Direct Firestore write successful.");
         
         sessionStorage.setItem('user', JSON.stringify(newUser));
         console.log("CLIENT: User data saved to session storage.");

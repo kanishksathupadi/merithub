@@ -20,22 +20,11 @@ export async function findUserByEmailAction(email: string) {
     }
 }
 
+// This server action is no longer needed as user creation is handled on the client.
+// It is kept here to avoid breaking imports but it does nothing.
 export async function addUserAction(user: any) {
-    console.log("SERVER ACTION: addUserAction triggered for user:", user.email);
-    if (!user || !user.userId) {
-        throw new Error("A user object with a userId is required to add a user.");
-    }
-    try {
-        console.log(`DATABASE: Attempting to write user ${user.userId} to Firestore.`);
-        // Use the standard client-aware SDK for this server-side write operation.
-        const userRef = doc(db, "users", user.userId);
-        await setDoc(userRef, user);
-        console.log(`DATABASE: Successfully wrote user ${user.userId} to Firestore.`);
-        return user;
-    } catch (error) {
-        console.error("SERVER ACTION ERROR in addUserAction:", error);
-        throw new Error("Failed to create a new user. See server logs for details.");
-    }
+    console.warn("SERVER ACTION: addUserAction is deprecated and should not be used. User creation is handled client-side.");
+    return;
 }
 
 
