@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 // It should only be called from Server Actions or other server-side code.
 
 // --- USER MANAGEMENT ---
-export const findUserByEmail = async (email: string) => {
+export const dbFindUserByEmail = async (email: string) => {
     console.log("DATABASE: findUserByEmail called for", email);
     if (!email) return null;
     const usersRef = collection(db, "users");
@@ -22,12 +22,11 @@ export const findUserByEmail = async (email: string) => {
     return querySnapshot.docs[0].data();
 };
 
-export const addUser = async (user: any) => {
+export const dbAddUser = async (user: any) => {
     console.log(`DATABASE: Attempting to write user ${user.userId} to Firestore.`);
     if (!user || !user.userId) {
         throw new Error("A user object with a userId is required to add a user.");
     }
-    const userRef = doc(db, "users", user.userId);
     // Use the user's UID from Firebase Auth as the document ID
     await setDoc(doc(db, "users", user.userId), user);
     console.log(`DATABASE: Successfully wrote user ${user.userId} to Firestore.`);

@@ -12,14 +12,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { findUserByEmailAction } from "@/lib/actions";
+import { findUserByEmailAction, addUserAction } from "@/lib/actions";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { addUser } from "@/lib/data-client";
 
 
 const signupSchema = z.object({
@@ -56,8 +54,10 @@ export function SignupForm() {
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
     console.log("CLIENT: Signup form submitted. All client-side validation passed.");
     try {
-        console.log("CLIENT: Checking if user exists via server action...");
+        console.log("CLIENT: Checking if user exists. Calling findUserByEmailAction...");
         const existingUser = await findUserByEmailAction(values.email);
+        console.log(`CLIENT: findUserByEmailAction returned. User exists: ${!!existingUser}`);
+
         if (existingUser) {
             toast({
                 variant: "destructive",
@@ -72,11 +72,10 @@ export function SignupForm() {
         const firebaseUser = userCredential.user;
         console.log("CLIENT: Firebase Auth user created successfully. UID:", firebaseUser.uid);
 
+        console.log("CLIENT: Proceeding with creating new user object.");
         const newUser = { 
             name: values.name,
             email: values.email,
-            // DO NOT STORE PLAINTEXT PASSWORDS
-            // password: values.password, 
             grade: Number(values.grade) || 0,
             birthdate: new Date(values.birthdate).toISOString(),
             school: values.school,
@@ -89,9 +88,9 @@ export function SignupForm() {
             onboardingData: null,
         };
         
-        console.log("CLIENT: New user object created. Writing to Firestore...");
-        await addUser(newUser);
-        console.log("CLIENT: User data written to Firestore successfully.");
+        console.log("CLIENT: New user object created. Calling addUserAction...");
+        await addUserAction(newUser);
+        console.log("CLIENT: addUserAction completed successfully.");
         
         sessionStorage.setItem('user', JSON.stringify(newUser));
         console.log("CLIENT: User data saved to session storage.");
@@ -119,6 +118,9 @@ export function SignupForm() {
         } else if (error.code === 'auth/weak-password') {
             title = "Weak Password";
             description = "The password must be at least 6 characters long.";
+        } else if (error.message.includes('Failed to create a new user')) {
+            title = "Server Error";
+            description = "Could not save your profile to the database. Please try again.";
         }
 
         toast({
