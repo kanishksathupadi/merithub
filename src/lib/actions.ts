@@ -4,7 +4,7 @@
 // This file contains server actions that can be called from client components.
 
 import { doc, setDoc } from "firebase/firestore";
-import { db, adminDb } from './firebase';
+import { db } from './firebase';
 import { findUserByEmail as dbFindUserByEmail, updateUser as dbUpdateUser } from "./data";
 
 
@@ -26,10 +26,10 @@ export async function addUserAction(user: any) {
         throw new Error("A user object with a userId is required to add a user.");
     }
     try {
-        console.log(`DATABASE: Attempting to write user ${user.userId} to Firestore using ADMIN SDK.`);
-        // Use the Admin SDK for this server-side write operation.
-        const userRef = adminDb.collection("users").doc(user.userId);
-        await userRef.set(user);
+        console.log(`DATABASE: Attempting to write user ${user.userId} to Firestore.`);
+        // Use the standard client-aware SDK for this server-side write operation.
+        const userRef = doc(db, "users", user.userId);
+        await setDoc(userRef, user);
         console.log(`DATABASE: Successfully wrote user ${user.userId} to Firestore.`);
         return user;
     } catch (error) {
