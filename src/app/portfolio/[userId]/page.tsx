@@ -10,7 +10,7 @@ import { BrainCircuit, CheckCircle, Trophy, Star, ListChecks, Link as LinkIcon }
 import type { RoadmapTask } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { findUserById } from "@/lib/data";
+import { findUserById } from "@/lib/data-client";
 
 interface UserData {
     userId: string;
@@ -221,3 +221,5 @@ export default function PortfolioPage() {
         </div>
     );
 }
+
+    

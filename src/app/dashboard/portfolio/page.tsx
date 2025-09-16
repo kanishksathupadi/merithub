@@ -10,7 +10,7 @@ import type { RoadmapTask } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { findUserById } from "@/lib/data";
+import { findUserById } from "@/lib/data-client";
 
 interface UserData {
     userId: string;
@@ -225,3 +225,5 @@ export default function MyPortfolioPage() {
         </div>
     );
 }
+
+    

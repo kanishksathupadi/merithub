@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Card, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { findUserByEmail, updateUser } from "@/lib/data";
+import { updateUser } from "@/lib/data-client";
 
 export default function SettingsPage() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -117,3 +117,5 @@ export default function SettingsPage() {
     </div>
   );
 }
+
+    

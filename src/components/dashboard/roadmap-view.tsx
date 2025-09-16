@@ -14,7 +14,7 @@ import { format, parseISO } from "date-fns";
 import { addNotification } from "@/lib/tracking";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Textarea } from "../ui/textarea";
-import { updateUser, findUserById } from '@/lib/data';
+import { updateUser, findUserById } from '@/lib/data-client';
 
 const getCategoryIcon = (category: RoadmapTask['category']) => {
     switch (category) {
@@ -295,3 +295,5 @@ export function RoadmapView() {
     </div>
   );
 }
+
+    

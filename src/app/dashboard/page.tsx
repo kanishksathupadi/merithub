@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { updateUser, findUserById } from "@/lib/data";
+import { updateUser, findUserById } from "@/lib/data-client";
 
 
 async function fetchSuggestion(input: SuggestNextStepInput) {
@@ -382,3 +382,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

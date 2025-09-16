@@ -8,7 +8,7 @@ import { useEffect, useState, useCallback } from "react";
 import type { RoadmapTask } from "@/lib/types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { subDays, format, parseISO, isSameDay } from "date-fns";
-import { findUserById } from "@/lib/data";
+import { findUserById } from "@/lib/data-client";
 
 
 const generateTimelineData = (tasks: RoadmapTask[]) => {
@@ -164,3 +164,5 @@ export function ProgressView() {
     </div>
   );
 }
+
+    

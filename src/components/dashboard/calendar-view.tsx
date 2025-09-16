@@ -12,7 +12,7 @@ import { Button } from '../ui/button';
 import { CheckCircle, Link as LinkIcon, Star, Trophy, BrainCircuit, Repeat, Calendar as CalendarIcon, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { updateUser, findUserById } from '@/lib/data';
+import { updateUser, findUserById } from '@/lib/data-client';
 
 const dayOfWeekMap: { [key: string]: number } = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
 const dayHeaders = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -210,3 +210,5 @@ export function CalendarView() {
         </Card>
     );
 }
+
+    

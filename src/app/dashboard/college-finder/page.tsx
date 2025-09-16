@@ -18,7 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { incrementStat } from '@/lib/data-client-admin';
-import { findUserById } from '@/lib/data';
+import { findUserById } from '@/lib/data-client';
 
 const filterSchema = z.object({
   filterQuery: z.string().optional(),
@@ -280,3 +280,5 @@ export default function CollegeFinderPage() {
         </div>
     );
 }
+
+    
