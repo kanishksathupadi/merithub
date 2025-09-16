@@ -75,3 +75,31 @@ export const findUserById = async (userId: string) => {
     const users = getUsers();
     return users.find((user: any) => user.userId === userId) || null;
 }
+
+// Functions for managing support requests in localStorage
+export const getSupportRequests = async () => {
+    if (typeof window === 'undefined') return [];
+    const requestsStr = localStorage.getItem('supportRequests');
+    return requestsStr ? JSON.parse(requestsStr) : [];
+};
+
+const saveSupportRequests = (requests: any[]) => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('supportRequests', JSON.stringify(requests));
+};
+
+export const updateSupportRequest = async (userId: string, requestData: any) => {
+    let requests = await getSupportRequests();
+    const existingRequestIndex = requests.findIndex((req: any) => req.userId === userId);
+
+    if (existingRequestIndex > -1) {
+        // Update existing request
+        requests[existingRequestIndex] = { ...requests[existingRequestIndex], ...requestData };
+    } else {
+        // Add new request
+        requests.push({ userId, ...requestData });
+    }
+
+    saveSupportRequests(requests);
+    return { userId, ...requestData };
+};
