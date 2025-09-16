@@ -7,7 +7,7 @@ import { SupportChatWidget } from "@/components/dashboard/support-chat-widget";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useLayoutEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({
   children,
@@ -19,7 +19,7 @@ export default function DashboardLayout({
   const [user, setUser] = useState<any>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const userStr = sessionStorage.getItem('user');
     if (!userStr) {
       router.replace('/login');
