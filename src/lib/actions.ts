@@ -5,7 +5,7 @@
 
 import { doc, setDoc } from "firebase/firestore";
 import { db } from './firebase';
-import { findUserByEmail as dbFindUserByEmail, updateUser as dbUpdateUser } from "./data";
+import { findUserByEmail as dbFindUserByEmail, updateUser as dbUpdateUser, addUser as dbAddUser } from "./data";
 
 
 export async function findUserByEmailAction(email: string) {
@@ -26,8 +26,7 @@ export async function addUserAction(user: any) {
         if (!user || !user.userId) {
             throw new Error("A user object with a userId is required to add a user.");
         }
-        const userRef = doc(db, "users", user.userId);
-        await setDoc(userRef, user);
+        await dbAddUser(user);
         console.log("SERVER ACTION: addUserAction completed successfully.");
     } catch (error) {
         console.error("SERVER ACTION ERROR in addUserAction:", error);

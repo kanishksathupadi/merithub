@@ -28,7 +28,8 @@ export const addUser = async (user: any) => {
         throw new Error("A user object with a userId is required to add a user.");
     }
     const userRef = doc(db, "users", user.userId);
-    await setDoc(userRef, user);
+    // Use the user's UID from Firebase Auth as the document ID
+    await setDoc(doc(db, "users", user.userId), user);
     console.log(`DATABASE: Successfully wrote user ${user.userId} to Firestore.`);
 }
 

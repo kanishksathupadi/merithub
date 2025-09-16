@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React from "react";
@@ -17,7 +16,11 @@ import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { findUserByEmailAction, addUserAction } from "@/lib/actions";
+import { findUserByEmailAction } from "@/lib/actions";
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { addUser } from "@/lib/data-client";
+
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -53,12 +56,9 @@ export function SignupForm() {
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
     console.log("CLIENT: Signup form submitted. All client-side validation passed.");
     try {
-        console.log("CLIENT: Checking if user exists. Calling findUserByEmailAction...");
+        console.log("CLIENT: Checking if user exists via server action...");
         const existingUser = await findUserByEmailAction(values.email);
-        console.log("CLIENT: findUserByEmailAction returned. User exists:", !!existingUser);
-
         if (existingUser) {
-            console.log("CLIENT: User with this email already exists. Aborting.");
             toast({
                 variant: "destructive",
                 title: "Account Exists",
@@ -67,16 +67,21 @@ export function SignupForm() {
             return;
         }
         
-        console.log("CLIENT: User does not exist. Proceeding with creating new user object.");
+        console.log("CLIENT: User does not exist. Creating user with Firebase Auth...");
+        const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+        const firebaseUser = userCredential.user;
+        console.log("CLIENT: Firebase Auth user created successfully. UID:", firebaseUser.uid);
+
         const newUser = { 
             name: values.name,
             email: values.email,
-            password: values.password, // In a real app, this would be hashed.
+            // DO NOT STORE PLAINTEXT PASSWORDS
+            // password: values.password, 
             grade: Number(values.grade) || 0,
             birthdate: new Date(values.birthdate).toISOString(),
             school: values.school,
             plan: 'elite',
-            userId: uuidv4(),
+            userId: firebaseUser.uid, // Use Firebase UID as the unique ID
             signupTimestamp: new Date().toISOString(),
             lastLoginTimestamp: new Date().toISOString(),
             tasks: [],
@@ -84,9 +89,9 @@ export function SignupForm() {
             onboardingData: null,
         };
         
-        console.log("CLIENT: New user object created. Calling addUserAction...");
-        await addUserAction(newUser);
-        console.log("CLIENT: addUserAction completed successfully.");
+        console.log("CLIENT: New user object created. Writing to Firestore...");
+        await addUser(newUser);
+        console.log("CLIENT: User data written to Firestore successfully.");
         
         sessionStorage.setItem('user', JSON.stringify(newUser));
         console.log("CLIENT: User data saved to session storage.");
@@ -102,12 +107,24 @@ export function SignupForm() {
 
         console.log("CLIENT: Navigating to /onboarding...");
         router.push("/onboarding");
-    } catch (error) {
+    } catch (error: any) {
         console.error("CLIENT: An error occurred in the onSubmit function:", error);
+        
+        let title = "Signup Failed";
+        let description = "An unexpected error occurred. Please try again.";
+
+        if (error.code === 'auth/email-already-in-use') {
+            title = "Account Exists";
+            description = "An account with this email already exists. Please log in.";
+        } else if (error.code === 'auth/weak-password') {
+            title = "Weak Password";
+            description = "The password must be at least 6 characters long.";
+        }
+
         toast({
             variant: "destructive",
-            title: "Signup Failed",
-            description: "An unexpected error occurred. Please check the console for details.",
+            title: title,
+            description: description,
         });
     }
   };
