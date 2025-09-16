@@ -2,7 +2,6 @@
 import { initializeApp, getApps, getApp, FirebaseOptions } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import * as admin from 'firebase-admin';
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -19,33 +18,9 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 
-// Initialize Firebase Admin SDK for server-side operations
-// This prevents initialization on the client side.
-if (typeof window === 'undefined' && !admin.apps.length) {
-    try {
-        const privateKey = process.env.FIREBASE_PRIVATE_KEY;
-        if (process.env.FIREBASE_CLIENT_EMAIL && privateKey) {
-            admin.initializeApp({
-                credential: admin.credential.cert({
-                    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                    privateKey: privateKey.replace(/\\n/g, '\n'),
-                }),
-            });
-            console.log('Firebase Admin SDK initialized successfully.');
-        } else {
-            console.warn('Firebase Admin credentials are not set. Skipping Admin SDK initialization.');
-        }
-    } catch (error) {
-        console.error('Firebase Admin SDK initialization error:', error);
-    }
-}
+// Server-side admin SDK should be initialized elsewhere to avoid bundling in client code.
+// For this project structure, we will manage server-side operations through server actions
+// which can have their own isolated initialization if needed, but for simplicity,
+// we will rely on the client-authenticated SDK calls from server actions.
 
-const adminDb = admin.apps.length ? admin.firestore() : null;
-
-if (process.env.NODE_ENV === 'development' && typeof window === 'undefined' && !adminDb) {
-    console.warn('Firebase Admin SDK is not initialized. Some server-side operations might fail if they rely on admin privileges.');
-}
-
-
-export { app, db, auth, adminDb };
+export { app, db, auth };
