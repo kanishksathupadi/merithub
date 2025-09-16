@@ -14,7 +14,7 @@ import type { OnboardingData, RoadmapTask, ChatMessage } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { cn } from '@/lib/utils';
-import { getSupportRequests, updateSupportRequest } from '@/lib/data';
+import { getSupportRequests, updateSupportRequest } from '@/lib/data-client';
 
 export function SupportChatWidget() {
     const { toast } = useToast();
