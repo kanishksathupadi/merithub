@@ -16,7 +16,8 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function addUser(user: any) {
-    return addUserAction(user);
+    // This now directly uses the database function, not a server action
+    return dbAddUser(user);
 }
 
 export async function updateUser(userId: string, data: any) {

@@ -22,6 +22,16 @@ export const findUserByEmail = async (email: string) => {
     return querySnapshot.docs[0].data();
 };
 
+export const addUser = async (user: any) => {
+    console.log(`DATABASE: Attempting to write user ${user.userId} to Firestore.`);
+    if (!user || !user.userId) {
+        throw new Error("A user object with a userId is required to add a user.");
+    }
+    const userRef = doc(db, "users", user.userId);
+    await setDoc(userRef, user);
+    console.log(`DATABASE: Successfully wrote user ${user.userId} to Firestore.`);
+}
+
 export const findUserById = async (userId: string) => {
     if (!userId) return null;
     const userRef = doc(db, "users", userId);

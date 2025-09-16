@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { findUserByEmailAction, addUserAction } from "@/lib/actions";
+import { findUserByEmail, addUser } from "@/lib/data-client";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -56,7 +56,7 @@ export function SignupForm() {
     console.log("CLIENT: Signup form submitted. All client-side validation passed.");
     try {
         console.log("CLIENT: Checking if user exists. Calling findUserByEmailAction...");
-        const existingUser = await findUserByEmailAction(values.email);
+        const existingUser = await findUserByEmail(values.email);
         console.log("CLIENT: findUserByEmailAction returned. User exists:", !!existingUser);
 
         if (existingUser) {
@@ -88,8 +88,7 @@ export function SignupForm() {
         
         console.log(`CLIENT: Writing user ${newUser.userId} directly to Firestore...`);
         // --- DIRECT CLIENT-SIDE WRITE ---
-        const userRef = doc(db, "users", newUser.userId);
-        await setDoc(userRef, newUser);
+        await addUser(newUser);
         console.log("CLIENT: Direct Firestore write successful.");
         
         sessionStorage.setItem('user', JSON.stringify(newUser));

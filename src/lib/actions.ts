@@ -5,7 +5,7 @@
 
 import { doc, setDoc } from "firebase/firestore";
 import { db } from './firebase';
-import { findUserByEmail as dbFindUserByEmail, updateUser as dbUpdateUser } from "./data";
+import { findUserByEmail as dbFindUserByEmail, updateUser as dbUpdateUser, addUser as dbAddUser } from "./data";
 
 
 export async function findUserByEmailAction(email: string) {
@@ -20,11 +20,15 @@ export async function findUserByEmailAction(email: string) {
     }
 }
 
-// This server action is no longer needed as user creation is handled on the client.
-// It is kept here to avoid breaking imports but it does nothing.
 export async function addUserAction(user: any) {
-    console.warn("SERVER ACTION: addUserAction is deprecated and should not be used. User creation is handled client-side.");
-    return;
+    console.log("SERVER ACTION: addUserAction triggered for userId:", user.userId);
+    try {
+        await dbAddUser(user);
+        console.log("SERVER ACTION: addUserAction completed successfully.");
+    } catch (error) {
+        console.error("SERVER ACTION ERROR in addUserAction:", error);
+        throw new Error("Failed to create a new user. See server logs for details.");
+    }
 }
 
 
