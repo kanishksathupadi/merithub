@@ -1,18 +1,16 @@
 
 import { LoginForm } from "@/components/auth/login-form";
 import { AppLogo } from "@/components/logo";
+import { MarketingHeader } from "@/components/layout/marketing-header";
 import Link from "next/link";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 relative">
-      <header className="absolute top-0 left-0 w-full p-4 sm:p-6">
-        <Link href="/" className="flex items-center gap-2">
-            <AppLogo className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
-        </Link>
-      </header>
-      <LoginForm />
+     <div className="flex min-h-screen flex-col">
+        <MarketingHeader />
+        <main className="flex-1 flex flex-col items-center justify-center p-4">
+            <LoginForm />
+        </main>
     </div>
   );
 }

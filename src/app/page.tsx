@@ -13,6 +13,7 @@ import { AppLogo } from "@/components/logo";
 import { StatCard } from "@/components/home/stat-card";
 import { useEffect, useState, useCallback } from "react";
 import { getGlobalStats as getGlobalStatsClient } from "@/lib/data-client-admin";
+import { MarketingHeader } from "@/components/layout/marketing-header";
 
 
 function LiveStats() {
@@ -92,27 +93,7 @@ const allFeatures = [
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
-      <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto flex h-16 items-center">
-          <Link href="/" className="flex items-center gap-2 mr-6">
-            <AppLogo className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight">AI School Mentor</h1>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
-            <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
-            <Link href="#faq" className="hover:text-primary transition-colors">FAQ</Link>
-          </nav>
-          <div className="flex items-center gap-2 ml-auto">
-             <Button asChild variant="secondary">
-                <Link href="/login">Member Login</Link>
-            </Button>
-            <Button asChild>
-                <Link href="/signup">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <MarketingHeader />
 
       <main className="flex-1">
         {/* Hero Section */}
@@ -123,20 +104,20 @@ export default function Home() {
                <div className="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold mb-4 border border-primary/20 text-primary">
                 Your Co-Pilot for Academic & Career Victory
               </div>
-              <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
+              <h2 className="text-4xl md:text-7xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
                 Your Path to Academic Victory
               </h2>
               <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
                 AI School Mentor is your dedicated co-pilot, building a unique strategy that sharpens your skills and crafts a standout profile to get you into your dream college.
               </p>
-              <div className="mt-8 space-x-4">
-                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30">
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30 w-full sm:w-auto">
                     <Link href="/signup">
                         <Rocket className="mr-2 h-5 w-5" />
                         Start Your Journey
                     </Link>
                 </Button>
-                <Button variant="outline" size="lg" asChild className="border-border hover:bg-primary/10">
+                <Button variant="outline" size="lg" asChild className="border-border hover:bg-primary/10 w-full sm:w-auto">
                   <Link href="#features">
                     Learn More
                   </Link>
