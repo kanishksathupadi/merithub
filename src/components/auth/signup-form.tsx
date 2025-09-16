@@ -15,9 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "../ui/checkbox";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { findUserByEmailAction, addUserAction } from "@/lib/actions";
-import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { findUserByEmail, addUser } from "@/lib/data-client";
+import { v4 as uuidv4 } from "uuid";
 
 
 const signupSchema = z.object({
@@ -52,11 +51,8 @@ export function SignupForm() {
 
 
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
-    console.log("CLIENT: Signup form submitted. All client-side validation passed.");
     try {
-        console.log("CLIENT: Checking if user exists. Calling findUserByEmailAction...");
-        const existingUser = await findUserByEmailAction(values.email);
-        console.log(`CLIENT: findUserByEmailAction returned. User exists: ${!!existingUser}`);
+        const existingUser = await findUserByEmail(values.email);
 
         if (existingUser) {
             toast({
@@ -67,20 +63,15 @@ export function SignupForm() {
             return;
         }
         
-        console.log("CLIENT: User does not exist. Creating user with Firebase Auth...");
-        const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-        const firebaseUser = userCredential.user;
-        console.log("CLIENT: Firebase Auth user created successfully. UID:", firebaseUser.uid);
-
-        console.log("CLIENT: Proceeding with creating new user object.");
         const newUser = { 
+            userId: uuidv4(),
             name: values.name,
             email: values.email,
+            password: values.password, // In a real app, this should be hashed.
             grade: Number(values.grade) || 0,
             birthdate: new Date(values.birthdate).toISOString(),
             school: values.school,
             plan: 'elite',
-            userId: firebaseUser.uid, // Use Firebase UID as the unique ID
             signupTimestamp: new Date().toISOString(),
             lastLoginTimestamp: new Date().toISOString(),
             tasks: [],
@@ -88,14 +79,10 @@ export function SignupForm() {
             onboardingData: null,
         };
         
-        console.log("CLIENT: New user object created. Calling addUserAction...");
-        await addUserAction(newUser);
-        console.log("CLIENT: addUserAction completed successfully.");
+        await addUser(newUser);
         
         sessionStorage.setItem('user', JSON.stringify(newUser));
-        console.log("CLIENT: User data saved to session storage.");
 
-        console.log("CLIENT: Firing non-blocking welcome email request...");
         fetch('/api/send-welcome-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -104,29 +91,14 @@ export function SignupForm() {
             console.error("CLIENT: Non-blocking welcome email fetch failed, but this should not stop navigation.", err);
         });
 
-        console.log("CLIENT: Navigating to /onboarding...");
         router.push("/onboarding");
     } catch (error: any) {
         console.error("CLIENT: An error occurred in the onSubmit function:", error);
         
-        let title = "Signup Failed";
-        let description = "An unexpected error occurred. Please try again.";
-
-        if (error.code === 'auth/email-already-in-use') {
-            title = "Account Exists";
-            description = "An account with this email already exists. Please log in.";
-        } else if (error.code === 'auth/weak-password') {
-            title = "Weak Password";
-            description = "The password must be at least 6 characters long.";
-        } else if (error.message.includes('Failed to create a new user')) {
-            title = "Server Error";
-            description = "Could not save your profile to the database. Please try again.";
-        }
-
         toast({
             variant: "destructive",
-            title: title,
-            description: description,
+            title: "Signup Failed",
+            description: "An unexpected error occurred. Please try again.",
         });
     }
   };

@@ -1,7 +1,8 @@
 
 import { initializeApp, getApps, getApp, FirebaseOptions } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+
+// This file is now ONLY for client-side SDK initialization, if ever needed.
+// All server-side Admin SDK logic has been removed to prevent build errors.
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,15 +13,9 @@ const firebaseConfig: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase client app
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
-const auth = getAuth(app);
 
+// Since we are not using Firebase Auth or Firestore anymore, we don't need to export db or auth.
+// We keep the basic app initialization in case another library depends on it.
 
-// Server-side admin SDK should be initialized elsewhere to avoid bundling in client code.
-// For this project structure, we will manage server-side operations through server actions
-// which can have their own isolated initialization if needed, but for simplicity,
-// we will rely on the client-authenticated SDK calls from server actions.
-
-export { app, db, auth };
+export { app };
