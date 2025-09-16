@@ -17,9 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "../ui/checkbox";
 import { SchoolAutocomplete } from "../dashboard/school-autocomplete";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { findUserByEmail, addUser } from "@/lib/data-client";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { findUserByEmailAction, addUserAction } from "@/lib/actions";
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -56,7 +54,7 @@ export function SignupForm() {
     console.log("CLIENT: Signup form submitted. All client-side validation passed.");
     try {
         console.log("CLIENT: Checking if user exists. Calling findUserByEmailAction...");
-        const existingUser = await findUserByEmail(values.email);
+        const existingUser = await findUserByEmailAction(values.email);
         console.log("CLIENT: findUserByEmailAction returned. User exists:", !!existingUser);
 
         if (existingUser) {
@@ -86,10 +84,9 @@ export function SignupForm() {
             onboardingData: null,
         };
         
-        console.log(`CLIENT: Writing user ${newUser.userId} directly to Firestore...`);
-        // --- DIRECT CLIENT-SIDE WRITE ---
-        await addUser(newUser);
-        console.log("CLIENT: Direct Firestore write successful.");
+        console.log("CLIENT: New user object created. Calling addUserAction...");
+        await addUserAction(newUser);
+        console.log("CLIENT: addUserAction completed successfully.");
         
         sessionStorage.setItem('user', JSON.stringify(newUser));
         console.log("CLIENT: User data saved to session storage.");
